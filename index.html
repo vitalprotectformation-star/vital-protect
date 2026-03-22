@@ -1011,11 +1011,15 @@
       submitReservationBtn.textContent = "Redirection vers le paiement...";
 
       const data = {
-        stage_title: selectedStage.title,
-        places: Number(placesInput.value),
-        unit_price: Number(selectedStage.price),
-        email: email
-      };
+  stage_id: selectedStage.id,
+  stage_title: selectedStage.title,
+  first_name: document.getElementById("firstName").value.trim(),
+  last_name: document.getElementById("lastName").value.trim(),
+  email: document.getElementById("email").value.trim(),
+  phone: document.getElementById("phone").value.trim(),
+  places: Number(placesInput.value),
+  unit_price: Number(selectedStage.price)
+};
 
       try {
         const res = await fetch("/api/create-checkout-session", {
