@@ -2,61 +2,1021 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>VITAL PROTECT</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
   <style>
-    body { font-family: Arial; background: #f5f7fa; margin: 0; }
-    header { background: #0B2A4A; color: white; padding: 20px; font-size: 24px; }
-    .container { padding: 20px; }
-    .card { background: white; padding: 15px; margin-bottom: 15px; border-radius: 8px; }
-    button { background: #0B2A4A; color: white; border: none; padding: 10px; cursor: pointer; }
+    :root {
+      --navy: #0b2e59;
+      --navy-dark: #08203d;
+      --blue: #1f6feb;
+      --blue-soft: #eaf2ff;
+      --text: #142033;
+      --muted: #667085;
+      --bg: #f4f7fb;
+      --card: #ffffff;
+      --border: #dbe4f0;
+      --success: #0f9d58;
+      --warning: #b7791f;
+      --shadow: 0 10px 30px rgba(11, 46, 89, 0.08);
+      --radius: 18px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .container {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+    }
+
+    header {
+      background: linear-gradient(135deg, var(--navy-dark), var(--navy));
+      color: white;
+      padding: 20px 0;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .brand {
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .nav-links a {
+      color: rgba(255,255,255,0.92);
+      text-decoration: none;
+      font-weight: 600;
+      padding: 10px 14px;
+      border-radius: 12px;
+    }
+
+    .nav-links a:hover {
+      background: rgba(255,255,255,0.12);
+    }
+
+    .hero {
+      padding: 56px 0 28px;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 24px;
+      align-items: stretch;
+    }
+
+    .hero-card,
+    .hero-side {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+    }
+
+    .hero-card {
+      padding: 36px;
+      background: linear-gradient(180deg, #ffffff, #f8fbff);
+    }
+
+    .hero-badge {
+      display: inline-block;
+      background: var(--blue-soft);
+      color: var(--blue);
+      font-weight: 700;
+      font-size: 0.9rem;
+      padding: 8px 12px;
+      border-radius: 999px;
+      margin-bottom: 16px;
+    }
+
+    .hero h1 {
+      margin: 0 0 14px;
+      font-size: 2.6rem;
+      line-height: 1.1;
+    }
+
+    .hero p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 1.08rem;
+      line-height: 1.7;
+      max-width: 760px;
+    }
+
+    .hero-actions {
+      margin-top: 24px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 14px;
+      padding: 14px 18px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.15s ease, opacity 0.15s ease, background 0.15s ease;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .btn-primary {
+      background: var(--blue);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #165ecc;
+    }
+
+    .btn-secondary {
+      background: white;
+      color: var(--navy);
+      border: 1px solid var(--border);
+    }
+
+    .btn-dark {
+      background: var(--navy);
+      color: white;
+    }
+
+    .hero-side {
+      padding: 26px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      background: linear-gradient(180deg, #0d376b, #0b2e59);
+      color: white;
+    }
+
+    .hero-side h3 {
+      margin-top: 0;
+      margin-bottom: 12px;
+      font-size: 1.3rem;
+    }
+
+    .hero-side p {
+      margin: 0 0 18px;
+      color: rgba(255,255,255,0.88);
+      line-height: 1.6;
+    }
+
+    .mini-stats {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .mini-stat {
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 16px;
+      padding: 14px;
+    }
+
+    .mini-stat strong {
+      display: block;
+      font-size: 1.2rem;
+      margin-bottom: 4px;
+    }
+
+    section {
+      padding: 24px 0 34px;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .section-head h2 {
+      margin: 0;
+      font-size: 2rem;
+    }
+
+    .section-head p {
+      margin: 8px 0 0;
+      color: var(--muted);
+    }
+
+    .filters {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+
+    .filter-box {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px 14px;
+      min-width: 220px;
+      box-shadow: 0 4px 16px rgba(11, 46, 89, 0.04);
+    }
+
+    .filter-box label {
+      display: block;
+      font-size: 0.86rem;
+      color: var(--muted);
+      margin-bottom: 6px;
+      font-weight: 700;
+    }
+
+    .filter-box input,
+    .filter-box select {
+      width: 100%;
+      border: none;
+      outline: none;
+      font-size: 1rem;
+      background: transparent;
+      color: var(--text);
+    }
+
+    .stages-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 20px;
+    }
+
+    .stage-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .stage-top {
+      padding: 22px 22px 12px;
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: start;
+    }
+
+    .stage-type {
+      display: inline-block;
+      background: var(--blue-soft);
+      color: var(--blue);
+      font-size: 0.82rem;
+      font-weight: 700;
+      padding: 8px 10px;
+      border-radius: 999px;
+      margin-bottom: 10px;
+    }
+
+    .stage-title {
+      margin: 0;
+      font-size: 1.45rem;
+      line-height: 1.25;
+    }
+
+    .stage-price {
+      white-space: nowrap;
+      font-weight: 800;
+      font-size: 1.5rem;
+      color: var(--navy);
+    }
+
+    .stage-body {
+      padding: 0 22px 18px;
+    }
+
+    .stage-description {
+      color: var(--muted);
+      line-height: 1.65;
+      margin-bottom: 18px;
+    }
+
+    .stage-meta {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .meta-item {
+      background: #f8fbff;
+      border: 1px solid #e7eef8;
+      border-radius: 14px;
+      padding: 12px;
+    }
+
+    .meta-label {
+      display: block;
+      color: var(--muted);
+      font-size: 0.85rem;
+      margin-bottom: 4px;
+      font-weight: 700;
+    }
+
+    .meta-value {
+      font-weight: 700;
+    }
+
+    .availability {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 700;
+      border-radius: 999px;
+      padding: 8px 12px;
+    }
+
+    .availability.ok {
+      background: #eaf8f0;
+      color: var(--success);
+    }
+
+    .availability.low {
+      background: #fff4df;
+      color: var(--warning);
+    }
+
+    .stage-actions {
+      border-top: 1px solid var(--border);
+      padding: 18px 22px 22px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .reservation-wrapper {
+      margin-top: 8px;
+    }
+
+    .reservation-card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      display: none;
+    }
+
+    .reservation-card.active {
+      display: block;
+    }
+
+    .reservation-header {
+      background: linear-gradient(135deg, var(--navy), #123f77);
+      color: white;
+      padding: 24px;
+    }
+
+    .reservation-header h2 {
+      margin: 0 0 8px;
+    }
+
+    .reservation-header p {
+      margin: 0;
+      color: rgba(255,255,255,0.9);
+    }
+
+    .reservation-content {
+      display: grid;
+      grid-template-columns: 1fr 360px;
+      gap: 0;
+    }
+
+    .reservation-form {
+      padding: 24px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .field.full {
+      grid-column: 1 / -1;
+    }
+
+    .field label {
+      font-weight: 700;
+      font-size: 0.95rem;
+    }
+
+    .field input,
+    .field select,
+    .field textarea {
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px 14px;
+      font-size: 1rem;
+      outline: none;
+      background: white;
+    }
+
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 4px rgba(31, 111, 235, 0.08);
+    }
+
+    .reservation-side {
+      border-left: 1px solid var(--border);
+      background: #f8fbff;
+      padding: 24px;
+    }
+
+    .summary-card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 18px;
+    }
+
+    .summary-card h3 {
+      margin-top: 0;
+      margin-bottom: 18px;
+    }
+
+    .summary-line {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid #edf2f8;
+    }
+
+    .summary-line:last-child {
+      border-bottom: none;
+    }
+
+    .summary-total {
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 2px solid #e4ebf5;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 1.12rem;
+      font-weight: 800;
+    }
+
+    .helper-box {
+      margin-top: 16px;
+      padding: 16px;
+      border-radius: 16px;
+      background: #eef5ff;
+      color: #27446d;
+      line-height: 1.6;
+      font-size: 0.95rem;
+    }
+
+    .empty-state,
+    .loading-state,
+    .error-state {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 28px;
+      text-align: center;
+      color: var(--muted);
+      box-shadow: var(--shadow);
+    }
+
+    footer {
+      margin-top: 38px;
+      background: var(--navy-dark);
+      color: rgba(255,255,255,0.88);
+      padding: 28px 0;
+    }
+
+    footer p {
+      margin: 0;
+      text-align: center;
+    }
+
+    @media (max-width: 980px) {
+      .hero-grid,
+      .reservation-content,
+      .stages-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .reservation-side {
+        border-left: none;
+        border-top: 1px solid var(--border);
+      }
+    }
+
+    @media (max-width: 720px) {
+      .brand {
+        font-size: 1.5rem;
+      }
+
+      .hero h1 {
+        font-size: 2rem;
+      }
+
+      .stage-top {
+        flex-direction: column;
+      }
+
+      .stage-meta,
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .section-head {
+        flex-direction: column;
+        align-items: start;
+      }
+    }
   </style>
 </head>
 <body>
-<header>VITAL PROTECT</header>
-<div class="container">
-  <h2>Stages disponibles</h2>
-  <div id="stages"></div>
-</div>
 
-<script>
-  const supabaseClient = supabase.createClient(
-    "https://zsraqxzneghkzaozzuci.supabase.co",
-    "sb_publishable_VlTpYjzJ3DKpFA1Un_EFHQ_FW-mYK4U"
-  );
+  <header>
+    <div class="container header-inner">
+      <div class="brand">VITAL PROTECT</div>
+      <nav class="nav-links">
+        <a href="#stages">Stages</a>
+        <a href="#reservation">Réservation</a>
+      </nav>
+    </div>
+  </header>
 
-  async function loadStages() {
-    const { data, error } = await supabaseClient
-      .from("stages")
-      .select("*")
-      .eq("status", "published");
+  <main>
+    <section class="hero">
+      <div class="container hero-grid">
+        <div class="hero-card">
+          <div class="hero-badge">Marketplace de stages de self-défense</div>
+          <h1>Réservez un stage de self-défense simplement et rapidement.</h1>
+          <p>
+            Découvrez nos stages disponibles partout en France, sélectionnez votre session,
+            indiquez le nombre de places souhaité et préparez votre réservation dans une interface claire et professionnelle.
+          </p>
+          <div class="hero-actions">
+            <a href="#stages" class="btn btn-primary">Voir les stages</a>
+            <a href="#reservation" class="btn btn-secondary">Aller à la réservation</a>
+          </div>
+        </div>
 
-    const container = document.getElementById("stages");
+        <div class="hero-side">
+          <div>
+            <h3>Réservation simplifiée</h3>
+            <p>
+              Cette version améliore l’expérience utilisateur, rend les boutons Réserver fonctionnels
+              et prépare l’intégration de Stripe pour l’étape suivante.
+            </p>
+          </div>
 
-    if (!data) {
-      container.innerHTML = "Erreur de chargement";
-      return;
+          <div class="mini-stats">
+            <div class="mini-stat">
+              <strong id="heroStageCount">0</strong>
+              <span>stages publiés</span>
+            </div>
+            <div class="mini-stat">
+              <strong>100%</strong>
+              <span>données chargées depuis Supabase</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="stages">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <h2>Stages disponibles</h2>
+            <p>Choisissez la session qui vous convient, puis cliquez sur Réserver.</p>
+          </div>
+        </div>
+
+        <div class="filters">
+          <div class="filter-box">
+            <label for="cityFilter">Filtrer par ville</label>
+            <input type="text" id="cityFilter" placeholder="Ex: Paris" />
+          </div>
+
+          <div class="filter-box">
+            <label for="typeFilter">Filtrer par type</label>
+            <select id="typeFilter">
+              <option value="">Tous les types</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="stagesContainer" class="stages-grid"></div>
+      </div>
+    </section>
+
+    <section id="reservation" class="reservation-wrapper">
+      <div class="container">
+        <div id="reservationCard" class="reservation-card">
+          <div class="reservation-header">
+            <h2>Finaliser votre réservation</h2>
+            <p id="reservationSubtitle">Sélectionnez d’abord un stage.</p>
+          </div>
+
+          <div class="reservation-content">
+            <div class="reservation-form">
+              <form id="bookingForm">
+                <div class="form-grid">
+                  <div class="field">
+                    <label for="firstName">Prénom</label>
+                    <input type="text" id="firstName" placeholder="Votre prénom" required />
+                  </div>
+
+                  <div class="field">
+                    <label for="lastName">Nom</label>
+                    <input type="text" id="lastName" placeholder="Votre nom" required />
+                  </div>
+
+                  <div class="field">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" placeholder="vous@email.com" required />
+                  </div>
+
+                  <div class="field">
+                    <label for="phone">Téléphone</label>
+                    <input type="tel" id="phone" placeholder="06 00 00 00 00" required />
+                  </div>
+
+                  <div class="field full">
+                    <label for="places">Nombre de places</label>
+                    <input type="number" id="places" min="1" value="1" required />
+                  </div>
+                </div>
+
+                <div style="margin-top: 22px; display: flex; gap: 12px; flex-wrap: wrap;">
+                  <button type="submit" class="btn btn-primary">Préparer la réservation</button>
+                  <button type="button" class="btn btn-secondary" id="cancelReservation">Annuler</button>
+                </div>
+              </form>
+            </div>
+
+            <aside class="reservation-side">
+              <div class="summary-card">
+                <h3>Résumé</h3>
+
+                <div class="summary-line">
+                  <span>Stage</span>
+                  <strong id="summaryTitle">—</strong>
+                </div>
+
+                <div class="summary-line">
+                  <span>Ville</span>
+                  <strong id="summaryCity">—</strong>
+                </div>
+
+                <div class="summary-line">
+                  <span>Date</span>
+                  <strong id="summaryDate">—</strong>
+                </div>
+
+                <div class="summary-line">
+                  <span>Prix / place</span>
+                  <strong id="summaryUnitPrice">—</strong>
+                </div>
+
+                <div class="summary-line">
+                  <span>Quantité</span>
+                  <strong id="summaryQty">1</strong>
+                </div>
+
+                <div class="summary-total">
+                  <span>Total</span>
+                  <span id="summaryTotal">0 €</span>
+                </div>
+              </div>
+
+              <div class="helper-box">
+                Paiement Stripe non branché pour le moment.  
+                Cette étape permet déjà de valider le parcours de réservation et le calcul du total.
+              </div>
+            </aside>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <p>VITAL PROTECT — Plateforme de réservation de stages de self-défense</p>
+    </div>
+  </footer>
+
+  <script type="module">
+    import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
+    const SUPABASE_URL = "https://zsraqxzneghkzaozzuci.supabase.co";
+    const SUPABASE_KEY = "pk_live_51TDM3YLO1D7DfLAltLTxAgk95o1DdwP6tOQm43mxoan1XxRw1aDe0WLRVbUndNPNtT3QNEEGpUZLS30DoBOBe5OV00G0SSwcxR";
+
+    const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    let allStages = [];
+    let selectedStage = null;
+
+    const stagesContainer = document.getElementById("stagesContainer");
+    const reservationCard = document.getElementById("reservationCard");
+    const reservationSubtitle = document.getElementById("reservationSubtitle");
+    const bookingForm = document.getElementById("bookingForm");
+    const placesInput = document.getElementById("places");
+    const cancelReservationBtn = document.getElementById("cancelReservation");
+    const cityFilter = document.getElementById("cityFilter");
+    const typeFilter = document.getElementById("typeFilter");
+    const heroStageCount = document.getElementById("heroStageCount");
+
+    function formatDate(dateString) {
+      if (!dateString) return "Date non disponible";
+      const date = new Date(dateString);
+      return date.toLocaleDateString("fr-FR", {
+        day: "2-digit",
+        month: "long",
+        year: "numeric"
+      });
     }
 
-    data.forEach(stage => {
-      const div = document.createElement("div");
-      div.className = "card";
+    function formatPrice(price) {
+      return `${Number(price).toFixed(0)} €`;
+    }
 
-      div.innerHTML = `
-        <h3>${stage.title}</h3>
-        <p>${stage.city}</p>
-        <p>${stage.stage_date}</p>
-        <p>${stage.price} €</p>
-        <p>${stage.remaining_places} places restantes</p>
-        <button>Réserver</button>
+    function getAvailabilityClass(remainingPlaces) {
+      return remainingPlaces <= 3 ? "low" : "ok";
+    }
+
+    function populateTypeFilter(stages) {
+      const types = [...new Set(stages.map(stage => stage.training_type).filter(Boolean))];
+      typeFilter.innerHTML = '<option value="">Tous les types</option>';
+
+      types.forEach(type => {
+        const option = document.createElement("option");
+        option.value = type;
+        option.textContent = type;
+        typeFilter.appendChild(option);
+      });
+    }
+
+    function renderStages(stages) {
+      if (!stages.length) {
+        stagesContainer.innerHTML = `
+          <div class="empty-state" style="grid-column: 1 / -1;">
+            Aucun stage ne correspond à votre recherche.
+          </div>
+        `;
+        return;
+      }
+
+      stagesContainer.innerHTML = stages.map(stage => `
+        <article class="stage-card">
+          <div class="stage-top">
+            <div>
+              <div class="stage-type">${stage.training_type || "Stage"}</div>
+              <h3 class="stage-title">${stage.title}</h3>
+            </div>
+            <div class="stage-price">${formatPrice(stage.price)}</div>
+          </div>
+
+          <div class="stage-body">
+            <div class="stage-description">
+              ${stage.description || "Découvrez un stage de self-défense encadré par des professionnels."}
+            </div>
+
+            <div class="stage-meta">
+              <div class="meta-item">
+                <span class="meta-label">Ville</span>
+                <span class="meta-value">${stage.city || "Non précisée"}</span>
+              </div>
+
+              <div class="meta-item">
+                <span class="meta-label">Date</span>
+                <span class="meta-value">${formatDate(stage.stage_date)}</span>
+              </div>
+
+              <div class="meta-item">
+                <span class="meta-label">Région</span>
+                <span class="meta-value">${stage.region || "Non précisée"}</span>
+              </div>
+
+              <div class="meta-item">
+                <span class="meta-label">Département</span>
+                <span class="meta-value">${stage.department || "Non précisé"}</span>
+              </div>
+            </div>
+
+            <div class="availability ${getAvailabilityClass(stage.remaining_places)}">
+              ${stage.remaining_places} place(s) restante(s)
+            </div>
+          </div>
+
+          <div class="stage-actions">
+            <div style="color: var(--muted); font-weight: 600;">
+              Réservation simple • sans paiement pour l’instant
+            </div>
+            <button class="btn btn-dark" data-stage-id="${stage.id}">
+              Réserver
+            </button>
+          </div>
+        </article>
+      `).join("");
+
+      document.querySelectorAll("[data-stage-id]").forEach(button => {
+        button.addEventListener("click", () => {
+          const stageId = button.getAttribute("data-stage-id");
+          openReservation(stageId);
+        });
+      });
+    }
+
+    function updateSummary() {
+      if (!selectedStage) return;
+
+      const qty = Math.max(1, Number(placesInput.value) || 1);
+      const total = qty * Number(selectedStage.price || 0);
+
+      document.getElementById("summaryTitle").textContent = selectedStage.title || "—";
+      document.getElementById("summaryCity").textContent = selectedStage.city || "—";
+      document.getElementById("summaryDate").textContent = formatDate(selectedStage.stage_date);
+      document.getElementById("summaryUnitPrice").textContent = formatPrice(selectedStage.price || 0);
+      document.getElementById("summaryQty").textContent = qty;
+      document.getElementById("summaryTotal").textContent = formatPrice(total);
+    }
+
+    function openReservation(stageId) {
+      selectedStage = allStages.find(stage => String(stage.id) === String(stageId));
+
+      if (!selectedStage) return;
+
+      const maxPlaces = Math.max(1, Number(selectedStage.remaining_places || 1));
+      placesInput.max = maxPlaces;
+      placesInput.value = 1;
+
+      reservationSubtitle.textContent = `${selectedStage.title} • ${selectedStage.city || "Ville non précisée"} • ${formatDate(selectedStage.stage_date)}`;
+      reservationCard.classList.add("active");
+
+      updateSummary();
+
+      document.getElementById("reservation").scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    function resetReservation() {
+      selectedStage = null;
+      bookingForm.reset();
+      placesInput.value = 1;
+      reservationCard.classList.remove("active");
+
+      document.getElementById("summaryTitle").textContent = "—";
+      document.getElementById("summaryCity").textContent = "—";
+      document.getElementById("summaryDate").textContent = "—";
+      document.getElementById("summaryUnitPrice").textContent = "—";
+      document.getElementById("summaryQty").textContent = "1";
+      document.getElementById("summaryTotal").textContent = "0 €";
+    }
+
+    function getFilteredStages() {
+      const cityValue = cityFilter.value.trim().toLowerCase();
+      const typeValue = typeFilter.value.trim().toLowerCase();
+
+      return allStages.filter(stage => {
+        const matchCity = !cityValue || (stage.city || "").toLowerCase().includes(cityValue);
+        const matchType = !typeValue || (stage.training_type || "").toLowerCase() === typeValue;
+        return matchCity && matchType;
+      });
+    }
+
+    function refreshStageList() {
+      const filteredStages = getFilteredStages();
+      renderStages(filteredStages);
+    }
+
+    async function loadStages() {
+      stagesContainer.innerHTML = `
+        <div class="loading-state" style="grid-column: 1 / -1;">
+          Chargement des stages...
+        </div>
       `;
 
-      container.appendChild(div);
-    });
-  }
+      const { data, error } = await supabase
+        .from("stages")
+        .select("*")
+        .eq("status", "published")
+        .order("stage_date", { ascending: true });
 
-  loadStages();
-</script>
-<!-- deploy -->
+      if (error) {
+        console.error("Erreur chargement stages:", error);
+        stagesContainer.innerHTML = `
+          <div class="error-state" style="grid-column: 1 / -1;">
+            Impossible de charger les stages. Vérifiez Supabase et votre clé publique.
+          </div>
+        `;
+        return;
+      }
+
+      allStages = data || [];
+      heroStageCount.textContent = allStages.length;
+      populateTypeFilter(allStages);
+      renderStages(allStages);
+    }
+
+    cityFilter.addEventListener("input", refreshStageList);
+    typeFilter.addEventListener("change", refreshStageList);
+
+    placesInput.addEventListener("input", () => {
+      if (!selectedStage) return;
+
+      const maxPlaces = Math.max(1, Number(selectedStage.remaining_places || 1));
+      let currentValue = Number(placesInput.value) || 1;
+
+      if (currentValue < 1) currentValue = 1;
+      if (currentValue > maxPlaces) currentValue = maxPlaces;
+
+      placesInput.value = currentValue;
+      updateSummary();
+    });
+
+    cancelReservationBtn.addEventListener("click", resetReservation);
+
+    bookingForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+
+      if (!selectedStage) {
+        alert("Veuillez d’abord sélectionner un stage.");
+        return;
+      }
+
+      const reservationData = {
+        stage_id: selectedStage.id,
+        stage_title: selectedStage.title,
+        first_name: document.getElementById("firstName").value.trim(),
+        last_name: document.getElementById("lastName").value.trim(),
+        email: document.getElementById("email").value.trim(),
+        phone: document.getElementById("phone").value.trim(),
+        places: Number(placesInput.value),
+        total: Number(placesInput.value) * Number(selectedStage.price || 0)
+      };
+
+      console.log("Réservation préparée :", reservationData);
+
+      alert(
+        `Réservation prête pour ${reservationData.stage_title}\n` +
+        `Nom : ${reservationData.first_name} ${reservationData.last_name}\n` +
+        `Places : ${reservationData.places}\n` +
+        `Total : ${reservationData.total} €\n\n` +
+        `Stripe sera branché à l’étape suivante.`
+      );
+    });
+
+    loadStages();
+  </script>
 </body>
 </html>
