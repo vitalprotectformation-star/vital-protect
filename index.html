@@ -19,7 +19,6 @@
       --success: #0f9d58;
       --warning: #b7791f;
       --shadow: 0 10px 30px rgba(11, 46, 89, 0.08);
-      --radius: 18px;
     }
 
     * {
@@ -155,6 +154,12 @@
 
     .btn:hover {
       transform: translateY(-1px);
+    }
+
+    .btn:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+      transform: none;
     }
 
     .btn-primary {
@@ -613,8 +618,7 @@
           <div>
             <h3>Réservation simplifiée</h3>
             <p>
-              Cette version améliore l’expérience utilisateur, rend les boutons Réserver fonctionnels
-              et prépare l’intégration de Stripe pour l’étape suivante.
+              Réservez votre stage en quelques clics et passez au paiement sécurisé via Stripe.
             </p>
           </div>
 
@@ -698,7 +702,7 @@
                 </div>
 
                 <div style="margin-top: 22px; display: flex; gap: 12px; flex-wrap: wrap;">
-                  <button type="submit" class="btn btn-primary">Préparer la réservation</button>
+                  <button type="submit" class="btn btn-primary" id="submitReservationBtn">Passer au paiement</button>
                   <button type="button" class="btn btn-secondary" id="cancelReservation">Annuler</button>
                 </div>
               </form>
@@ -740,8 +744,7 @@
               </div>
 
               <div class="helper-box">
-                Paiement Stripe non branché pour le moment.  
-                Cette étape permet déjà de valider le parcours de réservation et le calcul du total.
+                Paiement sécurisé via Stripe après validation du formulaire.
               </div>
             </aside>
           </div>
@@ -776,6 +779,7 @@
     const cityFilter = document.getElementById("cityFilter");
     const typeFilter = document.getElementById("typeFilter");
     const heroStageCount = document.getElementById("heroStageCount");
+    const submitReservationBtn = document.getElementById("submitReservationBtn");
 
     function formatDate(dateString) {
       if (!dateString) return "Date non disponible";
@@ -861,7 +865,7 @@
 
           <div class="stage-actions">
             <div style="color: var(--muted); font-weight: 600;">
-              Réservation simple • sans paiement pour l’instant
+              Réservation simple • paiement Stripe
             </div>
             <button class="btn btn-dark" data-stage-id="${stage.id}">
               Réserver
@@ -921,6 +925,8 @@
       document.getElementById("summaryUnitPrice").textContent = "—";
       document.getElementById("summaryQty").textContent = "1";
       document.getElementById("summaryTotal").textContent = "0 €";
+      submitReservationBtn.disabled = false;
+      submitReservationBtn.textContent = "Passer au paiement";
     }
 
     function getFilteredStages() {
@@ -986,34 +992,55 @@
 
     cancelReservationBtn.addEventListener("click", resetReservation);
 
-    bookingForm.addEventListener("submit", (event) => {
+    bookingForm.addEventListener("submit", async (event) => {
       event.preventDefault();
 
       if (!selectedStage) {
-        alert("Veuillez d’abord sélectionner un stage.");
+        alert("Veuillez sélectionner un stage.");
         return;
       }
 
-      const reservationData = {
-        stage_id: selectedStage.id,
+      const email = document.getElementById("email").value.trim();
+
+      if (!email) {
+        alert("Veuillez saisir un email valide.");
+        return;
+      }
+
+      submitReservationBtn.disabled = true;
+      submitReservationBtn.textContent = "Redirection vers le paiement...";
+
+      const data = {
         stage_title: selectedStage.title,
-        first_name: document.getElementById("firstName").value.trim(),
-        last_name: document.getElementById("lastName").value.trim(),
-        email: document.getElementById("email").value.trim(),
-        phone: document.getElementById("phone").value.trim(),
         places: Number(placesInput.value),
-        total: Number(placesInput.value) * Number(selectedStage.price || 0)
+        unit_price: Number(selectedStage.price),
+        email: email
       };
 
-      console.log("Réservation préparée :", reservationData);
+      try {
+        const res = await fetch("/api/create-checkout-session", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(data)
+        });
 
-      alert(
-        `Réservation prête pour ${reservationData.stage_title}\n` +
-        `Nom : ${reservationData.first_name} ${reservationData.last_name}\n` +
-        `Places : ${reservationData.places}\n` +
-        `Total : ${reservationData.total} €\n\n` +
-        `Stripe sera branché à l’étape suivante.`
-      );
+        const result = await res.json();
+
+        if (result.url) {
+          window.location.href = result.url;
+        } else {
+          submitReservationBtn.disabled = false;
+          submitReservationBtn.textContent = "Passer au paiement";
+          alert("Erreur Stripe");
+        }
+      } catch (err) {
+        console.error(err);
+        submitReservationBtn.disabled = false;
+        submitReservationBtn.textContent = "Passer au paiement";
+        alert("Erreur connexion serveur");
+      }
     });
 
     loadStages();
