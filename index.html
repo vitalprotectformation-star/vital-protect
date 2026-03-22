@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>VITAL PROTECT</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <style>
+    body { font-family: Arial; background: #f5f7fa; margin: 0; }
+    header { background: #0B2A4A; color: white; padding: 20px; font-size: 24px; }
+    .container { padding: 20px; }
+    .card { background: white; padding: 15px; margin-bottom: 15px; border-radius: 8px; }
+    button { background: #0B2A4A; color: white; border: none; padding: 10px; cursor: pointer; }
+  </style>
+</head>
+<body>
+<header>VITAL PROTECT</header>
+<div class="container">
+  <h2>Stages disponibles</h2>
+  <div id="stages"></div>
+</div>
+
+<script>
+  const supabaseClient = supabase.createClient(
+    "https://zsraqxzneghkzaozzuci.supabase.co",
+    "sb_publishable_VlTpYjzJ3DKpFA1Un_EFHQ_FW-mYK4U"
+  );
+
+  async function loadStages() {
+    const { data, error } = await supabaseClient
+      .from("stages")
+      .select("*")
+      .eq("status", "published");
+
+    const container = document.getElementById("stages");
+
+    if (!data) {
+      container.innerHTML = "Erreur de chargement";
+      return;
+    }
+
+    data.forEach(stage => {
+      const div = document.createElement("div");
+      div.className = "card";
+
+      div.innerHTML = `
+        <h3>${stage.title}</h3>
+        <p>${stage.city}</p>
+        <p>${stage.stage_date}</p>
+        <p>${stage.price} €</p>
+        <p>${stage.remaining_places} places restantes</p>
+        <button>Réserver</button>
+      `;
+
+      container.appendChild(div);
+    });
+  }
+
+  loadStages();
+</script>
+</body>
+</html>
