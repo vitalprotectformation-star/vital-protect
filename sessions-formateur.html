@@ -59,7 +59,7 @@
       const { data } = await supabase
         .from("trainer_sessions")
         .select("*")
-        .eq("status", "published");
+        .eq("status", "open");
 
       const container = document.getElementById("sessions");
 
