@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Devenir formateur — VITAL PROTECT</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f4f7fb;
+      color: #142033;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: auto;
+      padding: 40px 20px;
+    }
+
+    h1 {
+      font-size: 2.2rem;
+      margin-bottom: 10px;
+    }
+
+    p {
+      color: #555;
+      line-height: 1.6;
+    }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      margin-top: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      margin-bottom: 15px;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+    }
+
+    button {
+      background: #1f6feb;
+      color: white;
+      border: none;
+      padding: 14px;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #165ecc;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>Devenir formateur VITAL PROTECT</h1>
+    <p>
+      Rejoignez notre réseau de formateurs certifiés et développez votre activité
+      dans la self-défense avec un accompagnement complet.
+    </p>
+
+    <div class="card">
+      <h2>Programme</h2>
+      <ul>
+        <li>Self Défense Essentielle</li>
+        <li>Self Défense Essentielle Niveau 2</li>
+        <li>Self Défense en entreprise</li>
+      </ul>
+
+      <p><strong>Tarif :</strong> 590€ / module (offre lancement 490€)</p>
+    </div>
+
+    <div class="card">
+      <h2>Postuler</h2>
+
+      <form id="trainerForm">
+        <input type="text" id="firstName" placeholder="Prénom" required />
+        <input type="text" id="lastName" placeholder="Nom" required />
+        <input type="email" id="email" placeholder="Email" required />
+        <input type="tel" id="phone" placeholder="Téléphone" required />
+        <input type="text" id="city" placeholder="Ville" required />
+
+        <select id="trainingType">
+          <option value="">Choisir un module</option>
+          <option>Self Défense Essentielle</option>
+          <option>Self Défense Essentielle Niveau 2</option>
+          <option>Self Défense en entreprise</option>
+        </select>
+
+        <textarea id="message" placeholder="Votre message"></textarea>
+
+        <button type="submit">Envoyer ma candidature</button>
+      </form>
+    </div>
+  </div>
+
+  <script type="module">
+    import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
+    const supabase = createClient(
+      "https://zsraqxzneghkzaozzuci.supabase.co",
+      "sb_publishable_VlTpYjzJ3DKpFA1Un_EFHQ_FW-mYK4U"
+    );
+
+    const form = document.getElementById("trainerForm");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const data = {
+        first_name: document.getElementById("firstName").value,
+        last_name: document.getElementById("lastName").value,
+        email: document.getElementById("email").value,
+        phone: document.getElementById("phone").value,
+        city: document.getElementById("city").value,
+        training_type: document.getElementById("trainingType").value,
+        message: document.getElementById("message").value
+      };
+
+      const { error } = await supabase
+        .from("trainer_applications")
+        .insert([data]);
+
+      if (error) {
+        alert("Erreur lors de l'envoi");
+        console.error(error);
+      } else {
+        alert("Candidature envoyée !");
+        form.reset();
+      }
+    });
+  </script>
+
+</body>
+</html>
