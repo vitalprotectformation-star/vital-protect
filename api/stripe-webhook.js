@@ -1,8 +1,10 @@
 import Stripe from "stripe";
 import { createClient } from "@supabase/supabase-js";
+import { Resend } from "resend";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 const supabase = createClient(
   process.env.SUPABASE_URL,
@@ -109,6 +111,28 @@ export default async function handler(req, res) {
         if (updateError) {
           console.error("Supabase stage update error:", updateError);
           return res.status(500).send("Failed to update stage places");
+        }
+
+        try {
+          await resend.emails.send({
+            from: "VITAL PROTECT <onboarding@resend.dev>",
+            to: email,
+            subject: "Confirmation de votre réservation",
+            html: `
+              <h2>Réservation confirmée ✅</h2>
+              <p>Bonjour ${firstName || ""},</p>
+              <p>Votre réservation a bien été enregistrée.</p>
+              <ul>
+                <li><strong>Stage :</strong> ${stageTitle}</li>
+                <li><strong>Places :</strong> ${places}</li>
+                <li><strong>Montant :</strong> ${totalAmount} €</li>
+              </ul>
+              <p>Merci pour votre confiance.</p>
+              <p><strong>VITAL PROTECT</strong></p>
+            `
+          });
+        } catch (emailError) {
+          console.error("Resend email error:", emailError);
         }
       }
     }
