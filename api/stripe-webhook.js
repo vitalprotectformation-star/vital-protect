@@ -42,10 +42,10 @@ export default async function handler(req, res) {
 
     if (event.type === "checkout.session.completed") {
       const session = event.data.object;
-
       const metadata = session.metadata || {};
 
       const stageId = metadata.stage_id;
+      const stageTitle = metadata.stage_title || "Stage";
       const firstName = metadata.first_name || "";
       const lastName = metadata.last_name || "";
       const email = metadata.email || session.customer_email || "";
@@ -69,6 +69,7 @@ export default async function handler(req, res) {
           .from("reservations")
           .insert({
             stage_id: stageId,
+            stage_title: stageTitle,
             first_name: firstName,
             last_name: lastName,
             email: email,
