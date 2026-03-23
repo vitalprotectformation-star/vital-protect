@@ -1,12 +1,139 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <title>Paiement réussi</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Réservation confirmée — VITAL PROTECT</title>
+  <style>
+    :root {
+      --navy: #0b2e59;
+      --blue: #1f6feb;
+      --bg: #f4f7fb;
+      --card: #ffffff;
+      --border: #dbe4f0;
+      --text: #142033;
+      --muted: #667085;
+      --success: #0f9d58;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .wrapper {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 720px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 40px 32px;
+      box-shadow: 0 10px 30px rgba(11, 46, 89, 0.08);
+      text-align: center;
+    }
+
+    .icon {
+      width: 72px;
+      height: 72px;
+      margin: 0 auto 20px;
+      border-radius: 999px;
+      background: rgba(15, 157, 88, 0.12);
+      color: var(--success);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      font-weight: bold;
+    }
+
+    h1 {
+      margin: 0 0 14px;
+      font-size: 2rem;
+    }
+
+    p {
+      margin: 0 0 12px;
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 1.05rem;
+    }
+
+    .info-box {
+      margin: 28px 0;
+      padding: 18px;
+      border-radius: 16px;
+      background: #f8fbff;
+      border: 1px solid var(--border);
+      text-align: left;
+    }
+
+    .info-box strong {
+      color: var(--text);
+    }
+
+    .actions {
+      margin-top: 28px;
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      text-decoration: none;
+      border-radius: 14px;
+      padding: 14px 18px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .btn-primary {
+      background: var(--blue);
+      color: white;
+    }
+
+    .btn-secondary {
+      background: white;
+      color: var(--navy);
+      border: 1px solid var(--border);
+    }
+  </style>
 </head>
-<body style="font-family: Arial; text-align: center; padding: 50px;">
-  <h1>✅ Paiement réussi</h1>
-  <p>Votre réservation a bien été enregistrée.</p>
-  <a href="/">Retour à l’accueil</a>
+<body>
+  <div class="wrapper">
+    <div class="card">
+      <div class="icon">✓</div>
+      <h1>Réservation confirmée</h1>
+      <p>Votre paiement a bien été validé.</p>
+      <p>Votre réservation a été enregistrée avec succès sur VITAL PROTECT.</p>
+
+      <div class="info-box">
+        <p><strong>Confirmation :</strong> votre place est bien prise en compte.</p>
+        <p><strong>Conseil :</strong> présentez-vous quelques minutes avant le début du stage.</p>
+        <p><strong>Besoin d’aide :</strong> vous pourrez ensuite ajouter un email de confirmation automatique.</p>
+      </div>
+
+      <div class="actions">
+        <a href="/" class="btn btn-primary">Retour à l’accueil</a>
+        <a href="/#stages" class="btn btn-secondary">Voir les stages</a>
+      </div>
+    </div>
+  </div>
 </body>
 </html>
