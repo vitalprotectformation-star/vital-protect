@@ -67,6 +67,7 @@ export default async function handler(req, res) {
         .maybeSingle();
 
       if (!existingReservation) {
+        // ✅ INSERT RESERVATION
         const { error: reservationError } = await supabase
           .from("reservations")
           .insert({
@@ -87,6 +88,7 @@ export default async function handler(req, res) {
           return res.status(500).send("Failed to save reservation");
         }
 
+        // ✅ UPDATE PLACES
         const { data: stage, error: stageError } = await supabase
           .from("stages")
           .select("remaining_places")
@@ -113,10 +115,14 @@ export default async function handler(req, res) {
           return res.status(500).send("Failed to update stage places");
         }
 
+        // ✅ ENVOI EMAIL (VERSION TEST)
         try {
-          await resend.emails.send({
+          const emailResponse = await resend.emails.send({
             from: "VITAL PROTECT <onboarding@resend.dev>",
-            to: email,
+
+            // ⚠️ IMPORTANT : MET TON EMAIL ICI POUR TEST
+            to: "vitalprotectformation@gmail.com",
+
             subject: "Confirmation de votre réservation",
             html: `
               <h2>Réservation confirmée ✅</h2>
@@ -131,6 +137,8 @@ export default async function handler(req, res) {
               <p><strong>VITAL PROTECT</strong></p>
             `
           });
+
+          console.log("Email envoyé :", emailResponse);
         } catch (emailError) {
           console.error("Resend email error:", emailError);
         }
