@@ -328,7 +328,9 @@
                   <strong>${row.email || "—"}</strong>
                   <span>${row.phone || "—"}</span>
                 </td>
-                <td>${row.stage_id || "—"}</td>
+                <td>
+  <strong>${row.stage_title || "Stage"}</strong>
+</td>
                 <td>${row.places || 0}</td>
                 <td>${formatPrice(row.total_amount)}</td>
                 <td><span class="badge badge-paid">${row.payment_status || "paid"}</span></td>
