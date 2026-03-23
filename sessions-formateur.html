@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Sessions formateur — VITAL PROTECT</title>
+
+  <style>
+    body {
+      font-family: Arial;
+      background: #f4f7fb;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+      margin-top: 30px;
+    }
+
+    .card {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+    }
+
+    button {
+      background: #1f6feb;
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Sessions de formation formateur</h1>
+
+  <div class="grid" id="sessions"></div>
+
+  <script type="module">
+    import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
+    const supabase = createClient(
+      "https://zsraqxzneghkzaozzuci.supabase.co",
+      "sb_publishable_VlTpYjzJ3DKpFA1Un_EFHQ_FW-mYK4U"
+    );
+
+    async function loadSessions() {
+      const { data } = await supabase
+        .from("trainer_sessions")
+        .select("*")
+        .eq("status", "published");
+
+      const container = document.getElementById("sessions");
+
+      data.forEach(session => {
+        const el = document.createElement("div");
+        el.className = "card";
+
+        el.innerHTML = `
+          <h3>${session.title}</h3>
+          <p>${session.city} — ${session.date}</p>
+          <p><strong>${session.price} €</strong></p>
+          <p>${session.remaining_places} places restantes</p>
+          <button onclick="alert('Prochaine étape: paiement + dossier')">
+            Réserver ma place
+          </button>
+        `;
+
+        container.appendChild(el);
+      });
+    }
+
+    loadSessions();
+  </script>
+
+</body>
+</html>
