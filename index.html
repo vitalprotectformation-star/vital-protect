@@ -18,6 +18,8 @@
       --border: #dbe4f0;
       --shadow: 0 10px 30px rgba(11, 46, 89, 0.08);
       --success: #0f9d58;
+      --warning-bg: #fff4df;
+      --warning-text: #b7791f;
     }
 
     * {
@@ -232,8 +234,16 @@
       font-weight: 700;
       border-radius: 999px;
       padding: 8px 12px;
+    }
+
+    .availability.success {
       background: #eaf8f0;
       color: var(--success);
+    }
+
+    .availability.warning {
+      background: var(--warning-bg);
+      color: var(--warning-text);
     }
 
     .stage-actions {
@@ -242,6 +252,13 @@
       display: flex;
       gap: 12px;
       flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .stage-action-text {
+      color: var(--muted);
+      font-weight: 600;
     }
 
     .btn {
@@ -263,7 +280,7 @@
     }
 
     .btn-primary {
-      background: var(--blue);
+      background: var(--navy);
       color: white;
     }
 
@@ -271,10 +288,6 @@
       background: white;
       color: var(--navy);
       border: 1px solid var(--border);
-    }
-
-    .btn-full {
-      flex: 1;
     }
 
     .empty-state {
@@ -328,9 +341,13 @@
         flex-direction: column;
       }
 
-      .btn,
-      .btn-full {
+      .btn {
         width: 100%;
+      }
+
+      .stage-actions {
+        flex-direction: column;
+        align-items: stretch;
       }
     }
   </style>
@@ -412,15 +429,18 @@
       });
     }
 
+    function getAvailabilityClass(remainingPlaces) {
+      return Number(remainingPlaces || 0) <= 3 ? "warning" : "success";
+    }
+
     async function loadStages() {
       const { data, error } = await supabase
         .from("stages")
         .select("*")
-        .eq("status", "published")
-        .order("date", { ascending: true });
+        .eq("status", "published");
 
       if (error) {
-        console.error(error);
+        console.error("Erreur Supabase:", error);
         container.innerHTML = `
           <div class="empty-state">
             Impossible de charger les stages pour le moment.
@@ -442,7 +462,7 @@
         <article class="stage-card">
           <div class="stage-top">
             <div>
-              <div class="stage-badge">${stage.category || "Stage VITAL PROTECT"}</div>
+              <div class="stage-badge">${stage.training_type || "Stage VITAL PROTECT"}</div>
               <h3 class="stage-title">${stage.title || "Stage de self-défense"}</h3>
             </div>
             <div class="stage-price">${formatPrice(stage.price)}</div>
@@ -450,7 +470,7 @@
 
           <div class="stage-body">
             <div class="stage-description">
-              ${stage.description || "Stage pratique de self-défense encadré par VITAL PROTECT. Réservez votre place rapidement et en toute sécurité."}
+              ${stage.description || "Formation pratique de self-défense encadrée par VITAL PROTECT."}
             </div>
 
             <div class="stage-meta">
@@ -461,32 +481,30 @@
 
               <div class="meta-item">
                 <span class="meta-label">Date</span>
-                <span class="meta-value">${formatDate(stage.date)}</span>
+                <span class="meta-value">${formatDate(stage.stage_date)}</span>
               </div>
 
               <div class="meta-item">
-                <span class="meta-label">Durée</span>
-                <span class="meta-value">${stage.duration_days ? `${stage.duration_days} jour(s)` : "Non précisée"}</span>
+                <span class="meta-label">Région</span>
+                <span class="meta-value">${stage.region || "Non précisée"}</span>
               </div>
 
               <div class="meta-item">
-                <span class="meta-label">Tarif</span>
-                <span class="meta-value">${formatPrice(stage.price)}</span>
+                <span class="meta-label">Département</span>
+                <span class="meta-value">${stage.department || "Non précisé"}</span>
               </div>
             </div>
 
-            <div class="availability">
+            <div class="availability ${getAvailabilityClass(stage.remaining_places)}">
               ${stage.remaining_places ?? 0} place(s) restante(s)
             </div>
           </div>
 
           <div class="stage-actions">
-            <button class="btn btn-primary btn-full" onclick="alert('Étape suivante : ouverture du tunnel de réservation Stripe')">
+            <div class="stage-action-text">Réservation simple • paiement Stripe</div>
+            <button class="btn btn-primary" onclick="alert('Étape suivante : tunnel de réservation Stripe')">
               Réserver
             </button>
-            <a class="btn btn-secondary btn-full" href="/devenir-formateur.html">
-              Devenir formateur
-            </a>
           </div>
         </article>
       `).join("");
