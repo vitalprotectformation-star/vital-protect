@@ -16,8 +16,56 @@ export default async function handler(req, res) {
       email,
       phone,
       places,
-      unit_price
+      unit_price,
+      type // 🔥 AJOUT (stage ou trainer)
     } = req.body;
+
+    // =========================
+    // CAS FORMATEUR
+    // =========================
+    if (type === "trainer") {
+      const session = await stripe.checkout.sessions.create({
+        mode: "payment",
+        customer_email: email,
+
+        payment_intent_data: {
+          capture_method: "manual" // 🔥 LE POINT CRITIQUE
+        },
+
+        metadata: {
+          first_name,
+          last_name,
+          email,
+          phone,
+          city: req.body.city || "",
+          training_type: req.body.training_type || "",
+          message: req.body.message || "",
+          type: "trainer"
+        },
+
+        success_url: `${req.headers.origin}/success.html`,
+        cancel_url: `${req.headers.origin}/devenir-formateur.html`,
+
+        line_items: [
+          {
+            price_data: {
+              currency: "eur",
+              product_data: {
+                name: `Certification ${req.body.training_type || ""}`
+              },
+              unit_amount: 49000 // 490€
+            },
+            quantity: 1
+          }
+        ]
+      });
+
+      return res.status(200).json({ url: session.url });
+    }
+
+    // =========================
+    // CAS STAGE (EXISTANT)
+    // =========================
 
     if (!stage_id || !stage_title || !email || !places || !unit_price) {
       return res.status(400).json({ error: "Missing required fields" });
@@ -46,7 +94,8 @@ export default async function handler(req, res) {
         email: String(email || ""),
         phone: String(phone || ""),
         places: String(qty),
-        unit_price: String(price)
+        unit_price: String(price),
+        type: "stage"
       },
 
       success_url: `${req.headers.origin}/success.html?session_id={CHECKOUT_SESSION_ID}`,
@@ -67,6 +116,7 @@ export default async function handler(req, res) {
     });
 
     return res.status(200).json({ url: session.url });
+
   } catch (err) {
     console.error("Stripe checkout error:", err);
     return res.status(500).json({ error: "Stripe error" });
