@@ -81,7 +81,7 @@ header {
 }
 
 .btn-primary {background:var(--blue);color:white;}
-.btn-secondary {background:white;border:1px solid var(--border);}
+.btn-secondary {background:white;border:1px solid var(--border);color:var(--text);}
 
 section {padding:40px 0;}
 
@@ -292,7 +292,7 @@ un cadre professionnel et un accès direct à la marketplace.
 
 <textarea id="message" placeholder="Votre message"></textarea>
 
-<button class="btn btn-primary">Réserver ma place</button>
+<button class="btn btn-primary" type="submit">Réserver ma place</button>
 
 <div class="note">
 Réservation sécurisée — aucun montant encaissé avant validation finale.
@@ -312,37 +312,42 @@ VITAL PROTECT — Certification formateurs
 </footer>
 
 <script type="module">
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-
-const supabase = createClient(
-  "https://zsraqxzneghkzaozzuci.supabase.co",
-  "sb_publishable_VlTpYjzJ3DKpFA1Un_EFHQ_FW-mYK4U"
-);
-
 const form = document.getElementById("trainerForm");
 
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
   const data = {
-    first_name: firstName.value,
-    last_name: lastName.value,
-    email: email.value,
-    phone: phone.value,
-    city: city.value,
-    training_type: trainingType.value,
-    message: message.value
+    first_name: document.getElementById("firstName").value,
+    last_name: document.getElementById("lastName").value,
+    email: document.getElementById("email").value,
+    phone: document.getElementById("phone").value,
+    city: document.getElementById("city").value,
+    training_type: document.getElementById("trainingType").value,
+    message: document.getElementById("message").value,
+    type: "trainer"
   };
 
-  const { error } = await supabase
-    .from("trainer_applications")
-    .insert([data]);
+  try {
+    const res = await fetch("/api/create-checkout-session", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(data)
+    });
 
-  if (error) {
-    alert("Erreur");
-  } else {
-    alert("Place réservée !");
-    form.reset();
+    const result = await res.json();
+
+    if (result.url) {
+      window.location.href = result.url;
+    } else {
+      alert("Erreur lors de la redirection vers Stripe");
+      console.error(result);
+    }
+  } catch (error) {
+    alert("Erreur réseau");
+    console.error(error);
   }
 });
 </script>
