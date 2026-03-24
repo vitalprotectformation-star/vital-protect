@@ -21,9 +21,7 @@
       --danger: #c62828;
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
@@ -41,7 +39,6 @@
       background: linear-gradient(135deg, var(--navy-dark), var(--navy));
       color: white;
       padding: 20px 0;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
       position: sticky;
       top: 0;
       z-index: 20;
@@ -49,30 +46,26 @@
 
     .header-inner {
       display: flex;
-      align-items: center;
       justify-content: space-between;
-      gap: 16px;
+      align-items: center;
     }
 
     .brand {
       font-size: 2rem;
       font-weight: 800;
-      letter-spacing: 0.5px;
     }
 
     .nav-links {
       display: flex;
       gap: 12px;
-      flex-wrap: wrap;
     }
 
     .nav-links a {
-      color: rgba(255,255,255,0.92);
+      color: white;
       text-decoration: none;
       font-weight: 600;
       padding: 10px 14px;
       border-radius: 12px;
-      transition: 0.2s ease;
     }
 
     .nav-links a:hover {
@@ -85,61 +78,43 @@
 
     .hero-card {
       background: linear-gradient(180deg, #ffffff, #f8fbff);
-      border: 1px solid var(--border);
       border-radius: 24px;
       padding: 36px;
       box-shadow: var(--shadow);
     }
 
     .hero-badge {
-      display: inline-block;
       background: var(--blue-soft);
       color: var(--blue);
-      font-weight: 700;
-      font-size: 0.9rem;
       padding: 8px 12px;
       border-radius: 999px;
+      font-weight: 700;
+      display: inline-block;
       margin-bottom: 16px;
     }
 
     .hero h1 {
       margin: 0 0 14px;
-      font-size: 2.6rem;
-      line-height: 1.1;
-      max-width: 760px;
+      font-size: 2.4rem;
     }
 
     .hero p {
-      margin: 0;
       color: var(--muted);
-      font-size: 1.08rem;
-      line-height: 1.7;
-      max-width: 780px;
     }
 
     .hero-actions {
-      margin-top: 26px;
+      margin-top: 20px;
       display: flex;
       gap: 12px;
-      flex-wrap: wrap;
     }
 
     .btn {
-      border: none;
       border-radius: 14px;
       padding: 14px 18px;
-      font-size: 1rem;
       font-weight: 700;
       cursor: pointer;
+      border: none;
       text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      transition: 0.2s ease;
-    }
-
-    .btn:hover {
-      transform: translateY(-1px);
     }
 
     .btn-primary {
@@ -149,424 +124,231 @@
 
     .btn-secondary {
       background: white;
-      color: var(--navy);
       border: 1px solid var(--border);
+      color: var(--navy);
     }
 
     section {
-      padding: 24px 0 34px;
+      padding: 24px 0;
+    }
+
+    .section-head h2 {
+      margin: 0;
+    }
+
+    .section-head p {
+      color: var(--muted);
+    }
+
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .step-card {
+      background: white;
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: var(--shadow);
+    }
+
+    .step-number {
+      background: var(--blue-soft);
+      color: var(--blue);
+      font-weight: 800;
+      padding: 10px;
+      border-radius: 12px;
+      width: 40px;
+      text-align: center;
+      margin-bottom: 10px;
     }
 
     .content-grid {
       display: grid;
       grid-template-columns: 1fr 1.1fr;
       gap: 20px;
-      align-items: start;
     }
 
     .card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 22px;
-      box-shadow: var(--shadow);
-      overflow: hidden;
-    }
-
-    .card-inner {
-      padding: 26px;
-    }
-
-    .card h2 {
-      margin: 0 0 12px;
-      font-size: 1.7rem;
-    }
-
-    .card p {
-      margin: 0;
-      color: var(--muted);
-      line-height: 1.7;
-    }
-
-    .program-list {
-      display: grid;
-      gap: 12px;
-      margin-top: 20px;
-    }
-
-    .program-item {
-      background: #f8fbff;
-      border: 1px solid #e7eef8;
-      border-radius: 16px;
-      padding: 14px 16px;
-      font-weight: 700;
-    }
-
-    .price-box {
-      margin-top: 18px;
-      display: grid;
-      gap: 12px;
-    }
-
-    .price-item {
-      background: var(--blue-soft);
-      border: 1px solid #d7e6ff;
-      border-radius: 16px;
-      padding: 16px;
-    }
-
-    .price-label {
-      display: block;
-      color: var(--muted);
-      font-size: 0.9rem;
-      margin-bottom: 6px;
-      font-weight: 700;
-    }
-
-    .price-value {
-      font-size: 1.35rem;
-      font-weight: 800;
-      color: var(--navy);
-    }
-
-    .form-card-top {
-      padding: 26px 26px 10px;
-    }
-
-    .form-card-top h2 {
-      margin: 0 0 10px;
-      font-size: 1.7rem;
-    }
-
-    .form-card-top p {
-      margin: 0;
-      color: var(--muted);
-      line-height: 1.7;
-    }
-
-    form {
-      padding: 0 26px 26px;
-    }
-
-    .form-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 14px;
-      margin-top: 20px;
-    }
-
-    .field {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .field.full {
-      grid-column: 1 / -1;
-    }
-
-    label {
-      font-size: 0.95rem;
-      font-weight: 700;
-      color: var(--text);
-    }
-
-    input,
-    select,
-    textarea {
-      width: 100%;
-      padding: 14px 15px;
-      border-radius: 14px;
-      border: 1px solid var(--border);
-      background: #f8fbff;
-      color: var(--text);
-      font-size: 1rem;
-      outline: none;
-      transition: 0.2s ease;
-    }
-
-    input:focus,
-    select:focus,
-    textarea:focus {
-      border-color: var(--blue);
       background: white;
-      box-shadow: 0 0 0 3px rgba(31, 111, 235, 0.10);
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: var(--shadow);
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 12px;
+      margin-top: 8px;
+      margin-bottom: 14px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
     }
 
     textarea {
-      min-height: 130px;
-      resize: vertical;
-      font-family: Arial, Helvetica, sans-serif;
-    }
-
-    .form-actions {
-      margin-top: 18px;
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .form-note {
-      color: var(--muted);
-      font-size: 0.95rem;
-      line-height: 1.6;
-    }
-
-    .status-message {
-      margin-top: 16px;
-      padding: 14px 16px;
-      border-radius: 14px;
-      font-weight: 700;
-      display: none;
-    }
-
-    .status-message.success {
-      display: block;
-      background: #eaf8f0;
-      color: var(--success);
-      border: 1px solid #cfeedd;
-    }
-
-    .status-message.error {
-      display: block;
-      background: #fff1f1;
-      color: var(--danger);
-      border: 1px solid #ffd5d5;
+      min-height: 120px;
     }
 
     footer {
-      margin-top: 38px;
       background: var(--navy-dark);
-      color: rgba(255,255,255,0.88);
-      padding: 28px 0;
-    }
-
-    footer p {
-      margin: 0;
+      color: white;
+      padding: 20px;
       text-align: center;
+      margin-top: 40px;
     }
 
-    @media (max-width: 980px) {
-      .content-grid {
+    @media (max-width: 900px) {
+      .steps-grid, .content-grid {
         grid-template-columns: 1fr;
-      }
-    }
-
-    @media (max-width: 720px) {
-      .brand {
-        font-size: 1.5rem;
-      }
-
-      .hero h1 {
-        font-size: 2rem;
-      }
-
-      .form-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .hero-actions,
-      .form-actions {
-        flex-direction: column;
-        align-items: stretch;
-      }
-
-      .btn {
-        width: 100%;
       }
     }
   </style>
 </head>
+
 <body>
 
-  <header>
-    <div class="container header-inner">
-      <div class="brand">VITAL PROTECT</div>
-      <nav class="nav-links">
-        <a href="/index.html">Accueil</a>
-        <a href="/devenir-formateur.html">Devenir formateur</a>
-        <a href="/sessions-formateur.html">Sessions formateur</a>
-      </nav>
-    </div>
-  </header>
+<header>
+  <div class="container header-inner">
+    <div class="brand">VITAL PROTECT</div>
+    <nav class="nav-links">
+      <a href="/index.html">Accueil</a>
+      <a href="/sessions-formateur.html">Sessions formateur</a>
+    </nav>
+  </div>
+</header>
 
-  <main>
-    <section class="hero">
-      <div class="container">
-        <div class="hero-card">
-          <div class="hero-badge">Certification VITAL PROTECT</div>
-          <h1>Rejoignez le réseau de formateurs VITAL PROTECT.</h1>
-          <p>
-            Développez votre activité avec une certification structurée, un accès à la marketplace,
-            un accompagnement au lancement et un cadre professionnel clair.
-          </p>
+<main>
 
-          <div class="hero-actions">
-            <a href="#formulaire" class="btn btn-primary">Envoyer ma candidature</a>
-            <a href="/sessions-formateur.html" class="btn btn-secondary">Voir les sessions</a>
-          </div>
-        </div>
+<section class="hero">
+  <div class="container">
+    <div class="hero-card">
+      <div class="hero-badge">Certification VITAL PROTECT</div>
+      <h1>Rejoignez le réseau de formateurs</h1>
+      <p>Développez votre activité avec une certification reconnue.</p>
+
+      <div class="hero-actions">
+        <a href="#formulaire" class="btn btn-primary">Postuler</a>
+        <a href="/sessions-formateur.html" class="btn btn-secondary">Voir les sessions</a>
       </div>
-    </section>
-
-    <section>
-      <div class="container">
-        <div class="content-grid">
-          <div class="card">
-            <div class="card-inner">
-              <h2>Programme formateur</h2>
-              <p>
-                Intégrez un parcours certifiant pensé pour standardiser vos interventions
-                et vous permettre de proposer rapidement vos premiers stages.
-              </p>
-
-              <div class="program-list">
-                <div class="program-item">Self Défense Essentielle</div>
-                <div class="program-item">Self Défense Essentielle Niveau 2</div>
-                <div class="program-item">Self Défense en entreprise</div>
-              </div>
-
-              <div class="price-box">
-                <div class="price-item">
-                  <span class="price-label">Tarif standard</span>
-                  <span class="price-value">590 € / module</span>
-                </div>
-                <div class="price-item">
-                  <span class="price-label">Offre de lancement</span>
-                  <span class="price-value">490 € / module</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="card" id="formulaire">
-            <div class="form-card-top">
-              <h2>Postuler</h2>
-              <p>
-                Remplissez le formulaire ci-dessous pour transmettre votre candidature.
-                Notre équipe reviendra vers vous après étude de votre dossier.
-              </p>
-            </div>
-
-            <form id="trainerForm">
-              <div class="form-grid">
-                <div class="field">
-                  <label for="firstName">Prénom</label>
-                  <input type="text" id="firstName" placeholder="Votre prénom" required />
-                </div>
-
-                <div class="field">
-                  <label for="lastName">Nom</label>
-                  <input type="text" id="lastName" placeholder="Votre nom" required />
-                </div>
-
-                <div class="field">
-                  <label for="email">Email</label>
-                  <input type="email" id="email" placeholder="vous@email.com" required />
-                </div>
-
-                <div class="field">
-                  <label for="phone">Téléphone</label>
-                  <input type="tel" id="phone" placeholder="06 00 00 00 00" required />
-                </div>
-
-                <div class="field">
-                  <label for="city">Ville</label>
-                  <input type="text" id="city" placeholder="Votre ville" required />
-                </div>
-
-                <div class="field">
-                  <label for="trainingType">Module souhaité</label>
-                  <select id="trainingType" required>
-                    <option value="">Choisir un module</option>
-                    <option>Self Défense Essentielle</option>
-                    <option>Self Défense Essentielle Niveau 2</option>
-                    <option>Self Défense en entreprise</option>
-                  </select>
-                </div>
-
-                <div class="field full">
-                  <label for="message">Votre message</label>
-                  <textarea id="message" placeholder="Présentez votre profil, votre expérience ou vos motivations."></textarea>
-                </div>
-              </div>
-
-              <div class="form-actions">
-                <div class="form-note">
-                  En envoyant ce formulaire, vous entrez dans le processus de candidature VITAL PROTECT.
-                </div>
-
-                <button type="submit" class="btn btn-primary" id="submitButton">
-                  Envoyer ma candidature
-                </button>
-              </div>
-
-              <div id="statusMessage" class="status-message"></div>
-            </form>
-          </div>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <footer>
-    <div class="container">
-      <p>VITAL PROTECT — Recrutement et certification formateur</p>
     </div>
-  </footer>
+  </div>
+</section>
 
-  <script type="module">
-    import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+<section>
+  <div class="container">
+    <div class="section-head">
+      <h2>Comment devenir formateur ?</h2>
+      <p>Un processus simple et structuré.</p>
+    </div>
 
-    const supabase = createClient(
-      "https://zsraqxzneghkzaozzuci.supabase.co",
-      "sb_publishable_VlTpYjzJ3DKpFA1Un_EFHQ_FW-mYK4U"
-    );
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-number">1</div>
+        <h3>Candidature</h3>
+        <p>Remplissez le formulaire.</p>
+      </div>
 
-    const form = document.getElementById("trainerForm");
-    const submitButton = document.getElementById("submitButton");
-    const statusMessage = document.getElementById("statusMessage");
+      <div class="step-card">
+        <div class="step-number">2</div>
+        <h3>Validation</h3>
+        <p>Analyse de votre profil.</p>
+      </div>
 
-    function showStatus(message, type) {
-      statusMessage.textContent = message;
-      statusMessage.className = `status-message ${type}`;
-    }
+      <div class="step-card">
+        <div class="step-number">3</div>
+        <h3>Certification</h3>
+        <p>Accédez à votre formation.</p>
+      </div>
+    </div>
+  </div>
+</section>
 
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
+<section>
+  <div class="container">
+    <div class="content-grid">
 
-      submitButton.disabled = true;
-      submitButton.textContent = "Envoi en cours...";
-      statusMessage.className = "status-message";
-      statusMessage.textContent = "";
+      <div class="card">
+        <h2>Programme</h2>
+        <p>Modules disponibles :</p>
+        <ul>
+          <li>Self Défense Essentielle</li>
+          <li>Self Défense Essentielle Niveau 2</li>
+          <li>Self Défense en entreprise</li>
+        </ul>
 
-      const data = {
-        first_name: document.getElementById("firstName").value.trim(),
-        last_name: document.getElementById("lastName").value.trim(),
-        email: document.getElementById("email").value.trim(),
-        phone: document.getElementById("phone").value.trim(),
-        city: document.getElementById("city").value.trim(),
-        training_type: document.getElementById("trainingType").value,
-        message: document.getElementById("message").value.trim()
-      };
+        <p><strong>Tarif :</strong> 590€ (490€ lancement)</p>
+      </div>
 
-      const { error } = await supabase
-        .from("trainer_applications")
-        .insert([data]);
+      <div class="card" id="formulaire">
+        <h2>Postuler</h2>
 
-      if (error) {
-        console.error(error);
-        showStatus("Erreur lors de l'envoi de votre candidature.", "error");
-      } else {
-        showStatus("Candidature envoyée avec succès.", "success");
-        form.reset();
-      }
+        <form id="trainerForm">
+          <input type="text" id="firstName" placeholder="Prénom" required />
+          <input type="text" id="lastName" placeholder="Nom" required />
+          <input type="email" id="email" placeholder="Email" required />
+          <input type="tel" id="phone" placeholder="Téléphone" required />
+          <input type="text" id="city" placeholder="Ville" required />
 
-      submitButton.disabled = false;
-      submitButton.textContent = "Envoyer ma candidature";
-    });
-  </script>
+          <select id="trainingType" required>
+            <option value="">Choisir un module</option>
+            <option>Self Défense Essentielle</option>
+            <option>Self Défense Essentielle Niveau 2</option>
+            <option>Self Défense en entreprise</option>
+          </select>
+
+          <textarea id="message" placeholder="Votre message"></textarea>
+
+          <button class="btn btn-primary">Envoyer</button>
+        </form>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  VITAL PROTECT — Recrutement formateurs
+</footer>
+
+<script type="module">
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
+const supabase = createClient(
+  "https://zsraqxzneghkzaozzuci.supabase.co",
+  "sb_publishable_VlTpYjzJ3DKpFA1Un_EFHQ_FW-mYK4U"
+);
+
+const form = document.getElementById("trainerForm");
+
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const data = {
+    first_name: firstName.value,
+    last_name: lastName.value,
+    email: email.value,
+    phone: phone.value,
+    city: city.value,
+    training_type: trainingType.value,
+    message: message.value
+  };
+
+  const { error } = await supabase
+    .from("trainer_applications")
+    .insert([data]);
+
+  if (error) {
+    alert("Erreur");
+  } else {
+    alert("Candidature envoyée !");
+    form.reset();
+  }
+});
+</script>
 
 </body>
 </html>
