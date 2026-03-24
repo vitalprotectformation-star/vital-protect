@@ -447,7 +447,7 @@
           <div class="session-actions">
             <a
               class="btn btn-primary"
-              href="/devenir-formateur.html?training_type=${encodeURIComponent(session.module_name || session.training_type || "")}"
+              href="/devenir-formateur.html?training_type=${encodeURIComponent(session.module_name || session.training_type || "")}&session_id=${encodeURIComponent(session.id)}"
             >
               Réserver ma place
             </a>
