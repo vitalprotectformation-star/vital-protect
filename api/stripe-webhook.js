@@ -46,6 +46,86 @@ export default async function handler(req, res) {
       const session = event.data.object;
       const metadata = session.metadata || {};
 
+      // =========================================
+      // CAS FORMATEUR
+      // =========================================
+      if (metadata.type === "trainer") {
+        const firstName = metadata.first_name || "";
+        const lastName = metadata.last_name || "";
+        const email = metadata.email || session.customer_email || "";
+        const phone = metadata.phone || "";
+        const city = metadata.city || "";
+        const trainingType = metadata.training_type || "";
+        const message = metadata.message || "";
+
+        const stripePaymentIntentId =
+          typeof session.payment_intent === "string"
+            ? session.payment_intent
+            : session.payment_intent?.id || "";
+
+        const { data: existingTrainerRegistration } = await supabase
+          .from("trainer_session_registrations")
+          .select("id")
+          .eq("stripe_session_id", session.id)
+          .maybeSingle();
+
+        if (!existingTrainerRegistration) {
+          const { error: trainerRegistrationError } = await supabase
+            .from("trainer_session_registrations")
+            .insert({
+              first_name: firstName,
+              last_name: lastName,
+              email: email,
+              phone: phone,
+              city: city,
+              message: message,
+              stripe_session_id: session.id,
+              stripe_payment_intent_id: stripePaymentIntentId,
+              payment_mode: "manual_capture",
+              payment_status: "authorized",
+              validation_status: "pending"
+            });
+
+          if (trainerRegistrationError) {
+            console.error(
+              "Supabase trainer registration insert error:",
+              trainerRegistrationError
+            );
+            return res.status(500).send("Failed to save trainer registration");
+          }
+
+          try {
+            const emailResponse = await resend.emails.send({
+              from: "VITAL PROTECT <contact@vital-protect.fr>",
+              to: email,
+              replyTo: "contact@vital-protect.fr",
+              subject: "Réservation de votre place confirmée",
+              html: `
+                <h2>Réservation enregistrée ✅</h2>
+                <p>Bonjour ${firstName} ${lastName},</p>
+                <p>Votre réservation pour le parcours formateur <strong>VITAL PROTECT</strong> a bien été enregistrée.</p>
+                <ul>
+                  <li><strong>Module :</strong> ${trainingType}</li>
+                  <li><strong>Statut paiement :</strong> empreinte bancaire autorisée</li>
+                  <li><strong>Validation :</strong> en attente</li>
+                </ul>
+                <p>Vous recevrez la suite des étapes prochainement.</p>
+                <p><strong>VITAL PROTECT</strong></p>
+              `
+            });
+
+            console.log("Email formateur envoyé :", emailResponse);
+          } catch (emailError) {
+            console.error("Resend trainer email error:", emailError);
+          }
+        }
+
+        return res.status(200).json({ received: true });
+      }
+
+      // =========================================
+      // CAS STAGE
+      // =========================================
       const stageId = metadata.stage_id;
       const stageTitle = metadata.stage_title || "Stage";
       const firstName = metadata.first_name || "";
