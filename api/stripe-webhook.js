@@ -57,6 +57,7 @@ export default async function handler(req, res) {
         const city = metadata.city || "";
         const trainingType = metadata.training_type || "";
         const message = metadata.message || "";
+        const trainerSessionId = metadata.session_id || null;
 
         const stripePaymentIntentId =
           typeof session.payment_intent === "string"
@@ -73,6 +74,7 @@ export default async function handler(req, res) {
           const { error: trainerRegistrationError } = await supabase
             .from("trainer_session_registrations")
             .insert({
+              session_id: trainerSessionId,
               first_name: firstName,
               last_name: lastName,
               email: email,
