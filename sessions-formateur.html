@@ -445,9 +445,12 @@
           </div>
 
           <div class="session-actions">
-            <button class="btn btn-primary" onclick="alert('Étape suivante : dossier + empreinte bancaire')">
+            <a
+              class="btn btn-primary"
+              href="/devenir-formateur.html?training_type=${encodeURIComponent(session.module_name || session.training_type || "")}"
+            >
               Réserver ma place
-            </button>
+            </a>
             <a class="btn btn-secondary" href="/devenir-formateur.html">
               Demander un entretien
             </a>
