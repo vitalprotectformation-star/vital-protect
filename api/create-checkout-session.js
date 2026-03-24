@@ -17,7 +17,11 @@ export default async function handler(req, res) {
       phone,
       places,
       unit_price,
-      type // 🔥 AJOUT (stage ou trainer)
+      type,
+      city,
+      training_type,
+      message,
+      session_id
     } = req.body;
 
     // =========================
@@ -29,17 +33,18 @@ export default async function handler(req, res) {
         customer_email: email,
 
         payment_intent_data: {
-          capture_method: "manual" // 🔥 LE POINT CRITIQUE
+          capture_method: "manual"
         },
 
         metadata: {
-          first_name,
-          last_name,
-          email,
-          phone,
-          city: req.body.city || "",
-          training_type: req.body.training_type || "",
-          message: req.body.message || "",
+          first_name: String(first_name || ""),
+          last_name: String(last_name || ""),
+          email: String(email || ""),
+          phone: String(phone || ""),
+          city: String(city || ""),
+          training_type: String(training_type || ""),
+          message: String(message || ""),
+          session_id: String(session_id || ""),
           type: "trainer"
         },
 
@@ -51,9 +56,9 @@ export default async function handler(req, res) {
             price_data: {
               currency: "eur",
               product_data: {
-                name: `Certification ${req.body.training_type || ""}`
+                name: `Certification ${training_type || ""}`
               },
-              unit_amount: 49000 // 490€
+              unit_amount: 49000
             },
             quantity: 1
           }
@@ -64,9 +69,8 @@ export default async function handler(req, res) {
     }
 
     // =========================
-    // CAS STAGE (EXISTANT)
+    // CAS STAGE
     // =========================
-
     if (!stage_id || !stage_title || !email || !places || !unit_price) {
       return res.status(400).json({ error: "Missing required fields" });
     }
@@ -116,7 +120,6 @@ export default async function handler(req, res) {
     });
 
     return res.status(200).json({ url: session.url });
-
   } catch (err) {
     console.error("Stripe checkout error:", err);
     return res.status(500).json({ error: "Stripe error" });
