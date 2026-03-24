@@ -6,104 +6,515 @@
   <title>Devenir formateur — VITAL PROTECT</title>
 
   <style>
+    :root {
+      --navy: #0b2e59;
+      --navy-dark: #08203d;
+      --blue: #1f6feb;
+      --blue-soft: #eaf2ff;
+      --text: #142033;
+      --muted: #667085;
+      --bg: #f4f7fb;
+      --card: #ffffff;
+      --border: #dbe4f0;
+      --shadow: 0 10px 30px rgba(11, 46, 89, 0.08);
+      --success: #0f9d58;
+      --danger: #c62828;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f4f7fb;
-      color: #142033;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--text);
     }
 
     .container {
-      max-width: 900px;
-      margin: auto;
-      padding: 40px 20px;
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
     }
 
-    h1 {
-      font-size: 2.2rem;
-      margin-bottom: 10px;
+    header {
+      background: linear-gradient(135deg, var(--navy-dark), var(--navy));
+      color: white;
+      padding: 20px 0;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+      position: sticky;
+      top: 0;
+      z-index: 20;
     }
 
-    p {
-      color: #555;
-      line-height: 1.6;
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .brand {
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .nav-links a {
+      color: rgba(255,255,255,0.92);
+      text-decoration: none;
+      font-weight: 600;
+      padding: 10px 14px;
+      border-radius: 12px;
+      transition: 0.2s ease;
+    }
+
+    .nav-links a:hover {
+      background: rgba(255,255,255,0.12);
+    }
+
+    .hero {
+      padding: 56px 0 28px;
+    }
+
+    .hero-card {
+      background: linear-gradient(180deg, #ffffff, #f8fbff);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 36px;
+      box-shadow: var(--shadow);
+    }
+
+    .hero-badge {
+      display: inline-block;
+      background: var(--blue-soft);
+      color: var(--blue);
+      font-weight: 700;
+      font-size: 0.9rem;
+      padding: 8px 12px;
+      border-radius: 999px;
+      margin-bottom: 16px;
+    }
+
+    .hero h1 {
+      margin: 0 0 14px;
+      font-size: 2.6rem;
+      line-height: 1.1;
+      max-width: 760px;
+    }
+
+    .hero p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 1.08rem;
+      line-height: 1.7;
+      max-width: 780px;
+    }
+
+    .hero-actions {
+      margin-top: 26px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 14px;
+      padding: 14px 18px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: 0.2s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .btn-primary {
+      background: var(--blue);
+      color: white;
+    }
+
+    .btn-secondary {
+      background: white;
+      color: var(--navy);
+      border: 1px solid var(--border);
+    }
+
+    section {
+      padding: 24px 0 34px;
+    }
+
+    .content-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.1fr;
+      gap: 20px;
+      align-items: start;
     }
 
     .card {
-      background: white;
-      border-radius: 12px;
-      padding: 20px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .card-inner {
+      padding: 26px;
+    }
+
+    .card h2 {
+      margin: 0 0 12px;
+      font-size: 1.7rem;
+    }
+
+    .card p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .program-list {
+      display: grid;
+      gap: 12px;
       margin-top: 20px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.05);
     }
 
-    input, select, textarea {
+    .program-item {
+      background: #f8fbff;
+      border: 1px solid #e7eef8;
+      border-radius: 16px;
+      padding: 14px 16px;
+      font-weight: 700;
+    }
+
+    .price-box {
+      margin-top: 18px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .price-item {
+      background: var(--blue-soft);
+      border: 1px solid #d7e6ff;
+      border-radius: 16px;
+      padding: 16px;
+    }
+
+    .price-label {
+      display: block;
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin-bottom: 6px;
+      font-weight: 700;
+    }
+
+    .price-value {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: var(--navy);
+    }
+
+    .form-card-top {
+      padding: 26px 26px 10px;
+    }
+
+    .form-card-top h2 {
+      margin: 0 0 10px;
+      font-size: 1.7rem;
+    }
+
+    .form-card-top p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    form {
+      padding: 0 26px 26px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 20px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .field.full {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    input,
+    select,
+    textarea {
       width: 100%;
-      padding: 12px;
-      margin-top: 10px;
-      margin-bottom: 15px;
-      border-radius: 8px;
-      border: 1px solid #ddd;
+      padding: 14px 15px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: #f8fbff;
+      color: var(--text);
+      font-size: 1rem;
+      outline: none;
+      transition: 0.2s ease;
     }
 
-    button {
-      background: #1f6feb;
-      color: white;
-      border: none;
-      padding: 14px;
-      border-radius: 8px;
-      font-weight: bold;
-      cursor: pointer;
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: var(--blue);
+      background: white;
+      box-shadow: 0 0 0 3px rgba(31, 111, 235, 0.10);
     }
 
-    button:hover {
-      background: #165ecc;
+    textarea {
+      min-height: 130px;
+      resize: vertical;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .form-actions {
+      margin-top: 18px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .form-note {
+      color: var(--muted);
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    .status-message {
+      margin-top: 16px;
+      padding: 14px 16px;
+      border-radius: 14px;
+      font-weight: 700;
+      display: none;
+    }
+
+    .status-message.success {
+      display: block;
+      background: #eaf8f0;
+      color: var(--success);
+      border: 1px solid #cfeedd;
+    }
+
+    .status-message.error {
+      display: block;
+      background: #fff1f1;
+      color: var(--danger);
+      border: 1px solid #ffd5d5;
+    }
+
+    footer {
+      margin-top: 38px;
+      background: var(--navy-dark);
+      color: rgba(255,255,255,0.88);
+      padding: 28px 0;
+    }
+
+    footer p {
+      margin: 0;
+      text-align: center;
+    }
+
+    @media (max-width: 980px) {
+      .content-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .brand {
+        font-size: 1.5rem;
+      }
+
+      .hero h1 {
+        font-size: 2rem;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-actions,
+      .form-actions {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .btn {
+        width: 100%;
+      }
     }
   </style>
 </head>
 <body>
 
-  <div class="container">
-    <h1>Devenir formateur VITAL PROTECT</h1>
-    <p>
-      Rejoignez notre réseau de formateurs certifiés et développez votre activité
-      dans la self-défense avec un accompagnement complet.
-    </p>
-
-    <div class="card">
-      <h2>Programme</h2>
-      <ul>
-        <li>Self Défense Essentielle</li>
-        <li>Self Défense Essentielle Niveau 2</li>
-        <li>Self Défense en entreprise</li>
-      </ul>
-
-      <p><strong>Tarif :</strong> 590€ / module (offre lancement 490€)</p>
+  <header>
+    <div class="container header-inner">
+      <div class="brand">VITAL PROTECT</div>
+      <nav class="nav-links">
+        <a href="/index.html">Accueil</a>
+        <a href="/devenir-formateur.html">Devenir formateur</a>
+        <a href="/sessions-formateur.html">Sessions formateur</a>
+      </nav>
     </div>
+  </header>
 
-    <div class="card">
-      <h2>Postuler</h2>
+  <main>
+    <section class="hero">
+      <div class="container">
+        <div class="hero-card">
+          <div class="hero-badge">Certification VITAL PROTECT</div>
+          <h1>Rejoignez le réseau de formateurs VITAL PROTECT.</h1>
+          <p>
+            Développez votre activité avec une certification structurée, un accès à la marketplace,
+            un accompagnement au lancement et un cadre professionnel clair.
+          </p>
 
-      <form id="trainerForm">
-        <input type="text" id="firstName" placeholder="Prénom" required />
-        <input type="text" id="lastName" placeholder="Nom" required />
-        <input type="email" id="email" placeholder="Email" required />
-        <input type="tel" id="phone" placeholder="Téléphone" required />
-        <input type="text" id="city" placeholder="Ville" required />
+          <div class="hero-actions">
+            <a href="#formulaire" class="btn btn-primary">Envoyer ma candidature</a>
+            <a href="/sessions-formateur.html" class="btn btn-secondary">Voir les sessions</a>
+          </div>
+        </div>
+      </div>
+    </section>
 
-        <select id="trainingType">
-          <option value="">Choisir un module</option>
-          <option>Self Défense Essentielle</option>
-          <option>Self Défense Essentielle Niveau 2</option>
-          <option>Self Défense en entreprise</option>
-        </select>
+    <section>
+      <div class="container">
+        <div class="content-grid">
+          <div class="card">
+            <div class="card-inner">
+              <h2>Programme formateur</h2>
+              <p>
+                Intégrez un parcours certifiant pensé pour standardiser vos interventions
+                et vous permettre de proposer rapidement vos premiers stages.
+              </p>
 
-        <textarea id="message" placeholder="Votre message"></textarea>
+              <div class="program-list">
+                <div class="program-item">Self Défense Essentielle</div>
+                <div class="program-item">Self Défense Essentielle Niveau 2</div>
+                <div class="program-item">Self Défense en entreprise</div>
+              </div>
 
-        <button type="submit">Envoyer ma candidature</button>
-      </form>
+              <div class="price-box">
+                <div class="price-item">
+                  <span class="price-label">Tarif standard</span>
+                  <span class="price-value">590 € / module</span>
+                </div>
+                <div class="price-item">
+                  <span class="price-label">Offre de lancement</span>
+                  <span class="price-value">490 € / module</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card" id="formulaire">
+            <div class="form-card-top">
+              <h2>Postuler</h2>
+              <p>
+                Remplissez le formulaire ci-dessous pour transmettre votre candidature.
+                Notre équipe reviendra vers vous après étude de votre dossier.
+              </p>
+            </div>
+
+            <form id="trainerForm">
+              <div class="form-grid">
+                <div class="field">
+                  <label for="firstName">Prénom</label>
+                  <input type="text" id="firstName" placeholder="Votre prénom" required />
+                </div>
+
+                <div class="field">
+                  <label for="lastName">Nom</label>
+                  <input type="text" id="lastName" placeholder="Votre nom" required />
+                </div>
+
+                <div class="field">
+                  <label for="email">Email</label>
+                  <input type="email" id="email" placeholder="vous@email.com" required />
+                </div>
+
+                <div class="field">
+                  <label for="phone">Téléphone</label>
+                  <input type="tel" id="phone" placeholder="06 00 00 00 00" required />
+                </div>
+
+                <div class="field">
+                  <label for="city">Ville</label>
+                  <input type="text" id="city" placeholder="Votre ville" required />
+                </div>
+
+                <div class="field">
+                  <label for="trainingType">Module souhaité</label>
+                  <select id="trainingType" required>
+                    <option value="">Choisir un module</option>
+                    <option>Self Défense Essentielle</option>
+                    <option>Self Défense Essentielle Niveau 2</option>
+                    <option>Self Défense en entreprise</option>
+                  </select>
+                </div>
+
+                <div class="field full">
+                  <label for="message">Votre message</label>
+                  <textarea id="message" placeholder="Présentez votre profil, votre expérience ou vos motivations."></textarea>
+                </div>
+              </div>
+
+              <div class="form-actions">
+                <div class="form-note">
+                  En envoyant ce formulaire, vous entrez dans le processus de candidature VITAL PROTECT.
+                </div>
+
+                <button type="submit" class="btn btn-primary" id="submitButton">
+                  Envoyer ma candidature
+                </button>
+              </div>
+
+              <div id="statusMessage" class="status-message"></div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <p>VITAL PROTECT — Recrutement et certification formateur</p>
     </div>
-  </div>
+  </footer>
 
   <script type="module">
     import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
@@ -114,18 +525,30 @@
     );
 
     const form = document.getElementById("trainerForm");
+    const submitButton = document.getElementById("submitButton");
+    const statusMessage = document.getElementById("statusMessage");
+
+    function showStatus(message, type) {
+      statusMessage.textContent = message;
+      statusMessage.className = `status-message ${type}`;
+    }
 
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
 
+      submitButton.disabled = true;
+      submitButton.textContent = "Envoi en cours...";
+      statusMessage.className = "status-message";
+      statusMessage.textContent = "";
+
       const data = {
-        first_name: document.getElementById("firstName").value,
-        last_name: document.getElementById("lastName").value,
-        email: document.getElementById("email").value,
-        phone: document.getElementById("phone").value,
-        city: document.getElementById("city").value,
+        first_name: document.getElementById("firstName").value.trim(),
+        last_name: document.getElementById("lastName").value.trim(),
+        email: document.getElementById("email").value.trim(),
+        phone: document.getElementById("phone").value.trim(),
+        city: document.getElementById("city").value.trim(),
         training_type: document.getElementById("trainingType").value,
-        message: document.getElementById("message").value
+        message: document.getElementById("message").value.trim()
       };
 
       const { error } = await supabase
@@ -133,12 +556,15 @@
         .insert([data]);
 
       if (error) {
-        alert("Erreur lors de l'envoi");
         console.error(error);
+        showStatus("Erreur lors de l'envoi de votre candidature.", "error");
       } else {
-        alert("Candidature envoyée !");
+        showStatus("Candidature envoyée avec succès.", "success");
         form.reset();
       }
+
+      submitButton.disabled = false;
+      submitButton.textContent = "Envoyer ma candidature";
     });
   </script>
 
