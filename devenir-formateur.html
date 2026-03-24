@@ -314,6 +314,7 @@ VITAL PROTECT — Certification formateurs
 <script type="module">
 const params = new URLSearchParams(window.location.search);
 const trainingTypeFromUrl = params.get("training_type");
+const sessionIdFromUrl = params.get("session_id");
 
 if (trainingTypeFromUrl) {
   const trainingTypeSelect = document.getElementById("trainingType");
@@ -333,6 +334,7 @@ form.addEventListener("submit", async (e) => {
     city: document.getElementById("city").value,
     training_type: document.getElementById("trainingType").value,
     message: document.getElementById("message").value,
+    session_id: sessionIdFromUrl || "",
     type: "trainer"
   };
 
