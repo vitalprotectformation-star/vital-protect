@@ -16,7 +16,7 @@ body {
   background: white;
   padding: 30px;
   border-radius: 16px;
-  max-width: 700px;
+  max-width: 720px;
   margin: auto;
   box-shadow: 0 10px 30px rgba(11, 46, 89, 0.08);
 }
@@ -44,6 +44,17 @@ button {
 h2 {
   margin-top: 0;
 }
+
+.debug {
+  margin-top: 20px;
+  padding: 14px;
+  border-radius: 12px;
+  background: #f8fbff;
+  border: 1px solid #dbe4f0;
+  color: #667085;
+  font-size: 14px;
+  white-space: pre-wrap;
+}
 </style>
 </head>
 
@@ -64,34 +75,61 @@ const supabase = createClient(
 const emailParam = new URLSearchParams(window.location.search).get("email");
 const cleanEmail = emailParam ? emailParam.trim().toLowerCase() : "";
 
+function normalize(value) {
+  return String(value || "").trim().toLowerCase();
+}
+
 async function load() {
+  const app = document.getElementById("app");
+
   if (!cleanEmail) {
-    document.getElementById("app").innerHTML = "Email manquant";
+    app.innerHTML = `
+      <h2>Email manquant</h2>
+      <div class="debug">Aucun paramètre "email" trouvé dans l’URL.</div>
+    `;
     return;
   }
 
   const { data, error } = await supabase
     .from("trainers")
-    .select("*")
-    .eq("email", cleanEmail)
-    .single();
+    .select("*");
 
-  if (error || !data) {
-    console.error("Erreur formateur:", error);
-    document.getElementById("app").innerHTML = "Formateur introuvable";
+  if (error) {
+    console.error("Erreur Supabase:", error);
+    app.innerHTML = `
+      <h2>Erreur de chargement</h2>
+      <div class="debug">Supabase error: ${error.message}</div>
+    `;
+    return;
+  }
+
+  const trainers = data || [];
+  const trainer = trainers.find(t => normalize(t.email) === cleanEmail);
+
+  if (!trainer) {
+    console.error("Formateur introuvable. Email URL:", cleanEmail, "Emails DB:", trainers.map(t => t.email));
+    app.innerHTML = `
+      <h2>Formateur introuvable</h2>
+      <div class="debug">
+Email demandé : ${cleanEmail}
+
+Emails trouvés en base :
+${trainers.map(t => `- ${t.email}`).join("\n") || "Aucun"}
+      </div>
+    `;
     return;
   }
 
   const today = new Date();
 
-  const certExpiry = data.certification_expiry ? new Date(data.certification_expiry) : null;
-  const affExpiry = data.affiliation_end ? new Date(data.affiliation_end) : null;
+  const certExpiry = trainer.certification_expiry ? new Date(trainer.certification_expiry) : null;
+  const affExpiry = trainer.affiliation_end ? new Date(trainer.affiliation_end) : null;
 
   const certValid = certExpiry ? certExpiry >= today : false;
   const affValid = affExpiry ? affExpiry >= today : false;
 
-  document.getElementById("app").innerHTML = `
-    <h2>${data.first_name || ""} ${data.last_name || ""}</h2>
+  app.innerHTML = `
+    <h2>${trainer.first_name || ""} ${trainer.last_name || ""}</h2>
 
     <p>
       Certification :
@@ -100,8 +138,8 @@ async function load() {
       </span>
     </p>
 
-    <p>Date de certification : ${data.certification_date || "—"}</p>
-    <p>Expire le : ${data.certification_expiry || "—"}</p>
+    <p>Date de certification : ${trainer.certification_date || "—"}</p>
+    <p>Expire le : ${trainer.certification_expiry || "—"}</p>
 
     <hr>
 
@@ -112,8 +150,8 @@ async function load() {
       </span>
     </p>
 
-    <p>Début affiliation : ${data.affiliation_start || "—"}</p>
-    <p>Expire le : ${data.affiliation_end || "—"}</p>
+    <p>Début affiliation : ${trainer.affiliation_start || "—"}</p>
+    <p>Expire le : ${trainer.affiliation_end || "—"}</p>
 
     ${
       !affValid
@@ -122,6 +160,12 @@ async function load() {
           </button>`
         : ""
     }
+
+    <div class="debug">
+Email URL : ${cleanEmail}
+Email trouvé : ${trainer.email}
+ID formateur : ${trainer.id}
+    </div>
   `;
 }
 
