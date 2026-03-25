@@ -27,6 +27,10 @@ async function getRawBody(readable) {
   return Buffer.concat(chunks);
 }
 
+function normalizeEmail(value) {
+  return String(value || "").trim().toLowerCase();
+}
+
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).send("Method not allowed");
@@ -52,7 +56,7 @@ export default async function handler(req, res) {
       if (metadata.type === "trainer") {
         const firstName = metadata.first_name || "";
         const lastName = metadata.last_name || "";
-        const email = metadata.email || session.customer_email || "";
+        const email = normalizeEmail(metadata.email || session.customer_email || "");
         const phone = metadata.phone || "";
         const city = metadata.city || "";
         const trainingType = metadata.training_type || "";
@@ -132,7 +136,7 @@ export default async function handler(req, res) {
       const stageTitle = metadata.stage_title || "Stage";
       const firstName = metadata.first_name || "";
       const lastName = metadata.last_name || "";
-      const email = metadata.email || session.customer_email || "";
+      const email = normalizeEmail(metadata.email || session.customer_email || "");
       const phone = metadata.phone || "";
       const places = Number(metadata.places || 1);
       const unitPrice = Number(metadata.unit_price || 0);
