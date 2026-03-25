@@ -20,15 +20,15 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: "Missing data" });
     }
 
-    // 💸 capture paiement
     await stripe.paymentIntents.capture(payment_intent_id);
 
-    // 🔄 update supabase
     const { error } = await supabase
       .from("trainer_session_registrations")
       .update({
         payment_status: "captured",
-        validation_status: "validated"
+        validation_status: "validated",
+        training_result: "passed",
+        validated_at: new Date().toISOString()
       })
       .eq("id", registration_id);
 
@@ -38,7 +38,6 @@ export default async function handler(req, res) {
     }
 
     return res.status(200).json({ success: true });
-
   } catch (err) {
     console.error(err);
     return res.status(500).json({ error: "Capture error" });
