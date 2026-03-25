@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Espace formateur</title>
+
+<style>
+body {
+  font-family: Arial;
+  background:#f4f7fb;
+  padding:40px;
+}
+
+.card {
+  background:white;
+  padding:30px;
+  border-radius:16px;
+  max-width:600px;
+  margin:auto;
+}
+
+.status-ok {
+  color:green;
+  font-weight:bold;
+}
+
+.status-bad {
+  color:red;
+  font-weight:bold;
+}
+
+button {
+  padding:12px 16px;
+  background:#1f6feb;
+  color:white;
+  border:none;
+  border-radius:10px;
+  cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div class="card" id="app">
+Chargement...
+</div>
+
+<script type="module">
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
+const supabase = createClient(
+  "https://zsraqxzneghkzaozzuci.supabase.co",
+  "sb_publishable_VlTpYjzJ3DKpFA1Un_EFHQ_FW-mYK4U"
+);
+
+const email = new URLSearchParams(window.location.search).get("email");
+
+async function load() {
+
+  if (!email) {
+    document.getElementById("app").innerHTML = "Email manquant";
+    return;
+  }
+
+  const { data, error } = await supabase
+    .from("trainers")
+    .select("*")
+    .eq("email", email)
+    .single();
+
+  if (error || !data) {
+    document.getElementById("app").innerHTML = "Formateur introuvable";
+    return;
+  }
+
+  const today = new Date();
+
+  const certExpiry = new Date(data.certification_expiry);
+  const affExpiry = new Date(data.affiliation_end);
+
+  const certValid = certExpiry > today;
+  const affValid = affExpiry > today;
+
+  document.getElementById("app").innerHTML = `
+    <h2>${data.first_name} ${data.last_name}</h2>
+
+    <p>
+      Certification :
+      <span class="${certValid ? 'status-ok' : 'status-bad'}">
+        ${certValid ? 'Valide' : 'Expirée'}
+      </span>
+    </p>
+
+    <p>Expire le : ${data.certification_expiry}</p>
+
+    <hr>
+
+    <p>
+      Affiliation :
+      <span class="${affValid ? 'status-ok' : 'status-bad'}">
+        ${affValid ? 'Active' : 'Expirée'}
+      </span>
+    </p>
+
+    <p>Expire le : ${data.affiliation_end}</p>
+
+    ${
+      !affValid
+        ? `<button onclick="alert('Paiement affiliation à venir')">
+            Renouveler mon affiliation
+          </button>`
+        : ''
+    }
+  `;
+}
+
+load();
+</script>
+
+</body>
+</html>
