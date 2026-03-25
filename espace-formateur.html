@@ -6,36 +6,43 @@
 
 <style>
 body {
-  font-family: Arial;
-  background:#f4f7fb;
-  padding:40px;
+  font-family: Arial, Helvetica, sans-serif;
+  background: #f4f7fb;
+  padding: 40px;
+  margin: 0;
 }
 
 .card {
-  background:white;
-  padding:30px;
-  border-radius:16px;
-  max-width:600px;
-  margin:auto;
+  background: white;
+  padding: 30px;
+  border-radius: 16px;
+  max-width: 700px;
+  margin: auto;
+  box-shadow: 0 10px 30px rgba(11, 46, 89, 0.08);
 }
 
 .status-ok {
-  color:green;
-  font-weight:bold;
+  color: green;
+  font-weight: bold;
 }
 
 .status-bad {
-  color:red;
-  font-weight:bold;
+  color: red;
+  font-weight: bold;
 }
 
 button {
-  padding:12px 16px;
-  background:#1f6feb;
-  color:white;
-  border:none;
-  border-radius:10px;
-  cursor:pointer;
+  padding: 12px 16px;
+  background: #1f6feb;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+h2 {
+  margin-top: 0;
 }
 </style>
 </head>
@@ -54,11 +61,11 @@ const supabase = createClient(
   "sb_publishable_VlTpYjzJ3DKpFA1Un_EFHQ_FW-mYK4U"
 );
 
-const email = new URLSearchParams(window.location.search).get("email");
+const emailParam = new URLSearchParams(window.location.search).get("email");
+const cleanEmail = emailParam ? emailParam.trim().toLowerCase() : "";
 
 async function load() {
-
-  if (!email) {
+  if (!cleanEmail) {
     document.getElementById("app").innerHTML = "Email manquant";
     return;
   }
@@ -66,24 +73,25 @@ async function load() {
   const { data, error } = await supabase
     .from("trainers")
     .select("*")
-    .eq("email", email)
+    .eq("email", cleanEmail)
     .single();
 
   if (error || !data) {
+    console.error("Erreur formateur:", error);
     document.getElementById("app").innerHTML = "Formateur introuvable";
     return;
   }
 
   const today = new Date();
 
-  const certExpiry = new Date(data.certification_expiry);
-  const affExpiry = new Date(data.affiliation_end);
+  const certExpiry = data.certification_expiry ? new Date(data.certification_expiry) : null;
+  const affExpiry = data.affiliation_end ? new Date(data.affiliation_end) : null;
 
-  const certValid = certExpiry > today;
-  const affValid = affExpiry > today;
+  const certValid = certExpiry ? certExpiry >= today : false;
+  const affValid = affExpiry ? affExpiry >= today : false;
 
   document.getElementById("app").innerHTML = `
-    <h2>${data.first_name} ${data.last_name}</h2>
+    <h2>${data.first_name || ""} ${data.last_name || ""}</h2>
 
     <p>
       Certification :
@@ -92,7 +100,8 @@ async function load() {
       </span>
     </p>
 
-    <p>Expire le : ${data.certification_expiry}</p>
+    <p>Date de certification : ${data.certification_date || "—"}</p>
+    <p>Expire le : ${data.certification_expiry || "—"}</p>
 
     <hr>
 
@@ -103,14 +112,15 @@ async function load() {
       </span>
     </p>
 
-    <p>Expire le : ${data.affiliation_end}</p>
+    <p>Début affiliation : ${data.affiliation_start || "—"}</p>
+    <p>Expire le : ${data.affiliation_end || "—"}</p>
 
     ${
       !affValid
         ? `<button onclick="alert('Paiement affiliation à venir')">
             Renouveler mon affiliation
           </button>`
-        : ''
+        : ""
     }
   `;
 }
