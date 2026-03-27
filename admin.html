@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin — VITAL PROTECT</title>
+  <title>Admin VITAL PROTECT</title>
   <style>
     :root {
       --navy: #0b2e59;
@@ -31,63 +31,111 @@
       color: var(--text);
     }
 
-    header {
-      background: linear-gradient(135deg, var(--navy-dark), var(--navy));
+    .layout {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      background: linear-gradient(180deg, var(--navy-dark), var(--navy));
       color: white;
-      padding: 20px 0;
-    }
-
-    .container {
-      width: min(1200px, calc(100% - 32px));
-      margin: 0 auto;
-    }
-
-    .header-inner {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
+      padding: 24px 18px;
+      position: sticky;
+      top: 0;
+      height: 100vh;
     }
 
     .brand {
-      font-size: 1.8rem;
+      font-size: 1.6rem;
       font-weight: 800;
+      margin-bottom: 8px;
     }
 
-    .back-link {
+    .brand-sub {
+      color: rgba(255,255,255,0.8);
+      font-size: 0.95rem;
+      margin-bottom: 24px;
+    }
+
+    .nav-group {
+      display: grid;
+      gap: 8px;
+    }
+
+    .nav-btn {
+      width: 100%;
+      text-align: left;
+      border: none;
+      border-radius: 14px;
+      padding: 12px 14px;
+      background: transparent;
+      color: rgba(255,255,255,0.92);
+      font-size: 0.98rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .nav-btn:hover,
+    .nav-btn.active {
+      background: rgba(255,255,255,0.12);
+    }
+
+    .sidebar-footer {
+      margin-top: 28px;
+    }
+
+    .sidebar-link {
+      display: inline-block;
       color: white;
       text-decoration: none;
       font-weight: 700;
       opacity: 0.9;
     }
 
-    main {
-      padding: 32px 0 48px;
+    .content {
+      padding: 28px;
+    }
+
+    .page-header {
+      margin-bottom: 22px;
     }
 
     .page-title {
-      margin: 0 0 8px;
+      margin: 0 0 6px;
       font-size: 2rem;
     }
 
     .page-subtitle {
-      margin: 0 0 24px;
+      margin: 0;
       color: var(--muted);
+    }
+
+    .tab-panel {
+      display: none;
+    }
+
+    .tab-panel.active {
+      display: block;
     }
 
     .stats {
       display: grid;
       grid-template-columns: repeat(5, minmax(0, 1fr));
       gap: 16px;
-      margin-bottom: 28px;
+      margin-bottom: 24px;
+    }
+
+    .stat-card,
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      box-shadow: var(--shadow);
     }
 
     .stat-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 18px;
       padding: 20px;
-      box-shadow: var(--shadow);
     }
 
     .stat-label {
@@ -102,36 +150,118 @@
       font-weight: 800;
     }
 
-    .section {
-      margin-top: 28px;
-    }
-
-    .section-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 22px;
-      box-shadow: var(--shadow);
+    .card {
       overflow: hidden;
+      margin-top: 22px;
     }
 
-    .section-header {
-      padding: 20px 22px;
+    .card-header {
+      padding: 18px 20px;
       border-bottom: 1px solid var(--border);
       display: flex;
-      align-items: center;
       justify-content: space-between;
+      align-items: start;
       gap: 16px;
       flex-wrap: wrap;
     }
 
-    .section-header h2 {
-      margin: 0;
-      font-size: 1.4rem;
+    .card-header h2 {
+      margin: 0 0 6px;
+      font-size: 1.3rem;
     }
 
-    .section-header p {
-      margin: 6px 0 0;
+    .card-header p {
+      margin: 0;
       color: var(--muted);
+    }
+
+    .card-body {
+      padding: 20px;
+    }
+
+    .filters {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .filters.filters-2 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .filters.filters-3 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .filters.filters-4 {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .field label {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--muted);
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      border: 1px solid var(--border);
+      background: white;
+      border-radius: 12px;
+      padding: 12px;
+      font-size: 0.98rem;
+      color: var(--text);
+    }
+
+    textarea {
+      min-height: 110px;
+      resize: vertical;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .actions-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 12px;
+      padding: 11px 14px;
+      font-size: 0.96rem;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .btn-primary {
+      background: var(--blue);
+      color: white;
+    }
+
+    .btn-secondary {
+      background: white;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .btn-danger {
+      background: var(--danger);
+      color: white;
     }
 
     .table-wrap {
@@ -140,8 +270,8 @@
 
     table {
       width: 100%;
-      border-collapse: collapse;
       min-width: 980px;
+      border-collapse: collapse;
     }
 
     th,
@@ -153,9 +283,9 @@
     }
 
     th {
-      font-size: 0.92rem;
-      color: var(--muted);
       background: #f8fbff;
+      color: var(--muted);
+      font-size: 0.92rem;
     }
 
     td strong {
@@ -172,199 +302,565 @@
       white-space: nowrap;
     }
 
-    .badge-paid {
-      background: #eaf8f0;
-      color: #0f9d58;
-    }
-
-    .badge-low {
-      background: #fff4df;
-      color: #b7791f;
-    }
-
     .badge-ok {
       background: #eef5ff;
       color: #1f6feb;
     }
 
-    .badge-pending {
+    .badge-success {
+      background: #eaf8f0;
+      color: #0f9d58;
+    }
+
+    .badge-warning {
       background: #fff4df;
       color: #b7791f;
     }
 
-    .badge-authorized {
-      background: #eef5ff;
-      color: #1f6feb;
-    }
-
-    .badge-captured {
-      background: #eaf8f0;
-      color: #0f9d58;
-    }
-
-    .badge-active {
-      background: #eaf8f0;
-      color: #0f9d58;
-    }
-
-    .badge-expired {
+    .badge-danger {
       background: #fff1f1;
       color: #c62828;
+    }
+
+    .muted {
+      color: var(--muted);
     }
 
     .loading,
     .empty,
     .error {
-      padding: 24px;
+      padding: 16px 0;
       color: var(--muted);
     }
 
-    .action-btn {
-      border: none;
-      border-radius: 12px;
-      padding: 10px 14px;
-      font-weight: 700;
-      cursor: pointer;
-      background: var(--blue);
-      color: white;
-    }
-
-    .action-btn:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
-
-    .action-btn-secondary {
-      background: white;
-      color: var(--text);
-      border: 1px solid var(--border);
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
     }
 
     @media (max-width: 1200px) {
-      .stats {
+      .stats,
+      .filters {
         grid-template-columns: repeat(3, minmax(0, 1fr));
       }
     }
 
-    @media (max-width: 700px) {
-      .stats {
+    @media (max-width: 980px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: static;
+        height: auto;
+      }
+
+      .stats,
+      .filters,
+      .kpi-grid {
         grid-template-columns: 1fr;
       }
     }
   </style>
 </head>
 <body>
-  <header>
-    <div class="container header-inner">
-      <div class="brand">VITAL PROTECT — Admin</div>
-      <a class="back-link" href="/">← Retour au site</a>
-    </div>
-  </header>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="brand">VITAL PROTECT</div>
+      <div class="brand-sub">Cockpit admin</div>
 
-  <main>
-    <div class="container">
-      <h1 class="page-title">Tableau de bord simple</h1>
-      <p class="page-subtitle">Vue rapide sur les réservations, les stages, les candidats formateurs et les formateurs actifs.</p>
+      <div class="nav-group">
+        <button class="nav-btn active" data-tab="dashboard">Dashboard</button>
+        <button class="nav-btn" data-tab="candidats">Candidats</button>
+        <button class="nav-btn" data-tab="formateurs">Formateurs</button>
+        <button class="nav-btn" data-tab="stages">Stages</button>
+        <button class="nav-btn" data-tab="formations">Formations formateur</button>
+        <button class="nav-btn" data-tab="finances">Pilotage financier</button>
+      </div>
 
-      <section class="stats">
-        <div class="stat-card">
-          <span class="stat-label">Réservations</span>
-          <div class="stat-value" id="reservationsCount">0</div>
-        </div>
-        <div class="stat-card">
-          <span class="stat-label">Stages publiés</span>
-          <div class="stat-value" id="stagesCount">0</div>
-        </div>
-        <div class="stat-card">
-          <span class="stat-label">Chiffre affiché</span>
-          <div class="stat-value" id="revenueCount">0 €</div>
-        </div>
-        <div class="stat-card">
-          <span class="stat-label">Candidats formateurs</span>
-          <div class="stat-value" id="trainerRegistrationsCount">0</div>
-        </div>
-        <div class="stat-card">
-          <span class="stat-label">Formateurs actifs / total</span>
-          <div class="stat-value" id="trainersCount">0</div>
-        </div>
-      </section>
+      <div class="sidebar-footer">
+        <a class="sidebar-link" href="/">← Retour au site</a>
+      </div>
+    </aside>
 
-      <section class="section">
-        <div class="section-card">
-          <div class="section-header">
+    <main class="content">
+      <div class="page-header">
+        <h1 class="page-title">Administration VITAL PROTECT</h1>
+        <p class="page-subtitle">Pilotage global du réseau, des stages, des formateurs, des candidatures et des finances.</p>
+      </div>
+
+      <section id="tab-dashboard" class="tab-panel active">
+        <div class="stats">
+          <div class="stat-card">
+            <span class="stat-label">Réservations</span>
+            <div class="stat-value" id="reservationsCount">0</div>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Stages publiés</span>
+            <div class="stat-value" id="stagesCount">0</div>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Candidats formateurs</span>
+            <div class="stat-value" id="trainerRegistrationsCount">0</div>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Formateurs actifs / total</span>
+            <div class="stat-value" id="trainersCount">0</div>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">CA total affiché</span>
+            <div class="stat-value" id="revenueCount">0 €</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
             <div>
-              <h2>Réservations</h2>
-              <p>Réservations enregistrées après paiement Stripe.</p>
+              <h2>Vue d’ensemble</h2>
+              <p>Indicateurs rapides du système.</p>
             </div>
           </div>
-          <div class="table-wrap" id="reservationsWrap">
-            <div class="loading">Chargement des réservations...</div>
-          </div>
-        </div>
-      </section>
-
-      <section class="section">
-        <div class="section-card">
-          <div class="section-header">
-            <div>
-              <h2>Stages</h2>
-              <p>Suivi rapide des stages et des places restantes.</p>
+          <div class="card-body">
+            <div class="kpi-grid">
+              <div class="stat-card">
+                <span class="stat-label">Affiliations expirées</span>
+                <div class="stat-value" id="expiredAffiliationsCount">0</div>
+              </div>
+              <div class="stat-card">
+                <span class="stat-label">Certifications expirées</span>
+                <div class="stat-value" id="expiredCertificationsCount">0</div>
+              </div>
+              <div class="stat-card">
+                <span class="stat-label">Paiements formateurs capturés</span>
+                <div class="stat-value" id="capturedTrainerPaymentsCount">0</div>
+              </div>
             </div>
           </div>
-          <div class="table-wrap" id="stagesWrap">
-            <div class="loading">Chargement des stages...</div>
-          </div>
         </div>
       </section>
 
-      <section class="section">
-        <div class="section-card">
-          <div class="section-header">
+      <section id="tab-candidats" class="tab-panel">
+        <div class="card">
+          <div class="card-header">
             <div>
               <h2>Candidats formateurs</h2>
-              <p>Réservations formateur avec validation manuelle et capture Stripe.</p>
+              <p>Recherche et suivi des inscriptions formateur.</p>
             </div>
           </div>
-          <div class="table-wrap" id="trainerRegistrationsWrap">
-            <div class="loading">Chargement des candidats formateurs...</div>
+          <div class="card-body">
+            <div class="filters filters-4">
+              <div class="field">
+                <label>Recherche</label>
+                <input id="candidateSearch" type="text" placeholder="Nom, prénom, email, ville..." />
+              </div>
+              <div class="field">
+                <label>Validation</label>
+                <select id="candidateValidationFilter">
+                  <option value="">Tous</option>
+                  <option value="pending">En attente</option>
+                  <option value="validated">Validé</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>Résultat</label>
+                <select id="candidateResultFilter">
+                  <option value="">Tous</option>
+                  <option value="pending">En attente</option>
+                  <option value="passed">Réussi</option>
+                  <option value="failed">Échoué</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>Paiement</label>
+                <select id="candidatePaymentFilter">
+                  <option value="">Tous</option>
+                  <option value="authorized">Autorisé</option>
+                  <option value="captured">Capturé</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="table-wrap" id="trainerRegistrationsWrap">
+              <div class="loading">Chargement des candidats formateurs...</div>
+            </div>
           </div>
         </div>
       </section>
 
-      <section class="section">
-        <div class="section-card">
-          <div class="section-header">
+      <section id="tab-formateurs" class="tab-panel">
+        <div class="card">
+          <div class="card-header">
             <div>
               <h2>Formateurs</h2>
-              <p>Suivi des certifications, affiliations et échéances.</p>
+              <p>Recherche par identité, zone géographique et statut.</p>
             </div>
           </div>
-          <div class="table-wrap" id="trainersWrap">
-            <div class="loading">Chargement des formateurs...</div>
+          <div class="card-body">
+            <div class="filters">
+              <div class="field">
+                <label>Recherche</label>
+                <input id="trainerSearch" type="text" placeholder="Nom, prénom, email..." />
+              </div>
+              <div class="field">
+                <label>Région</label>
+                <input id="trainerRegionFilter" type="text" placeholder="Île-de-France..." />
+              </div>
+              <div class="field">
+                <label>Département</label>
+                <input id="trainerDepartmentFilter" type="text" placeholder="75..." />
+              </div>
+              <div class="field">
+                <label>Ville</label>
+                <input id="trainerCityFilter" type="text" placeholder="Paris..." />
+              </div>
+              <div class="field">
+                <label>Affiliation</label>
+                <select id="trainerAffiliationFilter">
+                  <option value="">Toutes</option>
+                  <option value="active">Affilié</option>
+                  <option value="expired">Résilié / expiré</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="filters filters-2">
+              <div class="field">
+                <label>Certification</label>
+                <select id="trainerCertificationFilter">
+                  <option value="">Toutes</option>
+                  <option value="valid">Valide</option>
+                  <option value="expired">Expirée</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="table-wrap" id="trainersWrap">
+              <div class="loading">Chargement des formateurs...</div>
+            </div>
           </div>
         </div>
       </section>
-    </div>
-  </main>
+
+      <section id="tab-stages" class="tab-panel">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h2>Stages</h2>
+              <p>Voir, filtrer et créer des stages publiés.</p>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="filters">
+              <div class="field">
+                <label>Région</label>
+                <input id="stageRegionFilter" type="text" placeholder="Région..." />
+              </div>
+              <div class="field">
+                <label>Département</label>
+                <input id="stageDepartmentFilter" type="text" placeholder="Département..." />
+              </div>
+              <div class="field">
+                <label>Ville</label>
+                <input id="stageCityFilter" type="text" placeholder="Ville..." />
+              </div>
+              <div class="field">
+                <label>Formateur (email)</label>
+                <input id="stageTrainerFilter" type="text" placeholder="Email formateur..." />
+              </div>
+              <div class="field">
+                <label>Statut</label>
+                <select id="stageStatusFilter">
+                  <option value="">Tous</option>
+                  <option value="published">Publié</option>
+                  <option value="pending">En attente</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="table-wrap" id="stagesWrap">
+              <div class="loading">Chargement des stages...</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h2>Créer un stage</h2>
+              <p>Insertion rapide d’un stage en base.</p>
+            </div>
+          </div>
+          <div class="card-body">
+            <form id="createStageForm">
+              <div class="filters">
+                <div class="field">
+                  <label>Titre</label>
+                  <input id="stageTitleInput" type="text" required />
+                </div>
+                <div class="field">
+                  <label>Type</label>
+                  <input id="stageTypeInput" type="text" required />
+                </div>
+                <div class="field">
+                  <label>Ville</label>
+                  <input id="stageCityInput" type="text" required />
+                </div>
+                <div class="field">
+                  <label>Département</label>
+                  <input id="stageDepartmentInput" type="text" />
+                </div>
+                <div class="field">
+                  <label>Région</label>
+                  <input id="stageRegionInput" type="text" />
+                </div>
+              </div>
+
+              <div class="filters filters-4">
+                <div class="field">
+                  <label>Date</label>
+                  <input id="stageDateInput" type="date" required />
+                </div>
+                <div class="field">
+                  <label>Heure</label>
+                  <input id="stageTimeInput" type="text" placeholder="14:00" />
+                </div>
+                <div class="field">
+                  <label>Durée</label>
+                  <input id="stageDurationInput" type="text" placeholder="3h" />
+                </div>
+                <div class="field">
+                  <label>Prix</label>
+                  <input id="stagePriceInput" type="number" required />
+                </div>
+              </div>
+
+              <div class="filters filters-3">
+                <div class="field">
+                  <label>Places max</label>
+                  <input id="stageMaxParticipantsInput" type="number" value="20" />
+                </div>
+                <div class="field">
+                  <label>Places restantes</label>
+                  <input id="stageRemainingPlacesInput" type="number" value="20" />
+                </div>
+                <div class="field">
+                  <label>Email formateur lié</label>
+                  <input id="stageTrainerEmailInput" type="text" placeholder="trainer@email.fr" />
+                </div>
+              </div>
+
+              <div class="field">
+                <label>Adresse</label>
+                <input id="stageAddressInput" type="text" />
+              </div>
+
+              <div class="field">
+                <label>Description</label>
+                <textarea id="stageDescriptionInput"></textarea>
+              </div>
+
+              <div class="actions-row">
+                <button class="btn btn-primary" type="submit">Créer le stage</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <section id="tab-formations" class="tab-panel">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h2>Formations formateur</h2>
+              <p>Voir et créer les sessions de formation / recyclage.</p>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="filters filters-3">
+              <div class="field">
+                <label>Module</label>
+                <input id="trainerSessionModuleFilter" type="text" placeholder="Module..." />
+              </div>
+              <div class="field">
+                <label>Ville</label>
+                <input id="trainerSessionCityFilter" type="text" placeholder="Ville..." />
+              </div>
+              <div class="field">
+                <label>Statut</label>
+                <select id="trainerSessionStatusFilter">
+                  <option value="">Tous</option>
+                  <option value="open">Ouverte</option>
+                  <option value="closed">Fermée</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="table-wrap" id="trainerSessionsWrap">
+              <div class="loading">Chargement des formations formateur...</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h2>Créer une formation formateur</h2>
+              <p>Nouvelle session de certification ou de recyclage.</p>
+            </div>
+          </div>
+          <div class="card-body">
+            <form id="createTrainerSessionForm">
+              <div class="filters filters-4">
+                <div class="field">
+                  <label>Module</label>
+                  <input id="trainerSessionModuleInput" type="text" required />
+                </div>
+                <div class="field">
+                  <label>Titre</label>
+                  <input id="trainerSessionTitleInput" type="text" required />
+                </div>
+                <div class="field">
+                  <label>Ville</label>
+                  <input id="trainerSessionCityInput" type="text" required />
+                </div>
+                <div class="field">
+                  <label>Adresse</label>
+                  <input id="trainerSessionAddressInput" type="text" />
+                </div>
+              </div>
+
+              <div class="filters filters-4">
+                <div class="field">
+                  <label>Date début</label>
+                  <input id="trainerSessionStartDateInput" type="date" required />
+                </div>
+                <div class="field">
+                  <label>Date fin</label>
+                  <input id="trainerSessionEndDateInput" type="date" required />
+                </div>
+                <div class="field">
+                  <label>Durée (jours)</label>
+                  <input id="trainerSessionDurationInput" type="number" value="3" />
+                </div>
+                <div class="field">
+                  <label>Places max</label>
+                  <input id="trainerSessionMaxPlacesInput" type="number" value="10" />
+                </div>
+              </div>
+
+              <div class="filters filters-4">
+                <div class="field">
+                  <label>Places restantes</label>
+                  <input id="trainerSessionRemainingPlacesInput" type="number" value="10" />
+                </div>
+                <div class="field">
+                  <label>Tarif standard</label>
+                  <input id="trainerSessionStandardPriceInput" type="number" value="590" />
+                </div>
+                <div class="field">
+                  <label>Tarif lancement</label>
+                  <input id="trainerSessionLaunchPriceInput" type="number" value="490" />
+                </div>
+                <div class="field">
+                  <label>Statut</label>
+                  <select id="trainerSessionStatusInput">
+                    <option value="open">open</option>
+                    <option value="closed">closed</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="actions-row">
+                <button class="btn btn-primary" type="submit">Créer la session</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <section id="tab-finances" class="tab-panel">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h2>Pilotage financier</h2>
+              <p>Bilan simplifié par catégorie.</p>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="stats" style="grid-template-columns: repeat(4, minmax(0, 1fr)); margin-bottom: 0;">
+              <div class="stat-card">
+                <span class="stat-label">CA stages</span>
+                <div class="stat-value" id="financeStages">0 €</div>
+              </div>
+              <div class="stat-card">
+                <span class="stat-label">CA formations formateur</span>
+                <div class="stat-value" id="financeTrainer">0 €</div>
+              </div>
+              <div class="stat-card">
+                <span class="stat-label">CA affiliations</span>
+                <div class="stat-value" id="financeAffiliation">0 €</div>
+              </div>
+              <div class="stat-card">
+                <span class="stat-label">Total</span>
+                <div class="stat-value" id="financeTotal">0 €</div>
+              </div>
+            </div>
+
+            <div class="card" style="margin-top: 20px;">
+              <div class="card-header">
+                <div>
+                  <h2>Lecture financière</h2>
+                  <p>Estimation basée sur les données actuellement disponibles en base.</p>
+                </div>
+              </div>
+              <div class="card-body">
+                <p class="muted">
+                  Stages : somme des réservations payées.<br/>
+                  Formations formateur : nombre d’inscriptions capturées × 490 €.<br/>
+                  Affiliations : estimation à partir des affiliations actives créées via renouvellement manuel.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
 
   <script type="module">
     import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
     const SUPABASE_URL = "https://zsraqxzneghkzaozzuci.supabase.co";
     const SUPABASE_KEY = "sb_publishable_VlTpYjzJ3DKpFA1Un_EFHQ_FW-mYK4U";
-
     const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    let reservationsData = [];
+    let stagesData = [];
+    let trainerRegistrationsData = [];
+    let trainersData = [];
+    let trainerSessionsData = [];
 
     const reservationsWrap = document.getElementById("reservationsWrap");
     const stagesWrap = document.getElementById("stagesWrap");
     const trainerRegistrationsWrap = document.getElementById("trainerRegistrationsWrap");
     const trainersWrap = document.getElementById("trainersWrap");
+    const trainerSessionsWrap = document.getElementById("trainerSessionsWrap");
 
     const reservationsCount = document.getElementById("reservationsCount");
     const stagesCount = document.getElementById("stagesCount");
     const revenueCount = document.getElementById("revenueCount");
     const trainerRegistrationsCount = document.getElementById("trainerRegistrationsCount");
     const trainersCount = document.getElementById("trainersCount");
+
+    const expiredAffiliationsCount = document.getElementById("expiredAffiliationsCount");
+    const expiredCertificationsCount = document.getElementById("expiredCertificationsCount");
+    const capturedTrainerPaymentsCount = document.getElementById("capturedTrainerPaymentsCount");
+
+    const financeStages = document.getElementById("financeStages");
+    const financeTrainer = document.getElementById("financeTrainer");
+    const financeAffiliation = document.getElementById("financeAffiliation");
+    const financeTotal = document.getElementById("financeTotal");
 
     function formatDate(dateString) {
       if (!dateString) return "—";
@@ -402,6 +898,28 @@
       return `${Number(value || 0).toFixed(0)} €`;
     }
 
+    function normalize(value) {
+      return String(value || "").trim().toLowerCase();
+    }
+
+    function getToday() {
+      return new Date();
+    }
+
+    function setActiveTab(tabName) {
+      document.querySelectorAll(".nav-btn").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.tab === tabName);
+      });
+
+      document.querySelectorAll(".tab-panel").forEach(panel => {
+        panel.classList.toggle("active", panel.id === `tab-${tabName}`);
+      });
+    }
+
+    document.querySelectorAll(".nav-btn").forEach(btn => {
+      btn.addEventListener("click", () => setActiveTab(btn.dataset.tab));
+    });
+
     function renderReservations(rows) {
       reservationsCount.textContent = rows.length;
       const totalRevenue = rows.reduce((sum, row) => sum + Number(row.total_amount || 0), 0);
@@ -428,19 +946,12 @@
           <tbody>
             ${rows.map(row => `
               <tr>
-                <td>
-                  <strong>${row.first_name || ""} ${row.last_name || ""}</strong>
-                </td>
-                <td>
-                  <strong>${row.email || "—"}</strong>
-                  <span>${row.phone || "—"}</span>
-                </td>
-                <td>
-                  <strong>${row.stage_title || "Stage"}</strong>
-                </td>
+                <td><strong>${row.first_name || ""} ${row.last_name || ""}</strong></td>
+                <td><strong>${row.email || "—"}</strong><span>${row.phone || "—"}</span></td>
+                <td><strong>${row.stage_title || "Stage"}</strong></td>
                 <td>${row.places || 0}</td>
                 <td>${formatPrice(row.total_amount)}</td>
-                <td><span class="badge badge-paid">${row.payment_status || "paid"}</span></td>
+                <td><span class="badge badge-success">${row.payment_status || "paid"}</span></td>
                 <td>${formatDate(row.created_at)}</td>
               </tr>
             `).join("")}
@@ -467,24 +978,19 @@
               <th>Prix</th>
               <th>Places restantes</th>
               <th>Statut</th>
+              <th>Formateur</th>
             </tr>
           </thead>
           <tbody>
             ${rows.map(row => `
               <tr>
-                <td>
-                  <strong>${row.title || "—"}</strong>
-                  <span>${row.training_type || "—"}</span>
-                </td>
+                <td><strong>${row.title || "—"}</strong><span>${row.training_type || "—"}</span></td>
                 <td>${row.city || "—"}</td>
                 <td>${formatStageDate(row.stage_date)}</td>
                 <td>${formatPrice(row.price)}</td>
                 <td>${row.remaining_places ?? 0}</td>
-                <td>
-                  <span class="badge ${Number(row.remaining_places) <= 3 ? "badge-low" : "badge-ok"}">
-                    ${row.status || "published"}
-                  </span>
-                </td>
+                <td><span class="badge ${Number(row.remaining_places) <= 3 ? "badge-warning" : "badge-ok"}">${row.status || "published"}</span></td>
+                <td>${row.trainer_id || "—"}</td>
               </tr>
             `).join("")}
           </tbody>
@@ -494,6 +1000,7 @@
 
     function renderTrainerRegistrations(rows) {
       trainerRegistrationsCount.textContent = rows.length;
+      capturedTrainerPaymentsCount.textContent = rows.filter(r => r.payment_status === "captured").length;
 
       if (!rows.length) {
         trainerRegistrationsWrap.innerHTML = `<div class="empty">Aucun candidat formateur pour le moment.</div>`;
@@ -517,10 +1024,10 @@
           <tbody>
             ${rows.map(row => {
               const paymentBadgeClass =
-                row.payment_status === "captured" ? "badge-captured" : "badge-authorized";
+                row.payment_status === "captured" ? "badge-success" : "badge-ok";
 
               const validationBadgeClass =
-                row.validation_status === "validated" ? "badge-paid" : "badge-pending";
+                row.validation_status === "validated" ? "badge-success" : "badge-warning";
 
               const canCapture =
                 row.payment_status === "authorized" &&
@@ -529,30 +1036,18 @@
 
               return `
                 <tr>
-                  <td>
-                    <strong>${row.first_name || ""} ${row.last_name || ""}</strong>
-                  </td>
-                  <td>
-                    <strong>${row.email || "—"}</strong>
-                    <span>${row.phone || "—"}</span><br/>
-                    <span>${row.city || "—"}</span>
-                  </td>
-                  <td>
-                    <strong>${row.session_id || "—"}</strong>
-                  </td>
-                  <td>
-                    <span class="badge ${paymentBadgeClass}">${row.payment_status || "—"}</span>
-                  </td>
-                  <td>
-                    <span class="badge ${validationBadgeClass}">${row.validation_status || "—"}</span>
-                  </td>
+                  <td><strong>${row.first_name || ""} ${row.last_name || ""}</strong></td>
+                  <td><strong>${row.email || "—"}</strong><span>${row.phone || "—"}</span><br/><span>${row.city || "—"}</span></td>
+                  <td><strong>${row.session_id || "—"}</strong></td>
+                  <td><span class="badge ${paymentBadgeClass}">${row.payment_status || "—"}</span></td>
+                  <td><span class="badge ${validationBadgeClass}">${row.validation_status || "—"}</span></td>
                   <td>${row.training_result || "pending"}</td>
                   <td>${formatDate(row.created_at)}</td>
                   <td>
                     ${
                       canCapture
-                        ? `<button class="action-btn" onclick="window.captureTrainerPayment('${row.id}', '${row.stripe_payment_intent_id}')">Valider et encaisser</button>`
-                        : `<button class="action-btn action-btn-secondary" disabled>Aucune action</button>`
+                        ? `<button class="btn btn-primary" onclick="window.captureTrainerPayment('${row.id}', '${row.stripe_payment_intent_id}')">Valider et encaisser</button>`
+                        : `<button class="btn btn-secondary" disabled>Aucune action</button>`
                     }
                   </td>
                 </tr>
@@ -567,17 +1062,31 @@
       if (!rows.length) {
         trainersWrap.innerHTML = `<div class="empty">Aucun formateur.</div>`;
         trainersCount.textContent = "0";
+        expiredAffiliationsCount.textContent = "0";
+        expiredCertificationsCount.textContent = "0";
         return;
       }
 
-      const today = new Date();
+      const today = getToday();
 
       const activeCount = rows.filter(row => {
         const affExpiry = row.affiliation_end ? new Date(row.affiliation_end) : null;
         return affExpiry && affExpiry >= today && row.affiliation_status === "active";
       }).length;
 
+      const expiredAffiliations = rows.filter(row => {
+        const affExpiry = row.affiliation_end ? new Date(row.affiliation_end) : null;
+        return !affExpiry || affExpiry < today || row.affiliation_status !== "active";
+      }).length;
+
+      const expiredCertifications = rows.filter(row => {
+        const certExpiry = row.certification_expiry ? new Date(row.certification_expiry) : null;
+        return !certExpiry || certExpiry < today;
+      }).length;
+
       trainersCount.textContent = `${activeCount}/${rows.length}`;
+      expiredAffiliationsCount.textContent = expiredAffiliations;
+      expiredCertificationsCount.textContent = expiredCertifications;
 
       trainersWrap.innerHTML = `
         <table>
@@ -586,6 +1095,8 @@
               <th>Nom</th>
               <th>Email</th>
               <th>Ville</th>
+              <th>Département</th>
+              <th>Région</th>
               <th>Certif. expire le</th>
               <th>Affiliation expire le</th>
               <th>Certification</th>
@@ -604,34 +1115,176 @@
 
               return `
                 <tr>
-                  <td>
-                    <strong>${row.first_name || ""} ${row.last_name || ""}</strong>
-                  </td>
+                  <td><strong>${row.first_name || ""} ${row.last_name || ""}</strong></td>
                   <td>${row.email || "—"}</td>
                   <td>${row.city || "—"}</td>
+                  <td>${row.department || "—"}</td>
+                  <td>${row.region || "—"}</td>
                   <td>${formatShortDate(row.certification_expiry)}</td>
                   <td>${formatShortDate(row.affiliation_end)}</td>
-                  <td>
-                    <span class="badge ${certValid ? "badge-active" : "badge-expired"}">
-                      ${certValid ? "Valide" : "Expirée"}
-                    </span>
-                  </td>
-                  <td>
-                    <span class="badge ${affValid ? "badge-active" : "badge-expired"}">
-                      ${affValid ? "Active" : "Expirée"}
-                    </span>
-                  </td>
-                  <td>
-                    <span class="badge ${globalValid ? "badge-active" : "badge-expired"}">
-                      ${globalValid ? "OK" : "À traiter"}
-                    </span>
-                  </td>
+                  <td><span class="badge ${certValid ? "badge-success" : "badge-danger"}">${certValid ? "Valide" : "Expirée"}</span></td>
+                  <td><span class="badge ${affValid ? "badge-success" : "badge-danger"}">${affValid ? "Active" : "Expirée"}</span></td>
+                  <td><span class="badge ${globalValid ? "badge-success" : "badge-danger"}">${globalValid ? "OK" : "À traiter"}</span></td>
                 </tr>
               `;
             }).join("")}
           </tbody>
         </table>
       `;
+    }
+
+    function renderTrainerSessions(rows) {
+      if (!rows.length) {
+        trainerSessionsWrap.innerHTML = `<div class="empty">Aucune formation formateur.</div>`;
+        return;
+      }
+
+      trainerSessionsWrap.innerHTML = `
+        <table>
+          <thead>
+            <tr>
+              <th>Module</th>
+              <th>Titre</th>
+              <th>Ville</th>
+              <th>Début</th>
+              <th>Fin</th>
+              <th>Prix lancement</th>
+              <th>Places restantes</th>
+              <th>Statut</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rows.map(row => `
+              <tr>
+                <td><strong>${row.module_name || "—"}</strong></td>
+                <td>${row.title || "—"}</td>
+                <td>${row.city || "—"}</td>
+                <td>${formatShortDate(row.start_date)}</td>
+                <td>${formatShortDate(row.end_date)}</td>
+                <td>${formatPrice(row.launch_price)}</td>
+                <td>${row.remaining_places ?? 0}</td>
+                <td><span class="badge ${row.status === "open" ? "badge-success" : "badge-warning"}">${row.status || "—"}</span></td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+      `;
+    }
+
+    function updateFinance() {
+      const stageRevenue = reservationsData.reduce((sum, row) => sum + Number(row.total_amount || 0), 0);
+      const trainerRevenue = trainerRegistrationsData
+        .filter(r => r.payment_status === "captured")
+        .reduce((sum) => sum + 490, 0);
+
+      const affiliationRevenue = trainersData
+        .filter(t => t.affiliation_status === "active" && t.affiliation_start)
+        .reduce((sum) => sum + 99, 0);
+
+      const total = stageRevenue + trainerRevenue + affiliationRevenue;
+
+      financeStages.textContent = formatPrice(stageRevenue);
+      financeTrainer.textContent = formatPrice(trainerRevenue);
+      financeAffiliation.textContent = formatPrice(affiliationRevenue);
+      financeTotal.textContent = formatPrice(total);
+    }
+
+    function applyCandidateFilters() {
+      const search = normalize(document.getElementById("candidateSearch").value);
+      const validation = document.getElementById("candidateValidationFilter").value;
+      const result = document.getElementById("candidateResultFilter").value;
+      const payment = document.getElementById("candidatePaymentFilter").value;
+
+      const filtered = trainerRegistrationsData.filter(row => {
+        const text = [
+          row.first_name,
+          row.last_name,
+          row.email,
+          row.city,
+          row.phone
+        ].map(normalize).join(" ");
+
+        const searchOk = !search || text.includes(search);
+        const validationOk = !validation || row.validation_status === validation;
+        const resultOk = !result || (row.training_result || "pending") === result;
+        const paymentOk = !payment || row.payment_status === payment;
+
+        return searchOk && validationOk && resultOk && paymentOk;
+      });
+
+      renderTrainerRegistrations(filtered);
+    }
+
+    function applyTrainerFilters() {
+      const search = normalize(document.getElementById("trainerSearch").value);
+      const region = normalize(document.getElementById("trainerRegionFilter").value);
+      const department = normalize(document.getElementById("trainerDepartmentFilter").value);
+      const city = normalize(document.getElementById("trainerCityFilter").value);
+      const affiliation = document.getElementById("trainerAffiliationFilter").value;
+      const certification = document.getElementById("trainerCertificationFilter").value;
+
+      const today = getToday();
+
+      const filtered = trainersData.filter(row => {
+        const certExpiry = row.certification_expiry ? new Date(row.certification_expiry) : null;
+        const affExpiry = row.affiliation_end ? new Date(row.affiliation_end) : null;
+
+        const certValid = certExpiry && certExpiry >= today;
+        const affValid = affExpiry && affExpiry >= today && row.affiliation_status === "active";
+
+        const text = [row.first_name, row.last_name, row.email].map(normalize).join(" ");
+
+        const searchOk = !search || text.includes(search);
+        const regionOk = !region || normalize(row.region).includes(region);
+        const departmentOk = !department || normalize(row.department).includes(department);
+        const cityOk = !city || normalize(row.city).includes(city);
+        const affiliationOk =
+          !affiliation ||
+          (affiliation === "active" && affValid) ||
+          (affiliation === "expired" && !affValid);
+        const certificationOk =
+          !certification ||
+          (certification === "valid" && certValid) ||
+          (certification === "expired" && !certValid);
+
+        return searchOk && regionOk && departmentOk && cityOk && affiliationOk && certificationOk;
+      });
+
+      renderTrainers(filtered);
+    }
+
+    function applyStageFilters() {
+      const region = normalize(document.getElementById("stageRegionFilter").value);
+      const department = normalize(document.getElementById("stageDepartmentFilter").value);
+      const city = normalize(document.getElementById("stageCityFilter").value);
+      const trainer = normalize(document.getElementById("stageTrainerFilter").value);
+      const status = document.getElementById("stageStatusFilter").value;
+
+      const filtered = stagesData.filter(row => {
+        const regionOk = !region || normalize(row.region).includes(region);
+        const departmentOk = !department || normalize(row.department).includes(department);
+        const cityOk = !city || normalize(row.city).includes(city);
+        const trainerOk = !trainer || normalize(row.trainer_id).includes(trainer);
+        const statusOk = !status || row.status === status;
+        return regionOk && departmentOk && cityOk && trainerOk && statusOk;
+      });
+
+      renderStages(filtered);
+    }
+
+    function applyTrainerSessionFilters() {
+      const moduleValue = normalize(document.getElementById("trainerSessionModuleFilter").value);
+      const city = normalize(document.getElementById("trainerSessionCityFilter").value);
+      const status = document.getElementById("trainerSessionStatusFilter").value;
+
+      const filtered = trainerSessionsData.filter(row => {
+        const moduleOk = !moduleValue || normalize(row.module_name).includes(moduleValue);
+        const cityOk = !city || normalize(row.city).includes(city);
+        const statusOk = !status || row.status === status;
+        return moduleOk && cityOk && statusOk;
+      });
+
+      renderTrainerSessions(filtered);
     }
 
     async function loadReservations() {
@@ -646,7 +1299,9 @@
         return;
       }
 
-      renderReservations(data || []);
+      reservationsData = data || [];
+      renderReservations(reservationsData);
+      updateFinance();
     }
 
     async function loadStages() {
@@ -661,7 +1316,8 @@
         return;
       }
 
-      renderStages(data || []);
+      stagesData = data || [];
+      renderStages(stagesData);
     }
 
     async function loadTrainerRegistrations() {
@@ -676,7 +1332,9 @@
         return;
       }
 
-      renderTrainerRegistrations(data || []);
+      trainerRegistrationsData = data || [];
+      renderTrainerRegistrations(trainerRegistrationsData);
+      updateFinance();
     }
 
     async function loadTrainers() {
@@ -691,7 +1349,25 @@
         return;
       }
 
-      renderTrainers(data || []);
+      trainersData = data || [];
+      renderTrainers(trainersData);
+      updateFinance();
+    }
+
+    async function loadTrainerSessions() {
+      const { data, error } = await supabase
+        .from("trainer_sessions")
+        .select("*")
+        .order("start_date", { ascending: true });
+
+      if (error) {
+        console.error(error);
+        trainerSessionsWrap.innerHTML = `<div class="error">Impossible de charger les formations formateur.</div>`;
+        return;
+      }
+
+      trainerSessionsData = data || [];
+      renderTrainerSessions(trainerSessionsData);
     }
 
     window.captureTrainerPayment = async (registrationId, paymentIntentId) => {
@@ -726,10 +1402,111 @@
       }
     };
 
+    document.getElementById("candidateSearch").addEventListener("input", applyCandidateFilters);
+    document.getElementById("candidateValidationFilter").addEventListener("change", applyCandidateFilters);
+    document.getElementById("candidateResultFilter").addEventListener("change", applyCandidateFilters);
+    document.getElementById("candidatePaymentFilter").addEventListener("change", applyCandidateFilters);
+
+    document.getElementById("trainerSearch").addEventListener("input", applyTrainerFilters);
+    document.getElementById("trainerRegionFilter").addEventListener("input", applyTrainerFilters);
+    document.getElementById("trainerDepartmentFilter").addEventListener("input", applyTrainerFilters);
+    document.getElementById("trainerCityFilter").addEventListener("input", applyTrainerFilters);
+    document.getElementById("trainerAffiliationFilter").addEventListener("change", applyTrainerFilters);
+    document.getElementById("trainerCertificationFilter").addEventListener("change", applyTrainerFilters);
+
+    document.getElementById("stageRegionFilter").addEventListener("input", applyStageFilters);
+    document.getElementById("stageDepartmentFilter").addEventListener("input", applyStageFilters);
+    document.getElementById("stageCityFilter").addEventListener("input", applyStageFilters);
+    document.getElementById("stageTrainerFilter").addEventListener("input", applyStageFilters);
+    document.getElementById("stageStatusFilter").addEventListener("change", applyStageFilters);
+
+    document.getElementById("trainerSessionModuleFilter").addEventListener("input", applyTrainerSessionFilters);
+    document.getElementById("trainerSessionCityFilter").addEventListener("input", applyTrainerSessionFilters);
+    document.getElementById("trainerSessionStatusFilter").addEventListener("change", applyTrainerSessionFilters);
+
+    document.getElementById("createStageForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const trainerEmail = document.getElementById("stageTrainerEmailInput").value.trim().toLowerCase();
+      let trainerId = null;
+
+      if (trainerEmail) {
+        const { data: trainer } = await supabase
+          .from("trainers")
+          .select("id")
+          .eq("email", trainerEmail)
+          .maybeSingle();
+
+        trainerId = trainer?.id || null;
+      }
+
+      const payload = {
+        trainer_id: trainerId,
+        title: document.getElementById("stageTitleInput").value,
+        training_type: document.getElementById("stageTypeInput").value,
+        description: document.getElementById("stageDescriptionInput").value,
+        city: document.getElementById("stageCityInput").value,
+        department: document.getElementById("stageDepartmentInput").value,
+        region: document.getElementById("stageRegionInput").value,
+        address: document.getElementById("stageAddressInput").value,
+        stage_date: document.getElementById("stageDateInput").value,
+        start_time: document.getElementById("stageTimeInput").value,
+        duration: document.getElementById("stageDurationInput").value,
+        max_participants: Number(document.getElementById("stageMaxParticipantsInput").value || 20),
+        remaining_places: Number(document.getElementById("stageRemainingPlacesInput").value || 20),
+        price: Number(document.getElementById("stagePriceInput").value || 0),
+        status: "published"
+      };
+
+      const { error } = await supabase.from("stages").insert(payload);
+
+      if (error) {
+        alert("Erreur lors de la création du stage.");
+        console.error(error);
+        return;
+      }
+
+      alert("Stage créé avec succès.");
+      e.target.reset();
+      await loadStages();
+    });
+
+    document.getElementById("createTrainerSessionForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const payload = {
+        module_name: document.getElementById("trainerSessionModuleInput").value,
+        title: document.getElementById("trainerSessionTitleInput").value,
+        city: document.getElementById("trainerSessionCityInput").value,
+        address: document.getElementById("trainerSessionAddressInput").value,
+        start_date: document.getElementById("trainerSessionStartDateInput").value,
+        end_date: document.getElementById("trainerSessionEndDateInput").value,
+        duration_days: Number(document.getElementById("trainerSessionDurationInput").value || 3),
+        max_places: Number(document.getElementById("trainerSessionMaxPlacesInput").value || 10),
+        remaining_places: Number(document.getElementById("trainerSessionRemainingPlacesInput").value || 10),
+        standard_price: Number(document.getElementById("trainerSessionStandardPriceInput").value || 590),
+        launch_price: Number(document.getElementById("trainerSessionLaunchPriceInput").value || 490),
+        status: document.getElementById("trainerSessionStatusInput").value
+      };
+
+      const { error } = await supabase.from("trainer_sessions").insert(payload);
+
+      if (error) {
+        alert("Erreur lors de la création de la session formateur.");
+        console.error(error);
+        return;
+      }
+
+      alert("Session formateur créée avec succès.");
+      e.target.reset();
+      await loadTrainerSessions();
+    });
+
     loadReservations();
     loadStages();
     loadTrainerRegistrations();
     loadTrainers();
+    loadTrainerSessions();
   </script>
 </body>
 </html>
