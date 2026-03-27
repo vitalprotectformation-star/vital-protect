@@ -31,6 +31,12 @@ function normalizeEmail(value) {
   return String(value || "").trim().toLowerCase();
 }
 
+function addYears(date, years) {
+  const d = new Date(date);
+  d.setFullYear(d.getFullYear() + years);
+  return d.toISOString().split("T")[0];
+}
+
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).send("Method not allowed");
@@ -49,6 +55,61 @@ export default async function handler(req, res) {
     if (event.type === "checkout.session.completed") {
       const session = event.data.object;
       const metadata = session.metadata || {};
+
+      // =========================================
+      // CAS AFFILIATION
+      // =========================================
+      if (metadata.type === "affiliation") {
+        const email = normalizeEmail(metadata.email || session.customer_email || "");
+
+        if (!email) {
+          return res.status(400).send("Missing email for affiliation");
+        }
+
+        const today = new Date().toISOString();
+        const affiliationStart = today.split("T")[0];
+        const affiliationEnd = addYears(today, 1);
+
+        const { error: affiliationUpdateError } = await supabase
+          .from("trainers")
+          .update({
+            affiliation_status: "active",
+            affiliation_start: affiliationStart,
+            affiliation_end: affiliationEnd
+          })
+          .eq("email", email);
+
+        if (affiliationUpdateError) {
+          console.error("Supabase affiliation update error:", affiliationUpdateError);
+          return res.status(500).send("Failed to update affiliation");
+        }
+
+        try {
+          const emailResponse = await resend.emails.send({
+            from: "VITAL PROTECT <contact@vital-protect.fr>",
+            to: email,
+            replyTo: "contact@vital-protect.fr",
+            subject: "Affiliation renouvelée avec succès",
+            html: `
+              <h2>Affiliation renouvelée ✅</h2>
+              <p>Bonjour,</p>
+              <p>Votre affiliation <strong>VITAL PROTECT</strong> a bien été renouvelée.</p>
+              <ul>
+                <li><strong>Début :</strong> ${affiliationStart}</li>
+                <li><strong>Fin :</strong> ${affiliationEnd}</li>
+              </ul>
+              <p>Merci pour votre confiance.</p>
+              <p><strong>VITAL PROTECT</strong></p>
+            `
+          });
+
+          console.log("Email affiliation envoyé :", emailResponse);
+        } catch (emailError) {
+          console.error("Resend affiliation email error:", emailError);
+        }
+
+        return res.status(200).json({ received: true });
+      }
 
       // =========================================
       // CAS FORMATEUR
