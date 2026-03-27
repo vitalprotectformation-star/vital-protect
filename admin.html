@@ -99,6 +99,11 @@
 
     .page-header {
       margin-bottom: 22px;
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      gap: 16px;
+      flex-wrap: wrap;
     }
 
     .page-title {
@@ -386,8 +391,13 @@
 
     <main class="content">
       <div class="page-header">
-        <h1 class="page-title">Administration VITAL PROTECT</h1>
-        <p class="page-subtitle">Pilotage global du réseau, des stages, des formateurs, des candidatures et des finances.</p>
+        <div>
+          <h1 class="page-title">Administration VITAL PROTECT</h1>
+          <p class="page-subtitle">Pilotage global du réseau, des stages, des formateurs, des candidatures et des finances.</p>
+        </div>
+        <div class="actions-row">
+          <button id="logoutBtn" class="btn btn-secondary" type="button">Déconnexion</button>
+        </div>
       </div>
 
       <section id="tab-dashboard" class="tab-panel active">
@@ -835,6 +845,39 @@
     const SUPABASE_KEY = "sb_publishable_VlTpYjzJ3DKpFA1Un_EFHQ_FW-mYK4U";
     const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
+    async function requireAdmin() {
+      const {
+        data: { session }
+      } = await supabase.auth.getSession();
+
+      if (!session?.user?.email) {
+        window.location.href = "/admin-login.html";
+        return null;
+      }
+
+      const email = session.user.email.trim().toLowerCase();
+
+      const { data: adminUser, error } = await supabase
+        .from("admin_users")
+        .select("*")
+        .eq("email", email)
+        .maybeSingle();
+
+      if (error) {
+        console.error("Erreur vérification admin:", error);
+        window.location.href = "/admin-login.html";
+        return null;
+      }
+
+      if (!adminUser) {
+        await supabase.auth.signOut();
+        window.location.href = "/admin-login.html";
+        return null;
+      }
+
+      return session.user;
+    }
+
     let reservationsData = [];
     let stagesData = [];
     let trainerRegistrationsData = [];
@@ -861,6 +904,15 @@
     const financeTrainer = document.getElementById("financeTrainer");
     const financeAffiliation = document.getElementById("financeAffiliation");
     const financeTotal = document.getElementById("financeTotal");
+
+    const logoutBtn = document.getElementById("logoutBtn");
+
+    if (logoutBtn) {
+      logoutBtn.addEventListener("click", async () => {
+        await supabase.auth.signOut();
+        window.location.href = "/admin-login.html";
+      });
+    }
 
     function formatDate(dateString) {
       if (!dateString) return "—";
@@ -1502,11 +1554,15 @@
       await loadTrainerSessions();
     });
 
-    loadReservations();
-    loadStages();
-    loadTrainerRegistrations();
-    loadTrainers();
-    loadTrainerSessions();
+    const adminUser = await requireAdmin();
+
+    if (adminUser) {
+      loadReservations();
+      loadStages();
+      loadTrainerRegistrations();
+      loadTrainers();
+      loadTrainerSessions();
+    }
   </script>
 </body>
 </html>
