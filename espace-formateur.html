@@ -171,6 +171,48 @@ ${trainers.map(t => `- ${t.email}`).join("\n") || "Aucun"}
   const certValid = certExpiry ? certExpiry >= today : false;
   const affValid = affExpiry ? affExpiry >= today : false;
 
+  // 🔒 BLOCAGE TOTAL SI AFFILIATION EXPIREE
+  if (!affValid) {
+    app.innerHTML = `
+      <h2>Accès bloqué</h2>
+
+      <p class="status-bad">
+        Votre affiliation n'est plus active.
+      </p>
+
+      <p>
+        Pour continuer à utiliser la plateforme VITAL PROTECT,
+        vous devez renouveler votre affiliation.
+      </p>
+
+      <div class="blocked-box">
+        <div class="blocked-title">Affiliation expirée</div>
+        <p>
+          Votre espace formateur est temporairement bloqué jusqu’au renouvellement de votre affiliation.
+        </p>
+        <p>
+          Date de fin d’affiliation : <strong>${trainer.affiliation_end || "—"}</strong>
+        </p>
+      </div>
+
+      <button id="renewAffiliationBtn">Renouveler mon affiliation</button>
+
+      <div class="debug">
+Email URL : ${cleanEmail}
+Email trouvé : ${trainer.email}
+ID formateur : ${trainer.id}
+Affiliation active : ${affValid}
+      </div>
+    `;
+
+    document
+      .getElementById("renewAffiliationBtn")
+      .addEventListener("click", () => payAffiliation(trainer.email));
+
+    return;
+  }
+
+  // ✅ ESPACE NORMAL SI AFFILIATION ACTIVE
   app.innerHTML = `
     <h2>${trainer.first_name || ""} ${trainer.last_name || ""}</h2>
 
@@ -196,36 +238,18 @@ ${trainers.map(t => `- ${t.email}`).join("\n") || "Aucun"}
     <p>Début affiliation : ${trainer.affiliation_start || "—"}</p>
     <p>Expire le : ${trainer.affiliation_end || "—"}</p>
 
-    ${
-      !affValid
-        ? `
-          <div class="blocked-box">
-            <div class="blocked-title">Accès limité</div>
-            <p>Votre affiliation n’est plus à jour. Vous devez la renouveler pour continuer à utiliser pleinement la plateforme VITAL PROTECT.</p>
-            <button id="renewAffiliationBtn">Renouveler mon affiliation</button>
-          </div>
-        `
-        : `
-          <div class="blocked-box" style="background:#eaf8f0;border-color:#cfeedd;">
-            <div class="blocked-title" style="color:#0f9d58;">Accès actif</div>
-            <p>Votre affiliation est à jour. Vous pouvez continuer à utiliser la plateforme normalement.</p>
-          </div>
-        `
-    }
+    <div class="blocked-box" style="background:#eaf8f0;border-color:#cfeedd;">
+      <div class="blocked-title" style="color:#0f9d58;">Accès actif</div>
+      <p>Votre affiliation est à jour. Vous pouvez continuer à utiliser la plateforme normalement.</p>
+    </div>
 
     <div class="debug">
 Email URL : ${cleanEmail}
 Email trouvé : ${trainer.email}
 ID formateur : ${trainer.id}
+Affiliation active : ${affValid}
     </div>
   `;
-
-  if (!affValid) {
-    const renewBtn = document.getElementById("renewAffiliationBtn");
-    if (renewBtn) {
-      renewBtn.addEventListener("click", () => payAffiliation(trainer.email));
-    }
-  }
 }
 
 load();
