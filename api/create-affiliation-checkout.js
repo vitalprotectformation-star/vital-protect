@@ -2,14 +2,25 @@ import Stripe from "stripe";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
+function normalizeEmail(value) {
+  return String(value || "").trim().toLowerCase();
+}
+
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).send("Method not allowed");
   }
 
-  const { email } = req.body;
-
   try {
+    const { email } = req.body;
+    const cleanEmail = normalizeEmail(email);
+
+    if (!cleanEmail) {
+      return res.status(400).json({ error: "Email manquant" });
+    }
+
+    const origin = req.headers.origin || "https://www.vital-protect.fr";
+
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
       mode: "payment",
@@ -21,24 +32,24 @@ export default async function handler(req, res) {
             product_data: {
               name: "Affiliation VITAL PROTECT (1 an)"
             },
-            unit_amount: 9900 // 99€
+            unit_amount: 9900
           },
           quantity: 1
         }
       ],
 
-      success_url: "https://www.vital-protect.fr/success.html",
-      cancel_url: "https://www.vital-protect.fr/cancel.html",
-
       metadata: {
         type: "affiliation",
-        email: email
-      }
+        email: cleanEmail
+      },
+
+      success_url: `${origin}/espace-formateur.html?email=${encodeURIComponent(cleanEmail)}`,
+      cancel_url: `${origin}/espace-formateur.html?email=${encodeURIComponent(cleanEmail)}`
     });
 
-    res.status(200).json({ url: session.url });
+    return res.status(200).json({ url: session.url });
   } catch (err) {
-    console.error(err);
-    res.status(500).send("Erreur Stripe");
+    console.error("Stripe affiliation checkout error:", err);
+    return res.status(500).json({ error: "Erreur Stripe" });
   }
 }
