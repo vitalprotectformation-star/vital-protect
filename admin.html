@@ -269,6 +269,11 @@
       color: white;
     }
 
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
     .table-wrap {
       overflow-x: auto;
     }
@@ -296,6 +301,11 @@
     td strong {
       display: block;
       margin-bottom: 4px;
+    }
+
+    td span {
+      color: var(--muted);
+      font-size: 0.92rem;
     }
 
     .badge {
@@ -342,6 +352,10 @@
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 16px;
+    }
+
+    .section-spacer {
+      margin-top: 24px;
     }
 
     @media (max-width: 1200px) {
@@ -445,6 +459,20 @@
                 <span class="stat-label">Paiements formateurs capturés</span>
                 <div class="stat-value" id="capturedTrainerPaymentsCount">0</div>
               </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card section-spacer">
+          <div class="card-header">
+            <div>
+              <h2>Dernières réservations stages</h2>
+              <p>Vue rapide des réservations clients encaissées.</p>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="table-wrap" id="reservationsWrap">
+              <div class="loading">Chargement des réservations...</div>
             </div>
           </div>
         </div>
@@ -575,8 +603,8 @@
                 <input id="stageCityFilter" type="text" placeholder="Ville..." />
               </div>
               <div class="field">
-                <label>Formateur (email)</label>
-                <input id="stageTrainerFilter" type="text" placeholder="Email formateur..." />
+                <label>Formateur (ID / email lié)</label>
+                <input id="stageTrainerFilter" type="text" placeholder="Identifiant formateur..." />
               </div>
               <div class="field">
                 <label>Statut</label>
@@ -826,9 +854,9 @@
               </div>
               <div class="card-body">
                 <p class="muted">
-                  Stages : somme des réservations payées.<br/>
-                  Formations formateur : nombre d’inscriptions capturées × 490 €.<br/>
-                  Affiliations : estimation à partir des affiliations actives créées via renouvellement manuel.
+                  Stages : somme des réservations payées.<br />
+                  Formations formateur : somme basée sur les inscriptions capturées.<br />
+                  Affiliations : estimation simple sur les affiliations actives.
                 </p>
               </div>
             </div>
@@ -844,39 +872,6 @@
     const SUPABASE_URL = "https://zsraqxzneghkzaozzuci.supabase.co";
     const SUPABASE_KEY = "sb_publishable_VlTpYjzJ3DKpFA1Un_EFHQ_FW-mYK4U";
     const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
-
-    async function requireAdmin() {
-      const {
-        data: { session }
-      } = await supabase.auth.getSession();
-
-      if (!session?.user?.email) {
-        window.location.href = "/admin-login.html";
-        return null;
-      }
-
-      const email = session.user.email.trim().toLowerCase();
-
-      const { data: adminUser, error } = await supabase
-        .from("admin_users")
-        .select("*")
-        .eq("email", email)
-        .maybeSingle();
-
-      if (error) {
-        console.error("Erreur vérification admin:", error);
-        window.location.href = "/admin-login.html";
-        return null;
-      }
-
-      if (!adminUser) {
-        await supabase.auth.signOut();
-        window.location.href = "/admin-login.html";
-        return null;
-      }
-
-      return session.user;
-    }
 
     let reservationsData = [];
     let stagesData = [];
@@ -907,6 +902,45 @@
 
     const logoutBtn = document.getElementById("logoutBtn");
 
+    async function requireAdmin() {
+      let {
+        data: { session }
+      } = await supabase.auth.getSession();
+
+      if (!session?.user?.email) {
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        const retry = await supabase.auth.getSession();
+        session = retry.data.session;
+      }
+
+      if (!session?.user?.email) {
+        window.location.href = "/admin-login.html";
+        return null;
+      }
+
+      const email = session.user.email.trim().toLowerCase();
+
+      const { data: adminUser, error } = await supabase
+        .from("admin_users")
+        .select("*")
+        .eq("email", email)
+        .maybeSingle();
+
+      if (error) {
+        console.error("Erreur vérification admin:", error);
+        window.location.href = "/admin-login.html";
+        return null;
+      }
+
+      if (!adminUser) {
+        await supabase.auth.signOut();
+        window.location.href = "/admin-login.html";
+        return null;
+      }
+
+      return session.user;
+    }
+
     if (logoutBtn) {
       logoutBtn.addEventListener("click", async () => {
         await supabase.auth.signOut();
@@ -917,6 +951,7 @@
     function formatDate(dateString) {
       if (!dateString) return "—";
       const date = new Date(dateString);
+      if (Number.isNaN(date.getTime())) return "—";
       return date.toLocaleDateString("fr-FR", {
         day: "2-digit",
         month: "2-digit",
@@ -929,6 +964,7 @@
     function formatShortDate(dateString) {
       if (!dateString) return "—";
       const date = new Date(dateString);
+      if (Number.isNaN(date.getTime())) return "—";
       return date.toLocaleDateString("fr-FR", {
         day: "2-digit",
         month: "2-digit",
@@ -939,6 +975,7 @@
     function formatStageDate(dateString) {
       if (!dateString) return "—";
       const date = new Date(dateString);
+      if (Number.isNaN(date.getTime())) return "—";
       return date.toLocaleDateString("fr-FR", {
         day: "2-digit",
         month: "long",
@@ -955,7 +992,9 @@
     }
 
     function getToday() {
-      return new Date();
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      return today;
     }
 
     function setActiveTab(tabName) {
@@ -974,7 +1013,11 @@
 
     function renderReservations(rows) {
       reservationsCount.textContent = rows.length;
-      const totalRevenue = rows.reduce((sum, row) => sum + Number(row.total_amount || 0), 0);
+
+      const totalRevenue = rows
+        .filter(row => normalize(row.payment_status) === "paid")
+        .reduce((sum, row) => sum + Number(row.total_amount || 0), 0);
+
       revenueCount.textContent = formatPrice(totalRevenue);
 
       if (!rows.length) {
@@ -999,8 +1042,11 @@
             ${rows.map(row => `
               <tr>
                 <td><strong>${row.first_name || ""} ${row.last_name || ""}</strong></td>
-                <td><strong>${row.email || "—"}</strong><span>${row.phone || "—"}</span></td>
-                <td><strong>${row.stage_title || "Stage"}</strong></td>
+                <td>
+                  <strong>${row.email || "—"}</strong>
+                  <span>${row.phone || "—"}</span>
+                </td>
+                <td><strong>${row.stage_title || row.stage_id || "Stage"}</strong></td>
                 <td>${row.places || 0}</td>
                 <td>${formatPrice(row.total_amount)}</td>
                 <td><span class="badge badge-success">${row.payment_status || "paid"}</span></td>
@@ -1030,7 +1076,7 @@
               <th>Prix</th>
               <th>Places restantes</th>
               <th>Statut</th>
-              <th>Formateur</th>
+              <th>Formateur lié</th>
             </tr>
           </thead>
           <tbody>
@@ -1041,7 +1087,11 @@
                 <td>${formatStageDate(row.stage_date)}</td>
                 <td>${formatPrice(row.price)}</td>
                 <td>${row.remaining_places ?? 0}</td>
-                <td><span class="badge ${Number(row.remaining_places) <= 3 ? "badge-warning" : "badge-ok"}">${row.status || "published"}</span></td>
+                <td>
+                  <span class="badge ${normalize(row.status) === "published" ? "badge-success" : "badge-warning"}">
+                    ${row.status || "published"}
+                  </span>
+                </td>
                 <td>${row.trainer_id || "—"}</td>
               </tr>
             `).join("")}
@@ -1076,10 +1126,17 @@
           <tbody>
             ${rows.map(row => {
               const paymentBadgeClass =
-                row.payment_status === "captured" ? "badge-success" : "badge-ok";
+                row.payment_status === "captured" ? "badge-success" :
+                row.payment_status === "authorized" ? "badge-ok" :
+                "badge-warning";
 
               const validationBadgeClass =
                 row.validation_status === "validated" ? "badge-success" : "badge-warning";
+
+              const resultBadgeClass =
+                row.training_result === "passed" ? "badge-success" :
+                row.training_result === "failed" ? "badge-danger" :
+                "badge-warning";
 
               const canCapture =
                 row.payment_status === "authorized" &&
@@ -1089,11 +1146,15 @@
               return `
                 <tr>
                   <td><strong>${row.first_name || ""} ${row.last_name || ""}</strong></td>
-                  <td><strong>${row.email || "—"}</strong><span>${row.phone || "—"}</span><br/><span>${row.city || "—"}</span></td>
+                  <td>
+                    <strong>${row.email || "—"}</strong>
+                    <span>${row.phone || "—"}</span><br />
+                    <span>${row.city || "—"}</span>
+                  </td>
                   <td><strong>${row.session_id || "—"}</strong></td>
                   <td><span class="badge ${paymentBadgeClass}">${row.payment_status || "—"}</span></td>
                   <td><span class="badge ${validationBadgeClass}">${row.validation_status || "—"}</span></td>
-                  <td>${row.training_result || "pending"}</td>
+                  <td><span class="badge ${resultBadgeClass}">${row.training_result || "pending"}</span></td>
                   <td>${formatDate(row.created_at)}</td>
                   <td>
                     ${
@@ -1213,7 +1274,7 @@
                 <td>${row.city || "—"}</td>
                 <td>${formatShortDate(row.start_date)}</td>
                 <td>${formatShortDate(row.end_date)}</td>
-                <td>${formatPrice(row.launch_price)}</td>
+                <td>${formatPrice(row.launch_price || row.standard_price || 0)}</td>
                 <td>${row.remaining_places ?? 0}</td>
                 <td><span class="badge ${row.status === "open" ? "badge-success" : "badge-warning"}">${row.status || "—"}</span></td>
               </tr>
@@ -1224,10 +1285,17 @@
     }
 
     function updateFinance() {
-      const stageRevenue = reservationsData.reduce((sum, row) => sum + Number(row.total_amount || 0), 0);
+      const stageRevenue = reservationsData
+        .filter(r => normalize(r.payment_status) === "paid")
+        .reduce((sum, row) => sum + Number(row.total_amount || 0), 0);
+
       const trainerRevenue = trainerRegistrationsData
         .filter(r => r.payment_status === "captured")
-        .reduce((sum) => sum + 490, 0);
+        .reduce((sum, row) => {
+          if (row.amount_total) return sum + Number(row.amount_total || 0);
+          if (row.amount) return sum + Number(row.amount || 0);
+          return sum + 490;
+        }, 0);
 
       const affiliationRevenue = trainersData
         .filter(t => t.affiliation_status === "active" && t.affiliation_start)
@@ -1253,7 +1321,8 @@
           row.last_name,
           row.email,
           row.city,
-          row.phone
+          row.phone,
+          row.session_id
         ].map(normalize).join(" ");
 
         const searchOk = !search || text.includes(search);
@@ -1445,7 +1514,7 @@
           await loadTrainerRegistrations();
           await loadTrainers();
         } else {
-          alert("Erreur lors de la capture du paiement.");
+          alert(result.error || "Erreur lors de la capture du paiement.");
           console.error(result);
         }
       } catch (error) {
@@ -1483,11 +1552,15 @@
       let trainerId = null;
 
       if (trainerEmail) {
-        const { data: trainer } = await supabase
+        const { data: trainer, error: trainerError } = await supabase
           .from("trainers")
           .select("id")
           .eq("email", trainerEmail)
           .maybeSingle();
+
+        if (trainerError) {
+          console.error(trainerError);
+        }
 
         trainerId = trainer?.id || null;
       }
@@ -1557,11 +1630,11 @@
     const adminUser = await requireAdmin();
 
     if (adminUser) {
-      loadReservations();
-      loadStages();
-      loadTrainerRegistrations();
-      loadTrainers();
-      loadTrainerSessions();
+      await loadReservations();
+      await loadStages();
+      await loadTrainerRegistrations();
+      await loadTrainers();
+      await loadTrainerSessions();
     }
   </script>
 </body>
