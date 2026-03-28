@@ -140,11 +140,11 @@
       }
 
       const { error } = await supabase.auth.signInWithOtp({
-        email,
-        options: {
-          emailRedirectTo: `${window.location.origin}/admin.html`
-        }
-      });
+  email,
+  options: {
+    emailRedirectTo: `${window.location.origin}/auth/callback.html`
+  }
+});
 
       if (error) {
         console.error(error);
