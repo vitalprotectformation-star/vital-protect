@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Connexion Admin — VITAL PROTECT</title>
+
   <style>
     :root {
       --navy: #0b2e59;
@@ -58,7 +59,6 @@
       display: block;
       margin-bottom: 6px;
       font-weight: 700;
-      color: var(--text);
     }
 
     input {
@@ -72,7 +72,7 @@
     .btn {
       border: none;
       border-radius: 12px;
-      padding: 12px 16px;
+      padding: 12px;
       font-size: 1rem;
       font-weight: 700;
       cursor: pointer;
@@ -88,18 +88,21 @@
     }
   </style>
 </head>
+
 <body>
   <div class="card">
     <h1>Connexion admin</h1>
-    <p>Connectez-vous avec votre email autorisé pour accéder au cockpit VITAL PROTECT.</p>
+    <p>Accédez au cockpit VITAL PROTECT via votre email autorisé.</p>
 
     <form id="loginForm">
       <div class="field">
-        <label for="email">Email admin</label>
+        <label>Email admin</label>
         <input type="email" id="email" required placeholder="admin@vital-protect.fr" />
       </div>
 
-      <button type="submit" class="btn">Recevoir mon lien de connexion</button>
+      <button type="submit" class="btn">
+        Recevoir mon lien de connexion
+      </button>
     </form>
 
     <div class="status" id="status"></div>
@@ -120,8 +123,10 @@
       e.preventDefault();
 
       const email = document.getElementById("email").value.trim().toLowerCase();
+
       status.textContent = "Vérification de l'accès...";
 
+      // 🔐 Vérification admin
       const { data: adminUser, error: adminError } = await supabase
         .from("admin_users")
         .select("*")
@@ -129,30 +134,36 @@
         .maybeSingle();
 
       if (adminError) {
-        console.error(adminError);
-        status.textContent = "Erreur lors de la vérification admin.";
+        console.error("Erreur admin:", adminError);
+        status.textContent = `Erreur : ${adminError.message}`;
         return;
       }
 
       if (!adminUser) {
-        status.textContent = "Accès refusé : cet email n'est pas autorisé.";
+        status.textContent = "Accès refusé : email non autorisé.";
         return;
       }
 
-      const { error } = await supabase.auth.signInWithOtp({
-  email,
-  options: {
-    emailRedirectTo: `${window.location.origin}/auth-callback.html``
-  }
-});
+      // 📧 Envoi du magic link
+      status.textContent = "Envoi du lien de connexion...";
+
+      const { data, error } = await supabase.auth.signInWithOtp({
+        email,
+        options: {
+          emailRedirectTo: `${window.location.origin}/auth-callback.html`
+        }
+      });
+
+      console.log("OTP data:", data);
+      console.log("OTP error:", error);
 
       if (error) {
-        console.error(error);
-        status.textContent = "Erreur lors de l'envoi du lien de connexion.";
+        console.error("Erreur OTP:", error);
+        status.textContent = `Erreur : ${error.message}`;
         return;
       }
 
-      status.textContent = "Lien de connexion envoyé par email.";
+      status.textContent = "✅ Lien envoyé ! Vérifiez votre email.";
     });
   </script>
 </body>
