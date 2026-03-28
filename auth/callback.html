@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Connexion en cours — VITAL PROTECT</title>
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f4f7fb;
+      color: #142033;
+      padding: 24px;
+    }
+
+    .card {
+      width: min(520px, 100%);
+      background: white;
+      border: 1px solid #dbe4f0;
+      border-radius: 20px;
+      padding: 28px;
+      box-shadow: 0 10px 30px rgba(11, 46, 89, 0.08);
+      text-align: center;
+    }
+
+    h1 {
+      margin-top: 0;
+      font-size: 1.8rem;
+    }
+
+    p {
+      color: #667085;
+      line-height: 1.6;
+      margin-bottom: 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Connexion en cours…</h1>
+    <p id="status">Validation de votre accès administrateur.</p>
+  </div>
+
+  <script type="module">
+    import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
+    const supabase = createClient(
+      "https://zsraqxzneghkzaozzuci.supabase.co",
+      "sb_publishable_VlTpYjzJ3DKpFA1Un_EFHQ_FW-mYK4U"
+    );
+
+    const status = document.getElementById("status");
+
+    async function handleCallback() {
+      try {
+        status.textContent = "Récupération de la session...";
+
+        // On laisse Supabase traiter le retour du magic link
+        await new Promise(resolve => setTimeout(resolve, 1200));
+
+        const {
+          data: { session },
+          error: sessionError
+        } = await supabase.auth.getSession();
+
+        if (sessionError) {
+          console.error(sessionError);
+          status.textContent = "Erreur de session.";
+          setTimeout(() => {
+            window.location.href = "/admin-login.html";
+          }, 1200);
+          return;
+        }
+
+        if (!session?.user?.email) {
+          status.textContent = "Session introuvable.";
+          setTimeout(() => {
+            window.location.href = "/admin-login.html";
+          }, 1200);
+          return;
+        }
+
+        const email = session.user.email.trim().toLowerCase();
+
+        status.textContent = "Vérification des droits administrateur...";
+
+        const { data: adminUser, error: adminError } = await supabase
+          .from("admin_users")
+          .select("*")
+          .eq("email", email)
+          .maybeSingle();
+
+        if (adminError) {
+          console.error(adminError);
+          status.textContent = "Erreur lors de la vérification admin.";
+          setTimeout(() => {
+            window.location.href = "/admin-login.html";
+          }, 1200);
+          return;
+        }
+
+        if (!adminUser) {
+          await supabase.auth.signOut();
+          status.textContent = "Accès refusé.";
+          setTimeout(() => {
+            window.location.href = "/admin-login.html";
+          }, 1200);
+          return;
+        }
+
+        status.textContent = "Connexion validée. Redirection vers l’admin...";
+        setTimeout(() => {
+          window.location.href = "/admin.html";
+        }, 600);
+      } catch (error) {
+        console.error(error);
+        status.textContent = "Erreur inattendue.";
+        setTimeout(() => {
+          window.location.href = "/admin-login.html";
+        }, 1200);
+      }
+    }
+
+    handleCallback();
+  </script>
+</body>
+</html>
