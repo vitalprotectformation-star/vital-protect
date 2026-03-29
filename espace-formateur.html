@@ -203,9 +203,6 @@
       "sb_publishable_VlTpYjzJ3DKpFA1Un_EFHQ_FW-mYK4U"
     );
 
-    const emailParam = new URLSearchParams(window.location.search).get("email");
-    const cleanEmail = emailParam ? emailParam.trim().toLowerCase() : "";
-
     function normalize(value) {
       return String(value || "").trim().toLowerCase();
     }
@@ -257,7 +254,12 @@
       }
     }
 
-    function buildTrainerView(trainer) {
+    async function logoutTrainer() {
+      await supabase.auth.signOut();
+      window.location.href = "/formateur-login.html";
+    }
+
+    function buildTrainerView(trainer, sessionEmail) {
       const certValid = isFutureOrToday(trainer.certification_expiry);
       const affiliationValid =
         isFutureOrToday(trainer.affiliation_end) &&
@@ -265,7 +267,6 @@
 
       const app = document.getElementById("app");
 
-      // Cas 1 : affiliation expirée = blocage total
       if (!affiliationValid) {
         app.innerHTML = `
           <h1>Espace formateur</h1>
@@ -301,11 +302,11 @@
               <button id="renewAffiliationBtn" class="btn btn-primary" type="button">
                 Renouveler mon affiliation
               </button>
-              <a href="/" class="btn btn-secondary">Retour au site</a>
+              <button id="logoutBtn" class="btn btn-secondary" type="button">Déconnexion</button>
             </div>
           </div>
 
-          <div class="debug">Email URL : ${cleanEmail}
+          <div class="debug">Email session : ${sessionEmail}
 Email trouvé : ${trainer.email}
 ID formateur : ${trainer.id}
 Certification valide : ${certValid}
@@ -316,10 +317,13 @@ Affiliation valide : ${affiliationValid}</div>
           .getElementById("renewAffiliationBtn")
           .addEventListener("click", () => payAffiliation(trainer.email));
 
+        document
+          .getElementById("logoutBtn")
+          .addEventListener("click", logoutTrainer);
+
         return;
       }
 
-      // Cas 2 : affiliation active mais certification expirée = accès limité / à traiter
       if (!certValid) {
         app.innerHTML = `
           <h1>Espace formateur</h1>
@@ -360,19 +364,23 @@ Affiliation valide : ${affiliationValid}</div>
 
           <div class="actions">
             <a href="/devenir-formateur.html" class="btn btn-primary">Voir les formations disponibles</a>
-            <a href="/" class="btn btn-secondary">Retour au site</a>
+            <button id="logoutBtn" class="btn btn-secondary" type="button">Déconnexion</button>
           </div>
 
-          <div class="debug">Email URL : ${cleanEmail}
+          <div class="debug">Email session : ${sessionEmail}
 Email trouvé : ${trainer.email}
 ID formateur : ${trainer.id}
 Certification valide : ${certValid}
 Affiliation valide : ${affiliationValid}</div>
         `;
+
+        document
+          .getElementById("logoutBtn")
+          .addEventListener("click", logoutTrainer);
+
         return;
       }
 
-      // Cas 3 : tout est OK
       app.innerHTML = `
         <h1>Espace formateur</h1>
         <p class="muted">Votre espace est actif. Votre certification et votre affiliation sont à jour.</p>
@@ -414,32 +422,47 @@ Affiliation valide : ${affiliationValid}</div>
           <p class="muted">Cette zone peut ensuite accueillir tes contenus privés : ressources, documents, calendrier, kit formateur, etc.</p>
           <div class="actions">
             <a href="/" class="btn btn-secondary">Retour au site</a>
+            <button id="logoutBtn" class="btn btn-secondary" type="button">Déconnexion</button>
           </div>
         </div>
 
-        <div class="debug">Email URL : ${cleanEmail}
+        <div class="debug">Email session : ${sessionEmail}
 Email trouvé : ${trainer.email}
 ID formateur : ${trainer.id}
 Certification valide : ${certValid}
 Affiliation valide : ${affiliationValid}</div>
       `;
+
+      document
+        .getElementById("logoutBtn")
+        .addEventListener("click", logoutTrainer);
     }
 
     async function load() {
       const app = document.getElementById("app");
 
-      if (!cleanEmail) {
-        app.innerHTML = `
-          <h1>Email manquant</h1>
-          <p class="muted">Aucun paramètre email trouvé dans l’URL.</p>
-          <div class="debug">Exemple attendu : /espace-formateur.html?email=contact@exemple.fr</div>
-        `;
+      let {
+        data: { session }
+      } = await supabase.auth.getSession();
+
+      if (!session?.user?.email) {
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        const retry = await supabase.auth.getSession();
+        session = retry.data.session;
+      }
+
+      if (!session?.user?.email) {
+        window.location.href = "/formateur-login.html";
         return;
       }
 
-      const { data, error } = await supabase
+      const sessionEmail = session.user.email.trim().toLowerCase();
+
+      const { data: trainer, error } = await supabase
         .from("trainers")
-        .select("*");
+        .select("*")
+        .ilike("email", sessionEmail)
+        .maybeSingle();
 
       if (error) {
         console.error("Erreur Supabase:", error);
@@ -451,19 +474,20 @@ Affiliation valide : ${affiliationValid}</div>
         return;
       }
 
-      const trainers = data || [];
-      const trainer = trainers.find(t => normalize(t.email) === cleanEmail);
-
       if (!trainer) {
+        await supabase.auth.signOut();
         app.innerHTML = `
-          <h1>Formateur introuvable</h1>
-          <p class="muted">Aucun profil formateur ne correspond à cet email.</p>
-          <div class="debug">Email demandé : ${cleanEmail}</div>
+          <h1>Profil formateur introuvable</h1>
+          <p class="muted">Aucun profil formateur ne correspond à votre session.</p>
+          <div class="debug">Email session : ${sessionEmail}</div>
         `;
+        setTimeout(() => {
+          window.location.href = "/formateur-login.html";
+        }, 1500);
         return;
       }
 
-      buildTrainerView(trainer);
+      buildTrainerView(trainer, sessionEmail);
     }
 
     load();
