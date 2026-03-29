@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Connexion formateur — VITAL PROTECT</title>
+  <style>
+    :root {
+      --navy: #0b2e59;
+      --blue: #1f6feb;
+      --bg: #f4f7fb;
+      --card: #ffffff;
+      --border: #dbe4f0;
+      --text: #142033;
+      --muted: #667085;
+      --shadow: 0 10px 30px rgba(11, 46, 89, 0.08);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+    }
+
+    .card {
+      width: min(480px, 100%);
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      padding: 28px;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 2rem;
+    }
+
+    p {
+      margin: 0 0 18px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .field {
+      margin-bottom: 14px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 700;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      font-size: 1rem;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 12px;
+      padding: 12px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      background: var(--blue);
+      color: white;
+      width: 100%;
+    }
+
+    .status {
+      margin-top: 14px;
+      color: var(--muted);
+      min-height: 22px;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Connexion formateur</h1>
+    <p>Accédez à votre espace formateur VITAL PROTECT via votre email enregistré.</p>
+
+    <form id="loginForm">
+      <div class="field">
+        <label for="email">Email formateur</label>
+        <input type="email" id="email" required placeholder="formateur@vital-protect.fr" />
+      </div>
+
+      <button type="submit" class="btn">Recevoir mon lien de connexion</button>
+    </form>
+
+    <div class="status" id="status"></div>
+  </div>
+
+  <script type="module">
+    import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
+    const supabase = createClient(
+      "https://zsraqxzneghkzaozzuci.supabase.co",
+      "sb_publishable_VlTpYjzJ3DKpFA1Un_EFHQ_FW-mYK4U"
+    );
+
+    const form = document.getElementById("loginForm");
+    const status = document.getElementById("status");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const email = document.getElementById("email").value.trim().toLowerCase();
+      status.textContent = "Vérification du profil formateur...";
+
+      const { data: trainer, error: trainerError } = await supabase
+        .from("trainers")
+        .select("id, email")
+        .ilike("email", email)
+        .maybeSingle();
+
+      if (trainerError) {
+        console.error("Erreur trainer:", trainerError);
+        status.textContent = `Erreur : ${trainerError.message}`;
+        return;
+      }
+
+      if (!trainer) {
+        status.textContent = "Aucun profil formateur trouvé avec cet email.";
+        return;
+      }
+
+      status.textContent = "Envoi du lien de connexion...";
+
+      const { error } = await supabase.auth.signInWithOtp({
+        email,
+        options: {
+          emailRedirectTo: `${window.location.origin}/formateur-callback.html`
+        }
+      });
+
+      if (error) {
+        console.error("Erreur OTP formateur:", error);
+        status.textContent = `Erreur : ${error.message}`;
+        return;
+      }
+
+      status.textContent = "Lien envoyé. Vérifiez votre email.";
+    });
+  </script>
+</body>
+</html>
