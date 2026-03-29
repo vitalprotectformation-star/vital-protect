@@ -1618,6 +1618,37 @@
       }
     };
 
+    window.rejectTrainerCandidate = async (registrationId) => {
+      const confirmed = window.confirm("Refuser ce dossier candidat et annuler le paiement autorisé ?");
+      if (!confirmed) return;
+
+      try {
+        const res = await fetch("/api/reject-trainer-candidate", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            registration_id: registrationId
+          })
+        });
+
+        const result = await res.json();
+
+        if (result.success) {
+          alert("Dossier refusé et candidat archivé.");
+          await loadTrainerRegistrations();
+          await loadTrainers();
+        } else {
+          alert(result.error || "Erreur lors du refus du dossier.");
+          console.error(result);
+        }
+      } catch (error) {
+        alert("Erreur réseau.");
+        console.error(error);
+      }
+    };
+
     window.updateTrainingResult = async (registrationId, result) => {
       const labels = {
         passed: "marquer ce candidat comme RÉUSSI",
@@ -1685,11 +1716,6 @@
         alert("Erreur réseau.");
         console.error(error);
       }
-    };
-
-    window.rejectTrainerCandidate = async (registrationId) => {
-      alert("Étape suivante : je te donnerai le fichier API complet pour refuser un dossier proprement.");
-      console.log("TODO reject candidate:", registrationId);
     };
 
     document.getElementById("candidateSearch").addEventListener("input", applyCandidateFilters);
