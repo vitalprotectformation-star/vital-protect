@@ -45,7 +45,7 @@
     header {
       background: linear-gradient(135deg, var(--navy-dark), var(--navy));
       color: white;
-      padding: 20px 0;
+      padding: 16px 0;
       box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
       position: sticky;
       top: 0;
@@ -60,9 +60,24 @@
     }
 
     .brand {
-      font-size: 2rem;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: white;
+    }
+
+    .brand img {
+      height: 54px;
+      width: auto;
+      display: block;
+    }
+
+    .brand-text {
+      font-size: 1.75rem;
       font-weight: 800;
       letter-spacing: 0.5px;
+      line-height: 1;
     }
 
     .nav-links {
@@ -321,8 +336,21 @@
     }
 
     @media (max-width: 720px) {
-      .brand {
-        font-size: 1.5rem;
+      .brand-text {
+        font-size: 1.2rem;
+      }
+
+      .brand img {
+        height: 44px;
+      }
+
+      .header-inner {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .nav-links {
+        width: 100%;
       }
 
       .hero h1 {
@@ -356,7 +384,11 @@
 
   <header>
     <div class="container header-inner">
-      <div class="brand">VITAL PROTECT</div>
+      <a href="/index.html" class="brand">
+        <img src="/logo.png" alt="VITAL PROTECT" />
+        <span class="brand-text">VITAL PROTECT</span>
+      </a>
+
       <nav class="nav-links">
         <a href="/index.html">Accueil</a>
         <a href="#stages">Stages</a>
