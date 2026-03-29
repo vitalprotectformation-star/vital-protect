@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Connexion formateur — VITAL PROTECT</title>
+</head>
+<body>
+  <h1>Connexion en cours...</h1>
+
+  <script type="module">
+    import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
+    const supabase = createClient(
+      "https://zsraqxzneghkzaozzuci.supabase.co",
+      "sb_publishable_VlTpYjzJ3DKpFA1Un_EFHQ_FW-mYK4U"
+    );
+
+    async function handle() {
+      await new Promise(r => setTimeout(r, 1000));
+
+      const { data } = await supabase.auth.getSession();
+
+      if (!data?.session) {
+        window.location.href = "/formateur-login.html";
+        return;
+      }
+
+      window.location.href = "/espace-formateur.html";
+    }
+
+    handle();
+  </script>
+</body>
+</html>
