@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Connexion formateur — VITAL PROTECT</title>
+
   <style>
     :root {
       --navy: #0b2e59;
@@ -24,9 +25,22 @@
       background: var(--bg);
       color: var(--text);
       min-height: 100vh;
-      display: grid;
-      place-items: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
       padding: 24px;
+    }
+
+    /* ===== LOGO ===== */
+    .logo {
+      margin-bottom: 24px;
+    }
+
+    .logo img {
+      width: min(260px, 60vw);
+      height: auto;
+      display: block;
     }
 
     .card {
@@ -86,7 +100,14 @@
     }
   </style>
 </head>
+
 <body>
+
+  <!-- 🔥 LOGO -->
+  <div class="logo">
+    <img src="/logo.png" alt="VITAL PROTECT" />
+  </div>
+
   <div class="card">
     <h1>Connexion formateur</h1>
     <p>Accédez à votre espace formateur VITAL PROTECT via votre email enregistré.</p>
@@ -97,7 +118,9 @@
         <input type="email" id="email" required placeholder="formateur@vital-protect.fr" />
       </div>
 
-      <button type="submit" class="btn">Recevoir mon lien de connexion</button>
+      <button type="submit" class="btn">
+        Recevoir mon lien de connexion
+      </button>
     </form>
 
     <div class="status" id="status"></div>
@@ -152,8 +175,9 @@
         return;
       }
 
-      status.textContent = "Lien envoyé. Vérifiez votre email.";
+      status.textContent = "✅ Lien envoyé. Vérifiez votre email.";
     });
   </script>
+
 </body>
 </html>
