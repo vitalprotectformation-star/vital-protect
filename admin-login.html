@@ -26,9 +26,22 @@
       background: var(--bg);
       color: var(--text);
       min-height: 100vh;
-      display: grid;
-      place-items: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
       padding: 24px;
+    }
+
+    /* ===== LOGO ===== */
+    .logo {
+      margin-bottom: 24px;
+    }
+
+    .logo img {
+      width: min(260px, 60vw);
+      height: auto;
+      display: block;
     }
 
     .card {
@@ -90,6 +103,12 @@
 </head>
 
 <body>
+
+  <!-- 🔥 LOGO -->
+  <div class="logo">
+    <img src="/logo.png" alt="VITAL PROTECT" />
+  </div>
+
   <div class="card">
     <h1>Connexion admin</h1>
     <p>Accédez au cockpit VITAL PROTECT via votre email autorisé.</p>
@@ -126,7 +145,6 @@
 
       status.textContent = "Vérification de l'accès...";
 
-      // 🔐 Vérification admin
       const { data: adminUser, error: adminError } = await supabase
         .from("admin_users")
         .select("*")
@@ -144,18 +162,14 @@
         return;
       }
 
-      // 📧 Envoi du magic link
       status.textContent = "Envoi du lien de connexion...";
 
-      const { data, error } = await supabase.auth.signInWithOtp({
+      const { error } = await supabase.auth.signInWithOtp({
         email,
         options: {
           emailRedirectTo: `${window.location.origin}/auth-callback.html`
         }
       });
-
-      console.log("OTP data:", data);
-      console.log("OTP error:", error);
 
       if (error) {
         console.error("Erreur OTP:", error);
@@ -166,5 +180,6 @@
       status.textContent = "✅ Lien envoyé ! Vérifiez votre email.";
     });
   </script>
+
 </body>
 </html>
