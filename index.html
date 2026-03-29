@@ -67,7 +67,6 @@
       color: white;
     }
 
-    /* 🔥 LOGO TRIPLÉ */
     .brand img {
       height: 162px;
       width: auto;
@@ -175,6 +174,149 @@
       flex-direction: column;
     }
 
+    .stage-top {
+      padding: 22px 22px 12px;
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: flex-start;
+    }
+
+    .stage-badge {
+      display: inline-block;
+      background: var(--blue-soft);
+      color: var(--blue);
+      font-size: 0.82rem;
+      font-weight: 700;
+      padding: 8px 10px;
+      border-radius: 999px;
+      margin-bottom: 10px;
+    }
+
+    .stage-title {
+      margin: 0;
+      font-size: 1.45rem;
+      line-height: 1.25;
+    }
+
+    .stage-price {
+      white-space: nowrap;
+      font-weight: 800;
+      font-size: 1.5rem;
+      color: var(--navy);
+    }
+
+    .stage-body {
+      padding: 0 22px 18px;
+    }
+
+    .stage-description {
+      color: var(--muted);
+      line-height: 1.65;
+      margin-bottom: 18px;
+    }
+
+    .stage-meta {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .meta-item {
+      background: #f8fbff;
+      border: 1px solid #e7eef8;
+      border-radius: 14px;
+      padding: 12px;
+    }
+
+    .meta-label {
+      display: block;
+      color: var(--muted);
+      font-size: 0.85rem;
+      margin-bottom: 4px;
+      font-weight: 700;
+    }
+
+    .meta-value {
+      font-weight: 700;
+    }
+
+    .availability {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 700;
+      border-radius: 999px;
+      padding: 8px 12px;
+    }
+
+    .availability.success {
+      background: #eaf8f0;
+      color: var(--success);
+    }
+
+    .availability.warning {
+      background: var(--warning-bg);
+      color: var(--warning-text);
+    }
+
+    .stage-actions {
+      border-top: 1px solid var(--border);
+      padding: 18px 22px 22px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .stage-action-text {
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 14px;
+      padding: 14px 18px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: 0.2s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .btn-primary {
+      background: var(--navy);
+      color: white;
+    }
+
+    .btn-secondary {
+      background: white;
+      color: var(--navy);
+      border: 1px solid var(--border);
+    }
+
+    .empty-state {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 28px;
+      text-align: center;
+      color: var(--muted);
+      box-shadow: var(--shadow);
+      margin-top: 24px;
+      grid-column: 1 / -1;
+    }
+
     footer {
       margin-top: 38px;
       background: var(--navy-dark);
@@ -198,7 +340,6 @@
         font-size: 1.2rem;
       }
 
-      /* 🔥 LOGO TRIPLÉ MOBILE */
       .brand img {
         height: 132px;
       }
@@ -215,26 +356,193 @@
       .hero h1 {
         font-size: 2rem;
       }
+
+      .stage-top {
+        flex-direction: column;
+      }
+
+      .stage-meta {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-actions {
+        flex-direction: column;
+      }
+
+      .btn {
+        width: 100%;
+      }
+
+      .stage-actions {
+        flex-direction: column;
+        align-items: stretch;
+      }
     }
   </style>
 </head>
-
 <body>
 
-<header>
-  <div class="container header-inner">
-    <a href="/index.html" class="brand">
-      <img src="/logo.png" alt="VITAL PROTECT" />
-      <span class="brand-text">VITAL PROTECT</span>
-    </a>
+  <header>
+    <div class="container header-inner">
+      <a href="/index.html" class="brand">
+        <img src="/logo.png" alt="VITAL PROTECT" />
+        <span class="brand-text">VITAL PROTECT</span>
+      </a>
 
-    <nav class="nav-links">
-      <a href="/index.html">Accueil</a>
-      <a href="#stages">Stages</a>
-      <a href="/devenir-formateur.html">Devenir formateur</a>
-    </nav>
-  </div>
-</header>
+      <nav class="nav-links">
+        <a href="/index.html">Accueil</a>
+        <a href="#stages">Stages</a>
+        <a href="/devenir-formateur.html">Devenir formateur</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container">
+        <div class="hero-card">
+          <div class="hero-badge">Stages VITAL PROTECT</div>
+          <h1>Réservez votre stage de self-défense.</h1>
+          <p>
+            Découvrez nos stages disponibles, choisissez la session qui vous convient
+            et réservez votre place en quelques clics avec un paiement sécurisé.
+          </p>
+
+          <div class="hero-actions">
+            <a href="#stages" class="btn btn-primary">Voir les stages</a>
+            <a href="/devenir-formateur.html" class="btn btn-secondary">Devenir formateur</a>
+            <a href="/devenir-formateur.html" class="btn btn-secondary">Sessions formateur</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="stages">
+      <div class="container">
+        <div class="section-head">
+          <h2>Stages disponibles</h2>
+          <p>Choisissez votre ville, consultez les dates et réservez votre place en ligne.</p>
+        </div>
+
+        <div id="stagesContainer" class="stages-grid"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <p>VITAL PROTECT — Marketplace de stages de self-défense</p>
+    </div>
+  </footer>
+
+  <script type="module">
+    import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
+    const supabase = createClient(
+      "https://zsraqxzneghkzaozzuci.supabase.co",
+      "sb_publishable_VlTpYjzJ3DKpFA1Un_EFHQ_FW-mYK4U"
+    );
+
+    const container = document.getElementById("stagesContainer");
+
+    function formatPrice(price) {
+      return `${Number(price || 0).toFixed(0)} €`;
+    }
+
+    function formatDate(dateString) {
+      if (!dateString) return "Date non disponible";
+
+      const date = new Date(dateString);
+      return date.toLocaleDateString("fr-FR", {
+        day: "2-digit",
+        month: "long",
+        year: "numeric"
+      });
+    }
+
+    function getAvailabilityClass(remainingPlaces) {
+      return Number(remainingPlaces || 0) <= 3 ? "warning" : "success";
+    }
+
+    async function loadStages() {
+      const { data, error } = await supabase
+        .from("stages")
+        .select("*")
+        .eq("status", "published");
+
+      if (error) {
+        console.error("Erreur Supabase:", error);
+        container.innerHTML = `
+          <div class="empty-state">
+            Impossible de charger les stages pour le moment.
+          </div>
+        `;
+        return;
+      }
+
+      if (!data || !data.length) {
+        container.innerHTML = `
+          <div class="empty-state">
+            Aucun stage disponible pour le moment.
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = data.map(stage => `
+        <article class="stage-card">
+          <div class="stage-top">
+            <div>
+              <div class="stage-badge">${stage.training_type || "Stage VITAL PROTECT"}</div>
+              <h3 class="stage-title">${stage.title || "Stage de self-défense"}</h3>
+            </div>
+            <div class="stage-price">${formatPrice(stage.price)}</div>
+          </div>
+
+          <div class="stage-body">
+            <div class="stage-description">
+              ${stage.description || "Formation pratique de self-défense encadrée par VITAL PROTECT."}
+            </div>
+
+            <div class="stage-meta">
+              <div class="meta-item">
+                <span class="meta-label">Ville</span>
+                <span class="meta-value">${stage.city || "Non précisée"}</span>
+              </div>
+
+              <div class="meta-item">
+                <span class="meta-label">Date</span>
+                <span class="meta-value">${formatDate(stage.stage_date)}</span>
+              </div>
+
+              <div class="meta-item">
+                <span class="meta-label">Région</span>
+                <span class="meta-value">${stage.region || "Non précisée"}</span>
+              </div>
+
+              <div class="meta-item">
+                <span class="meta-label">Département</span>
+                <span class="meta-value">${stage.department || "Non précisé"}</span>
+              </div>
+            </div>
+
+            <div class="availability ${getAvailabilityClass(stage.remaining_places)}">
+              ${stage.remaining_places ?? 0} place(s) restante(s)
+            </div>
+          </div>
+
+          <div class="stage-actions">
+            <div class="stage-action-text">Réservation simple • paiement Stripe</div>
+            <button class="btn btn-primary" onclick="alert('Étape suivante : tunnel de réservation Stripe')">
+              Réserver
+            </button>
+          </div>
+        </article>
+      `).join("");
+    }
+
+    loadStages();
+  </script>
 
 </body>
 </html>
