@@ -1,259 +1,472 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<title>Espace formateur — VITAL PROTECT</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Espace formateur — VITAL PROTECT</title>
 
-<style>
-body {
-  font-family: Arial, Helvetica, sans-serif;
-  background: #f4f7fb;
-  padding: 40px;
-  margin: 0;
-}
+  <style>
+    :root {
+      --navy: #0b2e59;
+      --navy-dark: #08203d;
+      --blue: #1f6feb;
+      --bg: #f4f7fb;
+      --card: #ffffff;
+      --border: #dbe4f0;
+      --text: #142033;
+      --muted: #667085;
+      --success: #0f9d58;
+      --warning: #b7791f;
+      --danger: #c62828;
+      --shadow: 0 10px 30px rgba(11, 46, 89, 0.08);
+    }
 
-.card {
-  background: white;
-  padding: 30px;
-  border-radius: 16px;
-  max-width: 720px;
-  margin: auto;
-  box-shadow: 0 10px 30px rgba(11, 46, 89, 0.08);
-}
+    * {
+      box-sizing: border-box;
+    }
 
-.status-ok {
-  color: green;
-  font-weight: bold;
-}
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      padding: 32px 16px;
+    }
 
-.status-bad {
-  color: red;
-  font-weight: bold;
-}
+    .container {
+      width: min(980px, 100%);
+      margin: 0 auto;
+    }
 
-button {
-  padding: 12px 16px;
-  background: #1f6feb;
-  color: white;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  font-weight: 700;
-}
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      padding: 28px;
+      margin-bottom: 20px;
+    }
 
-button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
+    h1, h2, h3 {
+      margin-top: 0;
+    }
 
-h2 {
-  margin-top: 0;
-}
+    p {
+      line-height: 1.6;
+    }
 
-.debug {
-  margin-top: 20px;
-  padding: 14px;
-  border-radius: 12px;
-  background: #f8fbff;
-  border: 1px solid #dbe4f0;
-  color: #667085;
-  font-size: 14px;
-  white-space: pre-wrap;
-}
+    .muted {
+      color: var(--muted);
+    }
 
-.blocked-box {
-  margin-top: 24px;
-  padding: 18px;
-  border-radius: 14px;
-  background: #fff4df;
-  border: 1px solid #f0d9a7;
-}
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
 
-.blocked-title {
-  font-weight: 800;
-  margin-bottom: 8px;
-  color: #b7791f;
-}
-</style>
+    .info-box {
+      background: #f8fbff;
+      border: 1px solid #e5edf7;
+      border-radius: 18px;
+      padding: 18px;
+    }
+
+    .label {
+      display: block;
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin-bottom: 6px;
+      font-weight: 700;
+    }
+
+    .value {
+      font-size: 1.05rem;
+      font-weight: 700;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+
+    .badge-success {
+      background: #eaf8f0;
+      color: var(--success);
+    }
+
+    .badge-warning {
+      background: #fff4df;
+      color: var(--warning);
+    }
+
+    .badge-danger {
+      background: #fff1f1;
+      color: var(--danger);
+    }
+
+    .btn {
+      border: none;
+      border-radius: 12px;
+      padding: 12px 16px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-primary {
+      background: var(--blue);
+      color: white;
+    }
+
+    .btn-secondary {
+      background: white;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+
+    .alert {
+      border-radius: 18px;
+      padding: 18px;
+      margin-top: 16px;
+    }
+
+    .alert-success {
+      background: #eaf8f0;
+      border: 1px solid #cdeedb;
+      color: #0f7d46;
+    }
+
+    .alert-warning {
+      background: #fff4df;
+      border: 1px solid #f0d9a7;
+      color: #8a5a00;
+    }
+
+    .alert-danger {
+      background: #fff1f1;
+      border: 1px solid #f2c7c7;
+      color: #a32020;
+    }
+
+    .blocked {
+      border: 2px solid #f0d9a7;
+      background: #fffaf2;
+    }
+
+    .debug {
+      margin-top: 18px;
+      padding: 14px;
+      border-radius: 12px;
+      background: #f8fbff;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 14px;
+      white-space: pre-wrap;
+    }
+
+    @media (max-width: 720px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
 </head>
 
 <body>
+  <div class="container">
+    <div class="card" id="app">
+      Chargement...
+    </div>
+  </div>
 
-<div class="card" id="app">
-Chargement...
-</div>
+  <script type="module">
+    import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-<script type="module">
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+    const supabase = createClient(
+      "https://zsraqxzneghkzaozzuci.supabase.co",
+      "sb_publishable_VlTpYjzJ3DKpFA1Un_EFHQ_FW-mYK4U"
+    );
 
-const supabase = createClient(
-  "https://zsraqxzneghkzaozzuci.supabase.co",
-  "sb_publishable_VlTpYjzJ3DKpFA1Un_EFHQ_FW-mYK4U"
-);
+    const emailParam = new URLSearchParams(window.location.search).get("email");
+    const cleanEmail = emailParam ? emailParam.trim().toLowerCase() : "";
 
-const emailParam = new URLSearchParams(window.location.search).get("email");
-const cleanEmail = emailParam ? emailParam.trim().toLowerCase() : "";
-
-function normalize(value) {
-  return String(value || "").trim().toLowerCase();
-}
-
-async function payAffiliation(email) {
-  try {
-    const res = await fetch("/api/create-affiliation-checkout", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ email })
-    });
-
-    const data = await res.json();
-
-    if (data.url) {
-      window.location.href = data.url;
-    } else {
-      alert("Erreur lors de la redirection vers le paiement affiliation.");
-      console.error(data);
+    function normalize(value) {
+      return String(value || "").trim().toLowerCase();
     }
-  } catch (error) {
-    alert("Erreur réseau.");
-    console.error(error);
-  }
-}
 
-async function load() {
-  const app = document.getElementById("app");
+    function formatDate(dateString) {
+      if (!dateString) return "—";
+      const date = new Date(dateString);
+      if (Number.isNaN(date.getTime())) return "—";
+      return date.toLocaleDateString("fr-FR", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric"
+      });
+    }
 
-  if (!cleanEmail) {
-    app.innerHTML = `
-      <h2>Email manquant</h2>
-      <div class="debug">Aucun paramètre "email" trouvé dans l’URL.</div>
-    `;
-    return;
-  }
+    function isFutureOrToday(dateString) {
+      if (!dateString) return false;
+      const date = new Date(dateString);
+      if (Number.isNaN(date.getTime())) return false;
 
-  const { data, error } = await supabase
-    .from("trainers")
-    .select("*");
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
 
-  if (error) {
-    console.error("Erreur Supabase:", error);
-    app.innerHTML = `
-      <h2>Erreur de chargement</h2>
-      <div class="debug">Supabase error: ${error.message}</div>
-    `;
-    return;
-  }
+      date.setHours(0, 0, 0, 0);
+      return date >= today;
+    }
 
-  const trainers = data || [];
-  const trainer = trainers.find(t => normalize(t.email) === cleanEmail);
+    async function payAffiliation(email) {
+      try {
+        const res = await fetch("/api/create-affiliation-checkout", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ email })
+        });
 
-  if (!trainer) {
-    console.error("Formateur introuvable. Email URL:", cleanEmail, "Emails DB:", trainers.map(t => t.email));
-    app.innerHTML = `
-      <h2>Formateur introuvable</h2>
-      <div class="debug">
-Email demandé : ${cleanEmail}
+        const data = await res.json();
 
-Emails trouvés en base :
-${trainers.map(t => `- ${t.email}`).join("\n") || "Aucun"}
-      </div>
-    `;
-    return;
-  }
+        if (data.url) {
+          window.location.href = data.url;
+        } else {
+          alert(data.error || "Erreur lors de la redirection vers le paiement affiliation.");
+          console.error(data);
+        }
+      } catch (error) {
+        alert("Erreur réseau.");
+        console.error(error);
+      }
+    }
 
-  const today = new Date();
+    function buildTrainerView(trainer) {
+      const certValid = isFutureOrToday(trainer.certification_expiry);
+      const affiliationValid =
+        isFutureOrToday(trainer.affiliation_end) &&
+        normalize(trainer.affiliation_status) === "active";
 
-  const certExpiry = trainer.certification_expiry ? new Date(trainer.certification_expiry) : null;
-  const affExpiry = trainer.affiliation_end ? new Date(trainer.affiliation_end) : null;
+      const app = document.getElementById("app");
 
-  const certValid = certExpiry ? certExpiry >= today : false;
-  const affValid = affExpiry ? affExpiry >= today : false;
+      // Cas 1 : affiliation expirée = blocage total
+      if (!affiliationValid) {
+        app.innerHTML = `
+          <h1>Espace formateur</h1>
+          <p class="muted">Bienvenue sur votre espace personnel VITAL PROTECT.</p>
 
-  // 🔒 BLOCAGE TOTAL SI AFFILIATION EXPIREE
-  if (!affValid) {
-    app.innerHTML = `
-      <h2>Accès bloqué</h2>
+          <div class="alert alert-danger blocked">
+            <h2>Accès bloqué</h2>
+            <p>Votre affiliation n’est plus active.</p>
+            <p>Pour réactiver votre espace formateur, vous devez renouveler votre affiliation annuelle.</p>
+          </div>
 
-      <p class="status-bad">
-        Votre affiliation n'est plus active.
-      </p>
+          <div class="card" style="padding:18px; margin-top:18px;">
+            <div class="grid">
+              <div class="info-box">
+                <span class="label">Formateur</span>
+                <div class="value">${trainer.first_name || ""} ${trainer.last_name || ""}</div>
+              </div>
+              <div class="info-box">
+                <span class="label">Email</span>
+                <div class="value">${trainer.email || "—"}</div>
+              </div>
+              <div class="info-box">
+                <span class="label">Affiliation</span>
+                <div class="value"><span class="badge badge-danger">Expirée</span></div>
+              </div>
+              <div class="info-box">
+                <span class="label">Fin d’affiliation</span>
+                <div class="value">${formatDate(trainer.affiliation_end)}</div>
+              </div>
+            </div>
 
-      <p>
-        Pour continuer à utiliser la plateforme VITAL PROTECT,
-        vous devez renouveler votre affiliation.
-      </p>
+            <div class="actions">
+              <button id="renewAffiliationBtn" class="btn btn-primary" type="button">
+                Renouveler mon affiliation
+              </button>
+              <a href="/" class="btn btn-secondary">Retour au site</a>
+            </div>
+          </div>
 
-      <div class="blocked-box">
-        <div class="blocked-title">Affiliation expirée</div>
-        <p>
-          Votre espace formateur est temporairement bloqué jusqu’au renouvellement de votre affiliation.
-        </p>
-        <p>
-          Date de fin d’affiliation : <strong>${trainer.affiliation_end || "—"}</strong>
-        </p>
-      </div>
-
-      <button id="renewAffiliationBtn">Renouveler mon affiliation</button>
-
-      <div class="debug">
-Email URL : ${cleanEmail}
+          <div class="debug">Email URL : ${cleanEmail}
 Email trouvé : ${trainer.email}
 ID formateur : ${trainer.id}
-Affiliation active : ${affValid}
-      </div>
-    `;
+Certification valide : ${certValid}
+Affiliation valide : ${affiliationValid}</div>
+        `;
 
-    document
-      .getElementById("renewAffiliationBtn")
-      .addEventListener("click", () => payAffiliation(trainer.email));
+        document
+          .getElementById("renewAffiliationBtn")
+          .addEventListener("click", () => payAffiliation(trainer.email));
 
-    return;
-  }
+        return;
+      }
 
-  // ✅ ESPACE NORMAL SI AFFILIATION ACTIVE
-  app.innerHTML = `
-    <h2>${trainer.first_name || ""} ${trainer.last_name || ""}</h2>
+      // Cas 2 : affiliation active mais certification expirée = accès limité / à traiter
+      if (!certValid) {
+        app.innerHTML = `
+          <h1>Espace formateur</h1>
+          <p class="muted">Bienvenue sur votre espace personnel VITAL PROTECT.</p>
 
-    <p>
-      Certification :
-      <span class="${certValid ? 'status-ok' : 'status-bad'}">
-        ${certValid ? 'Valide' : 'Expirée'}
-      </span>
-    </p>
+          <div class="alert alert-warning">
+            <h2>Certification expirée</h2>
+            <p>Votre affiliation est active, mais votre certification n’est plus valide.</p>
+            <p>Vous devez suivre le parcours de renouvellement / recyclage pour retrouver un statut complet.</p>
+          </div>
 
-    <p>Date de certification : ${trainer.certification_date || "—"}</p>
-    <p>Expire le : ${trainer.certification_expiry || "—"}</p>
+          <div class="grid" style="margin-top:18px;">
+            <div class="info-box">
+              <span class="label">Formateur</span>
+              <div class="value">${trainer.first_name || ""} ${trainer.last_name || ""}</div>
+            </div>
+            <div class="info-box">
+              <span class="label">Email</span>
+              <div class="value">${trainer.email || "—"}</div>
+            </div>
+            <div class="info-box">
+              <span class="label">Certification</span>
+              <div class="value"><span class="badge badge-danger">Expirée</span></div>
+            </div>
+            <div class="info-box">
+              <span class="label">Expire le</span>
+              <div class="value">${formatDate(trainer.certification_expiry)}</div>
+            </div>
+            <div class="info-box">
+              <span class="label">Affiliation</span>
+              <div class="value"><span class="badge badge-success">Active</span></div>
+            </div>
+            <div class="info-box">
+              <span class="label">Expire le</span>
+              <div class="value">${formatDate(trainer.affiliation_end)}</div>
+            </div>
+          </div>
 
-    <hr>
+          <div class="actions">
+            <a href="/devenir-formateur.html" class="btn btn-primary">Voir les formations disponibles</a>
+            <a href="/" class="btn btn-secondary">Retour au site</a>
+          </div>
 
-    <p>
-      Affiliation :
-      <span class="${affValid ? 'status-ok' : 'status-bad'}">
-        ${affValid ? 'Active' : 'Expirée'}
-      </span>
-    </p>
-
-    <p>Début affiliation : ${trainer.affiliation_start || "—"}</p>
-    <p>Expire le : ${trainer.affiliation_end || "—"}</p>
-
-    <div class="blocked-box" style="background:#eaf8f0;border-color:#cfeedd;">
-      <div class="blocked-title" style="color:#0f9d58;">Accès actif</div>
-      <p>Votre affiliation est à jour. Vous pouvez continuer à utiliser la plateforme normalement.</p>
-    </div>
-
-    <div class="debug">
-Email URL : ${cleanEmail}
+          <div class="debug">Email URL : ${cleanEmail}
 Email trouvé : ${trainer.email}
 ID formateur : ${trainer.id}
-Affiliation active : ${affValid}
-    </div>
-  `;
-}
+Certification valide : ${certValid}
+Affiliation valide : ${affiliationValid}</div>
+        `;
+        return;
+      }
 
-load();
-</script>
+      // Cas 3 : tout est OK
+      app.innerHTML = `
+        <h1>Espace formateur</h1>
+        <p class="muted">Votre espace est actif. Votre certification et votre affiliation sont à jour.</p>
 
+        <div class="alert alert-success">
+          <h2>Accès actif</h2>
+          <p>Vous pouvez continuer à utiliser la plateforme normalement.</p>
+        </div>
+
+        <div class="grid" style="margin-top:18px;">
+          <div class="info-box">
+            <span class="label">Formateur</span>
+            <div class="value">${trainer.first_name || ""} ${trainer.last_name || ""}</div>
+          </div>
+          <div class="info-box">
+            <span class="label">Email</span>
+            <div class="value">${trainer.email || "—"}</div>
+          </div>
+          <div class="info-box">
+            <span class="label">Certification</span>
+            <div class="value"><span class="badge badge-success">Valide</span></div>
+          </div>
+          <div class="info-box">
+            <span class="label">Expire le</span>
+            <div class="value">${formatDate(trainer.certification_expiry)}</div>
+          </div>
+          <div class="info-box">
+            <span class="label">Affiliation</span>
+            <div class="value"><span class="badge badge-success">Active</span></div>
+          </div>
+          <div class="info-box">
+            <span class="label">Expire le</span>
+            <div class="value">${formatDate(trainer.affiliation_end)}</div>
+          </div>
+        </div>
+
+        <div class="card" style="padding:18px; margin-top:18px;">
+          <h3>Zone membre</h3>
+          <p class="muted">Cette zone peut ensuite accueillir tes contenus privés : ressources, documents, calendrier, kit formateur, etc.</p>
+          <div class="actions">
+            <a href="/" class="btn btn-secondary">Retour au site</a>
+          </div>
+        </div>
+
+        <div class="debug">Email URL : ${cleanEmail}
+Email trouvé : ${trainer.email}
+ID formateur : ${trainer.id}
+Certification valide : ${certValid}
+Affiliation valide : ${affiliationValid}</div>
+      `;
+    }
+
+    async function load() {
+      const app = document.getElementById("app");
+
+      if (!cleanEmail) {
+        app.innerHTML = `
+          <h1>Email manquant</h1>
+          <p class="muted">Aucun paramètre email trouvé dans l’URL.</p>
+          <div class="debug">Exemple attendu : /espace-formateur.html?email=contact@exemple.fr</div>
+        `;
+        return;
+      }
+
+      const { data, error } = await supabase
+        .from("trainers")
+        .select("*");
+
+      if (error) {
+        console.error("Erreur Supabase:", error);
+        app.innerHTML = `
+          <h1>Erreur de chargement</h1>
+          <p class="muted">Impossible de charger les données du formateur.</p>
+          <div class="debug">${error.message}</div>
+        `;
+        return;
+      }
+
+      const trainers = data || [];
+      const trainer = trainers.find(t => normalize(t.email) === cleanEmail);
+
+      if (!trainer) {
+        app.innerHTML = `
+          <h1>Formateur introuvable</h1>
+          <p class="muted">Aucun profil formateur ne correspond à cet email.</p>
+          <div class="debug">Email demandé : ${cleanEmail}</div>
+        `;
+        return;
+      }
+
+      buildTrainerView(trainer);
+    }
+
+    load();
+  </script>
 </body>
 </html>
