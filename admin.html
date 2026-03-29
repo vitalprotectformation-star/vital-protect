@@ -292,7 +292,7 @@
 
     table {
       width: 100%;
-      min-width: 980px;
+      min-width: 1080px;
       border-collapse: collapse;
     }
 
@@ -411,6 +411,7 @@
       <div class="nav-group">
         <button class="nav-btn active" data-tab="dashboard">Dashboard</button>
         <button class="nav-btn" data-tab="candidats">Candidats</button>
+        <button class="nav-btn" data-tab="archives">Archives candidats</button>
         <button class="nav-btn" data-tab="formateurs">Formateurs</button>
         <button class="nav-btn" data-tab="stages">Stages</button>
         <button class="nav-btn" data-tab="formations">Formations formateur</button>
@@ -543,6 +544,46 @@
 
             <div class="table-wrap" id="trainerRegistrationsWrap">
               <div class="loading">Chargement des candidats formateurs...</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="tab-archives" class="tab-panel">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h2>Archives candidats</h2>
+              <p>Dossiers refusés et candidats recalés archivés.</p>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="filters filters-3">
+              <div class="field">
+                <label>Recherche</label>
+                <input id="archiveSearch" type="text" placeholder="Nom, prénom, email, ville..." />
+              </div>
+              <div class="field">
+                <label>Raison d’archive</label>
+                <select id="archiveReasonFilter">
+                  <option value="">Toutes</option>
+                  <option value="dossier_rejected">Dossier refusé</option>
+                  <option value="training_failed">Formation recalée</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>Paiement</label>
+                <select id="archivePaymentFilter">
+                  <option value="">Tous</option>
+                  <option value="authorized">Autorisé</option>
+                  <option value="captured">Capturé</option>
+                  <option value="canceled">Annulé</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="table-wrap" id="archivesWrap">
+              <div class="loading">Chargement des archives...</div>
             </div>
           </div>
         </div>
@@ -898,12 +939,14 @@
     let reservationsData = [];
     let stagesData = [];
     let trainerRegistrationsData = [];
+    let archivesData = [];
     let trainersData = [];
     let trainerSessionsData = [];
 
     const reservationsWrap = document.getElementById("reservationsWrap");
     const stagesWrap = document.getElementById("stagesWrap");
     const trainerRegistrationsWrap = document.getElementById("trainerRegistrationsWrap");
+    const archivesWrap = document.getElementById("archivesWrap");
     const trainersWrap = document.getElementById("trainersWrap");
     const trainerSessionsWrap = document.getElementById("trainerSessionsWrap");
 
@@ -1017,6 +1060,12 @@
       const today = new Date();
       today.setHours(0, 0, 0, 0);
       return today;
+    }
+
+    function archiveReasonLabel(reason) {
+      if (reason === "dossier_rejected") return "Dossier refusé";
+      if (reason === "training_failed") return "Formation recalée";
+      return reason || "—";
     }
 
     function setActiveTab(tabName) {
@@ -1265,6 +1314,69 @@
       `;
     }
 
+    function renderArchives(rows) {
+      if (!rows.length) {
+        archivesWrap.innerHTML = `<div class="empty">Aucune archive candidat.</div>`;
+        return;
+      }
+
+      archivesWrap.innerHTML = `
+        <table>
+          <thead>
+            <tr>
+              <th>Candidat</th>
+              <th>Contact</th>
+              <th>Session</th>
+              <th>Paiement</th>
+              <th>Validation</th>
+              <th>Résultat</th>
+              <th>Raison archive</th>
+              <th>Archivé le</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rows.map(row => {
+              const paymentBadgeClass =
+                row.payment_status === "captured" ? "badge-success" :
+                row.payment_status === "authorized" ? "badge-ok" :
+                row.payment_status === "canceled" ? "badge-danger" :
+                "badge-warning";
+
+              const validationBadgeClass =
+                row.validation_status === "validated" ? "badge-success" :
+                row.validation_status === "rejected" ? "badge-danger" :
+                "badge-warning";
+
+              const resultValue = row.training_result || "pending";
+
+              const resultBadgeClass =
+                resultValue === "passed" ? "badge-success" :
+                resultValue === "failed" ? "badge-danger" :
+                resultValue === "resit" ? "badge-warning" :
+                "badge-warning";
+
+              return `
+                <tr>
+                  <td><strong>${row.first_name || ""} ${row.last_name || ""}</strong></td>
+                  <td>
+                    <strong>${row.email || "—"}</strong>
+                    <span>${row.phone || "—"}</span><br />
+                    <span>${row.city || "—"}</span>
+                  </td>
+                  <td><strong>${row.session_id || "—"}</strong></td>
+                  <td><span class="badge ${paymentBadgeClass}">${row.payment_status || "—"}</span></td>
+                  <td><span class="badge ${validationBadgeClass}">${row.validation_status || "—"}</span></td>
+                  <td><span class="badge ${resultBadgeClass}">${resultValue}</span></td>
+                  <td><span class="badge badge-warning">${archiveReasonLabel(row.archive_reason)}</span></td>
+                  <td>${formatDate(row.archived_at)}</td>
+                </tr>
+              `;
+            }).join("")}
+          </tbody>
+        </table>
+      `;
+    }
+
     function renderTrainers(rows) {
       if (!rows.length) {
         trainersWrap.innerHTML = `<div class="empty">Aucun formateur.</div>`;
@@ -1430,6 +1542,31 @@
       renderTrainerRegistrations(filtered);
     }
 
+    function applyArchiveFilters() {
+      const search = normalize(document.getElementById("archiveSearch").value);
+      const reason = document.getElementById("archiveReasonFilter").value;
+      const payment = document.getElementById("archivePaymentFilter").value;
+
+      const filtered = archivesData.filter(row => {
+        const text = [
+          row.first_name,
+          row.last_name,
+          row.email,
+          row.city,
+          row.phone,
+          row.session_id
+        ].map(normalize).join(" ");
+
+        const searchOk = !search || text.includes(search);
+        const reasonOk = !reason || row.archive_reason === reason;
+        const paymentOk = !payment || row.payment_status === payment;
+
+        return searchOk && reasonOk && paymentOk;
+      });
+
+      renderArchives(filtered);
+    }
+
     function applyTrainerFilters() {
       const search = normalize(document.getElementById("trainerSearch").value);
       const region = normalize(document.getElementById("trainerRegionFilter").value);
@@ -1552,6 +1689,22 @@
       updateFinance();
     }
 
+    async function loadArchives() {
+      const { data, error } = await supabase
+        .from("trainer_candidate_archives")
+        .select("*")
+        .order("archived_at", { ascending: false });
+
+      if (error) {
+        console.error(error);
+        archivesWrap.innerHTML = `<div class="error">Impossible de charger les archives candidats.</div>`;
+        return;
+      }
+
+      archivesData = data || [];
+      renderArchives(archivesData);
+    }
+
     async function loadTrainers() {
       const { data, error } = await supabase
         .from("trainers")
@@ -1638,6 +1791,7 @@
         if (result.success) {
           alert("Dossier refusé et candidat archivé.");
           await loadTrainerRegistrations();
+          await loadArchives();
           await loadTrainers();
         } else {
           alert(result.error || "Erreur lors du refus du dossier.");
@@ -1676,6 +1830,7 @@
         if (apiResult.success) {
           alert("Résultat de formation mis à jour.");
           await loadTrainerRegistrations();
+          await loadArchives();
           await loadTrainers();
         } else {
           alert(apiResult.error || "Erreur lors de la mise à jour du résultat.");
@@ -1722,6 +1877,10 @@
     document.getElementById("candidateValidationFilter").addEventListener("change", applyCandidateFilters);
     document.getElementById("candidateResultFilter").addEventListener("change", applyCandidateFilters);
     document.getElementById("candidatePaymentFilter").addEventListener("change", applyCandidateFilters);
+
+    document.getElementById("archiveSearch").addEventListener("input", applyArchiveFilters);
+    document.getElementById("archiveReasonFilter").addEventListener("change", applyArchiveFilters);
+    document.getElementById("archivePaymentFilter").addEventListener("change", applyArchiveFilters);
 
     document.getElementById("trainerSearch").addEventListener("input", applyTrainerFilters);
     document.getElementById("trainerRegionFilter").addEventListener("input", applyTrainerFilters);
@@ -1828,6 +1987,7 @@
       await loadReservations();
       await loadStages();
       await loadTrainerRegistrations();
+      await loadArchives();
       await loadTrainers();
       await loadTrainerSessions();
     }
