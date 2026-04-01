@@ -596,7 +596,6 @@
     const container = document.getElementById("stagesContainer");
     const selectedDepartmentLabel = document.getElementById("selectedDepartmentLabel");
     const stagesSubtitle = document.getElementById("stagesSubtitle");
-    const departmentTags = document.getElementById("departmentTags");
     const mapSvgWrap = document.getElementById("mapSvgWrap");
     const mapPathBox = document.getElementById("mapPathBox");
     const applySelectionBtn = document.getElementById("applySelectionBtn");
@@ -609,18 +608,14 @@
 
     mapPathBox.textContent = `Chemin SVG utilisé : ${SVG_MAP_PATH}`;
 
-    function normalize(value) {
-      return String(value || "").trim().toLowerCase();
-    }
-
     function formatPrice(price) {
       return `${Number(price || 0).toFixed(0)} €`;
     }
 
     function formatDate(dateString) {
       if (!dateString) return "Date non disponible";
-
       const date = new Date(dateString);
+      if (Number.isNaN(date.getTime())) return "Date non disponible";
       return date.toLocaleDateString("fr-FR", {
         day: "2-digit",
         month: "long",
@@ -633,11 +628,25 @@
     }
 
     function normalizeDepartment(value) {
-      const raw = String(value || "").trim();
+      if (value === null || value === undefined) return "";
+
+      let raw = String(value).trim().toUpperCase();
+
       if (!raw) return "";
+
+      raw = raw.replace(",", ".");
+      if (/^\d+(\.\d+)?$/.test(raw)) {
+        raw = String(parseInt(raw, 10));
+      }
+
+      raw = raw.replace(/^0+(\d)$/, "$1");
+
       if (/^\d{1}$/.test(raw)) return raw.padStart(2, "0");
       if (/^\d{2}$/.test(raw)) return raw;
-      return raw.toUpperCase();
+
+      if (/^(2A|2B)$/.test(raw)) return raw;
+
+      return raw;
     }
 
     function getSortedDepartmentList(setObj) {
@@ -653,7 +662,7 @@
 
     function updateTagSelection() {
       document.querySelectorAll(".department-tag").forEach(button => {
-        const dep = button.dataset.department || "";
+        const dep = normalizeDepartment(button.dataset.department || "");
         button.classList.toggle("active", pendingDepartments.has(dep));
       });
     }
@@ -662,7 +671,7 @@
       if (!svgRoot) return;
 
       svgRoot.querySelectorAll("[id^='dpt-']").forEach(el => {
-        const depCode = el.id.replace("dpt-", "");
+        const depCode = normalizeDepartment(el.id.replace("dpt-", ""));
         const isSelected = pendingDepartments.has(depCode);
 
         el.style.fill = isSelected ? "#1f6feb" : "";
@@ -688,7 +697,7 @@
     }
 
     function applySelection() {
-      appliedDepartments = new Set(pendingDepartments);
+      appliedDepartments = new Set([...pendingDepartments].map(normalizeDepartment));
 
       const list = getSortedDepartmentList(appliedDepartments);
 
@@ -697,7 +706,6 @@
         : "Choisissez votre ville, consultez les dates et réservez votre place en ligne.";
 
       renderStages();
-
       document.getElementById("stages").scrollIntoView({ behavior: "smooth" });
     }
 
@@ -716,7 +724,10 @@
     function getFilteredStages() {
       if (!appliedDepartments.size) return allStages;
 
-      return allStages.filter(stage => appliedDepartments.has(normalizeDepartment(stage.department)));
+      return allStages.filter(stage => {
+        const dep = normalizeDepartment(stage.department);
+        return appliedDepartments.has(dep);
+      });
     }
 
     function renderStages() {
@@ -810,7 +821,7 @@
         }
 
         svgRoot.querySelectorAll("[id^='dpt-']").forEach(el => {
-          const depCode = el.id.replace("dpt-", "");
+          const depCode = normalizeDepartment(el.id.replace("dpt-", ""));
           el.style.cursor = "pointer";
 
           el.addEventListener("click", (event) => {
@@ -859,7 +870,11 @@
         return;
       }
 
-      allStages = data || [];
+      allStages = (data || []).map(stage => ({
+        ...stage,
+        department: normalizeDepartment(stage.department)
+      }));
+
       renderStages();
     }
 
