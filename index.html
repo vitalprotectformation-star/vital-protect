@@ -526,7 +526,7 @@
       <div class="container">
         <div class="section-head">
           <h2>Trouver un stage par département</h2>
-          <p>Sélectionnez un ou plusieurs départements, puis cliquez sur valider.</p>
+          <p>Cliquez sur un département de la carte pour filtrer les stages disponibles.</p>
         </div>
 
         <div class="map-layout">
@@ -537,9 +537,9 @@
           </div>
 
           <div class="map-sidebar">
-            <div class="map-selected" id="selectedDepartmentLabel">Départements sélectionnés : Tous les départements</div>
+            <div class="map-selected" id="selectedDepartmentLabel">Département sélectionné : Tous les départements</div>
             <p class="map-note">
-              Vous pouvez cliquer sur plusieurs départements sur la carte, puis valider votre sélection.
+              Un clic sur un département applique immédiatement le filtre.
             </p>
 
             <div class="department-tags" id="departmentTags">
@@ -555,7 +555,6 @@
             </div>
 
             <div class="selection-actions">
-              <button id="applySelectionBtn" class="btn btn-primary" type="button">Valider la sélection</button>
               <button id="resetSelectionBtn" class="btn btn-secondary" type="button">Réinitialiser</button>
             </div>
 
@@ -598,12 +597,10 @@
     const stagesSubtitle = document.getElementById("stagesSubtitle");
     const mapSvgWrap = document.getElementById("mapSvgWrap");
     const mapPathBox = document.getElementById("mapPathBox");
-    const applySelectionBtn = document.getElementById("applySelectionBtn");
     const resetSelectionBtn = document.getElementById("resetSelectionBtn");
 
     let allStages = [];
-    let pendingDepartments = new Set();
-    let appliedDepartments = new Set();
+    let selectedDepartment = "";
     let svgRoot = null;
 
     mapPathBox.textContent = `Chemin SVG utilisé : ${SVG_MAP_PATH}`;
@@ -631,39 +628,31 @@
       if (value === null || value === undefined) return "";
 
       let raw = String(value).trim().toUpperCase();
-
       if (!raw) return "";
 
       raw = raw.replace(",", ".");
+
       if (/^\d+(\.\d+)?$/.test(raw)) {
         raw = String(parseInt(raw, 10));
       }
 
-      raw = raw.replace(/^0+(\d)$/, "$1");
-
       if (/^\d{1}$/.test(raw)) return raw.padStart(2, "0");
       if (/^\d{2}$/.test(raw)) return raw;
-
       if (/^(2A|2B)$/.test(raw)) return raw;
 
       return raw;
     }
 
-    function getSortedDepartmentList(setObj) {
-      return [...setObj].sort((a, b) => a.localeCompare(b, "fr"));
-    }
-
     function updateSelectionLabel() {
-      const list = getSortedDepartmentList(pendingDepartments);
-      selectedDepartmentLabel.textContent = list.length
-        ? `Départements sélectionnés : ${list.join(", ")}`
-        : "Départements sélectionnés : Tous les départements";
+      selectedDepartmentLabel.textContent = selectedDepartment
+        ? `Département sélectionné : ${selectedDepartment}`
+        : "Département sélectionné : Tous les départements";
     }
 
     function updateTagSelection() {
       document.querySelectorAll(".department-tag").forEach(button => {
         const dep = normalizeDepartment(button.dataset.department || "");
-        button.classList.toggle("active", pendingDepartments.has(dep));
+        button.classList.toggle("active", dep === selectedDepartment);
       });
     }
 
@@ -672,7 +661,7 @@
 
       svgRoot.querySelectorAll("[id^='dpt-']").forEach(el => {
         const depCode = normalizeDepartment(el.id.replace("dpt-", ""));
-        const isSelected = pendingDepartments.has(depCode);
+        const isSelected = depCode === selectedDepartment;
 
         el.style.fill = isSelected ? "#1f6feb" : "";
         el.style.stroke = isSelected ? "#0b2e59" : "";
@@ -681,28 +670,15 @@
       });
     }
 
-    function toggleDepartment(departmentCode) {
-      const dep = normalizeDepartment(departmentCode);
-      if (!dep) return;
-
-      if (pendingDepartments.has(dep)) {
-        pendingDepartments.delete(dep);
-      } else {
-        pendingDepartments.add(dep);
-      }
+    function setSelectedDepartment(departmentCode) {
+      selectedDepartment = normalizeDepartment(departmentCode);
 
       updateSelectionLabel();
       updateTagSelection();
       refreshMapSelection();
-    }
 
-    function applySelection() {
-      appliedDepartments = new Set([...pendingDepartments].map(normalizeDepartment));
-
-      const list = getSortedDepartmentList(appliedDepartments);
-
-      stagesSubtitle.textContent = list.length
-        ? `Stages actuellement affichés pour les départements : ${list.join(", ")}.`
+      stagesSubtitle.textContent = selectedDepartment
+        ? `Stages actuellement affichés pour le département : ${selectedDepartment}.`
         : "Choisissez votre ville, consultez les dates et réservez votre place en ligne.";
 
       renderStages();
@@ -710,34 +686,27 @@
     }
 
     function resetSelection() {
-      pendingDepartments = new Set();
-      appliedDepartments = new Set();
-
+      selectedDepartment = "";
       updateSelectionLabel();
       updateTagSelection();
       refreshMapSelection();
-
       stagesSubtitle.textContent = "Choisissez votre ville, consultez les dates et réservez votre place en ligne.";
       renderStages();
     }
 
     function getFilteredStages() {
-      if (!appliedDepartments.size) return allStages;
+      if (!selectedDepartment) return allStages;
 
-      return allStages.filter(stage => {
-        const dep = normalizeDepartment(stage.department);
-        return appliedDepartments.has(dep);
-      });
+      return allStages.filter(stage => normalizeDepartment(stage.department) === selectedDepartment);
     }
 
     function renderStages() {
       const data = getFilteredStages();
-      const selectedList = getSortedDepartmentList(appliedDepartments);
 
       if (!data || !data.length) {
         container.innerHTML = `
           <div class="empty-state">
-            Aucun stage disponible${selectedList.length ? ` pour les départements ${selectedList.join(", ")}` : ""} pour le moment.
+            Aucun stage disponible${selectedDepartment ? ` pour le département ${selectedDepartment}` : ""} pour le moment.
           </div>
         `;
         return;
@@ -798,7 +767,7 @@
     function bindDepartmentTags() {
       document.querySelectorAll(".department-tag").forEach(button => {
         button.addEventListener("click", () => {
-          toggleDepartment(button.dataset.department || "");
+          setSelectedDepartment(button.dataset.department || "");
         });
       });
     }
@@ -826,11 +795,11 @@
 
           el.addEventListener("click", (event) => {
             event.preventDefault();
-            toggleDepartment(depCode);
+            setSelectedDepartment(depCode);
           });
 
           el.addEventListener("mouseenter", () => {
-            if (!pendingDepartments.has(depCode)) {
+            if (depCode !== selectedDepartment) {
               el.style.opacity = "0.8";
             }
           });
@@ -870,15 +839,10 @@
         return;
       }
 
-      allStages = (data || []).map(stage => ({
-        ...stage,
-        department: normalizeDepartment(stage.department)
-      }));
-
+      allStages = data || [];
       renderStages();
     }
 
-    applySelectionBtn.addEventListener("click", applySelection);
     resetSelectionBtn.addEventListener("click", resetSelection);
 
     bindDepartmentTags();
