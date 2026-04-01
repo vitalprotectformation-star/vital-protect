@@ -47,16 +47,25 @@
     }
 
     .brand {
-      display: inline-flex;
+      display: flex;
       align-items: center;
-      margin-bottom: 8px;
+      gap: 12px;
       text-decoration: none;
+      color: white;
+      margin-bottom: 8px;
     }
 
     .brand img {
       height: 162px;
       width: auto;
       display: block;
+    }
+
+    .brand-text {
+      font-size: 2.2rem;
+      font-weight: 800;
+      line-height: 1;
+      letter-spacing: 0.5px;
     }
 
     .brand-sub {
@@ -407,8 +416,16 @@
         grid-template-columns: 1fr;
       }
 
+      .brand {
+        align-items: center;
+      }
+
       .brand img {
         height: 132px;
+      }
+
+      .brand-text {
+        font-size: 1.4rem;
       }
 
       .brand-sub {
@@ -422,6 +439,7 @@
     <aside class="sidebar">
       <a href="/index.html" class="brand">
         <img src="/logo.png" alt="VITAL PROTECT" />
+        <span class="brand-text">VITAL PROTECT</span>
       </a>
       <div class="brand-sub">Cockpit admin</div>
 
