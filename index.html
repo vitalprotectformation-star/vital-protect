@@ -187,21 +187,24 @@
     .map-note {
       color: var(--muted);
       margin-bottom: 16px;
+      line-height: 1.6;
     }
 
     .map-selected {
       font-weight: 800;
       color: var(--navy);
       margin-bottom: 12px;
+      font-size: 1.05rem;
     }
 
-    .region-tags {
+    .department-tags {
       display: flex;
       flex-wrap: wrap;
       gap: 10px;
+      margin-top: 14px;
     }
 
-    .region-tag {
+    .department-tag {
       border: 1px solid var(--border);
       background: white;
       color: var(--text);
@@ -211,45 +214,18 @@
       cursor: pointer;
     }
 
-    .region-tag.active {
+    .department-tag.active {
       background: var(--blue-soft);
       color: var(--blue);
       border-color: #cfe0ff;
     }
 
-    .france-map {
+    .map-object {
       width: 100%;
-      height: auto;
-      display: block;
-    }
-
-    .fr-region {
-      fill: #eef4ff;
-      stroke: #bfd0eb;
-      stroke-width: 2;
-      cursor: pointer;
-      transition: 0.2s ease;
-    }
-
-    .fr-region:hover {
-      fill: #dce9ff;
-    }
-
-    .fr-region.active {
-      fill: #1f6feb;
-      stroke: #1f6feb;
-    }
-
-    .fr-label {
-      font-size: 11px;
-      fill: #0b2e59;
-      font-weight: 700;
-      pointer-events: none;
-      text-anchor: middle;
-    }
-
-    .fr-label.active {
-      fill: white;
+      min-height: 720px;
+      border: none;
+      border-radius: 18px;
+      background: #f8fbff;
     }
 
     .stages-grid {
@@ -421,6 +397,10 @@
       .stages-grid {
         grid-template-columns: 1fr;
       }
+
+      .map-object {
+        min-height: 580px;
+      }
     }
 
     @media (max-width: 720px) {
@@ -509,58 +489,39 @@
     <section id="mapFinder">
       <div class="container">
         <div class="section-head">
-          <h2>Trouver un stage par région</h2>
-          <p>Cliquez sur une région de la carte pour filtrer les stages disponibles.</p>
+          <h2>Trouver un stage par département</h2>
+          <p>Cliquez sur un département de la carte pour filtrer les stages disponibles.</p>
         </div>
 
         <div class="map-layout">
           <div class="map-card">
-            <svg class="france-map" viewBox="0 0 600 700" xmlns="http://www.w3.org/2000/svg" aria-label="Carte de France interactive stylisée">
-              <polygon class="fr-region" data-region="Bretagne" points="60,160 120,120 170,140 150,210 90,220 50,190"></polygon>
-              <text class="fr-label" data-label="Bretagne" x="110" y="175">Bretagne</text>
-
-              <polygon class="fr-region" data-region="Normandie" points="165,95 250,85 275,145 205,180 150,150"></polygon>
-              <text class="fr-label" data-label="Normandie" x="215" y="135">Normandie</text>
-
-              <polygon class="fr-region" data-region="Hauts-de-France" points="285,55 365,65 385,135 300,145 270,100"></polygon>
-              <text class="fr-label" data-label="Hauts-de-France" x="332" y="105">HDF</text>
-
-              <polygon class="fr-region" data-region="Île-de-France" points="275,155 330,155 345,205 295,225 255,195"></polygon>
-              <text class="fr-label" data-label="Île-de-France" x="300" y="190">IDF</text>
-
-              <polygon class="fr-region" data-region="Grand Est" points="385,90 470,105 500,200 430,250 350,210 350,150"></polygon>
-              <text class="fr-label" data-label="Grand Est" x="430" y="170">Grand Est</text>
-
-              <polygon class="fr-region" data-region="Pays de la Loire" points="135,210 205,195 225,255 185,305 120,290 105,235"></polygon>
-              <text class="fr-label" data-label="Pays de la Loire" x="165" y="255">PDL</text>
-
-              <polygon class="fr-region" data-region="Centre-Val de Loire" points="230,220 305,225 330,285 270,330 205,290"></polygon>
-              <text class="fr-label" data-label="Centre-Val de Loire" x="270" y="275">Centre</text>
-
-              <polygon class="fr-region" data-region="Bourgogne-Franche-Comté" points="335,230 420,255 420,340 340,360 300,300"></polygon>
-              <text class="fr-label" data-label="Bourgogne-Franche-Comté" x="365" y="300">BFC</text>
-
-              <polygon class="fr-region" data-region="Nouvelle-Aquitaine" points="115,315 205,310 260,385 245,520 150,560 85,470 75,370"></polygon>
-              <text class="fr-label" data-label="Nouvelle-Aquitaine" x="165" y="430">NA</text>
-
-              <polygon class="fr-region" data-region="Occitanie" points="255,395 350,385 405,470 355,565 250,555 220,470"></polygon>
-              <text class="fr-label" data-label="Occitanie" x="305" y="475">Occitanie</text>
-
-              <polygon class="fr-region" data-region="Auvergne-Rhône-Alpes" points="425,285 500,300 525,425 455,535 365,470 360,380"></polygon>
-              <text class="fr-label" data-label="Auvergne-Rhône-Alpes" x="450" y="410">AURA</text>
-
-              <polygon class="fr-region" data-region="Provence-Alpes-Côte d'Azur" points="455,540 540,535 565,590 515,625 435,605"></polygon>
-              <text class="fr-label" data-label="Provence-Alpes-Côte d'Azur" x="500" y="580">PACA</text>
-
-              <polygon class="fr-region" data-region="Corse" points="540,650 565,635 580,675 555,695 535,680"></polygon>
-              <text class="fr-label" data-label="Corse" x="558" y="645">Corse</text>
-            </svg>
+            <object
+              id="franceMapObject"
+              class="map-object"
+              type="image/svg+xml"
+              data="/carte_france_dep.svg"
+              aria-label="Carte de France interactive"
+            ></object>
           </div>
 
           <div class="map-sidebar">
-            <div class="map-selected" id="selectedRegionLabel">Région sélectionnée : Toutes les régions</div>
-            <p class="map-note">La carte est stylisée et sert de filtre rapide. Vous pouvez aussi cliquer sur un tag ci-dessous.</p>
-            <div class="region-tags" id="regionTags"></div>
+            <div class="map-selected" id="selectedDepartmentLabel">Département sélectionné : Tous les départements</div>
+            <p class="map-note">
+              Cliquez directement sur la carte ou utilisez les raccourcis ci-dessous.
+            </p>
+
+            <div class="department-tags" id="departmentTags">
+              <button class="department-tag active" data-department="">Tous</button>
+              <button class="department-tag" data-department="75">75</button>
+              <button class="department-tag" data-department="13">13</button>
+              <button class="department-tag" data-department="33">33</button>
+              <button class="department-tag" data-department="31">31</button>
+              <button class="department-tag" data-department="69">69</button>
+              <button class="department-tag" data-department="59">59</button>
+              <button class="department-tag" data-department="44">44</button>
+              <button class="department-tag" data-department="06">06</button>
+              <button class="department-tag" data-department="34">34</button>
+            </div>
           </div>
         </div>
       </div>
@@ -593,28 +554,13 @@
     );
 
     const container = document.getElementById("stagesContainer");
-    const regionTags = document.getElementById("regionTags");
-    const selectedRegionLabel = document.getElementById("selectedRegionLabel");
+    const selectedDepartmentLabel = document.getElementById("selectedDepartmentLabel");
     const stagesSubtitle = document.getElementById("stagesSubtitle");
+    const departmentTags = document.getElementById("departmentTags");
+    const franceMapObject = document.getElementById("franceMapObject");
 
     let allStages = [];
-    let selectedRegion = "";
-
-    const franceRegions = [
-      "Bretagne",
-      "Normandie",
-      "Hauts-de-France",
-      "Île-de-France",
-      "Grand Est",
-      "Pays de la Loire",
-      "Centre-Val de Loire",
-      "Bourgogne-Franche-Comté",
-      "Nouvelle-Aquitaine",
-      "Occitanie",
-      "Auvergne-Rhône-Alpes",
-      "Provence-Alpes-Côte d'Azur",
-      "Corse"
-    ];
+    let selectedDepartment = "";
 
     function normalize(value) {
       return String(value || "").trim().toLowerCase();
@@ -639,51 +585,72 @@
       return Number(remainingPlaces || 0) <= 3 ? "warning" : "success";
     }
 
-    function setSelectedRegion(region) {
-      selectedRegion = region || "";
-      selectedRegionLabel.textContent = `Région sélectionnée : ${selectedRegion || "Toutes les régions"}`;
-      stagesSubtitle.textContent = selectedRegion
-        ? `Stages actuellement affichés pour la région : ${selectedRegion}.`
+    function normalizeDepartment(value) {
+      const raw = String(value || "").trim();
+      if (!raw) return "";
+      if (/^\d{1}$/.test(raw)) return raw.padStart(2, "0");
+      if (/^\d{2}$/.test(raw)) return raw;
+      return raw.toUpperCase();
+    }
+
+    function updateTagSelection() {
+      document.querySelectorAll(".department-tag").forEach(button => {
+        button.classList.toggle("active", button.dataset.department === selectedDepartment);
+      });
+    }
+
+    function clearMapSelection(svgDoc) {
+      if (!svgDoc) return;
+
+      svgDoc.querySelectorAll("[id^='dpt-']").forEach(el => {
+        el.style.fill = "";
+        el.style.filter = "";
+        el.style.opacity = "";
+      });
+
+      svgDoc.querySelectorAll("text[onclick*=\"selectDep('dpt-\"]").forEach(el => {
+        el.style.fill = "";
+        el.style.fontWeight = "";
+      });
+    }
+
+    function highlightDepartmentOnMap(departmentCode) {
+      const svgDoc = franceMapObject.contentDocument;
+      if (!svgDoc) return;
+
+      clearMapSelection(svgDoc);
+
+      if (!departmentCode) return;
+
+      const target = svgDoc.getElementById(`dpt-${departmentCode}`);
+      if (target) {
+        target.style.fill = "#1f6feb";
+        target.style.filter = "brightness(0.95)";
+        target.style.opacity = "1";
+      }
+
+      svgDoc.querySelectorAll("text[onclick*=\"selectDep('dpt-" + departmentCode + "')\"]").forEach(el => {
+        el.style.fill = "#1f6feb";
+        el.style.fontWeight = "700";
+      });
+    }
+
+    function setSelectedDepartment(departmentCode) {
+      selectedDepartment = normalizeDepartment(departmentCode);
+      selectedDepartmentLabel.textContent = `Département sélectionné : ${selectedDepartment || "Tous les départements"}`;
+      stagesSubtitle.textContent = selectedDepartment
+        ? `Stages actuellement affichés pour le département : ${selectedDepartment}.`
         : "Choisissez votre ville, consultez les dates et réservez votre place en ligne.";
 
-      document.querySelectorAll(".fr-region").forEach(el => {
-        el.classList.toggle("active", el.dataset.region === selectedRegion);
-      });
-
-      document.querySelectorAll(".fr-label").forEach(el => {
-        el.classList.toggle("active", el.dataset.label === selectedRegion);
-      });
-
-      document.querySelectorAll(".region-tag").forEach(el => {
-        el.classList.toggle("active", el.dataset.region === selectedRegion);
-      });
-
+      updateTagSelection();
+      highlightDepartmentOnMap(selectedDepartment);
       renderStages();
     }
 
-    function buildRegionTags() {
-      regionTags.innerHTML = `
-        <button class="region-tag ${selectedRegion === "" ? "active" : ""}" data-region="">
-          Toutes
-        </button>
-        ${franceRegions.map(region => `
-          <button class="region-tag ${selectedRegion === region ? "active" : ""}" data-region="${region}">
-            ${region}
-          </button>
-        `).join("")}
-      `;
-
-      regionTags.querySelectorAll(".region-tag").forEach(button => {
-        button.addEventListener("click", () => {
-          setSelectedRegion(button.dataset.region || "");
-        });
-      });
-    }
-
     function getFilteredStages() {
-      if (!selectedRegion) return allStages;
+      if (!selectedDepartment) return allStages;
 
-      return allStages.filter(stage => normalize(stage.region) === normalize(selectedRegion));
+      return allStages.filter(stage => normalizeDepartment(stage.department) === selectedDepartment);
     }
 
     function renderStages() {
@@ -692,7 +659,7 @@
       if (!data || !data.length) {
         container.innerHTML = `
           <div class="empty-state">
-            Aucun stage disponible${selectedRegion ? ` en ${selectedRegion}` : ""} pour le moment.
+            Aucun stage disponible${selectedDepartment ? ` pour le département ${selectedDepartment}` : ""} pour le moment.
           </div>
         `;
         return;
@@ -750,6 +717,61 @@
       `).join("");
     }
 
+    function bindDepartmentTags() {
+      document.querySelectorAll(".department-tag").forEach(button => {
+        button.addEventListener("click", () => {
+          setSelectedDepartment(button.dataset.department || "");
+        });
+      });
+    }
+
+    function bindSvgDepartments() {
+      franceMapObject.addEventListener("load", () => {
+        const svgDoc = franceMapObject.contentDocument;
+        if (!svgDoc) return;
+
+        svgDoc.querySelectorAll("[id^='dpt-']").forEach(el => {
+          const depCode = el.id.replace("dpt-", "");
+
+          el.style.cursor = "pointer";
+
+          el.addEventListener("click", (event) => {
+            event.preventDefault();
+            setSelectedDepartment(depCode);
+          });
+
+          el.addEventListener("mouseenter", () => {
+            if (selectedDepartment !== depCode) {
+              el.style.opacity = "0.8";
+            }
+          });
+
+          el.addEventListener("mouseleave", () => {
+            if (selectedDepartment !== depCode) {
+              el.style.opacity = "";
+            }
+          });
+        });
+
+        svgDoc.querySelectorAll("text[onclick*=\"selectDep('dpt-\"]").forEach(textNode => {
+          const onclickValue = textNode.getAttribute("onclick") || "";
+          const match = onclickValue.match(/dpt-([0-9A-Z]+)/);
+
+          if (!match) return;
+
+          const depCode = match[1];
+          textNode.style.cursor = "pointer";
+
+          textNode.addEventListener("click", (event) => {
+            event.preventDefault();
+            setSelectedDepartment(depCode);
+          });
+        });
+
+        highlightDepartmentOnMap(selectedDepartment);
+      });
+    }
+
     async function loadStages() {
       const { data, error } = await supabase
         .from("stages")
@@ -767,16 +789,11 @@
       }
 
       allStages = data || [];
-      buildRegionTags();
       renderStages();
     }
 
-    document.querySelectorAll(".fr-region").forEach(region => {
-      region.addEventListener("click", () => {
-        setSelectedRegion(region.dataset.region || "");
-      });
-    });
-
+    bindDepartmentTags();
+    bindSvgDepartments();
     loadStages();
   </script>
 
