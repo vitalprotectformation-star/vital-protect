@@ -8,16 +8,21 @@
   <style>
     :root {
       --navy: #0b2e59;
+      --navy-dark: #08203d;
       --blue: #1f6feb;
       --bg: #f4f7fb;
       --card: #ffffff;
       --border: #dbe4f0;
       --text: #142033;
       --muted: #667085;
+      --success: #0f9d58;
+      --danger: #c62828;
       --shadow: 0 10px 30px rgba(11, 46, 89, 0.08);
     }
 
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+    }
 
     body {
       margin: 0;
@@ -32,7 +37,6 @@
       padding: 24px;
     }
 
-    /* ===== LOGO ===== */
     .logo {
       margin-bottom: 24px;
     }
@@ -93,17 +97,40 @@
       width: 100%;
     }
 
+    .btn:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+
     .status {
       margin-top: 14px;
-      color: var(--muted);
       min-height: 22px;
+      line-height: 1.5;
+      color: var(--muted);
+    }
+
+    .status.success {
+      color: var(--success);
+    }
+
+    .status.error {
+      color: var(--danger);
+    }
+
+    .footer-link {
+      margin-top: 16px;
+      text-align: center;
+    }
+
+    .footer-link a {
+      color: var(--navy);
+      text-decoration: none;
+      font-weight: 700;
     }
   </style>
 </head>
 
 <body>
-
-  <!-- 🔥 LOGO -->
   <div class="logo">
     <img src="/logo.png" alt="VITAL PROTECT" />
   </div>
@@ -115,15 +142,25 @@
     <form id="loginForm">
       <div class="field">
         <label for="email">Email formateur</label>
-        <input type="email" id="email" required placeholder="formateur@vital-protect.fr" />
+        <input
+          type="email"
+          id="email"
+          required
+          placeholder="formateur@vital-protect.fr"
+          autocomplete="email"
+        />
       </div>
 
-      <button type="submit" class="btn">
+      <button type="submit" class="btn" id="submitBtn">
         Recevoir mon lien de connexion
       </button>
     </form>
 
     <div class="status" id="status"></div>
+
+    <div class="footer-link">
+      <a href="/">← Retour au site</a>
+    </div>
   </div>
 
   <script type="module">
@@ -136,48 +173,83 @@
 
     const form = document.getElementById("loginForm");
     const status = document.getElementById("status");
+    const submitBtn = document.getElementById("submitBtn");
+
+    function setStatus(message, type = "") {
+      status.textContent = message;
+      status.className = `status${type ? " " + type : ""}`;
+    }
+
+    async function checkExistingSession() {
+      const {
+        data: { session }
+      } = await supabase.auth.getSession();
+
+      if (session?.user?.email) {
+        window.location.href = "/espace-formateur.html";
+      }
+    }
 
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
 
       const email = document.getElementById("email").value.trim().toLowerCase();
-      status.textContent = "Vérification du profil formateur...";
 
-      const { data: trainer, error: trainerError } = await supabase
-        .from("trainers")
-        .select("id, email")
-        .ilike("email", email)
-        .maybeSingle();
-
-      if (trainerError) {
-        console.error("Erreur trainer:", trainerError);
-        status.textContent = `Erreur : ${trainerError.message}`;
+      if (!email) {
+        setStatus("Veuillez saisir votre email.", "error");
         return;
       }
 
-      if (!trainer) {
-        status.textContent = "Aucun profil formateur trouvé avec cet email.";
-        return;
-      }
+      submitBtn.disabled = true;
+      setStatus("Vérification du profil formateur...");
 
-      status.textContent = "Envoi du lien de connexion...";
+      try {
+        const { data: trainer, error: trainerError } = await supabase
+          .from("trainers")
+          .select("id, email, first_name, last_name")
+          .ilike("email", email)
+          .maybeSingle();
 
-      const { error } = await supabase.auth.signInWithOtp({
-        email,
-        options: {
-          emailRedirectTo: `${window.location.origin}/formateur-callback.html`
+        if (trainerError) {
+          console.error("Erreur trainer:", trainerError);
+          setStatus(`Erreur : ${trainerError.message}`, "error");
+          submitBtn.disabled = false;
+          return;
         }
-      });
 
-      if (error) {
-        console.error("Erreur OTP formateur:", error);
-        status.textContent = `Erreur : ${error.message}`;
-        return;
+        if (!trainer) {
+          setStatus("Aucun profil formateur trouvé avec cet email.", "error");
+          submitBtn.disabled = false;
+          return;
+        }
+
+        setStatus("Envoi du lien de connexion...");
+
+        const { error } = await supabase.auth.signInWithOtp({
+          email,
+          options: {
+            emailRedirectTo: `${window.location.origin}/formateur-callback.html`
+          }
+        });
+
+        if (error) {
+          console.error("Erreur OTP formateur:", error);
+          setStatus(`Erreur : ${error.message}`, "error");
+          submitBtn.disabled = false;
+          return;
+        }
+
+        setStatus("✅ Lien envoyé. Vérifiez votre email.", "success");
+        form.reset();
+      } catch (error) {
+        console.error("Erreur login formateur:", error);
+        setStatus("Erreur réseau ou serveur.", "error");
+      } finally {
+        submitBtn.disabled = false;
       }
-
-      status.textContent = "✅ Lien envoyé. Vérifiez votre email.";
     });
-  </script>
 
+    checkExistingSession();
+  </script>
 </body>
 </html>
