@@ -133,6 +133,12 @@
       gap: 16px;
     }
 
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+
     .info-box {
       background: #f8fbff;
       border: 1px solid #e5edf7;
@@ -248,6 +254,51 @@
       white-space: pre-wrap;
     }
 
+    .section-title {
+      margin-bottom: 12px;
+    }
+
+    form {
+      margin-top: 16px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 14px;
+    }
+
+    .field label {
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: var(--muted);
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      border: 1px solid var(--border);
+      background: white;
+      border-radius: 12px;
+      padding: 12px;
+      font-size: 0.98rem;
+      color: var(--text);
+      font-family: inherit;
+    }
+
+    textarea {
+      min-height: 110px;
+      resize: vertical;
+    }
+
+    .form-note {
+      font-size: 0.92rem;
+      color: var(--muted);
+      margin-top: 8px;
+    }
+
     footer {
       margin-top: 28px;
       background: var(--navy-dark);
@@ -260,11 +311,14 @@
       text-align: center;
     }
 
-    @media (max-width: 720px) {
-      .grid {
+    @media (max-width: 900px) {
+      .grid,
+      .grid-3 {
         grid-template-columns: 1fr;
       }
+    }
 
+    @media (max-width: 720px) {
       .brand-text {
         font-size: 1.2rem;
       }
@@ -322,6 +376,9 @@
       "https://zsraqxzneghkzaozzuci.supabase.co",
       "sb_publishable_VlTpYjzJ3DKpFA1Un_EFHQ_FW-mYK4U"
     );
+
+    let trainerContext = null;
+    let certifiedModules = [];
 
     function normalize(value) {
       return String(value || "").trim().toLowerCase();
@@ -413,16 +470,287 @@
     function attachLogoutButtons() {
       const headerLogoutBtn = document.getElementById("headerLogoutBtn");
       if (headerLogoutBtn) {
-        headerLogoutBtn.addEventListener("click", logoutTrainer);
+        headerLogoutBtn.onclick = logoutTrainer;
       }
 
       const logoutBtn = document.getElementById("logoutBtn");
       if (logoutBtn) {
-        logoutBtn.addEventListener("click", logoutTrainer);
+        logoutBtn.onclick = logoutTrainer;
       }
     }
 
-    function buildTrainerView(trainer, sessionEmail) {
+    async function loadCertifiedModules(trainer) {
+      const { data: registrations, error: regError } = await supabase
+        .from("trainer_session_registrations")
+        .select("session_id, validation_status, training_result, email")
+        .ilike("email", trainer.email);
+
+      if (regError) {
+        console.error("Erreur chargement registrations:", regError);
+        return [];
+      }
+
+      const passedSessionIds = (registrations || [])
+        .filter(item =>
+          normalize(item.validation_status) === "validated" &&
+          normalize(item.training_result) === "passed" &&
+          item.session_id
+        )
+        .map(item => item.session_id);
+
+      if (!passedSessionIds.length) {
+        return [];
+      }
+
+      const { data: sessions, error: sessionsError } = await supabase
+        .from("trainer_sessions")
+        .select("id, module_name")
+        .in("id", passedSessionIds);
+
+      if (sessionsError) {
+        console.error("Erreur chargement trainer_sessions:", sessionsError);
+        return [];
+      }
+
+      const modules = [...new Set(
+        (sessions || [])
+          .map(item => item.module_name)
+          .filter(Boolean)
+      )];
+
+      return modules;
+    }
+
+    function buildCreateStageSection(trainer) {
+      if (!certifiedModules.length) {
+        return `
+          <div class="card">
+            <h2 class="section-title">Créer un stage</h2>
+            <div class="alert alert-warning">
+              <p>Aucun module certifié validé n’a été retrouvé pour votre profil.</p>
+              <p>Impossible de créer un stage tant qu’aucun module validé n’est disponible.</p>
+            </div>
+          </div>
+        `;
+      }
+
+      return `
+        <div class="card">
+          <h2 class="section-title">Créer un stage</h2>
+          <p class="muted">Vous pouvez publier un stage uniquement sur un module pour lequel vous êtes certifié et à jour.</p>
+
+          <form id="createStageForm">
+            <div class="grid">
+              <div class="field">
+                <label for="stageTitle">Titre du stage</label>
+                <input id="stageTitle" type="text" placeholder="Ex : Stage Self Défense Essentielle — Paris" required />
+              </div>
+
+              <div class="field">
+                <label for="stageTrainingType">Module certifié</label>
+                <select id="stageTrainingType" required>
+                  <option value="">Choisir un module</option>
+                  ${certifiedModules.map(module => `<option value="${module}">${module}</option>`).join("")}
+                </select>
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="stageDescription">Description</label>
+              <textarea id="stageDescription" placeholder="Décrivez votre stage..."></textarea>
+            </div>
+
+            <div class="grid-3">
+              <div class="field">
+                <label for="stageCity">Ville</label>
+                <input id="stageCity" type="text" required />
+              </div>
+
+              <div class="field">
+                <label for="stageDepartment">Département</label>
+                <input id="stageDepartment" type="text" required />
+              </div>
+
+              <div class="field">
+                <label for="stageRegion">Région</label>
+                <input id="stageRegion" type="text" required />
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="stageAddress">Adresse</label>
+              <input id="stageAddress" type="text" />
+            </div>
+
+            <div class="grid-3">
+              <div class="field">
+                <label for="stageDate">Date</label>
+                <input id="stageDate" type="date" required />
+              </div>
+
+              <div class="field">
+                <label for="stageTime">Heure</label>
+                <input id="stageTime" type="text" placeholder="14:00" />
+              </div>
+
+              <div class="field">
+                <label for="stageDuration">Durée</label>
+                <input id="stageDuration" type="text" placeholder="3h" />
+              </div>
+            </div>
+
+            <div class="grid-3">
+              <div class="field">
+                <label for="stagePrice">Prix (€)</label>
+                <input id="stagePrice" type="number" min="0" required />
+              </div>
+
+              <div class="field">
+                <label for="stageMaxParticipants">Places max</label>
+                <input id="stageMaxParticipants" type="number" min="1" value="20" required />
+              </div>
+
+              <div class="field">
+                <label for="stageRemainingPlaces">Places restantes</label>
+                <input id="stageRemainingPlaces" type="number" min="1" value="20" required />
+              </div>
+            </div>
+
+            <div class="actions">
+              <button class="btn btn-primary" type="submit">Publier le stage</button>
+            </div>
+
+            <div class="form-note">
+              Le stage sera rattaché automatiquement à votre profil formateur.
+            </div>
+          </form>
+
+          <div id="createStageStatus" class="debug" style="display:none;"></div>
+        </div>
+      `;
+    }
+
+    async function handleCreateStageSubmit(trainer) {
+      const form = document.getElementById("createStageForm");
+      const statusBox = document.getElementById("createStageStatus");
+
+      if (!form || !statusBox) return;
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        statusBox.style.display = "block";
+        statusBox.textContent = "Création du stage en cours...";
+
+        const payload = {
+          trainer_id: trainer.id,
+          title: document.getElementById("stageTitle").value.trim(),
+          training_type: document.getElementById("stageTrainingType").value,
+          description: document.getElementById("stageDescription").value.trim(),
+          city: document.getElementById("stageCity").value.trim(),
+          department: document.getElementById("stageDepartment").value.trim(),
+          region: document.getElementById("stageRegion").value.trim(),
+          address: document.getElementById("stageAddress").value.trim(),
+          stage_date: document.getElementById("stageDate").value,
+          start_time: document.getElementById("stageTime").value.trim(),
+          duration: document.getElementById("stageDuration").value.trim(),
+          max_participants: Number(document.getElementById("stageMaxParticipants").value || 20),
+          remaining_places: Number(document.getElementById("stageRemainingPlaces").value || 20),
+          price: Number(document.getElementById("stagePrice").value || 0),
+          status: "published"
+        };
+
+        if (!certifiedModules.includes(payload.training_type)) {
+          statusBox.textContent = "Erreur : ce module n’est pas autorisé pour votre profil.";
+          return;
+        }
+
+        if (!payload.stage_date) {
+          statusBox.textContent = "Erreur : veuillez choisir une date.";
+          return;
+        }
+
+        const { error } = await supabase
+          .from("stages")
+          .insert(payload);
+
+        if (error) {
+          console.error("Erreur création stage:", error);
+          statusBox.textContent = `Erreur : ${error.message}`;
+          return;
+        }
+
+        statusBox.textContent = "✅ Stage créé avec succès.";
+        form.reset();
+      });
+    }
+
+    async function renderFullActiveView(trainer, sessionEmail, certValid, affiliationValid) {
+      const app = document.getElementById("app");
+      const affiliationFeedback = buildAffiliationFeedback();
+
+      app.innerHTML = `
+        <h1>Espace formateur</h1>
+        <p class="muted">Votre espace est actif. Votre certification et votre affiliation sont à jour.</p>
+
+        ${affiliationFeedback}
+
+        <div class="alert alert-success">
+          <h2>Accès actif</h2>
+          <p>Vous pouvez continuer à utiliser la plateforme normalement.</p>
+        </div>
+
+        <div class="grid" style="margin-top:18px;">
+          <div class="info-box">
+            <span class="label">Formateur</span>
+            <div class="value">${trainer.first_name || ""} ${trainer.last_name || ""}</div>
+          </div>
+          <div class="info-box">
+            <span class="label">Email</span>
+            <div class="value">${trainer.email || "—"}</div>
+          </div>
+          <div class="info-box">
+            <span class="label">Certification</span>
+            <div class="value"><span class="badge badge-success">Valide</span></div>
+          </div>
+          <div class="info-box">
+            <span class="label">Expire le</span>
+            <div class="value">${formatDate(trainer.certification_expiry)}</div>
+          </div>
+          <div class="info-box">
+            <span class="label">Affiliation</span>
+            <div class="value"><span class="badge badge-success">Active</span></div>
+          </div>
+          <div class="info-box">
+            <span class="label">Expire le</span>
+            <div class="value">${formatDate(trainer.affiliation_end)}</div>
+          </div>
+        </div>
+
+        <div class="card" style="padding:18px; margin-top:18px;">
+          <h3>Zone membre</h3>
+          <p class="muted">Cette zone peut ensuite accueillir tes contenus privés : ressources, documents, calendrier, kit formateur, etc.</p>
+          <div class="actions">
+            <a href="/" class="btn btn-secondary">Retour au site</a>
+            <button id="logoutBtn" class="btn btn-secondary" type="button">Déconnexion</button>
+          </div>
+        </div>
+
+        ${buildCreateStageSection(trainer)}
+
+        <div class="debug">Email session : ${sessionEmail}
+Email trouvé : ${trainer.email}
+ID formateur : ${trainer.id}
+Certification valide : ${certValid}
+Affiliation valide : ${affiliationValid}
+Modules certifiés : ${certifiedModules.join(", ") || "aucun"}</div>
+      `;
+
+      attachLogoutButtons();
+      await handleCreateStageSubmit(trainer);
+    }
+
+    async function buildTrainerView(trainer, sessionEmail) {
       const certValid = isFutureOrToday(trainer.certification_expiry);
       const affiliationValid =
         isFutureOrToday(trainer.affiliation_end) &&
@@ -565,61 +893,7 @@ Certification expiry : ${trainer.certification_expiry || "—"}</div>
         return;
       }
 
-      app.innerHTML = `
-        <h1>Espace formateur</h1>
-        <p class="muted">Votre espace est actif. Votre certification et votre affiliation sont à jour.</p>
-
-        ${affiliationFeedback}
-
-        <div class="alert alert-success">
-          <h2>Accès actif</h2>
-          <p>Vous pouvez continuer à utiliser la plateforme normalement.</p>
-        </div>
-
-        <div class="grid" style="margin-top:18px;">
-          <div class="info-box">
-            <span class="label">Formateur</span>
-            <div class="value">${trainer.first_name || ""} ${trainer.last_name || ""}</div>
-          </div>
-          <div class="info-box">
-            <span class="label">Email</span>
-            <div class="value">${trainer.email || "—"}</div>
-          </div>
-          <div class="info-box">
-            <span class="label">Certification</span>
-            <div class="value"><span class="badge badge-success">Valide</span></div>
-          </div>
-          <div class="info-box">
-            <span class="label">Expire le</span>
-            <div class="value">${formatDate(trainer.certification_expiry)}</div>
-          </div>
-          <div class="info-box">
-            <span class="label">Affiliation</span>
-            <div class="value"><span class="badge badge-success">Active</span></div>
-          </div>
-          <div class="info-box">
-            <span class="label">Expire le</span>
-            <div class="value">${formatDate(trainer.affiliation_end)}</div>
-          </div>
-        </div>
-
-        <div class="card" style="padding:18px; margin-top:18px;">
-          <h3>Zone membre</h3>
-          <p class="muted">Cette zone peut ensuite accueillir tes contenus privés : ressources, documents, calendrier, kit formateur, etc.</p>
-          <div class="actions">
-            <a href="/" class="btn btn-secondary">Retour au site</a>
-            <button id="logoutBtn" class="btn btn-secondary" type="button">Déconnexion</button>
-          </div>
-        </div>
-
-        <div class="debug">Email session : ${sessionEmail}
-Email trouvé : ${trainer.email}
-ID formateur : ${trainer.id}
-Certification valide : ${certValid}
-Affiliation valide : ${affiliationValid}</div>
-      `;
-
-      attachLogoutButtons();
+      await renderFullActiveView(trainer, sessionEmail, certValid, affiliationValid);
     }
 
     async function load() {
@@ -673,7 +947,10 @@ Affiliation valide : ${affiliationValid}</div>
         return;
       }
 
-      buildTrainerView(trainer, sessionEmail);
+      trainerContext = trainer;
+      certifiedModules = await loadCertifiedModules(trainer);
+
+      await buildTrainerView(trainer, sessionEmail);
     }
 
     document.getElementById("headerLogoutBtn").addEventListener("click", logoutTrainer);
