@@ -220,6 +220,7 @@
 
     function isFutureOrToday(dateString) {
       if (!dateString) return false;
+
       const date = new Date(dateString);
       if (Number.isNaN(date.getTime())) return false;
 
@@ -228,6 +229,36 @@
 
       date.setHours(0, 0, 0, 0);
       return date >= today;
+    }
+
+    function getAffiliationUrlStatus() {
+      const params = new URLSearchParams(window.location.search);
+      return params.get("affiliation") || "";
+    }
+
+    function buildAffiliationFeedback() {
+      const status = getAffiliationUrlStatus();
+
+      if (status === "success") {
+        return `
+          <div class="alert alert-success">
+            <h2>Paiement reçu</h2>
+            <p>Votre paiement d’affiliation a bien été enregistré.</p>
+            <p>La mise à jour de votre statut peut prendre quelques secondes. Rechargez la page si nécessaire.</p>
+          </div>
+        `;
+      }
+
+      if (status === "cancel") {
+        return `
+          <div class="alert alert-warning">
+            <h2>Paiement annulé</h2>
+            <p>Le renouvellement de votre affiliation n’a pas été finalisé.</p>
+          </div>
+        `;
+      }
+
+      return "";
     }
 
     async function payAffiliation(email) {
@@ -265,12 +296,15 @@
         isFutureOrToday(trainer.affiliation_end) &&
         normalize(trainer.affiliation_status) === "active";
 
+      const affiliationFeedback = buildAffiliationFeedback();
       const app = document.getElementById("app");
 
       if (!affiliationValid) {
         app.innerHTML = `
           <h1>Espace formateur</h1>
           <p class="muted">Bienvenue sur votre espace personnel VITAL PROTECT.</p>
+
+          ${affiliationFeedback}
 
           <div class="alert alert-danger blocked">
             <h2>Accès bloqué</h2>
@@ -296,11 +330,26 @@
                 <span class="label">Fin d’affiliation</span>
                 <div class="value">${formatDate(trainer.affiliation_end)}</div>
               </div>
+              <div class="info-box">
+                <span class="label">Certification</span>
+                <div class="value">
+                  <span class="badge ${certValid ? "badge-success" : "badge-danger"}">
+                    ${certValid ? "Valide" : "Expirée"}
+                  </span>
+                </div>
+              </div>
+              <div class="info-box">
+                <span class="label">Fin certification</span>
+                <div class="value">${formatDate(trainer.certification_expiry)}</div>
+              </div>
             </div>
 
             <div class="actions">
               <button id="renewAffiliationBtn" class="btn btn-primary" type="button">
                 Renouveler mon affiliation
+              </button>
+              <button id="refreshBtn" class="btn btn-secondary" type="button">
+                Actualiser
               </button>
               <button id="logoutBtn" class="btn btn-secondary" type="button">Déconnexion</button>
             </div>
@@ -310,12 +359,18 @@
 Email trouvé : ${trainer.email}
 ID formateur : ${trainer.id}
 Certification valide : ${certValid}
-Affiliation valide : ${affiliationValid}</div>
+Affiliation valide : ${affiliationValid}
+Affiliation status : ${trainer.affiliation_status || "—"}
+Affiliation end : ${trainer.affiliation_end || "—"}</div>
         `;
 
         document
           .getElementById("renewAffiliationBtn")
           .addEventListener("click", () => payAffiliation(trainer.email));
+
+        document
+          .getElementById("refreshBtn")
+          .addEventListener("click", () => window.location.reload());
 
         document
           .getElementById("logoutBtn")
@@ -328,6 +383,8 @@ Affiliation valide : ${affiliationValid}</div>
         app.innerHTML = `
           <h1>Espace formateur</h1>
           <p class="muted">Bienvenue sur votre espace personnel VITAL PROTECT.</p>
+
+          ${affiliationFeedback}
 
           <div class="alert alert-warning">
             <h2>Certification expirée</h2>
@@ -371,7 +428,8 @@ Affiliation valide : ${affiliationValid}</div>
 Email trouvé : ${trainer.email}
 ID formateur : ${trainer.id}
 Certification valide : ${certValid}
-Affiliation valide : ${affiliationValid}</div>
+Affiliation valide : ${affiliationValid}
+Certification expiry : ${trainer.certification_expiry || "—"}</div>
         `;
 
         document
@@ -384,6 +442,8 @@ Affiliation valide : ${affiliationValid}</div>
       app.innerHTML = `
         <h1>Espace formateur</h1>
         <p class="muted">Votre espace est actif. Votre certification et votre affiliation sont à jour.</p>
+
+        ${affiliationFeedback}
 
         <div class="alert alert-success">
           <h2>Accès actif</h2>
