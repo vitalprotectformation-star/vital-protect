@@ -220,12 +220,27 @@
       border-color: #cfe0ff;
     }
 
-    .map-object {
+    .map-svg-wrap {
       width: 100%;
       min-height: 720px;
-      border: none;
       border-radius: 18px;
       background: #f8fbff;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px;
+    }
+
+    .map-svg-wrap svg {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .map-loading {
+      color: var(--muted);
+      font-weight: 600;
     }
 
     .stages-grid {
@@ -398,7 +413,7 @@
         grid-template-columns: 1fr;
       }
 
-      .map-object {
+      .map-svg-wrap {
         min-height: 580px;
       }
     }
@@ -495,13 +510,9 @@
 
         <div class="map-layout">
           <div class="map-card">
-            <object
-              id="franceMapObject"
-              class="map-object"
-              type="image/svg+xml"
-              data="/carte_france_dep.svg"
-              aria-label="Carte de France interactive"
-            ></object>
+            <div id="mapSvgWrap" class="map-svg-wrap">
+              <div class="map-loading">Chargement de la carte...</div>
+            </div>
           </div>
 
           <div class="map-sidebar">
@@ -557,10 +568,11 @@
     const selectedDepartmentLabel = document.getElementById("selectedDepartmentLabel");
     const stagesSubtitle = document.getElementById("stagesSubtitle");
     const departmentTags = document.getElementById("departmentTags");
-    const franceMapObject = document.getElementById("franceMapObject");
+    const mapSvgWrap = document.getElementById("mapSvgWrap");
 
     let allStages = [];
     let selectedDepartment = "";
+    let svgRoot = null;
 
     function normalize(value) {
       return String(value || "").trim().toLowerCase();
@@ -599,40 +611,32 @@
       });
     }
 
-    function clearMapSelection(svgDoc) {
-      if (!svgDoc) return;
+    function clearMapSelection() {
+      if (!svgRoot) return;
 
-      svgDoc.querySelectorAll("[id^='dpt-']").forEach(el => {
+      svgRoot.querySelectorAll("[id^='dpt-']").forEach(el => {
         el.style.fill = "";
         el.style.filter = "";
         el.style.opacity = "";
-      });
-
-      svgDoc.querySelectorAll("text[onclick*=\"selectDep('dpt-\"]").forEach(el => {
-        el.style.fill = "";
-        el.style.fontWeight = "";
+        el.style.stroke = "";
+        el.style.strokeWidth = "";
       });
     }
 
     function highlightDepartmentOnMap(departmentCode) {
-      const svgDoc = franceMapObject.contentDocument;
-      if (!svgDoc) return;
+      if (!svgRoot) return;
 
-      clearMapSelection(svgDoc);
+      clearMapSelection();
 
       if (!departmentCode) return;
 
-      const target = svgDoc.getElementById(`dpt-${departmentCode}`);
+      const target = svgRoot.querySelector(`#dpt-${CSS.escape(departmentCode)}`);
       if (target) {
         target.style.fill = "#1f6feb";
-        target.style.filter = "brightness(0.95)";
+        target.style.stroke = "#0b2e59";
+        target.style.strokeWidth = "1.5";
         target.style.opacity = "1";
       }
-
-      svgDoc.querySelectorAll("text[onclick*=\"selectDep('dpt-" + departmentCode + "')\"]").forEach(el => {
-        el.style.fill = "#1f6feb";
-        el.style.fontWeight = "700";
-      });
     }
 
     function setSelectedDepartment(departmentCode) {
@@ -725,14 +729,25 @@
       });
     }
 
-    function bindSvgDepartments() {
-      franceMapObject.addEventListener("load", () => {
-        const svgDoc = franceMapObject.contentDocument;
-        if (!svgDoc) return;
+    async function loadSvgMap() {
+      try {
+        const response = await fetch("/carte_france_dep.svg", { cache: "no-store" });
 
-        svgDoc.querySelectorAll("[id^='dpt-']").forEach(el => {
+        if (!response.ok) {
+          throw new Error(`Impossible de charger le SVG (${response.status})`);
+        }
+
+        const svgText = await response.text();
+        mapSvgWrap.innerHTML = svgText;
+
+        svgRoot = mapSvgWrap.querySelector("svg");
+
+        if (!svgRoot) {
+          throw new Error("Aucun élément SVG trouvé dans le fichier.");
+        }
+
+        svgRoot.querySelectorAll("[id^='dpt-']").forEach(el => {
           const depCode = el.id.replace("dpt-", "");
-
           el.style.cursor = "pointer";
 
           el.addEventListener("click", (event) => {
@@ -753,23 +768,16 @@
           });
         });
 
-        svgDoc.querySelectorAll("text[onclick*=\"selectDep('dpt-\"]").forEach(textNode => {
-          const onclickValue = textNode.getAttribute("onclick") || "";
-          const match = onclickValue.match(/dpt-([0-9A-Z]+)/);
-
-          if (!match) return;
-
-          const depCode = match[1];
-          textNode.style.cursor = "pointer";
-
-          textNode.addEventListener("click", (event) => {
-            event.preventDefault();
-            setSelectedDepartment(depCode);
-          });
-        });
-
         highlightDepartmentOnMap(selectedDepartment);
-      });
+      } catch (error) {
+        console.error("Erreur chargement carte SVG :", error);
+        mapSvgWrap.innerHTML = `
+          <div class="map-loading">
+            Impossible d’afficher la carte pour le moment.<br>
+            Vérifie que le fichier <strong>/carte_france_dep.svg</strong> est bien présent.
+          </div>
+        `;
+      }
     }
 
     async function loadStages() {
@@ -793,7 +801,7 @@
     }
 
     bindDepartmentTags();
-    bindSvgDepartments();
+    loadSvgMap();
     loadStages();
   </script>
 
