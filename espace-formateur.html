@@ -10,6 +10,7 @@
       --navy: #0b2e59;
       --navy-dark: #08203d;
       --blue: #1f6feb;
+      --blue-soft: #eaf2ff;
       --bg: #f4f7fb;
       --card: #ffffff;
       --border: #dbe4f0;
@@ -30,12 +31,79 @@
       font-family: Arial, Helvetica, sans-serif;
       background: var(--bg);
       color: var(--text);
-      padding: 32px 16px;
     }
 
     .container {
-      width: min(980px, 100%);
+      width: min(1180px, calc(100% - 32px));
       margin: 0 auto;
+    }
+
+    header {
+      background: linear-gradient(135deg, var(--navy-dark), var(--navy));
+      color: white;
+      padding: 16px 0;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: white;
+    }
+
+    .brand img {
+      height: 162px;
+      width: auto;
+      display: block;
+    }
+
+    .brand-text {
+      font-size: 1.75rem;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      line-height: 1;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .nav-links a,
+    .nav-links button {
+      color: rgba(255,255,255,0.92);
+      text-decoration: none;
+      font-weight: 600;
+      padding: 10px 14px;
+      border-radius: 12px;
+      transition: 0.2s ease;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      font-size: 1rem;
+      font-family: inherit;
+    }
+
+    .nav-links a:hover,
+    .nav-links button:hover {
+      background: rgba(255,255,255,0.12);
+    }
+
+    main {
+      padding: 32px 0;
     }
 
     .card {
@@ -180,20 +248,72 @@
       white-space: pre-wrap;
     }
 
+    footer {
+      margin-top: 28px;
+      background: var(--navy-dark);
+      color: rgba(255,255,255,0.88);
+      padding: 28px 0;
+    }
+
+    footer p {
+      margin: 0;
+      text-align: center;
+    }
+
     @media (max-width: 720px) {
       .grid {
         grid-template-columns: 1fr;
+      }
+
+      .brand-text {
+        font-size: 1.2rem;
+      }
+
+      .brand img {
+        height: 132px;
+      }
+
+      .header-inner {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .nav-links {
+        width: 100%;
       }
     }
   </style>
 </head>
 
 <body>
-  <div class="container">
-    <div class="card" id="app">
-      Chargement...
+  <header>
+    <div class="container header-inner">
+      <a href="/index.html" class="brand">
+        <img src="/logo.png" alt="VITAL PROTECT" />
+        <span class="brand-text">VITAL PROTECT</span>
+      </a>
+
+      <nav class="nav-links">
+        <a href="/index.html">Accueil</a>
+        <a href="/devenir-formateur.html">Devenir formateur</a>
+        <button id="headerLogoutBtn" type="button">Déconnexion</button>
+      </nav>
     </div>
-  </div>
+  </header>
+
+  <main>
+    <div class="container">
+      <div class="card" id="app">
+        Chargement...
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container">
+      <p>VITAL PROTECT — Espace formateur</p>
+    </div>
+  </footer>
 
   <script type="module">
     import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
@@ -290,6 +410,18 @@
       window.location.href = "/formateur-login.html";
     }
 
+    function attachLogoutButtons() {
+      const headerLogoutBtn = document.getElementById("headerLogoutBtn");
+      if (headerLogoutBtn) {
+        headerLogoutBtn.addEventListener("click", logoutTrainer);
+      }
+
+      const logoutBtn = document.getElementById("logoutBtn");
+      if (logoutBtn) {
+        logoutBtn.addEventListener("click", logoutTrainer);
+      }
+    }
+
     function buildTrainerView(trainer, sessionEmail) {
       const certValid = isFutureOrToday(trainer.certification_expiry);
       const affiliationValid =
@@ -372,10 +504,7 @@ Affiliation end : ${trainer.affiliation_end || "—"}</div>
           .getElementById("refreshBtn")
           .addEventListener("click", () => window.location.reload());
 
-        document
-          .getElementById("logoutBtn")
-          .addEventListener("click", logoutTrainer);
-
+        attachLogoutButtons();
         return;
       }
 
@@ -432,10 +561,7 @@ Affiliation valide : ${affiliationValid}
 Certification expiry : ${trainer.certification_expiry || "—"}</div>
         `;
 
-        document
-          .getElementById("logoutBtn")
-          .addEventListener("click", logoutTrainer);
-
+        attachLogoutButtons();
         return;
       }
 
@@ -493,9 +619,7 @@ Certification valide : ${certValid}
 Affiliation valide : ${affiliationValid}</div>
       `;
 
-      document
-        .getElementById("logoutBtn")
-        .addEventListener("click", logoutTrainer);
+      attachLogoutButtons();
     }
 
     async function load() {
@@ -531,6 +655,7 @@ Affiliation valide : ${affiliationValid}</div>
           <p class="muted">Impossible de charger les données du formateur.</p>
           <div class="debug">${error.message}</div>
         `;
+        attachLogoutButtons();
         return;
       }
 
@@ -541,6 +666,7 @@ Affiliation valide : ${affiliationValid}</div>
           <p class="muted">Aucun profil formateur ne correspond à votre session.</p>
           <div class="debug">Email session : ${sessionEmail}</div>
         `;
+        attachLogoutButtons();
         setTimeout(() => {
           window.location.href = "/formateur-login.html";
         }, 1500);
@@ -549,6 +675,8 @@ Affiliation valide : ${affiliationValid}</div>
 
       buildTrainerView(trainer, sessionEmail);
     }
+
+    document.getElementById("headerLogoutBtn").addEventListener("click", logoutTrainer);
 
     load();
   </script>
