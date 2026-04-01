@@ -377,7 +377,6 @@
       "sb_publishable_VlTpYjzJ3DKpFA1Un_EFHQ_FW-mYK4U"
     );
 
-    let trainerContext = null;
     let certifiedModules = [];
 
     function normalize(value) {
@@ -391,6 +390,17 @@
       return date.toLocaleDateString("fr-FR", {
         day: "2-digit",
         month: "2-digit",
+        year: "numeric"
+      });
+    }
+
+    function formatLongDate(dateString) {
+      if (!dateString) return "";
+      const date = new Date(dateString);
+      if (Number.isNaN(date.getTime())) return "";
+      return date.toLocaleDateString("fr-FR", {
+        day: "2-digit",
+        month: "long",
         year: "numeric"
       });
     }
@@ -512,13 +522,11 @@
         return [];
       }
 
-      const modules = [...new Set(
+      return [...new Set(
         (sessions || [])
           .map(item => item.module_name)
           .filter(Boolean)
       )];
-
-      return modules;
     }
 
     function buildCreateStageSection(trainer) {
@@ -540,19 +548,12 @@
           <p class="muted">Vous pouvez publier un stage uniquement sur un module pour lequel vous êtes certifié et à jour.</p>
 
           <form id="createStageForm">
-            <div class="grid">
-              <div class="field">
-                <label for="stageTitle">Titre du stage</label>
-                <input id="stageTitle" type="text" placeholder="Ex : Stage Self Défense Essentielle — Paris" required />
-              </div>
-
-              <div class="field">
-                <label for="stageTrainingType">Module certifié</label>
-                <select id="stageTrainingType" required>
-                  <option value="">Choisir un module</option>
-                  ${certifiedModules.map(module => `<option value="${module}">${module}</option>`).join("")}
-                </select>
-              </div>
+            <div class="field">
+              <label for="stageTrainingType">Module certifié</label>
+              <select id="stageTrainingType" required>
+                <option value="">Choisir un module</option>
+                ${certifiedModules.map(module => `<option value="${module}">${module}</option>`).join("")}
+              </select>
             </div>
 
             <div class="field">
@@ -621,7 +622,7 @@
             </div>
 
             <div class="form-note">
-              Le stage sera rattaché automatiquement à votre profil formateur.
+              Le titre du stage est généré automatiquement à partir du module, de la ville et de la date.
             </div>
           </form>
 
@@ -642,16 +643,22 @@
         statusBox.style.display = "block";
         statusBox.textContent = "Création du stage en cours...";
 
+        const trainingType = document.getElementById("stageTrainingType").value;
+        const city = document.getElementById("stageCity").value.trim();
+        const stageDate = document.getElementById("stageDate").value;
+
+        const generatedTitle = `${trainingType} — ${city}${stageDate ? ` — ${formatLongDate(stageDate)}` : ""}`;
+
         const payload = {
           trainer_id: trainer.id,
-          title: document.getElementById("stageTitle").value.trim(),
-          training_type: document.getElementById("stageTrainingType").value,
+          title: generatedTitle,
+          training_type: trainingType,
           description: document.getElementById("stageDescription").value.trim(),
-          city: document.getElementById("stageCity").value.trim(),
+          city: city,
           department: document.getElementById("stageDepartment").value.trim(),
           region: document.getElementById("stageRegion").value.trim(),
           address: document.getElementById("stageAddress").value.trim(),
-          stage_date: document.getElementById("stageDate").value,
+          stage_date: stageDate,
           start_time: document.getElementById("stageTime").value.trim(),
           duration: document.getElementById("stageDuration").value.trim(),
           max_participants: Number(document.getElementById("stageMaxParticipants").value || 20),
@@ -680,7 +687,7 @@
           return;
         }
 
-        statusBox.textContent = "✅ Stage créé avec succès.";
+        statusBox.textContent = `✅ Stage créé avec succès. Titre généré : ${generatedTitle}`;
         form.reset();
       });
     }
@@ -947,9 +954,7 @@ Certification expiry : ${trainer.certification_expiry || "—"}</div>
         return;
       }
 
-      trainerContext = trainer;
       certifiedModules = await loadCertifiedModules(trainer);
-
       await buildTrainerView(trainer, sessionEmail);
     }
 
