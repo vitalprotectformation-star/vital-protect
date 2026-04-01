@@ -197,6 +197,17 @@
       font-size: 1.05rem;
     }
 
+    .map-path {
+      margin-top: 10px;
+      padding: 12px;
+      background: #f8fbff;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      color: var(--muted);
+      font-size: 14px;
+      word-break: break-word;
+    }
+
     .department-tags {
       display: flex;
       flex-wrap: wrap;
@@ -241,6 +252,9 @@
     .map-loading {
       color: var(--muted);
       font-weight: 600;
+      line-height: 1.6;
+      text-align: left;
+      width: 100%;
     }
 
     .stages-grid {
@@ -533,6 +547,8 @@
               <button class="department-tag" data-department="06">06</button>
               <button class="department-tag" data-department="34">34</button>
             </div>
+
+            <div class="map-path" id="mapPathBox"></div>
           </div>
         </div>
       </div>
@@ -564,15 +580,20 @@
       "sb_publishable_VlTpYjzJ3DKpFA1Un_EFHQ_FW-mYK4U"
     );
 
+    const SVG_MAP_PATH = "/carte_france_dep.svg";
+
     const container = document.getElementById("stagesContainer");
     const selectedDepartmentLabel = document.getElementById("selectedDepartmentLabel");
     const stagesSubtitle = document.getElementById("stagesSubtitle");
     const departmentTags = document.getElementById("departmentTags");
     const mapSvgWrap = document.getElementById("mapSvgWrap");
+    const mapPathBox = document.getElementById("mapPathBox");
 
     let allStages = [];
     let selectedDepartment = "";
     let svgRoot = null;
+
+    mapPathBox.textContent = `Chemin SVG utilisé : ${SVG_MAP_PATH}`;
 
     function normalize(value) {
       return String(value || "").trim().toLowerCase();
@@ -600,8 +621,8 @@
     function normalizeDepartment(value) {
       const raw = String(value || "").trim();
       if (!raw) return "";
-      if (/^\d{1}$/.test(raw)) return raw.padStart(2, "0");
-      if (/^\d{2}$/.test(raw)) return raw;
+      if (/^\\d{1}$/.test(raw)) return raw.padStart(2, "0");
+      if (/^\\d{2}$/.test(raw)) return raw;
       return raw.toUpperCase();
     }
 
@@ -630,7 +651,9 @@
 
       if (!departmentCode) return;
 
-      const target = svgRoot.querySelector(`#dpt-${CSS.escape(departmentCode)}`);
+      const escaped = window.CSS && CSS.escape ? CSS.escape(departmentCode) : departmentCode;
+      const target = svgRoot.querySelector(`#dpt-${escaped}`);
+
       if (target) {
         target.style.fill = "#1f6feb";
         target.style.stroke = "#0b2e59";
@@ -731,10 +754,10 @@
 
     async function loadSvgMap() {
       try {
-        const response = await fetch("/carte_france_dep.svg", { cache: "no-store" });
+        const response = await fetch(SVG_MAP_PATH, { cache: "no-store" });
 
         if (!response.ok) {
-          throw new Error(`Impossible de charger le SVG (${response.status})`);
+          throw new Error(`HTTP ${response.status} sur ${SVG_MAP_PATH}`);
         }
 
         const svgText = await response.text();
@@ -743,7 +766,7 @@
         svgRoot = mapSvgWrap.querySelector("svg");
 
         if (!svgRoot) {
-          throw new Error("Aucun élément SVG trouvé dans le fichier.");
+          throw new Error("Le fichier chargé ne contient pas de balise <svg>.");
         }
 
         svgRoot.querySelectorAll("[id^='dpt-']").forEach(el => {
@@ -773,8 +796,10 @@
         console.error("Erreur chargement carte SVG :", error);
         mapSvgWrap.innerHTML = `
           <div class="map-loading">
-            Impossible d’afficher la carte pour le moment.<br>
-            Vérifie que le fichier <strong>/carte_france_dep.svg</strong> est bien présent.
+            Impossible d’afficher la carte pour le moment.<br><br>
+            Détail : <strong>${error.message}</strong><br><br>
+            Vérifie que le fichier SVG est bien servi ici :<br>
+            <strong>${SVG_MAP_PATH}</strong>
           </div>
         `;
       }
