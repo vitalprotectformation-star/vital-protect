@@ -231,6 +231,13 @@
       border-color: #cfe0ff;
     }
 
+    .selection-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+
     .map-svg-wrap {
       width: 100%;
       min-height: 720px;
@@ -519,7 +526,7 @@
       <div class="container">
         <div class="section-head">
           <h2>Trouver un stage par département</h2>
-          <p>Cliquez sur un département de la carte pour filtrer les stages disponibles.</p>
+          <p>Sélectionnez un ou plusieurs départements, puis cliquez sur valider.</p>
         </div>
 
         <div class="map-layout">
@@ -530,13 +537,12 @@
           </div>
 
           <div class="map-sidebar">
-            <div class="map-selected" id="selectedDepartmentLabel">Département sélectionné : Tous les départements</div>
+            <div class="map-selected" id="selectedDepartmentLabel">Départements sélectionnés : Tous les départements</div>
             <p class="map-note">
-              Cliquez directement sur la carte ou utilisez les raccourcis ci-dessous.
+              Vous pouvez cliquer sur plusieurs départements sur la carte, puis valider votre sélection.
             </p>
 
             <div class="department-tags" id="departmentTags">
-              <button class="department-tag active" data-department="">Tous</button>
               <button class="department-tag" data-department="75">75</button>
               <button class="department-tag" data-department="13">13</button>
               <button class="department-tag" data-department="33">33</button>
@@ -546,6 +552,11 @@
               <button class="department-tag" data-department="44">44</button>
               <button class="department-tag" data-department="06">06</button>
               <button class="department-tag" data-department="34">34</button>
+            </div>
+
+            <div class="selection-actions">
+              <button id="applySelectionBtn" class="btn btn-primary" type="button">Valider la sélection</button>
+              <button id="resetSelectionBtn" class="btn btn-secondary" type="button">Réinitialiser</button>
             </div>
 
             <div class="map-path" id="mapPathBox"></div>
@@ -588,9 +599,12 @@
     const departmentTags = document.getElementById("departmentTags");
     const mapSvgWrap = document.getElementById("mapSvgWrap");
     const mapPathBox = document.getElementById("mapPathBox");
+    const applySelectionBtn = document.getElementById("applySelectionBtn");
+    const resetSelectionBtn = document.getElementById("resetSelectionBtn");
 
     let allStages = [];
-    let selectedDepartment = "";
+    let pendingDepartments = new Set();
+    let appliedDepartments = new Set();
     let svgRoot = null;
 
     mapPathBox.textContent = `Chemin SVG utilisé : ${SVG_MAP_PATH}`;
@@ -621,72 +635,98 @@
     function normalizeDepartment(value) {
       const raw = String(value || "").trim();
       if (!raw) return "";
-      if (/^\\d{1}$/.test(raw)) return raw.padStart(2, "0");
-      if (/^\\d{2}$/.test(raw)) return raw;
+      if (/^\d{1}$/.test(raw)) return raw.padStart(2, "0");
+      if (/^\d{2}$/.test(raw)) return raw;
       return raw.toUpperCase();
+    }
+
+    function getSortedDepartmentList(setObj) {
+      return [...setObj].sort((a, b) => a.localeCompare(b, "fr"));
+    }
+
+    function updateSelectionLabel() {
+      const list = getSortedDepartmentList(pendingDepartments);
+      selectedDepartmentLabel.textContent = list.length
+        ? `Départements sélectionnés : ${list.join(", ")}`
+        : "Départements sélectionnés : Tous les départements";
     }
 
     function updateTagSelection() {
       document.querySelectorAll(".department-tag").forEach(button => {
-        button.classList.toggle("active", button.dataset.department === selectedDepartment);
+        const dep = button.dataset.department || "";
+        button.classList.toggle("active", pendingDepartments.has(dep));
       });
     }
 
-    function clearMapSelection() {
+    function refreshMapSelection() {
       if (!svgRoot) return;
 
       svgRoot.querySelectorAll("[id^='dpt-']").forEach(el => {
-        el.style.fill = "";
-        el.style.filter = "";
+        const depCode = el.id.replace("dpt-", "");
+        const isSelected = pendingDepartments.has(depCode);
+
+        el.style.fill = isSelected ? "#1f6feb" : "";
+        el.style.stroke = isSelected ? "#0b2e59" : "";
+        el.style.strokeWidth = isSelected ? "1.5" : "";
         el.style.opacity = "";
-        el.style.stroke = "";
-        el.style.strokeWidth = "";
       });
     }
 
-    function highlightDepartmentOnMap(departmentCode) {
-      if (!svgRoot) return;
+    function toggleDepartment(departmentCode) {
+      const dep = normalizeDepartment(departmentCode);
+      if (!dep) return;
 
-      clearMapSelection();
-
-      if (!departmentCode) return;
-
-      const escaped = window.CSS && CSS.escape ? CSS.escape(departmentCode) : departmentCode;
-      const target = svgRoot.querySelector(`#dpt-${escaped}`);
-
-      if (target) {
-        target.style.fill = "#1f6feb";
-        target.style.stroke = "#0b2e59";
-        target.style.strokeWidth = "1.5";
-        target.style.opacity = "1";
+      if (pendingDepartments.has(dep)) {
+        pendingDepartments.delete(dep);
+      } else {
+        pendingDepartments.add(dep);
       }
+
+      updateSelectionLabel();
+      updateTagSelection();
+      refreshMapSelection();
     }
 
-    function setSelectedDepartment(departmentCode) {
-      selectedDepartment = normalizeDepartment(departmentCode);
-      selectedDepartmentLabel.textContent = `Département sélectionné : ${selectedDepartment || "Tous les départements"}`;
-      stagesSubtitle.textContent = selectedDepartment
-        ? `Stages actuellement affichés pour le département : ${selectedDepartment}.`
+    function applySelection() {
+      appliedDepartments = new Set(pendingDepartments);
+
+      const list = getSortedDepartmentList(appliedDepartments);
+
+      stagesSubtitle.textContent = list.length
+        ? `Stages actuellement affichés pour les départements : ${list.join(", ")}.`
         : "Choisissez votre ville, consultez les dates et réservez votre place en ligne.";
 
+      renderStages();
+
+      document.getElementById("stages").scrollIntoView({ behavior: "smooth" });
+    }
+
+    function resetSelection() {
+      pendingDepartments = new Set();
+      appliedDepartments = new Set();
+
+      updateSelectionLabel();
       updateTagSelection();
-      highlightDepartmentOnMap(selectedDepartment);
+      refreshMapSelection();
+
+      stagesSubtitle.textContent = "Choisissez votre ville, consultez les dates et réservez votre place en ligne.";
       renderStages();
     }
 
     function getFilteredStages() {
-      if (!selectedDepartment) return allStages;
+      if (!appliedDepartments.size) return allStages;
 
-      return allStages.filter(stage => normalizeDepartment(stage.department) === selectedDepartment);
+      return allStages.filter(stage => appliedDepartments.has(normalizeDepartment(stage.department)));
     }
 
     function renderStages() {
       const data = getFilteredStages();
+      const selectedList = getSortedDepartmentList(appliedDepartments);
 
       if (!data || !data.length) {
         container.innerHTML = `
           <div class="empty-state">
-            Aucun stage disponible${selectedDepartment ? ` pour le département ${selectedDepartment}` : ""} pour le moment.
+            Aucun stage disponible${selectedList.length ? ` pour les départements ${selectedList.join(", ")}` : ""} pour le moment.
           </div>
         `;
         return;
@@ -747,7 +787,7 @@
     function bindDepartmentTags() {
       document.querySelectorAll(".department-tag").forEach(button => {
         button.addEventListener("click", () => {
-          setSelectedDepartment(button.dataset.department || "");
+          toggleDepartment(button.dataset.department || "");
         });
       });
     }
@@ -775,23 +815,21 @@
 
           el.addEventListener("click", (event) => {
             event.preventDefault();
-            setSelectedDepartment(depCode);
+            toggleDepartment(depCode);
           });
 
           el.addEventListener("mouseenter", () => {
-            if (selectedDepartment !== depCode) {
+            if (!pendingDepartments.has(depCode)) {
               el.style.opacity = "0.8";
             }
           });
 
           el.addEventListener("mouseleave", () => {
-            if (selectedDepartment !== depCode) {
-              el.style.opacity = "";
-            }
+            el.style.opacity = "";
           });
         });
 
-        highlightDepartmentOnMap(selectedDepartment);
+        refreshMapSelection();
       } catch (error) {
         console.error("Erreur chargement carte SVG :", error);
         mapSvgWrap.innerHTML = `
@@ -825,7 +863,11 @@
       renderStages();
     }
 
+    applySelectionBtn.addEventListener("click", applySelection);
+    resetSelectionBtn.addEventListener("click", resetSelection);
+
     bindDepartmentTags();
+    updateSelectionLabel();
     loadSvgMap();
     loadStages();
   </script>
