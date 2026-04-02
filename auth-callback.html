@@ -36,12 +36,26 @@
       line-height: 1.6;
       margin-bottom: 0;
     }
+
+    .debug {
+      margin-top: 18px;
+      padding: 14px;
+      border-radius: 12px;
+      background: #f8fbff;
+      border: 1px solid #dbe4f0;
+      color: #667085;
+      font-size: 14px;
+      white-space: pre-wrap;
+      text-align: left;
+      display: none;
+    }
   </style>
 </head>
 <body>
   <div class="card">
     <h1>Connexion en cours…</h1>
     <p id="status">Validation de votre accès administrateur.</p>
+    <div id="debug" class="debug"></div>
   </div>
 
   <script type="module">
@@ -53,13 +67,36 @@
     );
 
     const status = document.getElementById("status");
+    const debug = document.getElementById("debug");
+
+    function showDebug(message) {
+      debug.style.display = "block";
+      debug.textContent = message;
+    }
 
     async function handleCallback() {
       try {
-        status.textContent = "Récupération de la session...";
+        status.textContent = "Finalisation de la session admin...";
 
-        // On laisse Supabase traiter le retour du magic link
-        await new Promise(resolve => setTimeout(resolve, 1200));
+        const url = new URL(window.location.href);
+        const code = url.searchParams.get("code");
+
+        if (code) {
+          const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
+
+          if (exchangeError) {
+            console.error("Erreur exchangeCodeForSession admin:", exchangeError);
+            status.textContent = "Échec de connexion. Redirection...";
+            showDebug(exchangeError.message);
+
+            setTimeout(() => {
+              window.location.href = "/admin-login.html";
+            }, 1800);
+            return;
+          }
+        }
+
+        await new Promise(resolve => setTimeout(resolve, 700));
 
         const {
           data: { session },
@@ -67,19 +104,23 @@
         } = await supabase.auth.getSession();
 
         if (sessionError) {
-          console.error(sessionError);
-          status.textContent = "Erreur de session.";
+          console.error("Erreur session admin:", sessionError);
+          status.textContent = "Erreur de session admin.";
+          showDebug(sessionError.message);
+
           setTimeout(() => {
             window.location.href = "/admin-login.html";
-          }, 1200);
+          }, 1800);
           return;
         }
 
         if (!session?.user?.email) {
-          status.textContent = "Session introuvable.";
+          status.textContent = "Session admin introuvable.";
+          showDebug("Aucun utilisateur trouvé dans la session.");
+
           setTimeout(() => {
             window.location.href = "/admin-login.html";
-          }, 1200);
+          }, 1800);
           return;
         }
 
@@ -94,33 +135,39 @@
           .maybeSingle();
 
         if (adminError) {
-          console.error(adminError);
+          console.error("Erreur vérification admin:", adminError);
           status.textContent = "Erreur lors de la vérification admin.";
+          showDebug(adminError.message);
+
           setTimeout(() => {
             window.location.href = "/admin-login.html";
-          }, 1200);
+          }, 1800);
           return;
         }
 
         if (!adminUser) {
           await supabase.auth.signOut();
           status.textContent = "Accès refusé.";
+          showDebug("Aucun email admin correspondant.");
+
           setTimeout(() => {
             window.location.href = "/admin-login.html";
-          }, 1200);
+          }, 1800);
           return;
         }
 
         status.textContent = "Connexion validée. Redirection vers l’admin...";
         setTimeout(() => {
           window.location.href = "/admin.html";
-        }, 600);
+        }, 700);
       } catch (error) {
-        console.error(error);
+        console.error("Erreur callback admin:", error);
         status.textContent = "Erreur inattendue.";
+        showDebug(error.message || "Erreur inconnue");
+
         setTimeout(() => {
           window.location.href = "/admin-login.html";
-        }, 1200);
+        }, 1800);
       }
     }
 
