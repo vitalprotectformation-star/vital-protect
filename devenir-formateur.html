@@ -18,6 +18,8 @@
   --border:#dbe4f0;
   --shadow:0 10px 30px rgba(11,46,89,0.08);
   --success:#0f9d58;
+  --danger:#c62828;
+  --warning:#b7791f;
 }
 
 * { box-sizing:border-box; }
@@ -348,6 +350,32 @@ section {
   color:var(--navy);
 }
 
+.alert {
+  margin-bottom:18px;
+  padding:16px 18px;
+  border-radius:14px;
+  font-weight:600;
+  line-height:1.6;
+}
+
+.alert-success {
+  background:#eaf8f0;
+  border:1px solid #cdeedb;
+  color:#0f7d46;
+}
+
+.alert-warning {
+  background:#fff4df;
+  border:1px solid #f0d9a7;
+  color:#8a5a00;
+}
+
+.alert-error {
+  background:#fff1f1;
+  border:1px solid #f2c7c7;
+  color:#a32020;
+}
+
 input, select, textarea {
   width:100%;
   padding:12px;
@@ -516,6 +544,8 @@ footer {
         </p>
       </div>
 
+      <div id="checkoutFeedback"></div>
+
       <div id="selectedSessionBox" class="selected-session-box">
         <span class="selected-session-label">Session sélectionnée</span>
         <div id="selectedSessionValue" class="selected-session-value">—</div>
@@ -570,6 +600,7 @@ const trainingTypeSelect = document.getElementById("trainingType");
 const selectedSessionBox = document.getElementById("selectedSessionBox");
 const selectedSessionValue = document.getElementById("selectedSessionValue");
 const sessionsContainer = document.getElementById("sessionsContainer");
+const checkoutFeedback = document.getElementById("checkoutFeedback");
 
 function formatDate(dateString) {
   if (!dateString) return "Date non disponible";
@@ -615,11 +646,37 @@ function selectSession(session) {
   document.getElementById("formulaire").scrollIntoView({ behavior: "smooth" });
 }
 
+function renderCheckoutFeedback() {
+  const checkoutStatus = params.get("checkout");
+
+  if (checkoutStatus === "success") {
+    checkoutFeedback.innerHTML = `
+      <div class="alert alert-success">
+        Votre demande de réservation a bien été enregistrée.
+        Le montant a seulement été autorisé. Il sera capturé uniquement après validation de votre dossier.
+      </div>
+    `;
+    return;
+  }
+
+  if (checkoutStatus === "cancel") {
+    checkoutFeedback.innerHTML = `
+      <div class="alert alert-warning">
+        Le paiement n’a pas été finalisé. Votre réservation n’a pas été enregistrée.
+      </div>
+    `;
+    return;
+  }
+
+  checkoutFeedback.innerHTML = "";
+}
+
 async function loadSessions() {
   const { data, error } = await supabase
     .from("trainer_sessions")
     .select("*")
     .eq("status", "open")
+    .gt("remaining_places", 0)
     .order("end_date", { ascending: true });
 
   if (error) {
@@ -718,20 +775,38 @@ async function loadSessions() {
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
+  if (!selectedSessionId) {
+    checkoutFeedback.innerHTML = `
+      <div class="alert alert-error">
+        Merci de sélectionner une session avant de continuer.
+      </div>
+    `;
+    document.getElementById("sessions").scrollIntoView({ behavior: "smooth" });
+    return;
+  }
+
   const data = {
-    first_name: document.getElementById("firstName").value,
-    last_name: document.getElementById("lastName").value,
-    email: document.getElementById("email").value,
-    phone: document.getElementById("phone").value,
-    city: document.getElementById("city").value,
-    training_type: document.getElementById("trainingType").value,
-    message: document.getElementById("message").value,
-    session_id: selectedSessionId || "",
-    type: "trainer"
+    first_name: document.getElementById("firstName").value.trim(),
+    last_name: document.getElementById("lastName").value.trim(),
+    email: document.getElementById("email").value.trim(),
+    phone: document.getElementById("phone").value.trim(),
+    city: document.getElementById("city").value.trim(),
+    training_type: document.getElementById("trainingType").value.trim(),
+    message: document.getElementById("message").value.trim(),
+    session_id: selectedSessionId
   };
 
+  if (!data.training_type) {
+    checkoutFeedback.innerHTML = `
+      <div class="alert alert-error">
+        Merci de choisir un module.
+      </div>
+    `;
+    return;
+  }
+
   try {
-    const res = await fetch("/api/create-checkout-session", {
+    const res = await fetch("/api/create-trainer-checkout", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -744,11 +819,19 @@ form.addEventListener("submit", async (e) => {
     if (result.url) {
       window.location.href = result.url;
     } else {
-      alert("Erreur lors de la redirection vers Stripe");
+      checkoutFeedback.innerHTML = `
+        <div class="alert alert-error">
+          ${result.error || "Erreur lors de la redirection vers Stripe."}
+        </div>
+      `;
       console.error(result);
     }
   } catch (error) {
-    alert("Erreur réseau");
+    checkoutFeedback.innerHTML = `
+      <div class="alert alert-error">
+        Erreur réseau.
+      </div>
+    `;
     console.error(error);
   }
 });
@@ -757,6 +840,7 @@ if (selectedTrainingType) {
   trainingTypeSelect.value = selectedTrainingType;
 }
 
+renderCheckoutFeedback();
 loadSessions();
 </script>
 
