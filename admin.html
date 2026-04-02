@@ -1083,9 +1083,15 @@
     }
 
     async function getAuthHeaders() {
-      const {
+      let {
         data: { session }
       } = await supabase.auth.getSession();
+
+      if (!session?.access_token) {
+        await new Promise(resolve => setTimeout(resolve, 500));
+        const retry = await supabase.auth.getSession();
+        session = retry.data.session;
+      }
 
       const accessToken = session?.access_token || "";
 
@@ -1097,6 +1103,23 @@
         "Content-Type": "application/json",
         Authorization: `Bearer ${accessToken}`
       };
+    }
+
+    async function parseApiResponse(res) {
+      const rawText = await res.text();
+      let data = null;
+
+      try {
+        data = rawText ? JSON.parse(rawText) : {};
+      } catch (error) {
+        data = { error: rawText || `Réponse non JSON (${res.status})` };
+      }
+
+      if (!res.ok) {
+        throw new Error(data?.error || `Erreur HTTP ${res.status}`);
+      }
+
+      return data;
     }
 
     if (logoutBtn) {
@@ -1909,7 +1932,7 @@ VITAL PROTECT`
           })
         });
 
-        const result = await res.json();
+        const result = await parseApiResponse(res);
 
         if (result.success) {
           alert("Stage supprimé avec succès.");
@@ -1917,11 +1940,10 @@ VITAL PROTECT`
           await loadReservations();
         } else {
           alert(result.error || "Erreur lors de la suppression du stage.");
-          console.error(result);
         }
       } catch (error) {
         console.error(error);
-        alert("Erreur réseau ou session admin invalide.");
+        alert(error.message || "Erreur lors de la suppression du stage.");
       }
     };
 
@@ -1941,7 +1963,7 @@ VITAL PROTECT`
           })
         });
 
-        const result = await res.json();
+        const result = await parseApiResponse(res);
 
         if (result.success) {
           alert("Dossier accepté et paiement capturé avec succès.");
@@ -1949,11 +1971,10 @@ VITAL PROTECT`
           await loadTrainers();
         } else {
           alert(result.error || "Erreur lors de la capture du paiement.");
-          console.error(result);
         }
       } catch (error) {
-        alert("Erreur réseau ou session admin invalide.");
         console.error(error);
+        alert(error.message || "Erreur lors de la capture du paiement.");
       }
     };
 
@@ -1972,7 +1993,7 @@ VITAL PROTECT`
           })
         });
 
-        const result = await res.json();
+        const result = await parseApiResponse(res);
 
         if (result.success) {
           alert("Dossier refusé et candidat archivé.");
@@ -1981,11 +2002,10 @@ VITAL PROTECT`
           await loadTrainers();
         } else {
           alert(result.error || "Erreur lors du refus du dossier.");
-          console.error(result);
         }
       } catch (error) {
-        alert("Erreur réseau ou session admin invalide.");
         console.error(error);
+        alert(error.message || "Erreur lors du refus du dossier.");
       }
     };
 
@@ -2011,7 +2031,7 @@ VITAL PROTECT`
           })
         });
 
-        const apiResult = await res.json();
+        const apiResult = await parseApiResponse(res);
 
         if (apiResult.success) {
           alert("Résultat de formation mis à jour.");
@@ -2020,11 +2040,10 @@ VITAL PROTECT`
           await loadTrainers();
         } else {
           alert(apiResult.error || "Erreur lors de la mise à jour du résultat.");
-          console.error(apiResult);
         }
       } catch (error) {
-        alert("Erreur réseau ou session admin invalide.");
         console.error(error);
+        alert(error.message || "Erreur lors de la mise à jour du résultat.");
       }
     };
 
@@ -2043,7 +2062,7 @@ VITAL PROTECT`
           })
         });
 
-        const result = await res.json();
+        const result = await parseApiResponse(res);
 
         if (result.success) {
           alert("Formateur activé avec succès.");
@@ -2051,11 +2070,10 @@ VITAL PROTECT`
           await loadTrainers();
         } else {
           alert(result.error || "Erreur lors de l’activation du formateur.");
-          console.error(result);
         }
       } catch (error) {
-        alert("Erreur réseau ou session admin invalide.");
         console.error(error);
+        alert(error.message || "Erreur lors de l’activation du formateur.");
       }
     };
 
@@ -2134,11 +2152,10 @@ VITAL PROTECT`
           body: JSON.stringify(payload)
         });
 
-        const result = await res.json();
+        const result = await parseApiResponse(res);
 
         if (!result.success) {
           alert(result.error || "Erreur lors de la création du stage.");
-          console.error(result);
           return;
         }
 
@@ -2148,7 +2165,7 @@ VITAL PROTECT`
         await loadStages();
       } catch (error) {
         console.error(error);
-        alert("Erreur réseau ou session admin invalide.");
+        alert(error.message || "Erreur lors de la création du stage.");
       }
     });
 
@@ -2181,11 +2198,10 @@ VITAL PROTECT`
           body: JSON.stringify(payload)
         });
 
-        const result = await res.json();
+        const result = await parseApiResponse(res);
 
         if (!result.success) {
           alert(result.error || "Erreur lors de la création de la session formateur.");
-          console.error(result);
           return;
         }
 
@@ -2195,7 +2211,7 @@ VITAL PROTECT`
         await loadTrainerSessions();
       } catch (error) {
         console.error(error);
-        alert("Erreur réseau ou session admin invalide.");
+        alert(error.message || "Erreur lors de la création de la session formateur.");
       }
     });
 
