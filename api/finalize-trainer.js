@@ -15,22 +15,90 @@ function normalizeEmail(value) {
   return String(value || "").trim().toLowerCase();
 }
 
+function sanitizeText(value, fallback = "") {
+  return String(value || fallback).trim();
+}
+
+async function requireAdmin(req) {
+  const authHeader = req.headers.authorization || "";
+  const token = authHeader.startsWith("Bearer ")
+    ? authHeader.slice("Bearer ".length).trim()
+    : "";
+
+  if (!token) {
+    return {
+      ok: false,
+      status: 401,
+      error: "Token d'authentification manquant"
+    };
+  }
+
+  const {
+    data: { user },
+    error: userError
+  } = await supabase.auth.getUser(token);
+
+  if (userError || !user?.email) {
+    return {
+      ok: false,
+      status: 401,
+      error: "Session admin invalide"
+    };
+  }
+
+  const email = normalizeEmail(user.email);
+
+  const { data: adminUser, error: adminError } = await supabase
+    .from("admin_users")
+    .select("id, email")
+    .eq("email", email)
+    .maybeSingle();
+
+  if (adminError) {
+    return {
+      ok: false,
+      status: 500,
+      error: "Erreur de vérification admin"
+    };
+  }
+
+  if (!adminUser) {
+    return {
+      ok: false,
+      status: 403,
+      error: "Accès refusé"
+    };
+  }
+
+  return {
+    ok: true,
+    user,
+    adminUser
+  };
+}
+
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
   try {
-    const { registration_id } = req.body;
+    const adminCheck = await requireAdmin(req);
 
-    if (!registration_id) {
+    if (!adminCheck.ok) {
+      return res.status(adminCheck.status).json({ error: adminCheck.error });
+    }
+
+    const registrationId = sanitizeText(req.body?.registration_id);
+
+    if (!registrationId) {
       return res.status(400).json({ error: "Missing registration_id" });
     }
 
     const { data: registration, error: registrationError } = await supabase
       .from("trainer_session_registrations")
       .select("*")
-      .eq("id", registration_id)
+      .eq("id", registrationId)
       .single();
 
     if (registrationError || !registration) {
@@ -52,6 +120,10 @@ export default async function handler(req, res) {
 
     const today = new Date().toISOString().split("T")[0];
     const cleanEmail = normalizeEmail(registration.email);
+
+    if (!cleanEmail) {
+      return res.status(400).json({ error: "Email candidat manquant" });
+    }
 
     const trainerPayload = {
       first_name: registration.first_name || "",
