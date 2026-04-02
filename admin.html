@@ -46,31 +46,28 @@
       height: 100vh;
     }
 
-    .brand {
+    .brand-wrap {
       display: flex;
       align-items: center;
       gap: 12px;
-      text-decoration: none;
-      color: white;
       margin-bottom: 8px;
     }
 
-    .brand img {
-      height: 162px;
+    .brand-wrap img {
+      height: 108px;
       width: auto;
       display: block;
     }
 
-    .brand-text {
+    .brand {
       font-size: 2.2rem;
       font-weight: 800;
       line-height: 1;
-      letter-spacing: 0.5px;
     }
 
     .brand-sub {
       color: rgba(255,255,255,0.8);
-      font-size: 1.4rem;
+      font-size: 1.1rem;
       margin-bottom: 24px;
     }
 
@@ -267,6 +264,7 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
+      gap: 8px;
     }
 
     .btn-primary {
@@ -308,7 +306,7 @@
 
     table {
       width: 100%;
-      min-width: 1080px;
+      min-width: 1200px;
       border-collapse: collapse;
     }
 
@@ -390,7 +388,28 @@
       display: flex;
       flex-direction: column;
       gap: 8px;
-      min-width: 200px;
+      min-width: 220px;
+    }
+
+    .form-switcher {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+
+    .form-switcher .btn.active {
+      background: var(--blue);
+      color: white;
+      border-color: var(--blue);
+    }
+
+    .form-panel {
+      display: none;
+    }
+
+    .form-panel.active {
+      display: block;
     }
 
     @media (max-width: 1200px) {
@@ -417,19 +436,15 @@
       }
 
       .brand {
-        align-items: center;
+        font-size: 1.8rem;
       }
 
-      .brand img {
-        height: 132px;
-      }
-
-      .brand-text {
-        font-size: 1.4rem;
+      .brand-wrap img {
+        height: 84px;
       }
 
       .brand-sub {
-        font-size: 1.1rem;
+        font-size: 1rem;
       }
     }
   </style>
@@ -437,10 +452,10 @@
 <body>
   <div class="layout">
     <aside class="sidebar">
-      <a href="/index.html" class="brand">
+      <div class="brand-wrap">
         <img src="/logo.png" alt="VITAL PROTECT" />
-        <span class="brand-text">VITAL PROTECT</span>
-      </a>
+        <div class="brand">VITAL PROTECT</div>
+      </div>
       <div class="brand-sub">Cockpit admin</div>
 
       <div class="nav-group">
@@ -683,7 +698,7 @@
           <div class="card-header">
             <div>
               <h2>Stages</h2>
-              <p>Voir, filtrer et créer des stages publiés.</p>
+              <p>Voir, filtrer, supprimer et contacter les inscrits.</p>
             </div>
           </div>
           <div class="card-body">
@@ -719,97 +734,164 @@
             </div>
           </div>
         </div>
-
-        <div class="card">
-          <div class="card-header">
-            <div>
-              <h2>Créer un stage</h2>
-              <p>Insertion rapide d’un stage en base.</p>
-            </div>
-          </div>
-          <div class="card-body">
-            <form id="createStageForm">
-              <div class="filters">
-                <div class="field">
-                  <label>Titre</label>
-                  <input id="stageTitleInput" type="text" required />
-                </div>
-                <div class="field">
-                  <label>Type</label>
-                  <input id="stageTypeInput" type="text" required />
-                </div>
-                <div class="field">
-                  <label>Ville</label>
-                  <input id="stageCityInput" type="text" required />
-                </div>
-                <div class="field">
-                  <label>Département</label>
-                  <input id="stageDepartmentInput" type="text" />
-                </div>
-                <div class="field">
-                  <label>Région</label>
-                  <input id="stageRegionInput" type="text" />
-                </div>
-              </div>
-
-              <div class="filters filters-4">
-                <div class="field">
-                  <label>Date</label>
-                  <input id="stageDateInput" type="date" required />
-                </div>
-                <div class="field">
-                  <label>Heure</label>
-                  <input id="stageTimeInput" type="text" placeholder="14:00" />
-                </div>
-                <div class="field">
-                  <label>Durée</label>
-                  <input id="stageDurationInput" type="text" placeholder="3h" />
-                </div>
-                <div class="field">
-                  <label>Prix</label>
-                  <input id="stagePriceInput" type="number" required />
-                </div>
-              </div>
-
-              <div class="filters filters-3">
-                <div class="field">
-                  <label>Places max</label>
-                  <input id="stageMaxParticipantsInput" type="number" value="20" />
-                </div>
-                <div class="field">
-                  <label>Places restantes</label>
-                  <input id="stageRemainingPlacesInput" type="number" value="20" />
-                </div>
-                <div class="field">
-                  <label>Email formateur lié</label>
-                  <input id="stageTrainerEmailInput" type="text" placeholder="trainer@email.fr" />
-                </div>
-              </div>
-
-              <div class="field">
-                <label>Adresse</label>
-                <input id="stageAddressInput" type="text" />
-              </div>
-
-              <div class="field">
-                <label>Description</label>
-                <textarea id="stageDescriptionInput"></textarea>
-              </div>
-
-              <div class="actions-row">
-                <button class="btn btn-primary" type="submit">Créer le stage</button>
-              </div>
-            </form>
-          </div>
-        </div>
       </section>
 
       <section id="tab-formations" class="tab-panel">
         <div class="card">
           <div class="card-header">
             <div>
+              <h2>Entrée rapide</h2>
+              <p>Choisissez ce que vous créez, puis sélectionnez le module. Le titre reprend automatiquement le module.</p>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="form-switcher">
+              <button id="switchCreateStage" class="btn btn-secondary active" type="button">Créer un stage</button>
+              <button id="switchCreateTrainer" class="btn btn-secondary" type="button">Créer une formation formateur</button>
+            </div>
+
+            <div id="createStagePanel" class="form-panel active">
+              <form id="createStageForm">
+                <div class="filters filters-4">
+                  <div class="field">
+                    <label>Module</label>
+                    <select id="stageModuleInput" required></select>
+                  </div>
+                  <div class="field">
+                    <label>Ville</label>
+                    <input id="stageCityInput" type="text" required />
+                  </div>
+                  <div class="field">
+                    <label>Département</label>
+                    <input id="stageDepartmentInput" type="text" />
+                  </div>
+                  <div class="field">
+                    <label>Région</label>
+                    <input id="stageRegionInput" type="text" />
+                  </div>
+                </div>
+
+                <div class="filters filters-4">
+                  <div class="field">
+                    <label>Date</label>
+                    <input id="stageDateInput" type="date" required />
+                  </div>
+                  <div class="field">
+                    <label>Heure</label>
+                    <input id="stageTimeInput" type="text" placeholder="14:00" />
+                  </div>
+                  <div class="field">
+                    <label>Durée</label>
+                    <input id="stageDurationInput" type="text" placeholder="3h" />
+                  </div>
+                  <div class="field">
+                    <label>Prix</label>
+                    <input id="stagePriceInput" type="number" required />
+                  </div>
+                </div>
+
+                <div class="filters filters-3">
+                  <div class="field">
+                    <label>Places max</label>
+                    <input id="stageMaxParticipantsInput" type="number" value="20" />
+                  </div>
+                  <div class="field">
+                    <label>Places restantes</label>
+                    <input id="stageRemainingPlacesInput" type="number" value="20" />
+                  </div>
+                  <div class="field">
+                    <label>Email formateur lié</label>
+                    <input id="stageTrainerEmailInput" type="text" placeholder="trainer@email.fr" />
+                  </div>
+                </div>
+
+                <div class="field">
+                  <label>Adresse</label>
+                  <input id="stageAddressInput" type="text" />
+                </div>
+
+                <div class="field">
+                  <label>Description</label>
+                  <textarea id="stageDescriptionInput"></textarea>
+                </div>
+
+                <div class="actions-row">
+                  <button class="btn btn-primary" type="submit">Créer le stage</button>
+                </div>
+              </form>
+            </div>
+
+            <div id="createTrainerPanel" class="form-panel">
+              <form id="createTrainerSessionForm">
+                <div class="filters filters-4">
+                  <div class="field">
+                    <label>Module</label>
+                    <select id="trainerSessionModuleInput" required></select>
+                  </div>
+                  <div class="field">
+                    <label>Ville</label>
+                    <input id="trainerSessionCityInput" type="text" required />
+                  </div>
+                  <div class="field">
+                    <label>Adresse</label>
+                    <input id="trainerSessionAddressInput" type="text" />
+                  </div>
+                  <div class="field">
+                    <label>Statut</label>
+                    <select id="trainerSessionStatusInput">
+                      <option value="open">open</option>
+                      <option value="closed">closed</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="filters filters-4">
+                  <div class="field">
+                    <label>Date début</label>
+                    <input id="trainerSessionStartDateInput" type="date" required />
+                  </div>
+                  <div class="field">
+                    <label>Date fin</label>
+                    <input id="trainerSessionEndDateInput" type="date" required />
+                  </div>
+                  <div class="field">
+                    <label>Durée (jours)</label>
+                    <input id="trainerSessionDurationInput" type="number" value="3" />
+                  </div>
+                  <div class="field">
+                    <label>Places max</label>
+                    <input id="trainerSessionMaxPlacesInput" type="number" value="10" />
+                  </div>
+                </div>
+
+                <div class="filters filters-3">
+                  <div class="field">
+                    <label>Places restantes</label>
+                    <input id="trainerSessionRemainingPlacesInput" type="number" value="10" />
+                  </div>
+                  <div class="field">
+                    <label>Tarif standard</label>
+                    <input id="trainerSessionStandardPriceInput" type="number" value="590" />
+                  </div>
+                  <div class="field">
+                    <label>Tarif lancement</label>
+                    <input id="trainerSessionLaunchPriceInput" type="number" value="490" />
+                  </div>
+                </div>
+
+                <div class="actions-row">
+                  <button class="btn btn-primary" type="submit">Créer la session</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div>
               <h2>Formations formateur</h2>
-              <p>Voir et créer les sessions de formation / recyclage.</p>
+              <p>Voir et filtrer les sessions de formation / recyclage.</p>
             </div>
           </div>
           <div class="card-body">
@@ -835,82 +917,6 @@
             <div class="table-wrap" id="trainerSessionsWrap">
               <div class="loading">Chargement des formations formateur...</div>
             </div>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-header">
-            <div>
-              <h2>Créer une formation formateur</h2>
-              <p>Nouvelle session de certification ou de recyclage.</p>
-            </div>
-          </div>
-          <div class="card-body">
-            <form id="createTrainerSessionForm">
-              <div class="filters filters-4">
-                <div class="field">
-                  <label>Module</label>
-                  <input id="trainerSessionModuleInput" type="text" required />
-                </div>
-                <div class="field">
-                  <label>Titre</label>
-                  <input id="trainerSessionTitleInput" type="text" required />
-                </div>
-                <div class="field">
-                  <label>Ville</label>
-                  <input id="trainerSessionCityInput" type="text" required />
-                </div>
-                <div class="field">
-                  <label>Adresse</label>
-                  <input id="trainerSessionAddressInput" type="text" />
-                </div>
-              </div>
-
-              <div class="filters filters-4">
-                <div class="field">
-                  <label>Date début</label>
-                  <input id="trainerSessionStartDateInput" type="date" required />
-                </div>
-                <div class="field">
-                  <label>Date fin</label>
-                  <input id="trainerSessionEndDateInput" type="date" required />
-                </div>
-                <div class="field">
-                  <label>Durée (jours)</label>
-                  <input id="trainerSessionDurationInput" type="number" value="3" />
-                </div>
-                <div class="field">
-                  <label>Places max</label>
-                  <input id="trainerSessionMaxPlacesInput" type="number" value="10" />
-                </div>
-              </div>
-
-              <div class="filters filters-4">
-                <div class="field">
-                  <label>Places restantes</label>
-                  <input id="trainerSessionRemainingPlacesInput" type="number" value="10" />
-                </div>
-                <div class="field">
-                  <label>Tarif standard</label>
-                  <input id="trainerSessionStandardPriceInput" type="number" value="590" />
-                </div>
-                <div class="field">
-                  <label>Tarif lancement</label>
-                  <input id="trainerSessionLaunchPriceInput" type="number" value="490" />
-                </div>
-                <div class="field">
-                  <label>Statut</label>
-                  <select id="trainerSessionStatusInput">
-                    <option value="open">open</option>
-                    <option value="closed">closed</option>
-                  </select>
-                </div>
-              </div>
-
-              <div class="actions-row">
-                <button class="btn btn-primary" type="submit">Créer la session</button>
-              </div>
-            </form>
           </div>
         </div>
       </section>
@@ -971,6 +977,12 @@
     const SUPABASE_KEY = "sb_publishable_VlTpYjzJ3DKpFA1Un_EFHQ_FW-mYK4U";
     const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
+    const MODULE_OPTIONS = [
+      "Self Défense Essentielle",
+      "Self Défense Essentielle Niveau 2",
+      "Self Défense en entreprise"
+    ];
+
     let reservationsData = [];
     let stagesData = [];
     let trainerRegistrationsData = [];
@@ -1001,6 +1013,35 @@
     const financeTotal = document.getElementById("financeTotal");
 
     const logoutBtn = document.getElementById("logoutBtn");
+
+    const switchCreateStage = document.getElementById("switchCreateStage");
+    const switchCreateTrainer = document.getElementById("switchCreateTrainer");
+    const createStagePanel = document.getElementById("createStagePanel");
+    const createTrainerPanel = document.getElementById("createTrainerPanel");
+
+    function populateModuleSelect(selectId) {
+      const select = document.getElementById(selectId);
+      if (!select) return;
+
+      select.innerHTML = `
+        <option value="">Choisir un module</option>
+        ${MODULE_OPTIONS.map(module => `<option value="${module}">${module}</option>`).join("")}
+      `;
+    }
+
+    populateModuleSelect("stageModuleInput");
+    populateModuleSelect("trainerSessionModuleInput");
+
+    function setCreateMode(mode) {
+      const isStage = mode === "stage";
+      switchCreateStage.classList.toggle("active", isStage);
+      switchCreateTrainer.classList.toggle("active", !isStage);
+      createStagePanel.classList.toggle("active", isStage);
+      createTrainerPanel.classList.toggle("active", !isStage);
+    }
+
+    switchCreateStage.addEventListener("click", () => setCreateMode("stage"));
+    switchCreateTrainer.addEventListener("click", () => setCreateMode("trainer"));
 
     async function requireAdmin() {
       let {
@@ -1164,6 +1205,10 @@
       `;
     }
 
+    function getStageReservationCount(stageId) {
+      return reservationsData.filter(r => r.stage_id === stageId).length;
+    }
+
     function renderStages(rows) {
       stagesCount.textContent = rows.length;
 
@@ -1183,6 +1228,8 @@
               <th>Places restantes</th>
               <th>Statut</th>
               <th>Formateur lié</th>
+              <th>Inscrits</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -1199,6 +1246,17 @@
                   </span>
                 </td>
                 <td>${row.trainer_id || "—"}</td>
+                <td>${getStageReservationCount(row.id)}</td>
+                <td>
+                  <div class="action-stack">
+                    <button class="btn btn-secondary" type="button" onclick="window.contactStageRegistrants('${row.id}', '${(row.title || "").replace(/'/g, "\\'")}')">
+                      Contacter les inscrits
+                    </button>
+                    <button class="btn btn-danger" type="button" onclick="window.deleteStage('${row.id}', '${(row.title || "").replace(/'/g, "\\'")}')">
+                      Supprimer le stage
+                    </button>
+                  </div>
+                </td>
               </tr>
             `).join("")}
           </tbody>
@@ -1689,6 +1747,7 @@
       reservationsData = data || [];
       renderReservations(reservationsData);
       updateFinance();
+      renderStages(stagesData);
     }
 
     async function loadStages() {
@@ -1773,6 +1832,70 @@
       trainerSessionsData = data || [];
       renderTrainerSessions(trainerSessionsData);
     }
+
+    window.contactStageRegistrants = async (stageId, stageTitle) => {
+      const { data, error } = await supabase
+        .from("reservations")
+        .select("email, first_name, last_name")
+        .eq("stage_id", stageId);
+
+      if (error) {
+        console.error(error);
+        alert("Impossible de récupérer les inscrits.");
+        return;
+      }
+
+      const emails = [...new Set((data || []).map(item => item.email).filter(Boolean))];
+
+      if (!emails.length) {
+        alert("Aucun inscrit à contacter pour ce stage.");
+        return;
+      }
+
+      const subject = encodeURIComponent(`Information importante concernant votre stage VITAL PROTECT : ${stageTitle}`);
+      const body = encodeURIComponent(
+`Bonjour,
+
+Nous vous contactons concernant le stage suivant :
+${stageTitle}
+
+Merci de consulter ce message et de revenir vers nous si nécessaire.
+
+Cordialement,
+VITAL PROTECT`
+      );
+
+      window.location.href = `mailto:?bcc=${encodeURIComponent(emails.join(","))}&subject=${subject}&body=${body}`;
+    };
+
+    window.deleteStage = async (stageId, stageTitle) => {
+      const reservationCount = reservationsData.filter(r => r.stage_id === stageId).length;
+
+      const warningText = reservationCount
+        ? `Ce stage a ${reservationCount} inscrit(s). Pensez à utiliser "Contacter les inscrits" avant suppression.`
+        : "Aucun inscrit détecté sur ce stage.";
+
+      const confirmed = window.confirm(
+        `Supprimer le stage "${stageTitle}" ?\n\n${warningText}\n\nCette action est irréversible.`
+      );
+
+      if (!confirmed) return;
+
+      const { error } = await supabase
+        .from("stages")
+        .delete()
+        .eq("id", stageId);
+
+      if (error) {
+        console.error(error);
+        alert("Erreur lors de la suppression du stage.");
+        return;
+      }
+
+      alert("Stage supprimé avec succès.");
+      await loadStages();
+      await loadReservations();
+    };
 
     window.captureTrainerPayment = async (registrationId, paymentIntentId) => {
       const confirmed = window.confirm("Accepter le dossier de ce candidat et encaisser le paiement ?");
@@ -1954,10 +2077,12 @@
         trainerId = trainer?.id || null;
       }
 
+      const moduleName = document.getElementById("stageModuleInput").value;
+
       const payload = {
         trainer_id: trainerId,
-        title: document.getElementById("stageTitleInput").value,
-        training_type: document.getElementById("stageTypeInput").value,
+        title: moduleName,
+        training_type: moduleName,
         description: document.getElementById("stageDescriptionInput").value,
         city: document.getElementById("stageCityInput").value,
         department: document.getElementById("stageDepartmentInput").value,
@@ -1982,15 +2107,18 @@
 
       alert("Stage créé avec succès.");
       e.target.reset();
+      populateModuleSelect("stageModuleInput");
       await loadStages();
     });
 
     document.getElementById("createTrainerSessionForm").addEventListener("submit", async (e) => {
       e.preventDefault();
 
+      const moduleName = document.getElementById("trainerSessionModuleInput").value;
+
       const payload = {
-        module_name: document.getElementById("trainerSessionModuleInput").value,
-        title: document.getElementById("trainerSessionTitleInput").value,
+        module_name: moduleName,
+        title: moduleName,
         city: document.getElementById("trainerSessionCityInput").value,
         address: document.getElementById("trainerSessionAddressInput").value,
         start_date: document.getElementById("trainerSessionStartDateInput").value,
@@ -2013,6 +2141,7 @@
 
       alert("Session formateur créée avec succès.");
       e.target.reset();
+      populateModuleSelect("trainerSessionModuleInput");
       await loadTrainerSessions();
     });
 
