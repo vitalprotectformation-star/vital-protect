@@ -8,6 +8,72 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY
 );
 
+function normalizeEmail(value) {
+  return String(value || "").trim().toLowerCase();
+}
+
+function sanitizeText(value, fallback = "") {
+  return String(value || fallback).trim();
+}
+
+async function requireAdmin(req) {
+  const authHeader = req.headers.authorization || "";
+  const token = authHeader.startsWith("Bearer ")
+    ? authHeader.slice("Bearer ".length).trim()
+    : "";
+
+  if (!token) {
+    return {
+      ok: false,
+      status: 401,
+      error: "Token d'authentification manquant"
+    };
+  }
+
+  const {
+    data: { user },
+    error: userError
+  } = await supabase.auth.getUser(token);
+
+  if (userError || !user?.email) {
+    return {
+      ok: false,
+      status: 401,
+      error: "Session admin invalide"
+    };
+  }
+
+  const email = normalizeEmail(user.email);
+
+  const { data: adminUser, error: adminError } = await supabase
+    .from("admin_users")
+    .select("id, email")
+    .eq("email", email)
+    .maybeSingle();
+
+  if (adminError) {
+    return {
+      ok: false,
+      status: 500,
+      error: "Erreur de vérification admin"
+    };
+  }
+
+  if (!adminUser) {
+    return {
+      ok: false,
+      status: 403,
+      error: "Accès refusé"
+    };
+  }
+
+  return {
+    ok: true,
+    user,
+    adminUser
+  };
+}
+
 async function archiveRegistration(registration, archiveReason) {
   const archivePayload = {
     registration_id: registration.id,
@@ -41,16 +107,22 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { registration_id } = req.body;
+    const adminCheck = await requireAdmin(req);
 
-    if (!registration_id) {
+    if (!adminCheck.ok) {
+      return res.status(adminCheck.status).json({ error: adminCheck.error });
+    }
+
+    const registrationId = sanitizeText(req.body?.registration_id);
+
+    if (!registrationId) {
       return res.status(400).json({ error: "Missing registration_id" });
     }
 
     const { data: registration, error: registrationError } = await supabase
       .from("trainer_session_registrations")
       .select("*")
-      .eq("id", registration_id)
+      .eq("id", registrationId)
       .single();
 
     if (registrationError || !registration) {
@@ -89,7 +161,7 @@ export default async function handler(req, res) {
         payment_status: "canceled",
         validation_status: "rejected"
       })
-      .eq("id", registration_id);
+      .eq("id", registrationId);
 
     if (updateError) {
       console.error("Registration update error:", updateError);
