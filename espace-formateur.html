@@ -378,6 +378,7 @@
     );
 
     let certifiedModules = [];
+    let certifiedModulesDetails = [];
 
     function normalize(value) {
       return String(value || "").trim().toLowerCase();
@@ -490,43 +491,56 @@
     }
 
     async function loadCertifiedModules(trainer) {
-      const { data: registrations, error: regError } = await supabase
-        .from("trainer_session_registrations")
-        .select("session_id, validation_status, training_result, email")
-        .ilike("email", trainer.email);
+      const { data, error } = await supabase
+        .from("trainer_modules")
+        .select("*")
+        .eq("trainer_id", trainer.id)
+        .order("module_name", { ascending: true });
 
-      if (regError) {
-        console.error("Erreur chargement registrations:", regError);
+      if (error) {
+        console.error("Erreur chargement trainer_modules:", error);
         return [];
       }
 
-      const passedSessionIds = (registrations || [])
-        .filter(item =>
-          normalize(item.validation_status) === "validated" &&
-          normalize(item.training_result) === "passed" &&
-          item.session_id
-        )
-        .map(item => item.session_id);
+      return (data || []).filter(
+        item =>
+          normalize(item.status) === "certified" &&
+          (!item.expires_at || isFutureOrToday(item.expires_at))
+      );
+    }
 
-      if (!passedSessionIds.length) {
-        return [];
+    function buildCertifiedModulesSection() {
+      if (!certifiedModulesDetails.length) {
+        return `
+          <div class="card">
+            <h2 class="section-title">Modules certifiés</h2>
+            <div class="alert alert-warning">
+              <p>Aucun module certifié actif n’a été trouvé sur votre profil.</p>
+            </div>
+          </div>
+        `;
       }
 
-      const { data: sessions, error: sessionsError } = await supabase
-        .from("trainer_sessions")
-        .select("id, module_name")
-        .in("id", passedSessionIds);
-
-      if (sessionsError) {
-        console.error("Erreur chargement trainer_sessions:", sessionsError);
-        return [];
-      }
-
-      return [...new Set(
-        (sessions || [])
-          .map(item => item.module_name)
-          .filter(Boolean)
-      )];
+      return `
+        <div class="card">
+          <h2 class="section-title">Modules certifiés</h2>
+          <div class="grid">
+            ${certifiedModulesDetails.map(module => `
+              <div class="info-box">
+                <span class="label">Module</span>
+                <div class="value">${module.module_name || "—"}</div>
+                <div style="margin-top:10px;">
+                  <span class="badge badge-success">Certifié</span>
+                </div>
+                <div style="margin-top:10px;" class="muted">
+                  Validation : ${formatDate(module.validated_at)}<br />
+                  Expiration : ${formatDate(module.expires_at)}
+                </div>
+              </div>
+            `).join("")}
+          </div>
+        </div>
+      `;
     }
 
     function buildCreateStageSection(trainer) {
@@ -734,6 +748,8 @@
           </div>
         </div>
 
+        ${buildCertifiedModulesSection()}
+
         <div class="card" style="padding:18px; margin-top:18px;">
           <h3>Zone membre</h3>
           <p class="muted">Cette zone peut ensuite accueillir tes contenus privés : ressources, documents, calendrier, kit formateur, etc.</p>
@@ -822,6 +838,8 @@ Modules certifiés : ${certifiedModules.join(", ") || "aucun"}</div>
             </div>
           </div>
 
+          ${buildCertifiedModulesSection()}
+
           <div class="debug">Email session : ${sessionEmail}
 Email trouvé : ${trainer.email}
 ID formateur : ${trainer.id}
@@ -882,6 +900,8 @@ Affiliation end : ${trainer.affiliation_end || "—"}</div>
               <div class="value">${formatDate(trainer.affiliation_end)}</div>
             </div>
           </div>
+
+          ${buildCertifiedModulesSection()}
 
           <div class="actions">
             <a href="/devenir-formateur.html" class="btn btn-primary">Voir les formations disponibles</a>
@@ -954,7 +974,9 @@ Certification expiry : ${trainer.certification_expiry || "—"}</div>
         return;
       }
 
-      certifiedModules = await loadCertifiedModules(trainer);
+      certifiedModulesDetails = await loadCertifiedModules(trainer);
+      certifiedModules = certifiedModulesDetails.map(item => item.module_name).filter(Boolean);
+
       await buildTrainerView(trainer, sessionEmail);
     }
 
