@@ -125,6 +125,27 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: "Email candidat manquant" });
     }
 
+    let moduleName = "";
+
+    if (registration.session_id) {
+      const { data: trainerSession, error: trainerSessionError } = await supabase
+        .from("trainer_sessions")
+        .select("id, module_name, title")
+        .eq("id", registration.session_id)
+        .maybeSingle();
+
+      if (trainerSessionError) {
+        console.error("Trainer session fetch error:", trainerSessionError);
+        return res.status(500).json({ error: "Erreur de lecture de la session formateur" });
+      }
+
+      moduleName = sanitizeText(
+        trainerSession?.module_name || trainerSession?.title || registration.training_type || ""
+      );
+    } else {
+      moduleName = sanitizeText(registration.training_type || "");
+    }
+
     const trainerPayload = {
       first_name: registration.first_name || "",
       last_name: registration.last_name || "",
@@ -143,16 +164,43 @@ export default async function handler(req, res) {
     const { data: trainerData, error: trainerError } = await supabase
       .from("trainers")
       .upsert(trainerPayload, { onConflict: "email" })
-      .select();
+      .select()
+      .single();
 
     if (trainerError) {
       console.error("Trainer upsert error:", trainerError);
       return res.status(500).json({ error: trainerError.message });
     }
 
+    let trainerModule = null;
+
+    if (moduleName) {
+      const trainerModulePayload = {
+        trainer_id: trainerData.id,
+        module_name: moduleName,
+        status: "certified",
+        validated_at: today,
+        expires_at: addYears(today, 2)
+      };
+
+      const { data: trainerModuleData, error: trainerModuleError } = await supabase
+        .from("trainer_modules")
+        .upsert(trainerModulePayload, { onConflict: "trainer_id,module_name" })
+        .select()
+        .single();
+
+      if (trainerModuleError) {
+        console.error("Trainer module upsert error:", trainerModuleError);
+        return res.status(500).json({ error: trainerModuleError.message });
+      }
+
+      trainerModule = trainerModuleData;
+    }
+
     return res.status(200).json({
       success: true,
-      trainer: trainerData
+      trainer: trainerData,
+      trainer_module: trainerModule
     });
   } catch (err) {
     console.error("Finalize trainer error:", err);
