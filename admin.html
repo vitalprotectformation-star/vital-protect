@@ -1930,11 +1930,11 @@ VITAL PROTECT`
       if (!confirmed) return;
 
       try {
+        const headers = await getAuthHeaders();
+
         const res = await fetch("/api/capture-payment", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
+          headers,
           body: JSON.stringify({
             registration_id: registrationId,
             payment_intent_id: paymentIntentId
@@ -1952,7 +1952,7 @@ VITAL PROTECT`
           console.error(result);
         }
       } catch (error) {
-        alert("Erreur réseau.");
+        alert("Erreur réseau ou session admin invalide.");
         console.error(error);
       }
     };
@@ -1962,11 +1962,11 @@ VITAL PROTECT`
       if (!confirmed) return;
 
       try {
+        const headers = await getAuthHeaders();
+
         const res = await fetch("/api/reject-trainer-candidate", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
+          headers,
           body: JSON.stringify({
             registration_id: registrationId
           })
@@ -1984,7 +1984,7 @@ VITAL PROTECT`
           console.error(result);
         }
       } catch (error) {
-        alert("Erreur réseau.");
+        alert("Erreur réseau ou session admin invalide.");
         console.error(error);
       }
     };
@@ -2000,11 +2000,11 @@ VITAL PROTECT`
       if (!confirmed) return;
 
       try {
+        const headers = await getAuthHeaders();
+
         const res = await fetch("/api/update-training-result", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
+          headers,
           body: JSON.stringify({
             registration_id: registrationId,
             result
@@ -2023,7 +2023,7 @@ VITAL PROTECT`
           console.error(apiResult);
         }
       } catch (error) {
-        alert("Erreur réseau.");
+        alert("Erreur réseau ou session admin invalide.");
         console.error(error);
       }
     };
@@ -2033,11 +2033,11 @@ VITAL PROTECT`
       if (!confirmed) return;
 
       try {
+        const headers = await getAuthHeaders();
+
         const res = await fetch("/api/finalize-trainer", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
+          headers,
           body: JSON.stringify({
             registration_id: registrationId
           })
@@ -2054,7 +2054,7 @@ VITAL PROTECT`
           console.error(result);
         }
       } catch (error) {
-        alert("Erreur réseau.");
+        alert("Erreur réseau ou session admin invalide.");
         console.error(error);
       }
     };
