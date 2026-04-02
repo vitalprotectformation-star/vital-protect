@@ -5,6 +5,72 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY
 );
 
+function normalizeEmail(value) {
+  return String(value || "").trim().toLowerCase();
+}
+
+function sanitizeText(value, fallback = "") {
+  return String(value || fallback).trim();
+}
+
+async function requireAdmin(req) {
+  const authHeader = req.headers.authorization || "";
+  const token = authHeader.startsWith("Bearer ")
+    ? authHeader.slice("Bearer ".length).trim()
+    : "";
+
+  if (!token) {
+    return {
+      ok: false,
+      status: 401,
+      error: "Token d'authentification manquant"
+    };
+  }
+
+  const {
+    data: { user },
+    error: userError
+  } = await supabase.auth.getUser(token);
+
+  if (userError || !user?.email) {
+    return {
+      ok: false,
+      status: 401,
+      error: "Session admin invalide"
+    };
+  }
+
+  const email = normalizeEmail(user.email);
+
+  const { data: adminUser, error: adminError } = await supabase
+    .from("admin_users")
+    .select("id, email")
+    .eq("email", email)
+    .maybeSingle();
+
+  if (adminError) {
+    return {
+      ok: false,
+      status: 500,
+      error: "Erreur de vérification admin"
+    };
+  }
+
+  if (!adminUser) {
+    return {
+      ok: false,
+      status: 403,
+      error: "Accès refusé"
+    };
+  }
+
+  return {
+    ok: true,
+    user,
+    adminUser
+  };
+}
+
 async function archiveRegistration(registration, archiveReason) {
   const { data: existingArchive } = await supabase
     .from("trainer_candidate_archives")
@@ -74,9 +140,16 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { registration_id, result } = req.body;
+    const adminCheck = await requireAdmin(req);
 
-    if (!registration_id) {
+    if (!adminCheck.ok) {
+      return res.status(adminCheck.status).json({ error: adminCheck.error });
+    }
+
+    const registrationId = sanitizeText(req.body?.registration_id);
+    const result = sanitizeText(req.body?.result);
+
+    if (!registrationId) {
       return res.status(400).json({ error: "Missing registration_id" });
     }
 
@@ -87,11 +160,23 @@ export default async function handler(req, res) {
     const { data: registration, error: registrationError } = await supabase
       .from("trainer_session_registrations")
       .select("*")
-      .eq("id", registration_id)
+      .eq("id", registrationId)
       .single();
 
     if (registrationError || !registration) {
       return res.status(404).json({ error: "Registration not found" });
+    }
+
+    if (registration.payment_status !== "captured") {
+      return res.status(400).json({
+        error: "Le paiement doit être capturé avant de définir le résultat"
+      });
+    }
+
+    if (registration.validation_status !== "validated") {
+      return res.status(400).json({
+        error: "Le dossier doit être validé avant de définir le résultat"
+      });
     }
 
     const { error: updateError } = await supabase
@@ -99,7 +184,7 @@ export default async function handler(req, res) {
       .update({
         training_result: result
       })
-      .eq("id", registration_id);
+      .eq("id", registrationId);
 
     if (updateError) {
       return res.status(500).json({ error: updateError.message });
@@ -113,7 +198,7 @@ export default async function handler(req, res) {
     if (result === "failed") {
       await archiveRegistration(updatedRegistration, "training_failed");
     } else {
-      await removeArchive(registration_id);
+      await removeArchive(registrationId);
     }
 
     return res.status(200).json({ success: true });
