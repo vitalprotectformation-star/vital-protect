@@ -463,6 +463,7 @@
         <button class="nav-btn" data-tab="candidats">Candidats</button>
         <button class="nav-btn" data-tab="archives">Archives candidats</button>
         <button class="nav-btn" data-tab="formateurs">Formateurs</button>
+        <button class="nav-btn" data-tab="modules">Modules certifiés</button>
         <button class="nav-btn" data-tab="stages">Stages</button>
         <button class="nav-btn" data-tab="formations">Formations formateur</button>
         <button class="nav-btn" data-tab="finances">Pilotage financier</button>
@@ -688,6 +689,49 @@
 
             <div class="table-wrap" id="trainersWrap">
               <div class="loading">Chargement des formateurs...</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="tab-modules" class="tab-panel">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h2>Modules certifiés</h2>
+              <p>Suivi des certifications par module et de leurs expirations.</p>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="filters filters-4">
+              <div class="field">
+                <label>Recherche</label>
+                <input id="trainerModuleSearch" type="text" placeholder="Nom, prénom, email..." />
+              </div>
+              <div class="field">
+                <label>Module</label>
+                <input id="trainerModuleNameFilter" type="text" placeholder="Self Défense..." />
+              </div>
+              <div class="field">
+                <label>Statut</label>
+                <select id="trainerModuleStatusFilter">
+                  <option value="">Tous</option>
+                  <option value="certified">Certifié</option>
+                  <option value="expired">Expiré</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>Expiration</label>
+                <select id="trainerModuleExpiryFilter">
+                  <option value="">Toutes</option>
+                  <option value="valid">Encore valide</option>
+                  <option value="expired">Expirée</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="table-wrap" id="trainerModulesWrap">
+              <div class="loading">Chargement des modules certifiés...</div>
             </div>
           </div>
         </div>
@@ -988,6 +1032,7 @@
     let trainerRegistrationsData = [];
     let archivesData = [];
     let trainersData = [];
+    let trainerModulesData = [];
     let trainerSessionsData = [];
 
     const reservationsWrap = document.getElementById("reservationsWrap");
@@ -995,6 +1040,7 @@
     const trainerRegistrationsWrap = document.getElementById("trainerRegistrationsWrap");
     const archivesWrap = document.getElementById("archivesWrap");
     const trainersWrap = document.getElementById("trainersWrap");
+    const trainerModulesWrap = document.getElementById("trainerModulesWrap");
     const trainerSessionsWrap = document.getElementById("trainerSessionsWrap");
 
     const reservationsCount = document.getElementById("reservationsCount");
@@ -1192,6 +1238,26 @@
       document.querySelectorAll(".tab-panel").forEach(panel => {
         panel.classList.toggle("active", panel.id === `tab-${tabName}`);
       });
+    }
+
+    function getTrainerById(trainerId) {
+      return trainersData.find(item => String(item.id) === String(trainerId)) || null;
+    }
+
+    function isExpired(dateString) {
+      if (!dateString) return false;
+      const value = new Date(dateString);
+      if (Number.isNaN(value.getTime())) return false;
+      const today = getToday();
+      value.setHours(0, 0, 0, 0);
+      return value < today;
+    }
+
+    function getTrainerModuleStatus(moduleRow) {
+      if (isExpired(moduleRow.expires_at)) {
+        return "expired";
+      }
+      return normalize(moduleRow.status) || "certified";
     }
 
     document.querySelectorAll(".nav-btn").forEach(btn => {
@@ -1585,6 +1651,55 @@
       `;
     }
 
+    function renderTrainerModules(rows) {
+      if (!rows.length) {
+        trainerModulesWrap.innerHTML = `<div class="empty">Aucun module certifié trouvé.</div>`;
+        return;
+      }
+
+      trainerModulesWrap.innerHTML = `
+        <table>
+          <thead>
+            <tr>
+              <th>Formateur</th>
+              <th>Contact</th>
+              <th>Module</th>
+              <th>Statut</th>
+              <th>Validé le</th>
+              <th>Expire le</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rows.map(row => {
+              const trainer = getTrainerById(row.trainer_id);
+              const displayStatus = getTrainerModuleStatus(row);
+              const badgeClass =
+                displayStatus === "expired" ? "badge-danger" :
+                displayStatus === "certified" ? "badge-success" :
+                "badge-warning";
+
+              return `
+                <tr>
+                  <td>
+                    <strong>${trainer ? `${trainer.first_name || ""} ${trainer.last_name || ""}`.trim() : "Formateur inconnu"}</strong>
+                    <span>${trainer?.city || "—"}</span>
+                  </td>
+                  <td>
+                    <strong>${trainer?.email || "—"}</strong>
+                    <span>${trainer?.phone || "—"}</span>
+                  </td>
+                  <td><strong>${row.module_name || "—"}</strong></td>
+                  <td><span class="badge ${badgeClass}">${displayStatus}</span></td>
+                  <td>${formatShortDate(row.validated_at)}</td>
+                  <td>${formatShortDate(row.expires_at)}</td>
+                </tr>
+              `;
+            }).join("")}
+          </tbody>
+        </table>
+      `;
+    }
+
     function renderTrainerSessions(rows) {
       if (!rows.length) {
         trainerSessionsWrap.innerHTML = `<div class="empty">Aucune formation formateur.</div>`;
@@ -1738,6 +1853,38 @@
       renderTrainers(filtered);
     }
 
+    function applyTrainerModulesFilters() {
+      const search = normalize(document.getElementById("trainerModuleSearch").value);
+      const moduleName = normalize(document.getElementById("trainerModuleNameFilter").value);
+      const status = document.getElementById("trainerModuleStatusFilter").value;
+      const expiry = document.getElementById("trainerModuleExpiryFilter").value;
+
+      const filtered = trainerModulesData.filter(row => {
+        const trainer = getTrainerById(row.trainer_id);
+        const effectiveStatus = getTrainerModuleStatus(row);
+        const expired = isExpired(row.expires_at);
+
+        const text = [
+          trainer?.first_name,
+          trainer?.last_name,
+          trainer?.email,
+          row.module_name
+        ].map(normalize).join(" ");
+
+        const searchOk = !search || text.includes(search);
+        const moduleOk = !moduleName || normalize(row.module_name).includes(moduleName);
+        const statusOk = !status || effectiveStatus === status;
+        const expiryOk =
+          !expiry ||
+          (expiry === "valid" && !expired) ||
+          (expiry === "expired" && expired);
+
+        return searchOk && moduleOk && statusOk && expiryOk;
+      });
+
+      renderTrainerModules(filtered);
+    }
+
     function applyStageFilters() {
       const region = normalize(document.getElementById("stageRegionFilter").value);
       const department = normalize(document.getElementById("stageDepartmentFilter").value);
@@ -1854,7 +2001,24 @@
       trainersData = data || [];
       renderTrainers(trainersData);
       renderTrainerRegistrations(trainerRegistrationsData);
+      renderTrainerModules(trainerModulesData);
       updateFinance();
+    }
+
+    async function loadTrainerModules() {
+      const { data, error } = await supabase
+        .from("trainer_modules")
+        .select("*")
+        .order("module_name", { ascending: true });
+
+      if (error) {
+        console.error(error);
+        trainerModulesWrap.innerHTML = `<div class="error">Impossible de charger les modules certifiés.</div>`;
+        return;
+      }
+
+      trainerModulesData = data || [];
+      renderTrainerModules(trainerModulesData);
     }
 
     async function loadTrainerSessions() {
@@ -2068,6 +2232,7 @@ VITAL PROTECT`
           alert("Formateur activé avec succès.");
           await loadTrainerRegistrations();
           await loadTrainers();
+          await loadTrainerModules();
         } else {
           alert(result.error || "Erreur lors de l’activation du formateur.");
         }
@@ -2092,6 +2257,11 @@ VITAL PROTECT`
     document.getElementById("trainerCityFilter").addEventListener("input", applyTrainerFilters);
     document.getElementById("trainerAffiliationFilter").addEventListener("change", applyTrainerFilters);
     document.getElementById("trainerCertificationFilter").addEventListener("change", applyTrainerFilters);
+
+    document.getElementById("trainerModuleSearch").addEventListener("input", applyTrainerModulesFilters);
+    document.getElementById("trainerModuleNameFilter").addEventListener("input", applyTrainerModulesFilters);
+    document.getElementById("trainerModuleStatusFilter").addEventListener("change", applyTrainerModulesFilters);
+    document.getElementById("trainerModuleExpiryFilter").addEventListener("change", applyTrainerModulesFilters);
 
     document.getElementById("stageRegionFilter").addEventListener("input", applyStageFilters);
     document.getElementById("stageDepartmentFilter").addEventListener("input", applyStageFilters);
@@ -2223,6 +2393,7 @@ VITAL PROTECT`
       await loadTrainerRegistrations();
       await loadArchives();
       await loadTrainers();
+      await loadTrainerModules();
       await loadTrainerSessions();
     }
   </script>
