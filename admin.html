@@ -306,7 +306,7 @@
 
     table {
       width: 100%;
-      min-width: 1200px;
+      min-width: 1360px;
       border-collapse: collapse;
     }
 
@@ -409,6 +409,20 @@
     }
 
     .form-panel.active {
+      display: block;
+    }
+
+    .inline-status {
+      margin-top: 12px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: #f8fbff;
+      color: var(--muted);
+      display: none;
+    }
+
+    .inline-status.show {
       display: block;
     }
 
@@ -698,12 +712,50 @@
         <div class="card">
           <div class="card-header">
             <div>
-              <h2>Modules certifiés</h2>
-              <p>Suivi des certifications par module et de leurs expirations.</p>
+              <h2>Gestion des modules certifiés</h2>
+              <p>Ajout manuel, prolongation et correction de statut.</p>
             </div>
           </div>
           <div class="card-body">
-            <div class="filters filters-4">
+            <form id="trainerModuleForm">
+              <div class="filters filters-4">
+                <div class="field">
+                  <label>Formateur</label>
+                  <select id="trainerModuleTrainerIdInput" required></select>
+                </div>
+                <div class="field">
+                  <label>Module</label>
+                  <select id="trainerModuleNameInput" required></select>
+                </div>
+                <div class="field">
+                  <label>Statut</label>
+                  <select id="trainerModuleStatusInput" required>
+                    <option value="certified">certified</option>
+                    <option value="expired">expired</option>
+                    <option value="suspended">suspended</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label>Validé le</label>
+                  <input id="trainerModuleValidatedAtInput" type="date" required />
+                </div>
+              </div>
+
+              <div class="filters filters-2">
+                <div class="field">
+                  <label>Expire le</label>
+                  <input id="trainerModuleExpiresAtInput" type="date" required />
+                </div>
+                <div class="field">
+                  <label>&nbsp;</label>
+                  <button class="btn btn-primary" type="submit">Enregistrer le module</button>
+                </div>
+              </div>
+            </form>
+
+            <div id="trainerModuleFormStatus" class="inline-status"></div>
+
+            <div class="filters filters-4" style="margin-top: 24px;">
               <div class="field">
                 <label>Recherche</label>
                 <input id="trainerModuleSearch" type="text" placeholder="Nom, prénom, email..." />
@@ -718,6 +770,7 @@
                   <option value="">Tous</option>
                   <option value="certified">Certifié</option>
                   <option value="expired">Expiré</option>
+                  <option value="suspended">Suspendu</option>
                 </select>
               </div>
               <div class="field">
@@ -1065,6 +1118,12 @@
     const createStagePanel = document.getElementById("createStagePanel");
     const createTrainerPanel = document.getElementById("createTrainerPanel");
 
+    const trainerModuleTrainerIdInput = document.getElementById("trainerModuleTrainerIdInput");
+    const trainerModuleNameInput = document.getElementById("trainerModuleNameInput");
+    const trainerModuleValidatedAtInput = document.getElementById("trainerModuleValidatedAtInput");
+    const trainerModuleExpiresAtInput = document.getElementById("trainerModuleExpiresAtInput");
+    const trainerModuleFormStatus = document.getElementById("trainerModuleFormStatus");
+
     function populateModuleSelect(selectId) {
       const select = document.getElementById(selectId);
       if (!select) return;
@@ -1075,8 +1134,46 @@
       `;
     }
 
+    function populateTrainerModuleTrainerSelect() {
+      trainerModuleTrainerIdInput.innerHTML = `
+        <option value="">Choisir un formateur</option>
+        ${trainersData
+          .slice()
+          .sort((a, b) => {
+            const aName = `${a.last_name || ""} ${a.first_name || ""}`.trim().toLowerCase();
+            const bName = `${b.last_name || ""} ${b.first_name || ""}`.trim().toLowerCase();
+            return aName.localeCompare(bName);
+          })
+          .map(trainer => `
+            <option value="${trainer.id}">
+              ${(trainer.last_name || "").toUpperCase()} ${trainer.first_name || ""} — ${trainer.email || ""}
+            </option>
+          `)
+          .join("")}
+      `;
+    }
+
+    function populateTrainerModuleModuleSelect() {
+      trainerModuleNameInput.innerHTML = `
+        <option value="">Choisir un module</option>
+        ${MODULE_OPTIONS.map(module => `<option value="${module}">${module}</option>`).join("")}
+      `;
+    }
+
+    function setDefaultTrainerModuleDates() {
+      const today = new Date().toISOString().split("T")[0];
+      const expiry = new Date();
+      expiry.setFullYear(expiry.getFullYear() + 2);
+      const expiryText = expiry.toISOString().split("T")[0];
+
+      trainerModuleValidatedAtInput.value = today;
+      trainerModuleExpiresAtInput.value = expiryText;
+    }
+
     populateModuleSelect("stageModuleInput");
     populateModuleSelect("trainerSessionModuleInput");
+    populateTrainerModuleModuleSelect();
+    setDefaultTrainerModuleDates();
 
     function setCreateMode(mode) {
       const isStage = mode === "stage";
@@ -1168,6 +1265,14 @@
       return data;
     }
 
+    function showTrainerModuleFormStatus(message, isError = false) {
+      trainerModuleFormStatus.classList.add("show");
+      trainerModuleFormStatus.textContent = message;
+      trainerModuleFormStatus.style.color = isError ? "#c62828" : "#0f7d46";
+      trainerModuleFormStatus.style.borderColor = isError ? "#f2c7c7" : "#cdeedb";
+      trainerModuleFormStatus.style.background = isError ? "#fff1f1" : "#eaf8f0";
+    }
+
     if (logoutBtn) {
       logoutBtn.addEventListener("click", async () => {
         await supabase.auth.signOut();
@@ -1254,6 +1359,9 @@
     }
 
     function getTrainerModuleStatus(moduleRow) {
+      if (normalize(moduleRow.status) === "suspended") {
+        return "suspended";
+      }
       if (isExpired(moduleRow.expires_at)) {
         return "expired";
       }
@@ -1667,16 +1775,18 @@
               <th>Statut</th>
               <th>Validé le</th>
               <th>Expire le</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
             ${rows.map(row => {
               const trainer = getTrainerById(row.trainer_id);
               const displayStatus = getTrainerModuleStatus(row);
+
               const badgeClass =
                 displayStatus === "expired" ? "badge-danger" :
-                displayStatus === "certified" ? "badge-success" :
-                "badge-warning";
+                displayStatus === "suspended" ? "badge-warning" :
+                "badge-success";
 
               return `
                 <tr>
@@ -1692,6 +1802,19 @@
                   <td><span class="badge ${badgeClass}">${displayStatus}</span></td>
                   <td>${formatShortDate(row.validated_at)}</td>
                   <td>${formatShortDate(row.expires_at)}</td>
+                  <td>
+                    <div class="action-stack">
+                      <button class="btn btn-success" type="button" onclick="window.updateTrainerModuleAction('${row.id}', 'extend_2_years')">
+                        Prolonger 2 ans
+                      </button>
+                      <button class="btn btn-warning" type="button" onclick="window.updateTrainerModuleAction('${row.id}', 'reactivate_2_years')">
+                        Réactiver 2 ans
+                      </button>
+                      <button class="btn btn-danger" type="button" onclick="window.updateTrainerModuleAction('${row.id}', 'mark_expired')">
+                        Marquer expiré
+                      </button>
+                    </div>
+                  </td>
                 </tr>
               `;
             }).join("")}
@@ -1999,6 +2122,7 @@
       }
 
       trainersData = data || [];
+      populateTrainerModuleTrainerSelect();
       renderTrainers(trainersData);
       renderTrainerRegistrations(trainerRegistrationsData);
       renderTrainerModules(trainerModulesData);
@@ -2241,6 +2365,81 @@ VITAL PROTECT`
         alert(error.message || "Erreur lors de l’activation du formateur.");
       }
     };
+
+    window.updateTrainerModuleAction = async (moduleId, action) => {
+      const labels = {
+        extend_2_years: "prolonger ce module de 2 ans",
+        reactivate_2_years: "réactiver ce module pour 2 ans",
+        mark_expired: "marquer ce module comme expiré"
+      };
+
+      const confirmed = window.confirm(`Confirmer : ${labels[action]} ?`);
+      if (!confirmed) return;
+
+      try {
+        const headers = await getAuthHeaders();
+
+        const res = await fetch("/api/admin-update-trainer-module", {
+          method: "POST",
+          headers,
+          body: JSON.stringify({
+            module_id: moduleId,
+            action
+          })
+        });
+
+        const result = await parseApiResponse(res);
+
+        if (result.success) {
+          alert("Module mis à jour avec succès.");
+          await loadTrainerModules();
+        } else {
+          alert(result.error || "Erreur lors de la mise à jour du module.");
+        }
+      } catch (error) {
+        console.error(error);
+        alert(error.message || "Erreur lors de la mise à jour du module.");
+      }
+    };
+
+    document.getElementById("trainerModuleForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      try {
+        const headers = await getAuthHeaders();
+
+        const payload = {
+          trainer_id: trainerModuleTrainerIdInput.value,
+          module_name: trainerModuleNameInput.value,
+          status: document.getElementById("trainerModuleStatusInput").value,
+          validated_at: trainerModuleValidatedAtInput.value,
+          expires_at: trainerModuleExpiresAtInput.value
+        };
+
+        const res = await fetch("/api/admin-upsert-trainer-module", {
+          method: "POST",
+          headers,
+          body: JSON.stringify(payload)
+        });
+
+        const result = await parseApiResponse(res);
+
+        if (!result.success) {
+          showTrainerModuleFormStatus(result.error || "Erreur lors de l’enregistrement du module.", true);
+          return;
+        }
+
+        showTrainerModuleFormStatus("Module enregistré avec succès.");
+        document.getElementById("trainerModuleForm").reset();
+        populateTrainerModuleTrainerSelect();
+        populateTrainerModuleModuleSelect();
+        setDefaultTrainerModuleDates();
+        await loadTrainerModules();
+      } catch (error) {
+        console.error(error);
+        showTrainerModuleFormStatus(error.message || "Erreur lors de l’enregistrement du module.", true);
+      }
+    });
 
     document.getElementById("candidateSearch").addEventListener("input", applyCandidateFilters);
     document.getElementById("candidateValidationFilter").addEventListener("change", applyCandidateFilters);
