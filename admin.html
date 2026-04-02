@@ -1082,6 +1082,23 @@
       return session.user;
     }
 
+    async function getAuthHeaders() {
+      const {
+        data: { session }
+      } = await supabase.auth.getSession();
+
+      const accessToken = session?.access_token || "";
+
+      if (!accessToken) {
+        throw new Error("Session admin introuvable");
+      }
+
+      return {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`
+      };
+    }
+
     if (logoutBtn) {
       logoutBtn.addEventListener("click", async () => {
         await supabase.auth.signOut();
@@ -1881,20 +1898,31 @@ VITAL PROTECT`
 
       if (!confirmed) return;
 
-      const { error } = await supabase
-        .from("stages")
-        .delete()
-        .eq("id", stageId);
+      try {
+        const headers = await getAuthHeaders();
 
-      if (error) {
+        const res = await fetch("/api/admin-delete-stage", {
+          method: "POST",
+          headers,
+          body: JSON.stringify({
+            stage_id: stageId
+          })
+        });
+
+        const result = await res.json();
+
+        if (result.success) {
+          alert("Stage supprimé avec succès.");
+          await loadStages();
+          await loadReservations();
+        } else {
+          alert(result.error || "Erreur lors de la suppression du stage.");
+          console.error(result);
+        }
+      } catch (error) {
         console.error(error);
-        alert("Erreur lors de la suppression du stage.");
-        return;
+        alert("Erreur réseau ou session admin invalide.");
       }
-
-      alert("Stage supprimé avec succès.");
-      await loadStages();
-      await loadReservations();
     };
 
     window.captureTrainerPayment = async (registrationId, paymentIntentId) => {
@@ -2060,89 +2088,115 @@ VITAL PROTECT`
     document.getElementById("createStageForm").addEventListener("submit", async (e) => {
       e.preventDefault();
 
-      const trainerEmail = document.getElementById("stageTrainerEmailInput").value.trim().toLowerCase();
-      let trainerId = null;
+      try {
+        const trainerEmail = document.getElementById("stageTrainerEmailInput").value.trim().toLowerCase();
+        let trainerId = null;
 
-      if (trainerEmail) {
-        const { data: trainer, error: trainerError } = await supabase
-          .from("trainers")
-          .select("id")
-          .eq("email", trainerEmail)
-          .maybeSingle();
+        if (trainerEmail) {
+          const { data: trainer, error: trainerError } = await supabase
+            .from("trainers")
+            .select("id")
+            .eq("email", trainerEmail)
+            .maybeSingle();
 
-        if (trainerError) {
-          console.error(trainerError);
+          if (trainerError) {
+            console.error(trainerError);
+          }
+
+          trainerId = trainer?.id || null;
         }
 
-        trainerId = trainer?.id || null;
-      }
+        const moduleName = document.getElementById("stageModuleInput").value;
 
-      const moduleName = document.getElementById("stageModuleInput").value;
+        const payload = {
+          trainer_id: trainerId,
+          title: moduleName,
+          training_type: moduleName,
+          description: document.getElementById("stageDescriptionInput").value,
+          city: document.getElementById("stageCityInput").value,
+          department: document.getElementById("stageDepartmentInput").value,
+          region: document.getElementById("stageRegionInput").value,
+          address: document.getElementById("stageAddressInput").value,
+          stage_date: document.getElementById("stageDateInput").value,
+          start_time: document.getElementById("stageTimeInput").value,
+          duration: document.getElementById("stageDurationInput").value,
+          max_participants: Number(document.getElementById("stageMaxParticipantsInput").value || 20),
+          remaining_places: Number(document.getElementById("stageRemainingPlacesInput").value || 20),
+          price: Number(document.getElementById("stagePriceInput").value || 0),
+          status: "published"
+        };
 
-      const payload = {
-        trainer_id: trainerId,
-        title: moduleName,
-        training_type: moduleName,
-        description: document.getElementById("stageDescriptionInput").value,
-        city: document.getElementById("stageCityInput").value,
-        department: document.getElementById("stageDepartmentInput").value,
-        region: document.getElementById("stageRegionInput").value,
-        address: document.getElementById("stageAddressInput").value,
-        stage_date: document.getElementById("stageDateInput").value,
-        start_time: document.getElementById("stageTimeInput").value,
-        duration: document.getElementById("stageDurationInput").value,
-        max_participants: Number(document.getElementById("stageMaxParticipantsInput").value || 20),
-        remaining_places: Number(document.getElementById("stageRemainingPlacesInput").value || 20),
-        price: Number(document.getElementById("stagePriceInput").value || 0),
-        status: "published"
-      };
+        const headers = await getAuthHeaders();
 
-      const { error } = await supabase.from("stages").insert(payload);
+        const res = await fetch("/api/admin-create-stage", {
+          method: "POST",
+          headers,
+          body: JSON.stringify(payload)
+        });
 
-      if (error) {
-        alert("Erreur lors de la création du stage.");
+        const result = await res.json();
+
+        if (!result.success) {
+          alert(result.error || "Erreur lors de la création du stage.");
+          console.error(result);
+          return;
+        }
+
+        alert("Stage créé avec succès.");
+        e.target.reset();
+        populateModuleSelect("stageModuleInput");
+        await loadStages();
+      } catch (error) {
         console.error(error);
-        return;
+        alert("Erreur réseau ou session admin invalide.");
       }
-
-      alert("Stage créé avec succès.");
-      e.target.reset();
-      populateModuleSelect("stageModuleInput");
-      await loadStages();
     });
 
     document.getElementById("createTrainerSessionForm").addEventListener("submit", async (e) => {
       e.preventDefault();
 
-      const moduleName = document.getElementById("trainerSessionModuleInput").value;
+      try {
+        const moduleName = document.getElementById("trainerSessionModuleInput").value;
 
-      const payload = {
-        module_name: moduleName,
-        title: moduleName,
-        city: document.getElementById("trainerSessionCityInput").value,
-        address: document.getElementById("trainerSessionAddressInput").value,
-        start_date: document.getElementById("trainerSessionStartDateInput").value,
-        end_date: document.getElementById("trainerSessionEndDateInput").value,
-        duration_days: Number(document.getElementById("trainerSessionDurationInput").value || 3),
-        max_places: Number(document.getElementById("trainerSessionMaxPlacesInput").value || 10),
-        remaining_places: Number(document.getElementById("trainerSessionRemainingPlacesInput").value || 10),
-        standard_price: Number(document.getElementById("trainerSessionStandardPriceInput").value || 590),
-        launch_price: Number(document.getElementById("trainerSessionLaunchPriceInput").value || 490),
-        status: document.getElementById("trainerSessionStatusInput").value
-      };
+        const payload = {
+          module_name: moduleName,
+          title: moduleName,
+          city: document.getElementById("trainerSessionCityInput").value,
+          address: document.getElementById("trainerSessionAddressInput").value,
+          start_date: document.getElementById("trainerSessionStartDateInput").value,
+          end_date: document.getElementById("trainerSessionEndDateInput").value,
+          duration_days: Number(document.getElementById("trainerSessionDurationInput").value || 3),
+          max_places: Number(document.getElementById("trainerSessionMaxPlacesInput").value || 10),
+          remaining_places: Number(document.getElementById("trainerSessionRemainingPlacesInput").value || 10),
+          standard_price: Number(document.getElementById("trainerSessionStandardPriceInput").value || 590),
+          launch_price: Number(document.getElementById("trainerSessionLaunchPriceInput").value || 490),
+          status: document.getElementById("trainerSessionStatusInput").value
+        };
 
-      const { error } = await supabase.from("trainer_sessions").insert(payload);
+        const headers = await getAuthHeaders();
 
-      if (error) {
-        alert("Erreur lors de la création de la session formateur.");
+        const res = await fetch("/api/admin-create-trainer-session", {
+          method: "POST",
+          headers,
+          body: JSON.stringify(payload)
+        });
+
+        const result = await res.json();
+
+        if (!result.success) {
+          alert(result.error || "Erreur lors de la création de la session formateur.");
+          console.error(result);
+          return;
+        }
+
+        alert("Session formateur créée avec succès.");
+        e.target.reset();
+        populateModuleSelect("trainerSessionModuleInput");
+        await loadTrainerSessions();
+      } catch (error) {
         console.error(error);
-        return;
+        alert("Erreur réseau ou session admin invalide.");
       }
-
-      alert("Session formateur créée avec succès.");
-      e.target.reset();
-      populateModuleSelect("trainerSessionModuleInput");
-      await loadTrainerSessions();
     });
 
     const adminUser = await requireAdmin();
