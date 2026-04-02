@@ -643,6 +643,70 @@
       return raw;
     }
 
+    function escapeHtml(value) {
+      return String(value || "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#39;");
+    }
+
+    async function reserveStage(stage) {
+      const firstName = window.prompt("Votre prénom :");
+      if (firstName === null) return;
+
+      const lastName = window.prompt("Votre nom :");
+      if (lastName === null) return;
+
+      const email = window.prompt("Votre email :");
+      if (email === null) return;
+
+      const phone = window.prompt("Votre téléphone :");
+      if (phone === null) return;
+
+      const placesRaw = window.prompt("Nombre de places :", "1");
+      if (placesRaw === null) return;
+
+      const places = Math.max(1, Number(placesRaw || 1));
+
+      if (!String(email).trim()) {
+        alert("Email obligatoire.");
+        return;
+      }
+
+      try {
+        const res = await fetch("/api/create-checkout-session", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            stage_id: stage.id,
+            stage_title: stage.title || "",
+            first_name: String(firstName).trim(),
+            last_name: String(lastName).trim(),
+            email: String(email).trim(),
+            phone: String(phone || "").trim(),
+            places: places,
+            unit_price: Number(stage.price || 0)
+          })
+        });
+
+        const result = await res.json();
+
+        if (result.url) {
+          window.location.href = result.url;
+        } else {
+          alert(result.error || "Erreur lors de la redirection vers Stripe.");
+          console.error(result);
+        }
+      } catch (error) {
+        alert("Erreur réseau.");
+        console.error(error);
+      }
+    }
+
     function updateSelectionLabel() {
       selectedDepartmentLabel.textContent = selectedDepartment
         ? `Département sélectionné : ${selectedDepartment}`
@@ -712,25 +776,25 @@
         return;
       }
 
-      container.innerHTML = data.map(stage => `
+      container.innerHTML = data.map((stage, index) => `
         <article class="stage-card">
           <div class="stage-top">
             <div>
-              <div class="stage-badge">${stage.training_type || "Stage VITAL PROTECT"}</div>
-              <h3 class="stage-title">${stage.title || "Stage de self-défense"}</h3>
+              <div class="stage-badge">${escapeHtml(stage.training_type || "Stage VITAL PROTECT")}</div>
+              <h3 class="stage-title">${escapeHtml(stage.title || "Stage de self-défense")}</h3>
             </div>
             <div class="stage-price">${formatPrice(stage.price)}</div>
           </div>
 
           <div class="stage-body">
             <div class="stage-description">
-              ${stage.description || "Formation pratique de self-défense encadrée par VITAL PROTECT."}
+              ${escapeHtml(stage.description || "Formation pratique de self-défense encadrée par VITAL PROTECT.")}
             </div>
 
             <div class="stage-meta">
               <div class="meta-item">
                 <span class="meta-label">Ville</span>
-                <span class="meta-value">${stage.city || "Non précisée"}</span>
+                <span class="meta-value">${escapeHtml(stage.city || "Non précisée")}</span>
               </div>
 
               <div class="meta-item">
@@ -740,12 +804,12 @@
 
               <div class="meta-item">
                 <span class="meta-label">Région</span>
-                <span class="meta-value">${stage.region || "Non précisée"}</span>
+                <span class="meta-value">${escapeHtml(stage.region || "Non précisée")}</span>
               </div>
 
               <div class="meta-item">
                 <span class="meta-label">Département</span>
-                <span class="meta-value">${stage.department || "Non précisé"}</span>
+                <span class="meta-value">${escapeHtml(stage.department || "Non précisé")}</span>
               </div>
             </div>
 
@@ -756,12 +820,21 @@
 
           <div class="stage-actions">
             <div class="stage-action-text">Réservation simple • paiement Stripe</div>
-            <button class="btn btn-primary" onclick="alert('Étape suivante : tunnel de réservation Stripe')">
+            <button class="btn btn-primary" type="button" data-stage-index="${index}">
               Réserver
             </button>
           </div>
         </article>
       `).join("");
+
+      container.querySelectorAll("[data-stage-index]").forEach(button => {
+        button.addEventListener("click", () => {
+          const stage = data[Number(button.dataset.stageIndex)];
+          if (stage) {
+            reserveStage(stage);
+          }
+        });
+      });
     }
 
     function bindDepartmentTags() {
@@ -815,9 +888,9 @@
         mapSvgWrap.innerHTML = `
           <div class="map-loading">
             Impossible d’afficher la carte pour le moment.<br><br>
-            Détail : <strong>${error.message}</strong><br><br>
+            Détail : <strong>${escapeHtml(error.message)}</strong><br><br>
             Vérifie que le fichier SVG est bien servi ici :<br>
-            <strong>${SVG_MAP_PATH}</strong>
+            <strong>${escapeHtml(SVG_MAP_PATH)}</strong>
           </div>
         `;
       }
