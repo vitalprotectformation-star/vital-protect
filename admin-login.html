@@ -16,6 +16,8 @@
       --text: #142033;
       --muted: #667085;
       --shadow: 0 10px 30px rgba(11, 46, 89, 0.08);
+      --success: #0f9d58;
+      --danger: #c62828;
     }
 
     * { box-sizing: border-box; }
@@ -33,7 +35,6 @@
       padding: 24px;
     }
 
-    /* ===== LOGO ===== */
     .logo {
       margin-bottom: 24px;
     }
@@ -94,17 +95,29 @@
       width: 100%;
     }
 
+    .btn:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+
     .status {
       margin-top: 14px;
-      color: var(--muted);
       min-height: 22px;
+      line-height: 1.5;
+      color: var(--muted);
+    }
+
+    .status.success {
+      color: var(--success);
+    }
+
+    .status.error {
+      color: var(--danger);
     }
   </style>
 </head>
 
 <body>
-
-  <!-- 🔥 LOGO -->
   <div class="logo">
     <img src="/logo.png" alt="VITAL PROTECT" />
   </div>
@@ -119,7 +132,7 @@
         <input type="email" id="email" required placeholder="admin@vital-protect.fr" />
       </div>
 
-      <button type="submit" class="btn">
+      <button type="submit" class="btn" id="submitBtn">
         Recevoir mon lien de connexion
       </button>
     </form>
@@ -137,49 +150,50 @@
 
     const form = document.getElementById("loginForm");
     const status = document.getElementById("status");
+    const submitBtn = document.getElementById("submitBtn");
+
+    function setStatus(message, type = "") {
+      status.textContent = message;
+      status.className = `status${type ? " " + type : ""}`;
+    }
 
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
 
       const email = document.getElementById("email").value.trim().toLowerCase();
 
-      status.textContent = "Vérification de l'accès...";
-
-      const { data: adminUser, error: adminError } = await supabase
-        .from("admin_users")
-        .select("*")
-        .eq("email", email)
-        .maybeSingle();
-
-      if (adminError) {
-        console.error("Erreur admin:", adminError);
-        status.textContent = `Erreur : ${adminError.message}`;
+      if (!email) {
+        setStatus("Veuillez saisir votre email.", "error");
         return;
       }
 
-      if (!adminUser) {
-        status.textContent = "Accès refusé : email non autorisé.";
-        return;
-      }
+      submitBtn.disabled = true;
+      setStatus("Envoi du lien de connexion...");
 
-      status.textContent = "Envoi du lien de connexion...";
+      try {
+        const { error } = await supabase.auth.signInWithOtp({
+          email,
+          options: {
+            emailRedirectTo: `${window.location.origin}/auth-callback.html`
+          }
+        });
 
-      const { error } = await supabase.auth.signInWithOtp({
-        email,
-        options: {
-          emailRedirectTo: `${window.location.origin}/auth-callback.html`
+        if (error) {
+          console.error("Erreur OTP admin:", error);
+          setStatus(`Erreur : ${error.message}`, "error");
+          submitBtn.disabled = false;
+          return;
         }
-      });
 
-      if (error) {
-        console.error("Erreur OTP:", error);
-        status.textContent = `Erreur : ${error.message}`;
-        return;
+        setStatus("✅ Lien envoyé. Vérifiez votre email.", "success");
+        form.reset();
+      } catch (error) {
+        console.error("Erreur login admin:", error);
+        setStatus("Erreur réseau ou serveur.", "error");
+      } finally {
+        submitBtn.disabled = false;
       }
-
-      status.textContent = "✅ Lien envoyé ! Vérifiez votre email.";
     });
   </script>
-
 </body>
 </html>
