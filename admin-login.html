@@ -1,220 +1,55 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Connexion Admin — VITAL PROTECT</title>
+<script type="module">
+  import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-  <style>
-    :root {
-      --navy: #0b2e59;
-      --navy-dark: #08203d;
-      --blue: #1f6feb;
-      --bg: #f4f7fb;
-      --card: #ffffff;
-      --border: #dbe4f0;
-      --text: #142033;
-      --muted: #667085;
-      --shadow: 0 10px 30px rgba(11, 46, 89, 0.08);
-      --success: #0f9d58;
-      --danger: #c62828;
+  const supabase = createClient(
+    "https://zsraqxzneghkzaozzuci.supabase.co",
+    "sb_publishable_VlTpYjzJ3DKpFA1Un_EFHQ_FW-mYK4U"
+  );
+
+  const form = document.getElementById("loginForm");
+  const status = document.getElementById("status");
+  const submitBtn = document.getElementById("submitBtn");
+
+  function setStatus(message, type = "") {
+    status.textContent = message;
+    status.className = `status${type ? " " + type : ""}`;
+  }
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const email = document.getElementById("email").value.trim().toLowerCase();
+
+    if (!email) {
+      setStatus("Veuillez saisir votre email.", "error");
+      return;
     }
 
-    * { box-sizing: border-box; }
+    submitBtn.disabled = true;
+    setStatus("Envoi du lien de connexion...");
 
-    body {
-      margin: 0;
-      font-family: Arial, Helvetica, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
-    }
+    try {
+      const { error } = await supabase.auth.signInWithOtp({
+        email,
+        options: {
+          emailRedirectTo: `${window.location.origin}/auth-callback.html`
+        }
+      });
 
-    .logo {
-      margin-bottom: 24px;
-    }
-
-    .logo img {
-      width: min(260px, 60vw);
-      height: auto;
-      display: block;
-    }
-
-    .card {
-      width: min(480px, 100%);
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 24px;
-      box-shadow: var(--shadow);
-      padding: 28px;
-    }
-
-    h1 {
-      margin: 0 0 8px;
-      font-size: 2rem;
-    }
-
-    p {
-      margin: 0 0 18px;
-      color: var(--muted);
-      line-height: 1.6;
-    }
-
-    .field {
-      margin-bottom: 14px;
-    }
-
-    label {
-      display: block;
-      margin-bottom: 6px;
-      font-weight: 700;
-    }
-
-    input {
-      width: 100%;
-      padding: 12px;
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      font-size: 1rem;
-    }
-
-    .btn {
-      border: none;
-      border-radius: 12px;
-      padding: 12px;
-      font-size: 1rem;
-      font-weight: 700;
-      cursor: pointer;
-      background: var(--blue);
-      color: white;
-      width: 100%;
-    }
-
-    .btn:disabled {
-      opacity: 0.7;
-      cursor: not-allowed;
-    }
-
-    .status {
-      margin-top: 14px;
-      min-height: 22px;
-      line-height: 1.5;
-      color: var(--muted);
-    }
-
-    .status.success {
-      color: var(--success);
-    }
-
-    .status.error {
-      color: var(--danger);
-    }
-  </style>
-</head>
-
-<body>
-  <div class="logo">
-    <img src="/logo.png" alt="VITAL PROTECT" />
-  </div>
-
-  <div class="card">
-    <h1>Connexion admin</h1>
-    <p>Accédez au cockpit VITAL PROTECT via votre email autorisé.</p>
-
-    <form id="loginForm">
-      <div class="field">
-        <label>Email admin</label>
-        <input type="email" id="email" required placeholder="admin@vital-protect.fr" />
-      </div>
-
-      <button type="submit" class="btn" id="submitBtn">
-        Recevoir mon lien de connexion
-      </button>
-    </form>
-
-    <div class="status" id="status"></div>
-  </div>
-
-  <script type="module">
-    import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-
-    const supabase = createClient(
-      "https://zsraqxzneghkzaozzuci.supabase.co",
-      "sb_publishable_VlTpYjzJ3DKpFA1Un_EFHQ_FW-mYK4U"
-    );
-
-    const form = document.getElementById("loginForm");
-    const status = document.getElementById("status");
-    const submitBtn = document.getElementById("submitBtn");
-
-    function setStatus(message, type = "") {
-      status.textContent = message;
-      status.className = `status${type ? " " + type : ""}`;
-    }
-
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-
-      const email = document.getElementById("email").value.trim().toLowerCase();
-
-      if (!email) {
-        setStatus("Veuillez saisir votre email.", "error");
+      if (error) {
+        console.error("Erreur OTP admin:", error);
+        setStatus(`Erreur : ${error.message}`, "error");
+        submitBtn.disabled = false;
         return;
       }
 
-      submitBtn.disabled = true;
-      setStatus("Vérification de votre accès admin...");
-
-      try {
-        const { data: adminUser, error: adminCheckError } = await supabase
-          .from("admin_users")
-          .select("id, email")
-          .eq("email", email)
-          .maybeSingle();
-
-        if (adminCheckError) {
-          console.error("Erreur vérification admin:", adminCheckError);
-          setStatus("Erreur lors de la vérification admin.", "error");
-          submitBtn.disabled = false;
-          return;
-        }
-
-        if (!adminUser) {
-          setStatus("Cet email n’est pas autorisé pour l’administration.", "error");
-          submitBtn.disabled = false;
-          return;
-        }
-
-        setStatus("Envoi du lien de connexion...");
-
-        const { error } = await supabase.auth.signInWithOtp({
-          email,
-          options: {
-            emailRedirectTo: `${window.location.origin}/auth-callback.html`
-          }
-        });
-
-        if (error) {
-          console.error("Erreur OTP admin:", error);
-          setStatus(`Erreur : ${error.message}`, "error");
-          submitBtn.disabled = false;
-          return;
-        }
-
-        setStatus("✅ Lien envoyé. Vérifiez votre email.", "success");
-        form.reset();
-      } catch (error) {
-        console.error("Erreur login admin:", error);
-        setStatus("Erreur réseau ou serveur.", "error");
-      } finally {
-        submitBtn.disabled = false;
-      }
-    });
-  </script>
-</body>
-</html>
+      setStatus("✅ Lien envoyé. Vérifiez votre email.", "success");
+      form.reset();
+    } catch (error) {
+      console.error("Erreur login admin:", error);
+      setStatus("Erreur réseau ou serveur.", "error");
+    } finally {
+      submitBtn.disabled = false;
+    }
+  });
+</script>
