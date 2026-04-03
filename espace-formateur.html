@@ -394,17 +394,6 @@
       });
     }
 
-    function formatLongDate(dateString) {
-      if (!dateString) return "";
-      const date = new Date(dateString);
-      if (Number.isNaN(date.getTime())) return "";
-      return date.toLocaleDateString("fr-FR", {
-        day: "2-digit",
-        month: "long",
-        year: "numeric"
-      });
-    }
-
     function isFutureOrToday(dateString) {
       if (!dateString) return false;
 
@@ -530,62 +519,23 @@
     }
 
     async function loadCertifiedModules(trainer) {
-      const { data: registrations, error: regError } = await supabase
-        .from("trainer_session_registrations")
-        .select("session_id, validation_status, training_result, email")
-        .ilike("email", trainer.email);
-
-      if (regError) {
-        console.error("Erreur chargement registrations:", regError);
-        return [];
-      }
-
-      const passedSessionIds = (registrations || [])
-        .filter(item =>
-          normalize(item.validation_status) === "validated" &&
-          normalize(item.training_result) === "passed" &&
-          item.session_id
-        )
-        .map(item => item.session_id);
-
-      if (!passedSessionIds.length) {
-        return [];
-      }
-
-      const { data: sessions, error: sessionsError } = await supabase
-        .from("trainer_sessions")
-        .select("id, module_name")
-        .in("id", passedSessionIds);
-
-      if (sessionsError) {
-        console.error("Erreur chargement trainer_sessions:", sessionsError);
-        return [];
-      }
-
-      const sessionModules = [...new Set(
-        (sessions || [])
-          .map(item => item.module_name)
-          .filter(Boolean)
-      )];
-
-      const { data: trainerModules, error: trainerModulesError } = await supabase
+      const { data: trainerModules, error } = await supabase
         .from("trainer_modules")
         .select("module_name, status, expires_at")
         .eq("trainer_id", trainer.id);
 
-      if (trainerModulesError) {
-        console.error("Erreur chargement trainer_modules:", trainerModulesError);
-        return sessionModules;
+      if (error) {
+        console.error("Erreur chargement trainer_modules:", error);
+        return [];
       }
 
-      const validModuleNames = (trainerModules || [])
+      return (trainerModules || [])
         .filter(item =>
           normalize(item.status) === "certified" &&
-          isFutureOrToday(item.expires_at)
+          isFutureOrToday(item.expires_at) &&
+          item.module_name
         )
         .map(item => item.module_name);
-
-      return sessionModules.filter(moduleName => validModuleNames.includes(moduleName));
     }
 
     function buildCreateStageSection(trainer) {
@@ -690,7 +640,7 @@
       `;
     }
 
-    async function handleCreateStageSubmit(trainer) {
+    async function handleCreateStageSubmit() {
       const form = document.getElementById("createStageForm");
       const statusBox = document.getElementById("createStageStatus");
 
@@ -724,7 +674,7 @@
           department: document.getElementById("stageDepartment").value.trim(),
           region: document.getElementById("stageRegion").value.trim(),
           address: document.getElementById("stageAddress").value.trim(),
-          stage_date: stageDate,
+          stage_date: document.getElementById("stageDate").value,
           start_time: document.getElementById("stageTime").value.trim(),
           duration: document.getElementById("stageDuration").value.trim(),
           max_participants: Number(document.getElementById("stageMaxParticipants").value || 20),
@@ -819,7 +769,7 @@ Modules certifiés valides : ${certifiedModules.join(", ") || "aucun"}</div>
       `;
 
       attachLogoutButtons();
-      await handleCreateStageSubmit(trainer);
+      await handleCreateStageSubmit();
     }
 
     async function buildTrainerView(trainer, sessionEmail) {
