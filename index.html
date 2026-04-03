@@ -49,7 +49,7 @@
     }
 
     .container {
-      width: min(var(--container), calc(100% - 32px));
+      width: min(1180px, calc(100% - 32px));
       margin: 0 auto;
     }
 
@@ -121,7 +121,8 @@
       font-size: 0.96rem;
     }
 
-    .nav-links a:hover {
+    .nav-links a:hover,
+    .nav-links a.active {
       background: rgba(255,255,255,0.1);
     }
 
@@ -895,9 +896,9 @@
       </a>
 
       <nav class="nav-links">
-        <a href="/index.html">Accueil</a>
+        <a href="/index.html" class="active">Accueil</a>
         <a href="/methode.html">La méthode</a>
-        <a href="#stages">Nos stages</a>
+        <a href="/index.html#stages">Nos stages</a>
         <a href="/entreprises.html">Entreprises</a>
         <a href="/devenir-formateur.html">Devenir formateur</a>
         <a href="/formateur-login.html" class="nav-cta">Espace formateur</a>
@@ -1366,12 +1367,12 @@
 
       raw = raw.replace(",", ".");
 
-      if (/^\\d+(\\.\\d+)?$/.test(raw)) {
+      if (/^\d+(\.\d+)?$/.test(raw)) {
         raw = String(parseInt(raw, 10));
       }
 
-      if (/^\\d{1}$/.test(raw)) return raw.padStart(2, "0");
-      if (/^\\d{2}$/.test(raw)) return raw;
+      if (/^\d{1}$/.test(raw)) return raw.padStart(2, "0");
+      if (/^\d{2}$/.test(raw)) return raw;
       if (/^(2A|2B)$/.test(raw)) return raw;
 
       return raw;
