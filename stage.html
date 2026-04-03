@@ -1,0 +1,1110 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fiche stage — Vital Protect</title>
+
+  <style>
+    :root {
+      --navy: #0d2340;
+      --navy-dark: #09182c;
+      --steel: #244a73;
+      --blue-soft: #dce8f5;
+      --bg: #f7f9fc;
+      --card: #ffffff;
+      --border: #d9e3ef;
+      --text: #142033;
+      --muted: #6e7c8c;
+      --success: #2e8b57;
+      --warning: #9a6a22;
+      --danger: #b42318;
+      --gold: #c9a46a;
+      --shadow: 0 16px 40px rgba(13, 35, 64, 0.08);
+      --radius-xl: 28px;
+      --radius-lg: 20px;
+      --radius-md: 14px;
+      --container: 1180px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    a { color: inherit; }
+
+    .container {
+      width: min(var(--container), calc(100% - 32px));
+      margin: 0 auto;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(9, 24, 44, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      min-height: 86px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: white;
+      min-width: 0;
+    }
+
+    .brand img {
+      height: 68px;
+      width: auto;
+      display: block;
+      flex: 0 0 auto;
+    }
+
+    .brand-text {
+      font-size: 1.3rem;
+      font-weight: 800;
+      letter-spacing: 0.4px;
+      line-height: 1.05;
+    }
+
+    .brand-sub {
+      color: rgba(255,255,255,0.72);
+      font-size: 0.9rem;
+      margin-top: 4px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: flex-end;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: rgba(255,255,255,0.92);
+      font-weight: 700;
+      padding: 10px 14px;
+      border-radius: 12px;
+      transition: 0.2s ease;
+      font-size: 0.96rem;
+    }
+
+    .nav-links a:hover {
+      background: rgba(255,255,255,0.1);
+    }
+
+    .nav-links .nav-cta {
+      background: white;
+      color: var(--navy);
+    }
+
+    .hero {
+      background:
+        radial-gradient(circle at top right, rgba(201, 164, 106, 0.14), transparent 26%),
+        linear-gradient(135deg, var(--navy-dark), var(--navy));
+      color: white;
+      padding: 68px 0 46px;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 26px;
+      align-items: stretch;
+    }
+
+    .hero-copy,
+    .hero-side {
+      border-radius: var(--radius-xl);
+      box-shadow: 0 18px 40px rgba(0,0,0,0.15);
+    }
+
+    .hero-copy {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      padding: 34px;
+    }
+
+    .hero-side {
+      background: white;
+      color: var(--text);
+      padding: 28px;
+      border: 1px solid rgba(255,255,255,0.14);
+    }
+
+    .eyebrow,
+    .eyebrow-invert {
+      display: inline-block;
+      margin-bottom: 14px;
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-size: 0.88rem;
+      font-weight: 700;
+    }
+
+    .eyebrow-invert {
+      background: rgba(255,255,255,0.12);
+      color: #eaf2fb;
+    }
+
+    .eyebrow {
+      color: var(--steel);
+      background: var(--blue-soft);
+    }
+
+    .hero h1 {
+      margin: 0 0 16px;
+      font-size: 2.8rem;
+      line-height: 1.05;
+    }
+
+    .hero p {
+      margin: 0;
+      color: rgba(255,255,255,0.84);
+      font-size: 1.05rem;
+      line-height: 1.75;
+    }
+
+    .hero-actions {
+      margin-top: 24px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .hero-side h2 {
+      margin: 0 0 10px;
+      font-size: 1.35rem;
+      color: var(--navy);
+    }
+
+    .hero-side p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .meta-grid {
+      margin-top: 18px;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .meta-item {
+      background: #f8fbff;
+      border: 1px solid #e6edf7;
+      border-radius: 14px;
+      padding: 12px;
+    }
+
+    .meta-label {
+      display: block;
+      color: var(--muted);
+      font-size: 0.84rem;
+      margin-bottom: 4px;
+      font-weight: 700;
+    }
+
+    .meta-value {
+      font-weight: 800;
+      color: var(--navy);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      border: none;
+      border-radius: 14px;
+      padding: 14px 18px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.15s ease, background 0.2s ease;
+    }
+
+    .btn:hover { transform: translateY(-1px); }
+
+    .btn-primary {
+      background: white;
+      color: var(--navy);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: white;
+      border: 1px solid rgba(255,255,255,0.25);
+    }
+
+    .btn-dark {
+      background: var(--navy);
+      color: white;
+    }
+
+    .btn-outline {
+      background: white;
+      color: var(--navy);
+      border: 1px solid var(--border);
+    }
+
+    section {
+      padding: 64px 0;
+    }
+
+    .section-head {
+      max-width: 860px;
+      margin-bottom: 26px;
+    }
+
+    .section-head h2 {
+      margin: 0;
+      font-size: 2.1rem;
+      line-height: 1.15;
+      color: var(--navy);
+    }
+
+    .section-head p {
+      margin: 12px 0 0;
+      color: var(--muted);
+      line-height: 1.75;
+      font-size: 1.04rem;
+    }
+
+    .soft-band {
+      background: linear-gradient(180deg, #ffffff, #f8fbff);
+    }
+
+    .split-panel {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      align-items: start;
+    }
+
+    .card-grid-3,
+    .card-grid-2,
+    .faq-grid {
+      display: grid;
+      gap: 18px;
+    }
+
+    .card-grid-3 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .card-grid-2,
+    .faq-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .soft-panel,
+    .info-card,
+    .faq-card,
+    .booking-card,
+    .selected-stage-box,
+    .cta-panel {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+    }
+
+    .soft-panel,
+    .info-card,
+    .faq-card {
+      padding: 24px;
+    }
+
+    .soft-panel h3,
+    .info-card h3,
+    .faq-card h3 {
+      margin: 0 0 10px;
+      color: var(--navy);
+      font-size: 1.16rem;
+    }
+
+    .soft-panel p,
+    .info-card p,
+    .faq-card p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.72;
+    }
+
+    .bullet-list {
+      margin: 18px 0 0;
+      display: grid;
+      gap: 12px;
+    }
+
+    .bullet-item {
+      background: #f8fbff;
+      border: 1px solid #e6edf7;
+      border-radius: 14px;
+      padding: 14px;
+      color: var(--text);
+      line-height: 1.65;
+    }
+
+    .bullet-item strong {
+      color: var(--navy);
+    }
+
+    .booking-layout {
+      display: grid;
+      grid-template-columns: 0.95fr 1.05fr;
+      gap: 20px;
+      align-items: start;
+    }
+
+    .booking-card {
+      padding: 24px;
+    }
+
+    .selected-stage-box {
+      padding: 16px;
+      background: #f8fbff;
+      border: 1px solid #d7e6ff;
+      margin-bottom: 18px;
+    }
+
+    .selected-stage-label {
+      display: block;
+      font-size: 0.9rem;
+      color: var(--muted);
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .selected-stage-value {
+      font-weight: 800;
+      color: var(--navy);
+    }
+
+    .booking-status {
+      margin-top: 16px;
+      padding: 14px 16px;
+      border-radius: 14px;
+      font-weight: 600;
+      display: none;
+    }
+
+    .booking-status.show {
+      display: block;
+    }
+
+    .booking-status.success {
+      background: #eaf8f0;
+      color: #0f7d46;
+      border: 1px solid #cdeedb;
+    }
+
+    .booking-status.error {
+      background: #fff1f1;
+      color: #a32020;
+      border: 1px solid #f2c7c7;
+    }
+
+    .booking-status.info {
+      background: #f8fbff;
+      color: var(--navy);
+      border: 1px solid var(--border);
+    }
+
+    .booking-total {
+      margin-top: 8px;
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: var(--navy);
+    }
+
+    form {
+      margin-top: 8px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 14px;
+    }
+
+    .field.full {
+      grid-column: 1 / -1;
+    }
+
+    .field label {
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: var(--muted);
+    }
+
+    .field input,
+    .field textarea {
+      width: 100%;
+      border: 1px solid var(--border);
+      background: white;
+      border-radius: 12px;
+      padding: 12px;
+      font-size: 0.98rem;
+      color: var(--text);
+      font-family: inherit;
+    }
+
+    .field textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    .cta-panel {
+      padding: 34px;
+      background:
+        radial-gradient(circle at top right, rgba(201, 164, 106, 0.12), transparent 22%),
+        linear-gradient(135deg, #ffffff, #f8fbff);
+    }
+
+    .cta-panel h2 {
+      margin: 0 0 12px;
+      font-size: 2rem;
+      color: var(--navy);
+    }
+
+    .cta-panel p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.75;
+      max-width: 820px;
+    }
+
+    .cta-actions {
+      margin-top: 22px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    footer {
+      margin-top: 24px;
+      background: var(--navy-dark);
+      color: rgba(255,255,255,0.88);
+      padding: 36px 0;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 20px;
+      align-items: start;
+    }
+
+    .footer-brand strong {
+      display: block;
+      color: white;
+      font-size: 1.1rem;
+      margin-bottom: 8px;
+    }
+
+    .footer-brand p {
+      margin: 0;
+      color: rgba(255,255,255,0.72);
+      line-height: 1.7;
+      max-width: 720px;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .footer-links a {
+      text-decoration: none;
+      color: rgba(255,255,255,0.88);
+      font-weight: 700;
+      padding: 8px 10px;
+      border-radius: 10px;
+    }
+
+    .footer-links a:hover {
+      background: rgba(255,255,255,0.08);
+    }
+
+    @media (max-width: 1180px) {
+      .hero-grid,
+      .split-panel,
+      .card-grid-3,
+      .card-grid-2,
+      .faq-grid,
+      .booking-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .hero h1 {
+        font-size: 2.3rem;
+      }
+
+      .meta-grid,
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .header-inner,
+      .footer-grid {
+        grid-template-columns: 1fr;
+        display: grid;
+      }
+
+      .nav-links,
+      .footer-links {
+        justify-content: flex-start;
+      }
+
+      .brand img {
+        height: 56px;
+      }
+
+      .hero-copy,
+      .hero-side,
+      .cta-panel,
+      .booking-card {
+        padding: 24px;
+      }
+
+      .hero h1 {
+        font-size: 1.95rem;
+      }
+
+      .hero-actions,
+      .cta-actions {
+        flex-direction: column;
+      }
+
+      .btn {
+        width: 100%;
+      }
+
+      .section-head h2 {
+        font-size: 1.8rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="container header-inner">
+      <a href="/index.html" class="brand">
+        <img src="/logo.png" alt="Vital Protect" />
+        <div>
+          <div class="brand-text">VITAL PROTECT</div>
+          <div class="brand-sub">Méthode de sécurité personnelle</div>
+        </div>
+      </a>
+
+      <nav class="nav-links">
+        <a href="/index.html">Accueil</a>
+        <a href="/methode.html">La méthode</a>
+        <a href="/index.html#stages">Nos stages</a>
+        <a href="/entreprises.html">Entreprises</a>
+        <a href="/devenir-formateur.html">Devenir formateur</a>
+        <a href="/formateur-login.html" class="nav-cta">Espace formateur</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container hero-grid">
+        <div class="hero-copy">
+          <div class="eyebrow-invert" id="heroType">Stage Vital Protect</div>
+          <h1 id="heroTitle">Chargement du stage…</h1>
+          <p id="heroDescription">
+            Chargement des informations du stage.
+          </p>
+
+          <div class="hero-actions">
+            <a href="#reservation" class="btn btn-primary">Réserver ce stage</a>
+            <a href="/index.html#stages" class="btn btn-secondary">Retour aux stages</a>
+          </div>
+        </div>
+
+        <aside class="hero-side">
+          <h2>Informations essentielles</h2>
+          <p>
+            Retrouvez ici les objectifs du stage, son cadre pédagogique, son déroulé
+            et les informations pratiques avant réservation.
+          </p>
+
+          <div class="meta-grid">
+            <div class="meta-item">
+              <span class="meta-label">Ville</span>
+              <span class="meta-value" id="metaCity">—</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">Date</span>
+              <span class="meta-value" id="metaDate">—</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">Prix</span>
+              <span class="meta-value" id="metaPrice">—</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">Places restantes</span>
+              <span class="meta-value" id="metaPlaces">—</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">Région</span>
+              <span class="meta-value" id="metaRegion">—</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">Département</span>
+              <span class="meta-value" id="metaDepartment">—</span>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section>
+      <div class="container split-panel">
+        <div class="soft-panel">
+          <span class="eyebrow">Objectif du stage</span>
+          <h3>Ce que ce stage cherche à transmettre</h3>
+          <p id="objectiveText">
+            Ce stage s’inscrit dans la méthode Vital Protect : comprendre le risque, améliorer la lecture des situations, prévenir l’escalade et développer des réponses simples et réalistes.
+          </p>
+
+          <div class="bullet-list">
+            <div class="bullet-item"><strong>Comprendre :</strong> mieux lire une situation et ses signaux utiles.</div>
+            <div class="bullet-item"><strong>Prévenir :</strong> réduire l’exposition et éviter certaines escalades.</div>
+            <div class="bullet-item"><strong>Réagir :</strong> mobiliser des réponses simples, cohérentes et accessibles.</div>
+          </div>
+        </div>
+
+        <div class="soft-panel">
+          <span class="eyebrow">Public concerné</span>
+          <h3>À qui s’adresse ce stage</h3>
+          <p>
+            Ce format est pensé pour des participants souhaitant développer des repères concrets
+            de sécurité personnelle dans un cadre progressif, structuré et encadré.
+          </p>
+
+          <div class="bullet-list">
+            <div class="bullet-item"><strong>Accessible :</strong> aucun profil “combattant” n’est nécessaire.</div>
+            <div class="bullet-item"><strong>Progressif :</strong> la pédagogie est conçue pour favoriser l’apprentissage réel.</div>
+            <div class="bullet-item"><strong>Encadré :</strong> le cadre de sécurité est une priorité absolue.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="soft-band">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow">Déroulé pédagogique</span>
+          <h2>Comment se déroule le stage</h2>
+          <p>
+            Chaque stage Vital Protect suit une logique pédagogique claire, conçue pour transmettre
+            des repères utiles, favoriser la compréhension et sécuriser l’apprentissage.
+          </p>
+        </div>
+
+        <div class="card-grid-3">
+          <article class="info-card">
+            <h3>Explication</h3>
+            <p>Présentation des situations, des enjeux, des repères et de la logique d’action recherchée.</p>
+          </article>
+
+          <article class="info-card">
+            <h3>Démonstration & pratique</h3>
+            <p>Mise en œuvre progressive, adaptée au niveau des participants et centrée sur des réponses simples.</p>
+          </article>
+
+          <article class="info-card">
+            <h3>Mise en situation encadrée</h3>
+            <p>Consolidation des acquis dans un cadre maîtrisé, sécurisé et cohérent avec les objectifs du stage.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="container split-panel">
+        <div class="soft-panel">
+          <span class="eyebrow">Cadre de sécurité</span>
+          <h3>La sécurité des participants passe avant tout</h3>
+          <p>
+            Les stages Vital Protect sont conçus pour favoriser l’apprentissage, jamais la mise en danger.
+            Le cadre est pensé pour rester pédagogique, progressif et contrôlé.
+          </p>
+
+          <div class="bullet-list">
+            <div class="bullet-item"><strong>Consignes claires</strong> à chaque étape.</div>
+            <div class="bullet-item"><strong>Montée en intensité maîtrisée</strong> selon le niveau du groupe.</div>
+            <div class="bullet-item"><strong>Exercices adaptés</strong> à l’objectif pédagogique réel.</div>
+          </div>
+        </div>
+
+        <div class="soft-panel">
+          <span class="eyebrow">Informations pratiques</span>
+          <h3>Détails de la session</h3>
+          <div class="bullet-list">
+            <div class="bullet-item"><strong>Adresse :</strong> <span id="practicalAddress">—</span></div>
+            <div class="bullet-item"><strong>Heure :</strong> <span id="practicalTime">—</span></div>
+            <div class="bullet-item"><strong>Durée :</strong> <span id="practicalDuration">—</span></div>
+            <div class="bullet-item"><strong>Type :</strong> <span id="practicalType">—</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="soft-band">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow">Réservation</span>
+          <h2>Réserver votre place sur ce stage</h2>
+          <p>
+            Complétez vos informations puis finalisez votre réservation avec paiement sécurisé.
+          </p>
+        </div>
+
+        <div class="booking-layout">
+          <div class="booking-card">
+            <div class="selected-stage-box">
+              <span class="selected-stage-label">Stage sélectionné</span>
+              <div class="selected-stage-value" id="selectedStageValue">Chargement…</div>
+            </div>
+
+            <div class="booking-total" id="bookingTotal">Total : —</div>
+            <div id="bookingStatus" class="booking-status"></div>
+          </div>
+
+          <div class="booking-card">
+            <form id="bookingForm">
+              <div class="form-grid">
+                <div class="field">
+                  <label for="firstName">Prénom</label>
+                  <input id="firstName" type="text" required />
+                </div>
+
+                <div class="field">
+                  <label for="lastName">Nom</label>
+                  <input id="lastName" type="text" required />
+                </div>
+
+                <div class="field">
+                  <label for="email">Email</label>
+                  <input id="email" type="email" required />
+                </div>
+
+                <div class="field">
+                  <label for="phone">Téléphone</label>
+                  <input id="phone" type="tel" required />
+                </div>
+
+                <div class="field">
+                  <label for="places">Nombre de places</label>
+                  <input id="places" type="number" min="1" value="1" required />
+                </div>
+
+                <div class="field">
+                  <label for="cityDisplay">Ville du stage</label>
+                  <input id="cityDisplay" type="text" disabled />
+                </div>
+
+                <div class="field full">
+                  <label for="notes">Message complémentaire</label>
+                  <textarea id="notes" placeholder="Optionnel"></textarea>
+                </div>
+              </div>
+
+              <button class="btn btn-dark" type="submit">Procéder au paiement</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow">Questions fréquentes</span>
+          <h2>Avant de réserver</h2>
+          <p>
+            Quelques réponses utiles pour clarifier le cadre de participation.
+          </p>
+        </div>
+
+        <div class="faq-grid">
+          <article class="faq-card">
+            <h3>Faut-il être sportif ?</h3>
+            <p>Non. Le stage est pensé pour être accessible à un large public grâce à une pédagogie progressive.</p>
+          </article>
+
+          <article class="faq-card">
+            <h3>Est-ce un cours de combat ?</h3>
+            <p>Non. Vital Protect privilégie la prévention, l’évitement, la compréhension des situations et des réponses réalistes.</p>
+          </article>
+
+          <article class="faq-card">
+            <h3>Comment se passe la réservation ?</h3>
+            <p>Vous complétez le formulaire, accédez au paiement sécurisé Stripe, puis recevez la confirmation du parcours de réservation.</p>
+          </article>
+
+          <article class="faq-card">
+            <h3>Le cadre est-il sécurisé ?</h3>
+            <p>Oui. Les stages reposent sur des consignes claires, une progression contrôlée et un encadrement rigoureux.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="container">
+        <div class="cta-panel">
+          <h2>Comprendre le stage avant de réserver</h2>
+          <p>
+            Cette fiche existe pour donner une vision claire du cadre, des objectifs et des informations pratiques,
+            avant l’inscription et le paiement.
+          </p>
+
+          <div class="cta-actions">
+            <a href="/index.html#stages" class="btn btn-dark">Voir tous les stages</a>
+            <a href="/methode.html" class="btn btn-outline">Découvrir la méthode</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container footer-grid">
+      <div class="footer-brand">
+        <strong>VITAL PROTECT</strong>
+        <p>
+          Une méthode structurée de sécurité personnelle fondée sur la prévention, l’évitement,
+          la réaction réaliste, la pédagogie progressive et la certification des formateurs.
+        </p>
+      </div>
+
+      <div class="footer-links">
+        <a href="/methode.html">La méthode</a>
+        <a href="/entreprises.html">Entreprises</a>
+        <a href="/devenir-formateur.html">Devenir formateur</a>
+        <a href="/formateur-login.html">Espace formateur</a>
+        <a href="/admin-login.html">Admin</a>
+      </div>
+    </div>
+  </footer>
+
+  <script type="module">
+    import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
+    const supabase = createClient(
+      "https://zsraqxzneghkzaozzuci.supabase.co",
+      "sb_publishable_VlTpYjzJ3DKpFA1Un_EFHQ_FW-mYK4U"
+    );
+
+    const params = new URLSearchParams(window.location.search);
+    const stageId = params.get("id") || "";
+
+    const heroType = document.getElementById("heroType");
+    const heroTitle = document.getElementById("heroTitle");
+    const heroDescription = document.getElementById("heroDescription");
+
+    const metaCity = document.getElementById("metaCity");
+    const metaDate = document.getElementById("metaDate");
+    const metaPrice = document.getElementById("metaPrice");
+    const metaPlaces = document.getElementById("metaPlaces");
+    const metaRegion = document.getElementById("metaRegion");
+    const metaDepartment = document.getElementById("metaDepartment");
+
+    const practicalAddress = document.getElementById("practicalAddress");
+    const practicalTime = document.getElementById("practicalTime");
+    const practicalDuration = document.getElementById("practicalDuration");
+    const practicalType = document.getElementById("practicalType");
+
+    const selectedStageValue = document.getElementById("selectedStageValue");
+    const cityDisplay = document.getElementById("cityDisplay");
+    const bookingTotal = document.getElementById("bookingTotal");
+    const bookingStatus = document.getElementById("bookingStatus");
+    const placesInput = document.getElementById("places");
+    const bookingForm = document.getElementById("bookingForm");
+
+    let stage = null;
+
+    function formatPrice(price) {
+      return `${Number(price || 0).toFixed(0)} €`;
+    }
+
+    function formatDate(dateString) {
+      if (!dateString) return "Date non disponible";
+      const date = new Date(dateString);
+      if (Number.isNaN(date.getTime())) return "Date non disponible";
+      return date.toLocaleDateString("fr-FR", {
+        day: "2-digit",
+        month: "long",
+        year: "numeric"
+      });
+    }
+
+    function showBookingStatus(message, type = "info") {
+      bookingStatus.className = `booking-status show ${type}`;
+      bookingStatus.textContent = message;
+    }
+
+    function updateBookingTotal() {
+      if (!stage) {
+        bookingTotal.textContent = "Total : —";
+        return;
+      }
+
+      const places = Math.max(1, Number(placesInput.value || 1));
+      bookingTotal.textContent = `Total : ${formatPrice(Number(stage.price || 0) * places)}`;
+    }
+
+    function applyStageToPage() {
+      if (!stage) return;
+
+      document.title = `${stage.title || "Stage"} — Vital Protect`;
+
+      heroType.textContent = stage.training_type || "Stage Vital Protect";
+      heroTitle.textContent = stage.title || "Stage Vital Protect";
+      heroDescription.textContent =
+        stage.description ||
+        "Ce stage s’inscrit dans la méthode Vital Protect : compréhension du risque, prévention de l’escalade et réponses simples adaptées à la vie réelle.";
+
+      metaCity.textContent = stage.city || "—";
+      metaDate.textContent = formatDate(stage.stage_date);
+      metaPrice.textContent = formatPrice(stage.price);
+      metaPlaces.textContent = `${stage.remaining_places ?? 0}`;
+      metaRegion.textContent = stage.region || "—";
+      metaDepartment.textContent = stage.department || "—";
+
+      practicalAddress.textContent = stage.address || "Non précisée";
+      practicalTime.textContent = stage.start_time || "À confirmer";
+      practicalDuration.textContent = stage.duration || "À confirmer";
+      practicalType.textContent = stage.training_type || "Stage";
+
+      selectedStageValue.textContent =
+        `${stage.title || "Stage"} — ${stage.city || "Ville"} — ${formatDate(stage.stage_date)}`;
+
+      cityDisplay.value = stage.city || "";
+      updateBookingTotal();
+    }
+
+    async function loadStage() {
+      if (!stageId) {
+        heroTitle.textContent = "Stage introuvable";
+        heroDescription.textContent = "Aucun identifiant de stage n’a été fourni dans l’URL.";
+        return;
+      }
+
+      const { data, error } = await supabase
+        .from("stages")
+        .select("*")
+        .eq("id", stageId)
+        .eq("status", "published")
+        .maybeSingle();
+
+      if (error || !data) {
+        console.error("Erreur chargement stage:", error);
+        heroTitle.textContent = "Stage introuvable";
+        heroDescription.textContent = "Impossible de charger les informations de ce stage.";
+        return;
+      }
+
+      stage = data;
+      applyStageToPage();
+    }
+
+    bookingForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      if (!stage) {
+        showBookingStatus("Impossible de réserver ce stage pour le moment.", "error");
+        return;
+      }
+
+      const firstName = document.getElementById("firstName").value.trim();
+      const lastName = document.getElementById("lastName").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const phone = document.getElementById("phone").value.trim();
+      const places = Math.max(1, Number(document.getElementById("places").value || 1));
+
+      if (!firstName || !lastName || !email || !phone) {
+        showBookingStatus("Merci de remplir tous les champs obligatoires.", "error");
+        return;
+      }
+
+      showBookingStatus("Redirection vers le paiement Stripe...", "info");
+
+      try {
+        const res = await fetch("/api/create-checkout-session", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            stage_id: stage.id,
+            stage_title: stage.title || "",
+            first_name: firstName,
+            last_name: lastName,
+            email: email,
+            phone: phone,
+            places: places,
+            unit_price: Number(stage.price || 0)
+          })
+        });
+
+        const result = await res.json();
+
+        if (result.url) {
+          window.location.href = result.url;
+        } else {
+          showBookingStatus(result.error || "Erreur lors de la redirection vers Stripe.", "error");
+          console.error(result);
+        }
+      } catch (error) {
+        showBookingStatus("Erreur réseau.", "error");
+        console.error(error);
+      }
+    });
+
+    placesInput.addEventListener("input", updateBookingTotal);
+
+    loadStage();
+  </script>
+
+</body>
+</html>
