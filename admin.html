@@ -930,15 +930,12 @@
                     <input id="trainerSessionCityInput" type="text" required />
                   </div>
                   <div class="field">
-                    <label>Adresse</label>
-                    <input id="trainerSessionAddressInput" type="text" />
+                    <label>Département</label>
+                    <input id="trainerSessionDepartmentInput" type="text" placeholder="13" required />
                   </div>
                   <div class="field">
-                    <label>Statut</label>
-                    <select id="trainerSessionStatusInput">
-                      <option value="open">open</option>
-                      <option value="closed">closed</option>
-                    </select>
+                    <label>Adresse</label>
+                    <input id="trainerSessionAddressInput" type="text" />
                   </div>
                 </div>
 
@@ -956,12 +953,19 @@
                     <input id="trainerSessionDurationInput" type="number" value="3" />
                   </div>
                   <div class="field">
-                    <label>Places max</label>
-                    <input id="trainerSessionMaxPlacesInput" type="number" value="10" />
+                    <label>Statut</label>
+                    <select id="trainerSessionStatusInput">
+                      <option value="open">open</option>
+                      <option value="closed">closed</option>
+                    </select>
                   </div>
                 </div>
 
                 <div class="filters filters-3">
+                  <div class="field">
+                    <label>Places max</label>
+                    <input id="trainerSessionMaxPlacesInput" type="number" value="10" />
+                  </div>
                   <div class="field">
                     <label>Places restantes</label>
                     <input id="trainerSessionRemainingPlacesInput" type="number" value="10" />
@@ -970,14 +974,17 @@
                     <label>Tarif standard</label>
                     <input id="trainerSessionStandardPriceInput" type="number" value="590" />
                   </div>
+                </div>
+
+                <div class="filters filters-2">
                   <div class="field">
                     <label>Tarif lancement</label>
                     <input id="trainerSessionLaunchPriceInput" type="number" value="490" />
                   </div>
-                </div>
-
-                <div class="actions-row">
-                  <button class="btn btn-primary" type="submit">Créer la session</button>
+                  <div class="field">
+                    <label>&nbsp;</label>
+                    <button class="btn btn-primary" type="submit">Créer la session</button>
+                  </div>
                 </div>
               </form>
             </div>
@@ -1836,6 +1843,8 @@
               <th>Module</th>
               <th>Titre</th>
               <th>Ville</th>
+              <th>Département</th>
+              <th>Adresse</th>
               <th>Début</th>
               <th>Fin</th>
               <th>Prix lancement</th>
@@ -1849,6 +1858,8 @@
                 <td><strong>${row.module_name || "—"}</strong></td>
                 <td>${row.title || "—"}</td>
                 <td>${row.city || "—"}</td>
+                <td>${row.department || "—"}</td>
+                <td>${row.address || "—"}</td>
                 <td>${formatShortDate(row.start_date)}</td>
                 <td>${formatShortDate(row.end_date)}</td>
                 <td>${formatPrice(row.launch_price || row.standard_price || 0)}</td>
@@ -2553,6 +2564,7 @@ VITAL PROTECT`
           module_name: moduleName,
           title: moduleName,
           city: document.getElementById("trainerSessionCityInput").value,
+          department: document.getElementById("trainerSessionDepartmentInput").value,
           address: document.getElementById("trainerSessionAddressInput").value,
           start_date: document.getElementById("trainerSessionStartDateInput").value,
           end_date: document.getElementById("trainerSessionEndDateInput").value,
