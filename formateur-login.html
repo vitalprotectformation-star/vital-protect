@@ -201,9 +201,30 @@
       }
 
       submitBtn.disabled = true;
-      setStatus("Envoi du lien de connexion...");
+      setStatus("Vérification de votre profil formateur...");
 
       try {
+        const { data: trainer, error: trainerCheckError } = await supabase
+          .from("trainers")
+          .select("id, email")
+          .ilike("email", email)
+          .maybeSingle();
+
+        if (trainerCheckError) {
+          console.error("Erreur vérification formateur:", trainerCheckError);
+          setStatus("Erreur lors de la vérification du profil formateur.", "error");
+          submitBtn.disabled = false;
+          return;
+        }
+
+        if (!trainer) {
+          setStatus("Aucun profil formateur trouvé pour cet email.", "error");
+          submitBtn.disabled = false;
+          return;
+        }
+
+        setStatus("Envoi du lien de connexion...");
+
         const { error } = await supabase.auth.signInWithOtp({
           email,
           options: {
