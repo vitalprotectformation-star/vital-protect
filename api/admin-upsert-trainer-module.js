@@ -31,11 +31,7 @@ async function requireAdmin(req) {
     : "";
 
   if (!token) {
-    return {
-      ok: false,
-      status: 401,
-      error: "Token d'authentification manquant"
-    };
+    return { ok: false, status: 401, error: "Token d'authentification manquant" };
   }
 
   const {
@@ -44,11 +40,7 @@ async function requireAdmin(req) {
   } = await supabase.auth.getUser(token);
 
   if (userError || !user?.email) {
-    return {
-      ok: false,
-      status: 401,
-      error: "Session admin invalide"
-    };
+    return { ok: false, status: 401, error: "Session admin invalide" };
   }
 
   const email = normalizeEmail(user.email);
@@ -60,26 +52,14 @@ async function requireAdmin(req) {
     .maybeSingle();
 
   if (adminError) {
-    return {
-      ok: false,
-      status: 500,
-      error: "Erreur de vérification admin"
-    };
+    return { ok: false, status: 500, error: "Erreur de vérification admin" };
   }
 
   if (!adminUser) {
-    return {
-      ok: false,
-      status: 403,
-      error: "Accès refusé"
-    };
+    return { ok: false, status: 403, error: "Accès refusé" };
   }
 
-  return {
-    ok: true,
-    user,
-    adminUser
-  };
+  return { ok: true, user, adminUser };
 }
 
 export default async function handler(req, res) {
@@ -119,7 +99,6 @@ export default async function handler(req, res) {
       .maybeSingle();
 
     if (trainerError) {
-      console.error("Trainer fetch error:", trainerError);
       return res.status(500).json({ error: trainerError.message });
     }
 
@@ -160,7 +139,6 @@ export default async function handler(req, res) {
       .single();
 
     if (error) {
-      console.error("Trainer module upsert error:", error);
       return res.status(500).json({ error: error.message });
     }
 
@@ -170,7 +148,6 @@ export default async function handler(req, res) {
       trainer_module: data
     });
   } catch (err) {
-    console.error("Admin upsert trainer module error:", err);
     return res.status(500).json({ error: err.message });
   }
 }
