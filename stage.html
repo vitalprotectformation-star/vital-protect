@@ -24,7 +24,6 @@
       --radius-xl: 28px;
       --radius-lg: 20px;
       --radius-md: 14px;
-      --container: 1180px;
     }
 
     * { box-sizing: border-box; }
@@ -40,7 +39,7 @@
     a { color: inherit; }
 
     .container {
-      width: min(var(--container), calc(100% - 32px));
+      width: min(1180px, calc(100% - 32px));
       margin: 0 auto;
     }
 
@@ -77,6 +76,10 @@
       flex: 0 0 auto;
     }
 
+    .brand-text-wrap {
+      min-width: 0;
+    }
+
     .brand-text {
       font-size: 1.3rem;
       font-weight: 800;
@@ -108,13 +111,18 @@
       font-size: 0.96rem;
     }
 
-    .nav-links a:hover {
+    .nav-links a:hover,
+    .nav-links a.active {
       background: rgba(255,255,255,0.1);
     }
 
     .nav-links .nav-cta {
       background: white;
       color: var(--navy);
+    }
+
+    .nav-links .nav-cta:hover {
+      background: #edf3fa;
     }
 
     .hero {
@@ -625,7 +633,7 @@
     <div class="container header-inner">
       <a href="/index.html" class="brand">
         <img src="/logo.png" alt="Vital Protect" />
-        <div>
+        <div class="brand-text-wrap">
           <div class="brand-text">VITAL PROTECT</div>
           <div class="brand-sub">Méthode de sécurité personnelle</div>
         </div>
@@ -634,7 +642,7 @@
       <nav class="nav-links">
         <a href="/index.html">Accueil</a>
         <a href="/methode.html">La méthode</a>
-        <a href="/index.html#stages">Nos stages</a>
+        <a href="/index.html#stages" class="active">Nos stages</a>
         <a href="/entreprises.html">Entreprises</a>
         <a href="/devenir-formateur.html">Devenir formateur</a>
         <a href="/formateur-login.html" class="nav-cta">Espace formateur</a>
@@ -788,7 +796,7 @@
       </div>
     </section>
 
-    <section class="soft-band">
+    <section id="reservation" class="soft-band">
       <div class="container">
         <div class="section-head">
           <span class="eyebrow">Réservation</span>
