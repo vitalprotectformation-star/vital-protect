@@ -24,7 +24,6 @@
       --radius-xl: 28px;
       --radius-lg: 20px;
       --radius-md: 14px;
-      --container: 1180px;
     }
 
     * { box-sizing: border-box; }
@@ -40,7 +39,7 @@
     a { color: inherit; }
 
     .container {
-      width: min(var(--container), calc(100% - 32px));
+      width: min(1180px, calc(100% - 32px));
       margin: 0 auto;
     }
 
@@ -78,6 +77,7 @@
     }
 
     .brand-text-wrap { min-width: 0; }
+
     .brand-text {
       font-size: 1.3rem;
       font-weight: 800;
@@ -944,7 +944,7 @@
       </div>
     </section>
 
-    <section class="soft-band">
+    <section id="sessions" class="soft-band">
       <div class="container">
         <div class="section-head">
           <span class="eyebrow">Sessions disponibles</span>
