@@ -378,7 +378,6 @@
     );
 
     let certifiedModules = [];
-    let certifiedModulesDetails = [];
 
     function normalize(value) {
       return String(value || "").trim().toLowerCase();
@@ -490,57 +489,103 @@
       }
     }
 
-    async function loadCertifiedModules(trainer) {
-      const { data, error } = await supabase
-        .from("trainer_modules")
-        .select("*")
-        .eq("trainer_id", trainer.id)
-        .order("module_name", { ascending: true });
+    async function getTrainerAuthHeaders() {
+      let {
+        data: { session }
+      } = await supabase.auth.getSession();
 
-      if (error) {
-        console.error("Erreur chargement trainer_modules:", error);
+      if (!session?.access_token) {
+        await new Promise(resolve => setTimeout(resolve, 500));
+        const retry = await supabase.auth.getSession();
+        session = retry.data.session;
+      }
+
+      const accessToken = session?.access_token || "";
+
+      if (!accessToken) {
+        throw new Error("Session formateur introuvable");
+      }
+
+      return {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`
+      };
+    }
+
+    async function parseApiResponse(res) {
+      const rawText = await res.text();
+      let data = null;
+
+      try {
+        data = rawText ? JSON.parse(rawText) : {};
+      } catch (error) {
+        data = { error: rawText || `Réponse non JSON (${res.status})` };
+      }
+
+      if (!res.ok) {
+        throw new Error(data?.error || `Erreur HTTP ${res.status}`);
+      }
+
+      return data;
+    }
+
+    async function loadCertifiedModules(trainer) {
+      const { data: registrations, error: regError } = await supabase
+        .from("trainer_session_registrations")
+        .select("session_id, validation_status, training_result, email")
+        .ilike("email", trainer.email);
+
+      if (regError) {
+        console.error("Erreur chargement registrations:", regError);
         return [];
       }
 
-      return (data || []).filter(
-        item =>
-          normalize(item.status) === "certified" &&
-          (!item.expires_at || isFutureOrToday(item.expires_at))
-      );
-    }
+      const passedSessionIds = (registrations || [])
+        .filter(item =>
+          normalize(item.validation_status) === "validated" &&
+          normalize(item.training_result) === "passed" &&
+          item.session_id
+        )
+        .map(item => item.session_id);
 
-    function buildCertifiedModulesSection() {
-      if (!certifiedModulesDetails.length) {
-        return `
-          <div class="card">
-            <h2 class="section-title">Modules certifiés</h2>
-            <div class="alert alert-warning">
-              <p>Aucun module certifié actif n’a été trouvé sur votre profil.</p>
-            </div>
-          </div>
-        `;
+      if (!passedSessionIds.length) {
+        return [];
       }
 
-      return `
-        <div class="card">
-          <h2 class="section-title">Modules certifiés</h2>
-          <div class="grid">
-            ${certifiedModulesDetails.map(module => `
-              <div class="info-box">
-                <span class="label">Module</span>
-                <div class="value">${module.module_name || "—"}</div>
-                <div style="margin-top:10px;">
-                  <span class="badge badge-success">Certifié</span>
-                </div>
-                <div style="margin-top:10px;" class="muted">
-                  Validation : ${formatDate(module.validated_at)}<br />
-                  Expiration : ${formatDate(module.expires_at)}
-                </div>
-              </div>
-            `).join("")}
-          </div>
-        </div>
-      `;
+      const { data: sessions, error: sessionsError } = await supabase
+        .from("trainer_sessions")
+        .select("id, module_name")
+        .in("id", passedSessionIds);
+
+      if (sessionsError) {
+        console.error("Erreur chargement trainer_sessions:", sessionsError);
+        return [];
+      }
+
+      const sessionModules = [...new Set(
+        (sessions || [])
+          .map(item => item.module_name)
+          .filter(Boolean)
+      )];
+
+      const { data: trainerModules, error: trainerModulesError } = await supabase
+        .from("trainer_modules")
+        .select("module_name, status, expires_at")
+        .eq("trainer_id", trainer.id);
+
+      if (trainerModulesError) {
+        console.error("Erreur chargement trainer_modules:", trainerModulesError);
+        return sessionModules;
+      }
+
+      const validModuleNames = (trainerModules || [])
+        .filter(item =>
+          normalize(item.status) === "certified" &&
+          isFutureOrToday(item.expires_at)
+        )
+        .map(item => item.module_name);
+
+      return sessionModules.filter(moduleName => validModuleNames.includes(moduleName));
     }
 
     function buildCreateStageSection(trainer) {
@@ -549,8 +594,8 @@
           <div class="card">
             <h2 class="section-title">Créer un stage</h2>
             <div class="alert alert-warning">
-              <p>Aucun module certifié validé n’a été retrouvé pour votre profil.</p>
-              <p>Impossible de créer un stage tant qu’aucun module validé n’est disponible.</p>
+              <p>Aucun module certifié valide n’a été retrouvé pour votre profil.</p>
+              <p>Impossible de créer un stage tant qu’aucun module valide n’est disponible.</p>
             </div>
           </div>
         `;
@@ -636,7 +681,7 @@
             </div>
 
             <div class="form-note">
-              Le titre du stage est généré automatiquement à partir du module, de la ville et de la date.
+              Le titre du stage est généré automatiquement côté serveur à partir du module, de la ville et de la date.
             </div>
           </form>
 
@@ -661,14 +706,21 @@
         const city = document.getElementById("stageCity").value.trim();
         const stageDate = document.getElementById("stageDate").value;
 
-        const generatedTitle = `${trainingType} — ${city}${stageDate ? ` — ${formatLongDate(stageDate)}` : ""}`;
+        if (!certifiedModules.includes(trainingType)) {
+          statusBox.textContent = "Erreur : ce module n’est pas autorisé pour votre profil.";
+          return;
+        }
+
+        if (!stageDate) {
+          statusBox.textContent = "Erreur : veuillez choisir une date.";
+          return;
+        }
 
         const payload = {
-          trainer_id: trainer.id,
-          title: generatedTitle,
+          action: "create_stage",
           training_type: trainingType,
           description: document.getElementById("stageDescription").value.trim(),
-          city: city,
+          city,
           department: document.getElementById("stageDepartment").value.trim(),
           region: document.getElementById("stageRegion").value.trim(),
           address: document.getElementById("stageAddress").value.trim(),
@@ -677,32 +729,31 @@
           duration: document.getElementById("stageDuration").value.trim(),
           max_participants: Number(document.getElementById("stageMaxParticipants").value || 20),
           remaining_places: Number(document.getElementById("stageRemainingPlaces").value || 20),
-          price: Number(document.getElementById("stagePrice").value || 0),
-          status: "published"
+          price: Number(document.getElementById("stagePrice").value || 0)
         };
 
-        if (!certifiedModules.includes(payload.training_type)) {
-          statusBox.textContent = "Erreur : ce module n’est pas autorisé pour votre profil.";
-          return;
-        }
+        try {
+          const headers = await getTrainerAuthHeaders();
 
-        if (!payload.stage_date) {
-          statusBox.textContent = "Erreur : veuillez choisir une date.";
-          return;
-        }
+          const res = await fetch("/api/trainer-tools", {
+            method: "POST",
+            headers,
+            body: JSON.stringify(payload)
+          });
 
-        const { error } = await supabase
-          .from("stages")
-          .insert(payload);
+          const result = await parseApiResponse(res);
 
-        if (error) {
+          if (!result.success) {
+            statusBox.textContent = result.error || "Erreur lors de la création du stage.";
+            return;
+          }
+
+          statusBox.textContent = `✅ Stage créé avec succès. Titre généré : ${result.stage?.title || "Stage publié"}`;
+          form.reset();
+        } catch (error) {
           console.error("Erreur création stage:", error);
           statusBox.textContent = `Erreur : ${error.message}`;
-          return;
         }
-
-        statusBox.textContent = `✅ Stage créé avec succès. Titre généré : ${generatedTitle}`;
-        form.reset();
       });
     }
 
@@ -748,8 +799,6 @@
           </div>
         </div>
 
-        ${buildCertifiedModulesSection()}
-
         <div class="card" style="padding:18px; margin-top:18px;">
           <h3>Zone membre</h3>
           <p class="muted">Cette zone peut ensuite accueillir tes contenus privés : ressources, documents, calendrier, kit formateur, etc.</p>
@@ -766,7 +815,7 @@ Email trouvé : ${trainer.email}
 ID formateur : ${trainer.id}
 Certification valide : ${certValid}
 Affiliation valide : ${affiliationValid}
-Modules certifiés : ${certifiedModules.join(", ") || "aucun"}</div>
+Modules certifiés valides : ${certifiedModules.join(", ") || "aucun"}</div>
       `;
 
       attachLogoutButtons();
@@ -838,8 +887,6 @@ Modules certifiés : ${certifiedModules.join(", ") || "aucun"}</div>
             </div>
           </div>
 
-          ${buildCertifiedModulesSection()}
-
           <div class="debug">Email session : ${sessionEmail}
 Email trouvé : ${trainer.email}
 ID formateur : ${trainer.id}
@@ -900,8 +947,6 @@ Affiliation end : ${trainer.affiliation_end || "—"}</div>
               <div class="value">${formatDate(trainer.affiliation_end)}</div>
             </div>
           </div>
-
-          ${buildCertifiedModulesSection()}
 
           <div class="actions">
             <a href="/devenir-formateur.html" class="btn btn-primary">Voir les formations disponibles</a>
@@ -974,9 +1019,7 @@ Certification expiry : ${trainer.certification_expiry || "—"}</div>
         return;
       }
 
-      certifiedModulesDetails = await loadCertifiedModules(trainer);
-      certifiedModules = certifiedModulesDetails.map(item => item.module_name).filter(Boolean);
-
+      certifiedModules = await loadCertifiedModules(trainer);
       await buildTrainerView(trainer, sessionEmail);
     }
 
