@@ -43,8 +43,8 @@ export default async function handler(req, res) {
         email: cleanEmail
       },
 
-      success_url: `${origin}/espace-formateur.html?email=${encodeURIComponent(cleanEmail)}`,
-      cancel_url: `${origin}/espace-formateur.html?email=${encodeURIComponent(cleanEmail)}`
+      success_url: `${origin}/espace-formateur.html?affiliation=success`,
+      cancel_url: `${origin}/espace-formateur.html?affiliation=cancel`
     });
 
     return res.status(200).json({ url: session.url });
