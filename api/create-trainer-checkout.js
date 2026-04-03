@@ -85,8 +85,10 @@ export default async function handler(req, res) {
       return res.status(404).json({ error: "Session formateur introuvable" });
     }
 
-    if (trainerSession.status !== "open") {
-      return res.status(400).json({ error: "Cette session n'est pas ouverte à la réservation" });
+    if (String(trainerSession.status || "").toLowerCase() !== "open") {
+      return res.status(400).json({
+        error: "Cette session n'est pas ouverte à la réservation"
+      });
     }
 
     const remainingPlaces = Number(trainerSession.remaining_places || 0);
@@ -121,14 +123,20 @@ export default async function handler(req, res) {
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
       mode: "payment",
+      customer_email: cleanEmail,
 
       line_items: [
         {
           price_data: {
             currency: "eur",
             product_data: {
-              name: trainerSession.title || sessionModuleName || "Formation formateur VITAL PROTECT",
-              description: `Réservation session formateur${trainerSession.city ? ` - ${trainerSession.city}` : ""}`
+              name:
+                trainerSession.title ||
+                sessionModuleName ||
+                "Formation formateur VITAL PROTECT",
+              description: `Réservation session formateur${
+                trainerSession.city ? ` - ${trainerSession.city}` : ""
+              }`
             },
             unit_amount: Math.round(selectedPrice * 100)
           },
@@ -152,10 +160,8 @@ export default async function handler(req, res) {
         message: cleanMessage
       },
 
-      customer_email: cleanEmail,
-
-      success_url: `${origin}/devenir-formateur.html?checkout=success`,
-      cancel_url: `${origin}/devenir-formateur.html?checkout=cancel`
+      success_url: `${origin}/trainer-success.html?session_id=${encodeURIComponent(cleanSessionId)}`,
+      cancel_url: `${origin}/trainer-cancel.html?session_id=${encodeURIComponent(cleanSessionId)}`
     });
 
     return res.status(200).json({ url: session.url });
