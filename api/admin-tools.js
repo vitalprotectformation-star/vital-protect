@@ -1,0 +1,2605 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin VITAL PROTECT</title>
+  <style>
+    :root {
+      --navy: #0b2e59;
+      --navy-dark: #08203d;
+      --blue: #1f6feb;
+      --bg: #f4f7fb;
+      --card: #ffffff;
+      --border: #dbe4f0;
+      --text: #142033;
+      --muted: #667085;
+      --shadow: 0 10px 30px rgba(11, 46, 89, 0.08);
+      --success: #0f9d58;
+      --warning: #b7791f;
+      --danger: #c62828;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 420px 1fr;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      background: linear-gradient(180deg, var(--navy-dark), var(--navy));
+      color: white;
+      padding: 24px 18px;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+    }
+
+    .brand-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+
+    .brand-wrap img {
+      height: 108px;
+      width: auto;
+      display: block;
+    }
+
+    .brand {
+      font-size: 2.2rem;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .brand-sub {
+      color: rgba(255,255,255,0.8);
+      font-size: 1.1rem;
+      margin-bottom: 24px;
+    }
+
+    .nav-group {
+      display: grid;
+      gap: 8px;
+    }
+
+    .nav-btn {
+      width: 100%;
+      text-align: left;
+      border: none;
+      border-radius: 14px;
+      padding: 12px 14px;
+      background: transparent;
+      color: rgba(255,255,255,0.92);
+      font-size: 0.98rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .nav-btn:hover,
+    .nav-btn.active {
+      background: rgba(255,255,255,0.12);
+    }
+
+    .sidebar-footer {
+      margin-top: 28px;
+    }
+
+    .sidebar-link {
+      display: inline-block;
+      color: white;
+      text-decoration: none;
+      font-weight: 700;
+      opacity: 0.9;
+    }
+
+    .content {
+      padding: 28px;
+    }
+
+    .page-header {
+      margin-bottom: 22px;
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .page-title {
+      margin: 0 0 6px;
+      font-size: 2rem;
+    }
+
+    .page-subtitle {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .tab-panel {
+      display: none;
+    }
+
+    .tab-panel.active {
+      display: block;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .stat-card,
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+    }
+
+    .stat-card {
+      padding: 20px;
+    }
+
+    .stat-label {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 800;
+    }
+
+    .card {
+      overflow: hidden;
+      margin-top: 22px;
+    }
+
+    .card-header {
+      padding: 18px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .card-header h2 {
+      margin: 0 0 6px;
+      font-size: 1.3rem;
+    }
+
+    .card-header p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .card-body {
+      padding: 20px;
+    }
+
+    .filters {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .filters.filters-2 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .filters.filters-3 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .filters.filters-4 {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .field label {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--muted);
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      border: 1px solid var(--border);
+      background: white;
+      border-radius: 12px;
+      padding: 12px;
+      font-size: 0.98rem;
+      color: var(--text);
+    }
+
+    textarea {
+      min-height: 110px;
+      resize: vertical;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .actions-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 12px;
+      padding: 11px 14px;
+      font-size: 0.96rem;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-primary {
+      background: var(--blue);
+      color: white;
+    }
+
+    .btn-secondary {
+      background: white;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .btn-danger {
+      background: var(--danger);
+      color: white;
+    }
+
+    .btn-warning {
+      background: #fff4df;
+      color: #8a5a00;
+      border: 1px solid #f0d9a7;
+    }
+
+    .btn-success {
+      background: #eaf8f0;
+      color: #0f7d46;
+      border: 1px solid #cdeedb;
+    }
+
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      min-width: 1360px;
+      border-collapse: collapse;
+    }
+
+    th,
+    td {
+      padding: 14px 16px;
+      text-align: left;
+      border-bottom: 1px solid #edf2f8;
+      vertical-align: top;
+    }
+
+    th {
+      background: #f8fbff;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    td strong {
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    td span {
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      white-space: nowrap;
+    }
+
+    .badge-ok {
+      background: #eef5ff;
+      color: #1f6feb;
+    }
+
+    .badge-success {
+      background: #eaf8f0;
+      color: #0f9d58;
+    }
+
+    .badge-warning {
+      background: #fff4df;
+      color: #b7791f;
+    }
+
+    .badge-danger {
+      background: #fff1f1;
+      color: #c62828;
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    .loading,
+    .empty,
+    .error {
+      padding: 16px 0;
+      color: var(--muted);
+    }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .section-spacer {
+      margin-top: 24px;
+    }
+
+    .action-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      min-width: 220px;
+    }
+
+    .form-switcher {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+
+    .form-switcher .btn.active {
+      background: var(--blue);
+      color: white;
+      border-color: var(--blue);
+    }
+
+    .form-panel {
+      display: none;
+    }
+
+    .form-panel.active {
+      display: block;
+    }
+
+    .inline-status {
+      margin-top: 12px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: #f8fbff;
+      color: var(--muted);
+      display: none;
+    }
+
+    .inline-status.show {
+      display: block;
+    }
+
+    @media (max-width: 1200px) {
+      .stats,
+      .filters {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 980px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: static;
+        height: auto;
+      }
+
+      .stats,
+      .filters,
+      .kpi-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .brand {
+        font-size: 1.8rem;
+      }
+
+      .brand-wrap img {
+        height: 84px;
+      }
+
+      .brand-sub {
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="brand-wrap">
+        <img src="/logo.png" alt="VITAL PROTECT" />
+        <div class="brand">VITAL PROTECT</div>
+      </div>
+      <div class="brand-sub">Cockpit admin</div>
+
+      <div class="nav-group">
+        <button class="nav-btn active" data-tab="dashboard">Dashboard</button>
+        <button class="nav-btn" data-tab="candidats">Candidats</button>
+        <button class="nav-btn" data-tab="archives">Archives candidats</button>
+        <button class="nav-btn" data-tab="formateurs">Formateurs</button>
+        <button class="nav-btn" data-tab="modules">Modules certifiés</button>
+        <button class="nav-btn" data-tab="stages">Stages</button>
+        <button class="nav-btn" data-tab="formations">Formations formateur</button>
+        <button class="nav-btn" data-tab="finances">Pilotage financier</button>
+      </div>
+
+      <div class="sidebar-footer">
+        <a class="sidebar-link" href="/">← Retour au site</a>
+      </div>
+    </aside>
+
+    <main class="content">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Administration VITAL PROTECT</h1>
+          <p class="page-subtitle">Pilotage global du réseau, des stages, des formateurs, des candidatures et des finances.</p>
+        </div>
+        <div class="actions-row">
+          <button id="logoutBtn" class="btn btn-secondary" type="button">Déconnexion</button>
+        </div>
+      </div>
+
+      <section id="tab-dashboard" class="tab-panel active">
+        <div class="stats">
+          <div class="stat-card">
+            <span class="stat-label">Réservations</span>
+            <div class="stat-value" id="reservationsCount">0</div>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Stages publiés</span>
+            <div class="stat-value" id="stagesCount">0</div>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Candidats formateurs</span>
+            <div class="stat-value" id="trainerRegistrationsCount">0</div>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Formateurs actifs / total</span>
+            <div class="stat-value" id="trainersCount">0</div>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">CA total affiché</span>
+            <div class="stat-value" id="revenueCount">0 €</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h2>Vue d’ensemble</h2>
+              <p>Indicateurs rapides du système.</p>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="kpi-grid">
+              <div class="stat-card">
+                <span class="stat-label">Affiliations expirées</span>
+                <div class="stat-value" id="expiredAffiliationsCount">0</div>
+              </div>
+              <div class="stat-card">
+                <span class="stat-label">Certifications expirées</span>
+                <div class="stat-value" id="expiredCertificationsCount">0</div>
+              </div>
+              <div class="stat-card">
+                <span class="stat-label">Paiements formateurs capturés</span>
+                <div class="stat-value" id="capturedTrainerPaymentsCount">0</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card section-spacer">
+          <div class="card-header">
+            <div>
+              <h2>Dernières réservations stages</h2>
+              <p>Vue rapide des réservations clients encaissées.</p>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="table-wrap" id="reservationsWrap">
+              <div class="loading">Chargement des réservations...</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="tab-candidats" class="tab-panel">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h2>Candidats formateurs</h2>
+              <p>Recherche et suivi des inscriptions formateur.</p>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="filters filters-4">
+              <div class="field">
+                <label>Recherche</label>
+                <input id="candidateSearch" type="text" placeholder="Nom, prénom, email, ville..." />
+              </div>
+              <div class="field">
+                <label>Validation</label>
+                <select id="candidateValidationFilter">
+                  <option value="">Tous</option>
+                  <option value="pending">En attente</option>
+                  <option value="validated">Validé</option>
+                  <option value="rejected">Refusé</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>Résultat</label>
+                <select id="candidateResultFilter">
+                  <option value="">Tous</option>
+                  <option value="pending">En attente</option>
+                  <option value="passed">Réussi</option>
+                  <option value="failed">Recalé</option>
+                  <option value="resit">Rattrapage</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>Paiement</label>
+                <select id="candidatePaymentFilter">
+                  <option value="">Tous</option>
+                  <option value="authorized">Autorisé</option>
+                  <option value="captured">Capturé</option>
+                  <option value="canceled">Annulé</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="table-wrap" id="trainerRegistrationsWrap">
+              <div class="loading">Chargement des candidats formateurs...</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="tab-archives" class="tab-panel">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h2>Archives candidats</h2>
+              <p>Dossiers refusés et candidats recalés archivés.</p>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="filters filters-3">
+              <div class="field">
+                <label>Recherche</label>
+                <input id="archiveSearch" type="text" placeholder="Nom, prénom, email, ville..." />
+              </div>
+              <div class="field">
+                <label>Raison d’archive</label>
+                <select id="archiveReasonFilter">
+                  <option value="">Toutes</option>
+                  <option value="dossier_rejected">Dossier refusé</option>
+                  <option value="training_failed">Formation recalée</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>Paiement</label>
+                <select id="archivePaymentFilter">
+                  <option value="">Tous</option>
+                  <option value="authorized">Autorisé</option>
+                  <option value="captured">Capturé</option>
+                  <option value="canceled">Annulé</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="table-wrap" id="archivesWrap">
+              <div class="loading">Chargement des archives...</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="tab-formateurs" class="tab-panel">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h2>Formateurs</h2>
+              <p>Recherche par identité, zone géographique et statut.</p>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="filters">
+              <div class="field">
+                <label>Recherche</label>
+                <input id="trainerSearch" type="text" placeholder="Nom, prénom, email..." />
+              </div>
+              <div class="field">
+                <label>Région</label>
+                <input id="trainerRegionFilter" type="text" placeholder="Île-de-France..." />
+              </div>
+              <div class="field">
+                <label>Département</label>
+                <input id="trainerDepartmentFilter" type="text" placeholder="75..." />
+              </div>
+              <div class="field">
+                <label>Ville</label>
+                <input id="trainerCityFilter" type="text" placeholder="Paris..." />
+              </div>
+              <div class="field">
+                <label>Affiliation</label>
+                <select id="trainerAffiliationFilter">
+                  <option value="">Toutes</option>
+                  <option value="active">Affilié</option>
+                  <option value="expired">Résilié / expiré</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="filters filters-2">
+              <div class="field">
+                <label>Certification</label>
+                <select id="trainerCertificationFilter">
+                  <option value="">Toutes</option>
+                  <option value="valid">Valide</option>
+                  <option value="expired">Expirée</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="table-wrap" id="trainersWrap">
+              <div class="loading">Chargement des formateurs...</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="tab-modules" class="tab-panel">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h2>Gestion des modules certifiés</h2>
+              <p>Ajout manuel, prolongation et correction de statut.</p>
+            </div>
+          </div>
+          <div class="card-body">
+            <form id="trainerModuleForm">
+              <div class="filters filters-4">
+                <div class="field">
+                  <label>Formateur</label>
+                  <select id="trainerModuleTrainerIdInput" required></select>
+                </div>
+                <div class="field">
+                  <label>Module</label>
+                  <select id="trainerModuleNameInput" required></select>
+                </div>
+                <div class="field">
+                  <label>Statut</label>
+                  <select id="trainerModuleStatusInput" required>
+                    <option value="certified">certified</option>
+                    <option value="expired">expired</option>
+                    <option value="suspended">suspended</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label>Validé le</label>
+                  <input id="trainerModuleValidatedAtInput" type="date" required />
+                </div>
+              </div>
+
+              <div class="filters filters-2">
+                <div class="field">
+                  <label>Expire le</label>
+                  <input id="trainerModuleExpiresAtInput" type="date" required />
+                </div>
+                <div class="field">
+                  <label>&nbsp;</label>
+                  <button class="btn btn-primary" type="submit">Enregistrer le module</button>
+                </div>
+              </div>
+            </form>
+
+            <div id="trainerModuleFormStatus" class="inline-status"></div>
+
+            <div class="filters filters-4" style="margin-top: 24px;">
+              <div class="field">
+                <label>Recherche</label>
+                <input id="trainerModuleSearch" type="text" placeholder="Nom, prénom, email..." />
+              </div>
+              <div class="field">
+                <label>Module</label>
+                <input id="trainerModuleNameFilter" type="text" placeholder="Self Défense..." />
+              </div>
+              <div class="field">
+                <label>Statut</label>
+                <select id="trainerModuleStatusFilter">
+                  <option value="">Tous</option>
+                  <option value="certified">Certifié</option>
+                  <option value="expired">Expiré</option>
+                  <option value="suspended">Suspendu</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>Expiration</label>
+                <select id="trainerModuleExpiryFilter">
+                  <option value="">Toutes</option>
+                  <option value="valid">Encore valide</option>
+                  <option value="expired">Expirée</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="table-wrap" id="trainerModulesWrap">
+              <div class="loading">Chargement des modules certifiés...</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="tab-stages" class="tab-panel">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h2>Stages</h2>
+              <p>Voir, filtrer, supprimer et contacter les inscrits.</p>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="filters">
+              <div class="field">
+                <label>Région</label>
+                <input id="stageRegionFilter" type="text" placeholder="Région..." />
+              </div>
+              <div class="field">
+                <label>Département</label>
+                <input id="stageDepartmentFilter" type="text" placeholder="Département..." />
+              </div>
+              <div class="field">
+                <label>Ville</label>
+                <input id="stageCityFilter" type="text" placeholder="Ville..." />
+              </div>
+              <div class="field">
+                <label>Formateur (ID / email lié)</label>
+                <input id="stageTrainerFilter" type="text" placeholder="Identifiant formateur..." />
+              </div>
+              <div class="field">
+                <label>Statut</label>
+                <select id="stageStatusFilter">
+                  <option value="">Tous</option>
+                  <option value="published">Publié</option>
+                  <option value="pending">En attente</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="table-wrap" id="stagesWrap">
+              <div class="loading">Chargement des stages...</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="tab-formations" class="tab-panel">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h2>Entrée rapide</h2>
+              <p>Choisissez ce que vous créez, puis sélectionnez le module. Le titre reprend automatiquement le module.</p>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="form-switcher">
+              <button id="switchCreateStage" class="btn btn-secondary active" type="button">Créer un stage</button>
+              <button id="switchCreateTrainer" class="btn btn-secondary" type="button">Créer une formation formateur</button>
+            </div>
+
+            <div id="createStagePanel" class="form-panel active">
+              <form id="createStageForm">
+                <div class="filters filters-4">
+                  <div class="field">
+                    <label>Module</label>
+                    <select id="stageModuleInput" required></select>
+                  </div>
+                  <div class="field">
+                    <label>Ville</label>
+                    <input id="stageCityInput" type="text" required />
+                  </div>
+                  <div class="field">
+                    <label>Département</label>
+                    <input id="stageDepartmentInput" type="text" />
+                  </div>
+                  <div class="field">
+                    <label>Région</label>
+                    <input id="stageRegionInput" type="text" />
+                  </div>
+                </div>
+
+                <div class="filters filters-4">
+                  <div class="field">
+                    <label>Date</label>
+                    <input id="stageDateInput" type="date" required />
+                  </div>
+                  <div class="field">
+                    <label>Heure</label>
+                    <input id="stageTimeInput" type="text" placeholder="14:00" />
+                  </div>
+                  <div class="field">
+                    <label>Durée</label>
+                    <input id="stageDurationInput" type="text" placeholder="3h" />
+                  </div>
+                  <div class="field">
+                    <label>Prix</label>
+                    <input id="stagePriceInput" type="number" required />
+                  </div>
+                </div>
+
+                <div class="filters filters-3">
+                  <div class="field">
+                    <label>Places max</label>
+                    <input id="stageMaxParticipantsInput" type="number" value="20" />
+                  </div>
+                  <div class="field">
+                    <label>Places restantes</label>
+                    <input id="stageRemainingPlacesInput" type="number" value="20" />
+                  </div>
+                  <div class="field">
+                    <label>Email formateur lié</label>
+                    <input id="stageTrainerEmailInput" type="text" placeholder="trainer@email.fr" />
+                  </div>
+                </div>
+
+                <div class="field">
+                  <label>Adresse</label>
+                  <input id="stageAddressInput" type="text" />
+                </div>
+
+                <div class="field">
+                  <label>Description</label>
+                  <textarea id="stageDescriptionInput"></textarea>
+                </div>
+
+                <div class="actions-row">
+                  <button class="btn btn-primary" type="submit">Créer le stage</button>
+                </div>
+              </form>
+            </div>
+
+            <div id="createTrainerPanel" class="form-panel">
+              <form id="createTrainerSessionForm">
+                <div class="filters filters-4">
+                  <div class="field">
+                    <label>Module</label>
+                    <select id="trainerSessionModuleInput" required></select>
+                  </div>
+                  <div class="field">
+                    <label>Ville</label>
+                    <input id="trainerSessionCityInput" type="text" required />
+                  </div>
+                  <div class="field">
+                    <label>Adresse</label>
+                    <input id="trainerSessionAddressInput" type="text" />
+                  </div>
+                  <div class="field">
+                    <label>Statut</label>
+                    <select id="trainerSessionStatusInput">
+                      <option value="open">open</option>
+                      <option value="closed">closed</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="filters filters-4">
+                  <div class="field">
+                    <label>Date début</label>
+                    <input id="trainerSessionStartDateInput" type="date" required />
+                  </div>
+                  <div class="field">
+                    <label>Date fin</label>
+                    <input id="trainerSessionEndDateInput" type="date" required />
+                  </div>
+                  <div class="field">
+                    <label>Durée (jours)</label>
+                    <input id="trainerSessionDurationInput" type="number" value="3" />
+                  </div>
+                  <div class="field">
+                    <label>Places max</label>
+                    <input id="trainerSessionMaxPlacesInput" type="number" value="10" />
+                  </div>
+                </div>
+
+                <div class="filters filters-3">
+                  <div class="field">
+                    <label>Places restantes</label>
+                    <input id="trainerSessionRemainingPlacesInput" type="number" value="10" />
+                  </div>
+                  <div class="field">
+                    <label>Tarif standard</label>
+                    <input id="trainerSessionStandardPriceInput" type="number" value="590" />
+                  </div>
+                  <div class="field">
+                    <label>Tarif lancement</label>
+                    <input id="trainerSessionLaunchPriceInput" type="number" value="490" />
+                  </div>
+                </div>
+
+                <div class="actions-row">
+                  <button class="btn btn-primary" type="submit">Créer la session</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h2>Formations formateur</h2>
+              <p>Voir et filtrer les sessions de formation / recyclage.</p>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="filters filters-3">
+              <div class="field">
+                <label>Module</label>
+                <input id="trainerSessionModuleFilter" type="text" placeholder="Module..." />
+              </div>
+              <div class="field">
+                <label>Ville</label>
+                <input id="trainerSessionCityFilter" type="text" placeholder="Ville..." />
+              </div>
+              <div class="field">
+                <label>Statut</label>
+                <select id="trainerSessionStatusFilter">
+                  <option value="">Tous</option>
+                  <option value="open">Ouverte</option>
+                  <option value="closed">Fermée</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="table-wrap" id="trainerSessionsWrap">
+              <div class="loading">Chargement des formations formateur...</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="tab-finances" class="tab-panel">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h2>Pilotage financier</h2>
+              <p>Bilan simplifié par catégorie.</p>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="stats" style="grid-template-columns: repeat(4, minmax(0, 1fr)); margin-bottom: 0;">
+              <div class="stat-card">
+                <span class="stat-label">CA stages</span>
+                <div class="stat-value" id="financeStages">0 €</div>
+              </div>
+              <div class="stat-card">
+                <span class="stat-label">CA formations formateur</span>
+                <div class="stat-value" id="financeTrainer">0 €</div>
+              </div>
+              <div class="stat-card">
+                <span class="stat-label">CA affiliations</span>
+                <div class="stat-value" id="financeAffiliation">0 €</div>
+              </div>
+              <div class="stat-card">
+                <span class="stat-label">Total</span>
+                <div class="stat-value" id="financeTotal">0 €</div>
+              </div>
+            </div>
+
+            <div class="card" style="margin-top: 20px;">
+              <div class="card-header">
+                <div>
+                  <h2>Lecture financière</h2>
+                  <p>Estimation basée sur les données actuellement disponibles en base.</p>
+                </div>
+              </div>
+              <div class="card-body">
+                <p class="muted">
+                  Stages : somme des réservations payées.<br />
+                  Formations formateur : somme basée sur les inscriptions capturées.<br />
+                  Affiliations : estimation simple sur les affiliations actives.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script type="module">
+    import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
+    const SUPABASE_URL = "https://zsraqxzneghkzaozzuci.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_VlTpYjzJ3DKpFA1Un_EFHQ_FW-mYK4U";
+    const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    const MODULE_OPTIONS = [
+      "Self Défense Essentielle",
+      "Self Défense Essentielle Niveau 2",
+      "Self Défense en entreprise"
+    ];
+
+    let reservationsData = [];
+    let stagesData = [];
+    let trainerRegistrationsData = [];
+    let archivesData = [];
+    let trainersData = [];
+    let trainerModulesData = [];
+    let trainerSessionsData = [];
+
+    const reservationsWrap = document.getElementById("reservationsWrap");
+    const stagesWrap = document.getElementById("stagesWrap");
+    const trainerRegistrationsWrap = document.getElementById("trainerRegistrationsWrap");
+    const archivesWrap = document.getElementById("archivesWrap");
+    const trainersWrap = document.getElementById("trainersWrap");
+    const trainerModulesWrap = document.getElementById("trainerModulesWrap");
+    const trainerSessionsWrap = document.getElementById("trainerSessionsWrap");
+
+    const reservationsCount = document.getElementById("reservationsCount");
+    const stagesCount = document.getElementById("stagesCount");
+    const revenueCount = document.getElementById("revenueCount");
+    const trainerRegistrationsCount = document.getElementById("trainerRegistrationsCount");
+    const trainersCount = document.getElementById("trainersCount");
+
+    const expiredAffiliationsCount = document.getElementById("expiredAffiliationsCount");
+    const expiredCertificationsCount = document.getElementById("expiredCertificationsCount");
+    const capturedTrainerPaymentsCount = document.getElementById("capturedTrainerPaymentsCount");
+
+    const financeStages = document.getElementById("financeStages");
+    const financeTrainer = document.getElementById("financeTrainer");
+    const financeAffiliation = document.getElementById("financeAffiliation");
+    const financeTotal = document.getElementById("financeTotal");
+
+    const logoutBtn = document.getElementById("logoutBtn");
+
+    const switchCreateStage = document.getElementById("switchCreateStage");
+    const switchCreateTrainer = document.getElementById("switchCreateTrainer");
+    const createStagePanel = document.getElementById("createStagePanel");
+    const createTrainerPanel = document.getElementById("createTrainerPanel");
+
+    const trainerModuleTrainerIdInput = document.getElementById("trainerModuleTrainerIdInput");
+    const trainerModuleNameInput = document.getElementById("trainerModuleNameInput");
+    const trainerModuleValidatedAtInput = document.getElementById("trainerModuleValidatedAtInput");
+    const trainerModuleExpiresAtInput = document.getElementById("trainerModuleExpiresAtInput");
+    const trainerModuleFormStatus = document.getElementById("trainerModuleFormStatus");
+
+    function populateModuleSelect(selectId) {
+      const select = document.getElementById(selectId);
+      if (!select) return;
+
+      select.innerHTML = `
+        <option value="">Choisir un module</option>
+        ${MODULE_OPTIONS.map(module => `<option value="${module}">${module}</option>`).join("")}
+      `;
+    }
+
+    function populateTrainerModuleTrainerSelect() {
+      trainerModuleTrainerIdInput.innerHTML = `
+        <option value="">Choisir un formateur</option>
+        ${trainersData
+          .slice()
+          .sort((a, b) => {
+            const aName = `${a.last_name || ""} ${a.first_name || ""}`.trim().toLowerCase();
+            const bName = `${b.last_name || ""} ${b.first_name || ""}`.trim().toLowerCase();
+            return aName.localeCompare(bName);
+          })
+          .map(trainer => `
+            <option value="${trainer.id}">
+              ${(trainer.last_name || "").toUpperCase()} ${trainer.first_name || ""} — ${trainer.email || ""}
+            </option>
+          `)
+          .join("")}
+      `;
+    }
+
+    function populateTrainerModuleModuleSelect() {
+      trainerModuleNameInput.innerHTML = `
+        <option value="">Choisir un module</option>
+        ${MODULE_OPTIONS.map(module => `<option value="${module}">${module}</option>`).join("")}
+      `;
+    }
+
+    function setDefaultTrainerModuleDates() {
+      const today = new Date().toISOString().split("T")[0];
+      const expiry = new Date();
+      expiry.setFullYear(expiry.getFullYear() + 2);
+      const expiryText = expiry.toISOString().split("T")[0];
+
+      trainerModuleValidatedAtInput.value = today;
+      trainerModuleExpiresAtInput.value = expiryText;
+    }
+
+    populateModuleSelect("stageModuleInput");
+    populateModuleSelect("trainerSessionModuleInput");
+    populateTrainerModuleModuleSelect();
+    setDefaultTrainerModuleDates();
+
+    function setCreateMode(mode) {
+      const isStage = mode === "stage";
+      switchCreateStage.classList.toggle("active", isStage);
+      switchCreateTrainer.classList.toggle("active", !isStage);
+      createStagePanel.classList.toggle("active", isStage);
+      createTrainerPanel.classList.toggle("active", !isStage);
+    }
+
+    switchCreateStage.addEventListener("click", () => setCreateMode("stage"));
+    switchCreateTrainer.addEventListener("click", () => setCreateMode("trainer"));
+
+    async function requireAdmin() {
+      let {
+        data: { session }
+      } = await supabase.auth.getSession();
+
+      if (!session?.user?.email) {
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        const retry = await supabase.auth.getSession();
+        session = retry.data.session;
+      }
+
+      if (!session?.user?.email) {
+        window.location.href = "/admin-login.html";
+        return null;
+      }
+
+      const email = session.user.email.trim().toLowerCase();
+
+      const { data: adminUser, error } = await supabase
+        .from("admin_users")
+        .select("*")
+        .eq("email", email)
+        .maybeSingle();
+
+      if (error) {
+        console.error("Erreur vérification admin:", error);
+        window.location.href = "/admin-login.html";
+        return null;
+      }
+
+      if (!adminUser) {
+        await supabase.auth.signOut();
+        window.location.href = "/admin-login.html";
+        return null;
+      }
+
+      return session.user;
+    }
+
+    async function getAuthHeaders() {
+      let {
+        data: { session }
+      } = await supabase.auth.getSession();
+
+      if (!session?.access_token) {
+        await new Promise(resolve => setTimeout(resolve, 500));
+        const retry = await supabase.auth.getSession();
+        session = retry.data.session;
+      }
+
+      const accessToken = session?.access_token || "";
+
+      if (!accessToken) {
+        throw new Error("Session admin introuvable");
+      }
+
+      return {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`
+      };
+    }
+
+    async function parseApiResponse(res) {
+      const rawText = await res.text();
+      let data = null;
+
+      try {
+        data = rawText ? JSON.parse(rawText) : {};
+      } catch (error) {
+        data = { error: rawText || `Réponse non JSON (${res.status})` };
+      }
+
+      if (!res.ok) {
+        throw new Error(data?.error || `Erreur HTTP ${res.status}`);
+      }
+
+      return data;
+    }
+
+    function showTrainerModuleFormStatus(message, isError = false) {
+      trainerModuleFormStatus.classList.add("show");
+      trainerModuleFormStatus.textContent = message;
+      trainerModuleFormStatus.style.color = isError ? "#c62828" : "#0f7d46";
+      trainerModuleFormStatus.style.borderColor = isError ? "#f2c7c7" : "#cdeedb";
+      trainerModuleFormStatus.style.background = isError ? "#fff1f1" : "#eaf8f0";
+    }
+
+    if (logoutBtn) {
+      logoutBtn.addEventListener("click", async () => {
+        await supabase.auth.signOut();
+        window.location.href = "/admin-login.html";
+      });
+    }
+
+    function formatDate(dateString) {
+      if (!dateString) return "—";
+      const date = new Date(dateString);
+      if (Number.isNaN(date.getTime())) return "—";
+      return date.toLocaleDateString("fr-FR", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit"
+      });
+    }
+
+    function formatShortDate(dateString) {
+      if (!dateString) return "—";
+      const date = new Date(dateString);
+      if (Number.isNaN(date.getTime())) return "—";
+      return date.toLocaleDateString("fr-FR", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric"
+      });
+    }
+
+    function formatStageDate(dateString) {
+      if (!dateString) return "—";
+      const date = new Date(dateString);
+      if (Number.isNaN(date.getTime())) return "—";
+      return date.toLocaleDateString("fr-FR", {
+        day: "2-digit",
+        month: "long",
+        year: "numeric"
+      });
+    }
+
+    function formatPrice(value) {
+      return `${Number(value || 0).toFixed(0)} €`;
+    }
+
+    function normalize(value) {
+      return String(value || "").trim().toLowerCase();
+    }
+
+    function getToday() {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      return today;
+    }
+
+    function archiveReasonLabel(reason) {
+      if (reason === "dossier_rejected") return "Dossier refusé";
+      if (reason === "training_failed") return "Formation recalée";
+      return reason || "—";
+    }
+
+    function setActiveTab(tabName) {
+      document.querySelectorAll(".nav-btn").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.tab === tabName);
+      });
+
+      document.querySelectorAll(".tab-panel").forEach(panel => {
+        panel.classList.toggle("active", panel.id === `tab-${tabName}`);
+      });
+    }
+
+    function getTrainerById(trainerId) {
+      return trainersData.find(item => String(item.id) === String(trainerId)) || null;
+    }
+
+    function isExpired(dateString) {
+      if (!dateString) return false;
+      const value = new Date(dateString);
+      if (Number.isNaN(value.getTime())) return false;
+      const today = getToday();
+      value.setHours(0, 0, 0, 0);
+      return value < today;
+    }
+
+    function getTrainerModuleStatus(moduleRow) {
+      if (normalize(moduleRow.status) === "suspended") {
+        return "suspended";
+      }
+      if (isExpired(moduleRow.expires_at)) {
+        return "expired";
+      }
+      return normalize(moduleRow.status) || "certified";
+    }
+
+    document.querySelectorAll(".nav-btn").forEach(btn => {
+      btn.addEventListener("click", () => setActiveTab(btn.dataset.tab));
+    });
+
+    function renderReservations(rows) {
+      reservationsCount.textContent = rows.length;
+
+      const totalRevenue = rows
+        .filter(row => normalize(row.payment_status) === "paid")
+        .reduce((sum, row) => sum + Number(row.total_amount || 0), 0);
+
+      revenueCount.textContent = formatPrice(totalRevenue);
+
+      if (!rows.length) {
+        reservationsWrap.innerHTML = `<div class="empty">Aucune réservation pour le moment.</div>`;
+        return;
+      }
+
+      reservationsWrap.innerHTML = `
+        <table>
+          <thead>
+            <tr>
+              <th>Client</th>
+              <th>Contact</th>
+              <th>Stage</th>
+              <th>Places</th>
+              <th>Montant</th>
+              <th>Paiement</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rows.map(row => `
+              <tr>
+                <td><strong>${row.first_name || ""} ${row.last_name || ""}</strong></td>
+                <td>
+                  <strong>${row.email || "—"}</strong>
+                  <span>${row.phone || "—"}</span>
+                </td>
+                <td><strong>${row.stage_title || row.stage_id || "Stage"}</strong></td>
+                <td>${row.places || 0}</td>
+                <td>${formatPrice(row.total_amount)}</td>
+                <td><span class="badge badge-success">${row.payment_status || "paid"}</span></td>
+                <td>${formatDate(row.created_at)}</td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+      `;
+    }
+
+    function getStageReservationCount(stageId) {
+      return reservationsData.filter(r => r.stage_id === stageId).length;
+    }
+
+    function renderStages(rows) {
+      stagesCount.textContent = rows.length;
+
+      if (!rows.length) {
+        stagesWrap.innerHTML = `<div class="empty">Aucun stage trouvé.</div>`;
+        return;
+      }
+
+      stagesWrap.innerHTML = `
+        <table>
+          <thead>
+            <tr>
+              <th>Stage</th>
+              <th>Ville</th>
+              <th>Date</th>
+              <th>Prix</th>
+              <th>Places restantes</th>
+              <th>Statut</th>
+              <th>Formateur lié</th>
+              <th>Inscrits</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rows.map(row => `
+              <tr>
+                <td><strong>${row.title || "—"}</strong><span>${row.training_type || "—"}</span></td>
+                <td>${row.city || "—"}</td>
+                <td>${formatStageDate(row.stage_date)}</td>
+                <td>${formatPrice(row.price)}</td>
+                <td>${row.remaining_places ?? 0}</td>
+                <td>
+                  <span class="badge ${normalize(row.status) === "published" ? "badge-success" : "badge-warning"}">
+                    ${row.status || "published"}
+                  </span>
+                </td>
+                <td>${row.trainer_id || "—"}</td>
+                <td>${getStageReservationCount(row.id)}</td>
+                <td>
+                  <div class="action-stack">
+                    <button class="btn btn-secondary" type="button" onclick="window.contactStageRegistrants('${row.id}', '${(row.title || "").replace(/'/g, "\\'")}')">
+                      Contacter les inscrits
+                    </button>
+                    <button class="btn btn-danger" type="button" onclick="window.deleteStage('${row.id}', '${(row.title || "").replace(/'/g, "\\'")}')">
+                      Supprimer le stage
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+      `;
+    }
+
+    function trainerAlreadyExists(email) {
+      return trainersData.some(t => normalize(t.email) === normalize(email));
+    }
+
+    function buildCandidateActions(row) {
+      const actions = [];
+
+      const isAuthorized = row.payment_status === "authorized";
+      const isCaptured = row.payment_status === "captured";
+      const isPendingValidation = row.validation_status === "pending";
+      const isValidated = row.validation_status === "validated";
+      const result = row.training_result || "pending";
+      const existsAsTrainer = trainerAlreadyExists(row.email);
+
+      if (isAuthorized && isPendingValidation) {
+        actions.push(`
+          <button class="btn btn-primary" onclick="window.captureTrainerPayment('${row.id}', '${row.stripe_payment_intent_id || ""}')">
+            Accepter dossier et encaisser
+          </button>
+        `);
+
+        actions.push(`
+          <button class="btn btn-danger" onclick="window.rejectTrainerCandidate('${row.id}')">
+            Refuser dossier
+          </button>
+        `);
+      }
+
+      if (isCaptured && isValidated && result === "pending") {
+        actions.push(`
+          <button class="btn btn-success" onclick="window.updateTrainingResult('${row.id}', 'passed')">
+            Marquer réussi
+          </button>
+        `);
+
+        actions.push(`
+          <button class="btn btn-warning" onclick="window.updateTrainingResult('${row.id}', 'resit')">
+            Marquer rattrapage
+          </button>
+        `);
+
+        actions.push(`
+          <button class="btn btn-danger" onclick="window.updateTrainingResult('${row.id}', 'failed')">
+            Marquer recalé
+          </button>
+        `);
+      }
+
+      if (isCaptured && isValidated && result === "resit") {
+        actions.push(`
+          <button class="btn btn-success" onclick="window.updateTrainingResult('${row.id}', 'passed')">
+            Valider après rattrapage
+          </button>
+        `);
+
+        actions.push(`
+          <button class="btn btn-danger" onclick="window.updateTrainingResult('${row.id}', 'failed')">
+            Recaler après rattrapage
+          </button>
+        `);
+      }
+
+      if (isCaptured && isValidated && result === "passed" && !existsAsTrainer) {
+        actions.push(`
+          <button class="btn btn-primary" onclick="window.finalizeTrainer('${row.id}')">
+            Activer formateur
+          </button>
+        `);
+      }
+
+      if (!actions.length) {
+        return `<button class="btn btn-secondary" disabled>Aucune action</button>`;
+      }
+
+      return `<div class="action-stack">${actions.join("")}</div>`;
+    }
+
+    function renderTrainerRegistrations(rows) {
+      trainerRegistrationsCount.textContent = rows.length;
+      capturedTrainerPaymentsCount.textContent = rows.filter(r => r.payment_status === "captured").length;
+
+      if (!rows.length) {
+        trainerRegistrationsWrap.innerHTML = `<div class="empty">Aucun candidat formateur pour le moment.</div>`;
+        return;
+      }
+
+      trainerRegistrationsWrap.innerHTML = `
+        <table>
+          <thead>
+            <tr>
+              <th>Candidat</th>
+              <th>Contact</th>
+              <th>Session</th>
+              <th>Paiement</th>
+              <th>Validation</th>
+              <th>Résultat</th>
+              <th>Date</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rows.map(row => {
+              const paymentBadgeClass =
+                row.payment_status === "captured" ? "badge-success" :
+                row.payment_status === "authorized" ? "badge-ok" :
+                row.payment_status === "canceled" ? "badge-danger" :
+                "badge-warning";
+
+              const validationBadgeClass =
+                row.validation_status === "validated" ? "badge-success" :
+                row.validation_status === "rejected" ? "badge-danger" :
+                "badge-warning";
+
+              const resultValue = row.training_result || "pending";
+
+              const resultBadgeClass =
+                resultValue === "passed" ? "badge-success" :
+                resultValue === "failed" ? "badge-danger" :
+                resultValue === "resit" ? "badge-warning" :
+                "badge-warning";
+
+              return `
+                <tr>
+                  <td><strong>${row.first_name || ""} ${row.last_name || ""}</strong></td>
+                  <td>
+                    <strong>${row.email || "—"}</strong>
+                    <span>${row.phone || "—"}</span><br />
+                    <span>${row.city || "—"}</span>
+                  </td>
+                  <td><strong>${row.session_id || "—"}</strong></td>
+                  <td><span class="badge ${paymentBadgeClass}">${row.payment_status || "—"}</span></td>
+                  <td><span class="badge ${validationBadgeClass}">${row.validation_status || "—"}</span></td>
+                  <td><span class="badge ${resultBadgeClass}">${resultValue}</span></td>
+                  <td>${formatDate(row.created_at)}</td>
+                  <td>${buildCandidateActions(row)}</td>
+                </tr>
+              `;
+            }).join("")}
+          </tbody>
+        </table>
+      `;
+    }
+
+    function renderArchives(rows) {
+      if (!rows.length) {
+        archivesWrap.innerHTML = `<div class="empty">Aucune archive candidat.</div>`;
+        return;
+      }
+
+      archivesWrap.innerHTML = `
+        <table>
+          <thead>
+            <tr>
+              <th>Candidat</th>
+              <th>Contact</th>
+              <th>Session</th>
+              <th>Paiement</th>
+              <th>Validation</th>
+              <th>Résultat</th>
+              <th>Raison archive</th>
+              <th>Archivé le</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rows.map(row => {
+              const paymentBadgeClass =
+                row.payment_status === "captured" ? "badge-success" :
+                row.payment_status === "authorized" ? "badge-ok" :
+                row.payment_status === "canceled" ? "badge-danger" :
+                "badge-warning";
+
+              const validationBadgeClass =
+                row.validation_status === "validated" ? "badge-success" :
+                row.validation_status === "rejected" ? "badge-danger" :
+                "badge-warning";
+
+              const resultValue = row.training_result || "pending";
+
+              const resultBadgeClass =
+                resultValue === "passed" ? "badge-success" :
+                resultValue === "failed" ? "badge-danger" :
+                resultValue === "resit" ? "badge-warning" :
+                "badge-warning";
+
+              return `
+                <tr>
+                  <td><strong>${row.first_name || ""} ${row.last_name || ""}</strong></td>
+                  <td>
+                    <strong>${row.email || "—"}</strong>
+                    <span>${row.phone || "—"}</span><br />
+                    <span>${row.city || "—"}</span>
+                  </td>
+                  <td><strong>${row.session_id || "—"}</strong></td>
+                  <td><span class="badge ${paymentBadgeClass}">${row.payment_status || "—"}</span></td>
+                  <td><span class="badge ${validationBadgeClass}">${row.validation_status || "—"}</span></td>
+                  <td><span class="badge ${resultBadgeClass}">${resultValue}</span></td>
+                  <td><span class="badge badge-warning">${archiveReasonLabel(row.archive_reason)}</span></td>
+                  <td>${formatDate(row.archived_at)}</td>
+                </tr>
+              `;
+            }).join("")}
+          </tbody>
+        </table>
+      `;
+    }
+
+    function renderTrainers(rows) {
+      if (!rows.length) {
+        trainersWrap.innerHTML = `<div class="empty">Aucun formateur.</div>`;
+        trainersCount.textContent = "0";
+        expiredAffiliationsCount.textContent = "0";
+        expiredCertificationsCount.textContent = "0";
+        return;
+      }
+
+      const today = getToday();
+
+      const activeCount = rows.filter(row => {
+        const affExpiry = row.affiliation_end ? new Date(row.affiliation_end) : null;
+        return affExpiry && affExpiry >= today && row.affiliation_status === "active";
+      }).length;
+
+      const expiredAffiliations = rows.filter(row => {
+        const affExpiry = row.affiliation_end ? new Date(row.affiliation_end) : null;
+        return !affExpiry || affExpiry < today || row.affiliation_status !== "active";
+      }).length;
+
+      const expiredCertifications = rows.filter(row => {
+        const certExpiry = row.certification_expiry ? new Date(row.certification_expiry) : null;
+        return !certExpiry || certExpiry < today;
+      }).length;
+
+      trainersCount.textContent = `${activeCount}/${rows.length}`;
+      expiredAffiliationsCount.textContent = expiredAffiliations;
+      expiredCertificationsCount.textContent = expiredCertifications;
+
+      trainersWrap.innerHTML = `
+        <table>
+          <thead>
+            <tr>
+              <th>Nom</th>
+              <th>Email</th>
+              <th>Ville</th>
+              <th>Département</th>
+              <th>Région</th>
+              <th>Certif. expire le</th>
+              <th>Affiliation expire le</th>
+              <th>Certification</th>
+              <th>Affiliation</th>
+              <th>Statut global</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rows.map(row => {
+              const certExpiry = row.certification_expiry ? new Date(row.certification_expiry) : null;
+              const affExpiry = row.affiliation_end ? new Date(row.affiliation_end) : null;
+
+              const certValid = certExpiry && certExpiry >= today;
+              const affValid = affExpiry && affExpiry >= today && row.affiliation_status === "active";
+              const globalValid = certValid && affValid;
+
+              return `
+                <tr>
+                  <td><strong>${row.first_name || ""} ${row.last_name || ""}</strong></td>
+                  <td>${row.email || "—"}</td>
+                  <td>${row.city || "—"}</td>
+                  <td>${row.department || "—"}</td>
+                  <td>${row.region || "—"}</td>
+                  <td>${formatShortDate(row.certification_expiry)}</td>
+                  <td>${formatShortDate(row.affiliation_end)}</td>
+                  <td><span class="badge ${certValid ? "badge-success" : "badge-danger"}">${certValid ? "Valide" : "Expirée"}</span></td>
+                  <td><span class="badge ${affValid ? "badge-success" : "badge-danger"}">${affValid ? "Active" : "Expirée"}</span></td>
+                  <td><span class="badge ${globalValid ? "badge-success" : "badge-danger"}">${globalValid ? "OK" : "À traiter"}</span></td>
+                </tr>
+              `;
+            }).join("")}
+          </tbody>
+        </table>
+      `;
+    }
+
+    function renderTrainerModules(rows) {
+      if (!rows.length) {
+        trainerModulesWrap.innerHTML = `<div class="empty">Aucun module certifié trouvé.</div>`;
+        return;
+      }
+
+      trainerModulesWrap.innerHTML = `
+        <table>
+          <thead>
+            <tr>
+              <th>Formateur</th>
+              <th>Contact</th>
+              <th>Module</th>
+              <th>Statut</th>
+              <th>Validé le</th>
+              <th>Expire le</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rows.map(row => {
+              const trainer = getTrainerById(row.trainer_id);
+              const displayStatus = getTrainerModuleStatus(row);
+
+              const badgeClass =
+                displayStatus === "expired" ? "badge-danger" :
+                displayStatus === "suspended" ? "badge-warning" :
+                "badge-success";
+
+              return `
+                <tr>
+                  <td>
+                    <strong>${trainer ? `${trainer.first_name || ""} ${trainer.last_name || ""}`.trim() : "Formateur inconnu"}</strong>
+                    <span>${trainer?.city || "—"}</span>
+                  </td>
+                  <td>
+                    <strong>${trainer?.email || "—"}</strong>
+                    <span>${trainer?.phone || "—"}</span>
+                  </td>
+                  <td><strong>${row.module_name || "—"}</strong></td>
+                  <td><span class="badge ${badgeClass}">${displayStatus}</span></td>
+                  <td>${formatShortDate(row.validated_at)}</td>
+                  <td>${formatShortDate(row.expires_at)}</td>
+                  <td>
+                    <div class="action-stack">
+                      <button class="btn btn-success" type="button" onclick="window.updateTrainerModuleAction('${row.id}', 'extend_2_years')">
+                        Prolonger 2 ans
+                      </button>
+                      <button class="btn btn-warning" type="button" onclick="window.updateTrainerModuleAction('${row.id}', 'reactivate_2_years')">
+                        Réactiver 2 ans
+                      </button>
+                      <button class="btn btn-danger" type="button" onclick="window.updateTrainerModuleAction('${row.id}', 'mark_expired')">
+                        Marquer expiré
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              `;
+            }).join("")}
+          </tbody>
+        </table>
+      `;
+    }
+
+    function renderTrainerSessions(rows) {
+      if (!rows.length) {
+        trainerSessionsWrap.innerHTML = `<div class="empty">Aucune formation formateur.</div>`;
+        return;
+      }
+
+      trainerSessionsWrap.innerHTML = `
+        <table>
+          <thead>
+            <tr>
+              <th>Module</th>
+              <th>Titre</th>
+              <th>Ville</th>
+              <th>Début</th>
+              <th>Fin</th>
+              <th>Prix lancement</th>
+              <th>Places restantes</th>
+              <th>Statut</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rows.map(row => `
+              <tr>
+                <td><strong>${row.module_name || "—"}</strong></td>
+                <td>${row.title || "—"}</td>
+                <td>${row.city || "—"}</td>
+                <td>${formatShortDate(row.start_date)}</td>
+                <td>${formatShortDate(row.end_date)}</td>
+                <td>${formatPrice(row.launch_price || row.standard_price || 0)}</td>
+                <td>${row.remaining_places ?? 0}</td>
+                <td><span class="badge ${row.status === "open" ? "badge-success" : "badge-warning"}">${row.status || "—"}</span></td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+      `;
+    }
+
+    function updateFinance() {
+      const stageRevenue = reservationsData
+        .filter(r => normalize(r.payment_status) === "paid")
+        .reduce((sum, row) => sum + Number(row.total_amount || 0), 0);
+
+      const trainerRevenue = trainerRegistrationsData
+        .filter(r => r.payment_status === "captured")
+        .reduce((sum, row) => {
+          if (row.amount_total) return sum + Number(row.amount_total || 0);
+          if (row.amount) return sum + Number(row.amount || 0);
+          return sum + 490;
+        }, 0);
+
+      const affiliationRevenue = trainersData
+        .filter(t => t.affiliation_status === "active" && t.affiliation_start)
+        .reduce((sum) => sum + 99, 0);
+
+      const total = stageRevenue + trainerRevenue + affiliationRevenue;
+
+      financeStages.textContent = formatPrice(stageRevenue);
+      financeTrainer.textContent = formatPrice(trainerRevenue);
+      financeAffiliation.textContent = formatPrice(affiliationRevenue);
+      financeTotal.textContent = formatPrice(total);
+    }
+
+    function applyCandidateFilters() {
+      const search = normalize(document.getElementById("candidateSearch").value);
+      const validation = document.getElementById("candidateValidationFilter").value;
+      const result = document.getElementById("candidateResultFilter").value;
+      const payment = document.getElementById("candidatePaymentFilter").value;
+
+      const filtered = trainerRegistrationsData.filter(row => {
+        const text = [
+          row.first_name,
+          row.last_name,
+          row.email,
+          row.city,
+          row.phone,
+          row.session_id
+        ].map(normalize).join(" ");
+
+        const searchOk = !search || text.includes(search);
+        const validationOk = !validation || row.validation_status === validation;
+        const resultOk = !result || (row.training_result || "pending") === result;
+        const paymentOk = !payment || row.payment_status === payment;
+
+        return searchOk && validationOk && resultOk && paymentOk;
+      });
+
+      renderTrainerRegistrations(filtered);
+    }
+
+    function applyArchiveFilters() {
+      const search = normalize(document.getElementById("archiveSearch").value);
+      const reason = document.getElementById("archiveReasonFilter").value;
+      const payment = document.getElementById("archivePaymentFilter").value;
+
+      const filtered = archivesData.filter(row => {
+        const text = [
+          row.first_name,
+          row.last_name,
+          row.email,
+          row.city,
+          row.phone,
+          row.session_id
+        ].map(normalize).join(" ");
+
+        const searchOk = !search || text.includes(search);
+        const reasonOk = !reason || row.archive_reason === reason;
+        const paymentOk = !payment || row.payment_status === payment;
+
+        return searchOk && reasonOk && paymentOk;
+      });
+
+      renderArchives(filtered);
+    }
+
+    function applyTrainerFilters() {
+      const search = normalize(document.getElementById("trainerSearch").value);
+      const region = normalize(document.getElementById("trainerRegionFilter").value);
+      const department = normalize(document.getElementById("trainerDepartmentFilter").value);
+      const city = normalize(document.getElementById("trainerCityFilter").value);
+      const affiliation = document.getElementById("trainerAffiliationFilter").value;
+      const certification = document.getElementById("trainerCertificationFilter").value;
+
+      const today = getToday();
+
+      const filtered = trainersData.filter(row => {
+        const certExpiry = row.certification_expiry ? new Date(row.certification_expiry) : null;
+        const affExpiry = row.affiliation_end ? new Date(row.affiliation_end) : null;
+
+        const certValid = certExpiry && certExpiry >= today;
+        const affValid = affExpiry && affExpiry >= today && row.affiliation_status === "active";
+
+        const text = [row.first_name, row.last_name, row.email].map(normalize).join(" ");
+
+        const searchOk = !search || text.includes(search);
+        const regionOk = !region || normalize(row.region).includes(region);
+        const departmentOk = !department || normalize(row.department).includes(department);
+        const cityOk = !city || normalize(row.city).includes(city);
+        const affiliationOk =
+          !affiliation ||
+          (affiliation === "active" && affValid) ||
+          (affiliation === "expired" && !affValid);
+        const certificationOk =
+          !certification ||
+          (certification === "valid" && certValid) ||
+          (certification === "expired" && !certValid);
+
+        return searchOk && regionOk && departmentOk && cityOk && affiliationOk && certificationOk;
+      });
+
+      renderTrainers(filtered);
+    }
+
+    function applyTrainerModulesFilters() {
+      const search = normalize(document.getElementById("trainerModuleSearch").value);
+      const moduleName = normalize(document.getElementById("trainerModuleNameFilter").value);
+      const status = document.getElementById("trainerModuleStatusFilter").value;
+      const expiry = document.getElementById("trainerModuleExpiryFilter").value;
+
+      const filtered = trainerModulesData.filter(row => {
+        const trainer = getTrainerById(row.trainer_id);
+        const effectiveStatus = getTrainerModuleStatus(row);
+        const expired = isExpired(row.expires_at);
+
+        const text = [
+          trainer?.first_name,
+          trainer?.last_name,
+          trainer?.email,
+          row.module_name
+        ].map(normalize).join(" ");
+
+        const searchOk = !search || text.includes(search);
+        const moduleOk = !moduleName || normalize(row.module_name).includes(moduleName);
+        const statusOk = !status || effectiveStatus === status;
+        const expiryOk =
+          !expiry ||
+          (expiry === "valid" && !expired) ||
+          (expiry === "expired" && expired);
+
+        return searchOk && moduleOk && statusOk && expiryOk;
+      });
+
+      renderTrainerModules(filtered);
+    }
+
+    function applyStageFilters() {
+      const region = normalize(document.getElementById("stageRegionFilter").value);
+      const department = normalize(document.getElementById("stageDepartmentFilter").value);
+      const city = normalize(document.getElementById("stageCityFilter").value);
+      const trainer = normalize(document.getElementById("stageTrainerFilter").value);
+      const status = document.getElementById("stageStatusFilter").value;
+
+      const filtered = stagesData.filter(row => {
+        const regionOk = !region || normalize(row.region).includes(region);
+        const departmentOk = !department || normalize(row.department).includes(department);
+        const cityOk = !city || normalize(row.city).includes(city);
+        const trainerOk = !trainer || normalize(row.trainer_id).includes(trainer);
+        const statusOk = !status || row.status === status;
+        return regionOk && departmentOk && cityOk && trainerOk && statusOk;
+      });
+
+      renderStages(filtered);
+    }
+
+    function applyTrainerSessionFilters() {
+      const moduleValue = normalize(document.getElementById("trainerSessionModuleFilter").value);
+      const city = normalize(document.getElementById("trainerSessionCityFilter").value);
+      const status = document.getElementById("trainerSessionStatusFilter").value;
+
+      const filtered = trainerSessionsData.filter(row => {
+        const moduleOk = !moduleValue || normalize(row.module_name).includes(moduleValue);
+        const cityOk = !city || normalize(row.city).includes(city);
+        const statusOk = !status || row.status === status;
+        return moduleOk && cityOk && statusOk;
+      });
+
+      renderTrainerSessions(filtered);
+    }
+
+    async function loadReservations() {
+      const { data, error } = await supabase
+        .from("reservations")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        console.error(error);
+        reservationsWrap.innerHTML = `<div class="error">Impossible de charger les réservations.</div>`;
+        return;
+      }
+
+      reservationsData = data || [];
+      renderReservations(reservationsData);
+      updateFinance();
+      renderStages(stagesData);
+    }
+
+    async function loadStages() {
+      const { data, error } = await supabase
+        .from("stages")
+        .select("*")
+        .order("stage_date", { ascending: true });
+
+      if (error) {
+        console.error(error);
+        stagesWrap.innerHTML = `<div class="error">Impossible de charger les stages.</div>`;
+        return;
+      }
+
+      stagesData = data || [];
+      renderStages(stagesData);
+    }
+
+    async function loadTrainerRegistrations() {
+      const { data, error } = await supabase
+        .from("trainer_session_registrations")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        console.error(error);
+        trainerRegistrationsWrap.innerHTML = `<div class="error">Impossible de charger les candidats formateurs.</div>`;
+        return;
+      }
+
+      trainerRegistrationsData = data || [];
+      renderTrainerRegistrations(trainerRegistrationsData);
+      updateFinance();
+    }
+
+    async function loadArchives() {
+      const { data, error } = await supabase
+        .from("trainer_candidate_archives")
+        .select("*")
+        .order("archived_at", { ascending: false });
+
+      if (error) {
+        console.error(error);
+        archivesWrap.innerHTML = `<div class="error">Impossible de charger les archives candidats.</div>`;
+        return;
+      }
+
+      archivesData = data || [];
+      renderArchives(data || []);
+    }
+
+    async function loadTrainers() {
+      const { data, error } = await supabase
+        .from("trainers")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        console.error(error);
+        trainersWrap.innerHTML = `<div class="error">Impossible de charger les formateurs.</div>`;
+        return;
+      }
+
+      trainersData = data || [];
+      populateTrainerModuleTrainerSelect();
+      renderTrainers(trainersData);
+      renderTrainerRegistrations(trainerRegistrationsData);
+      renderTrainerModules(trainerModulesData);
+      updateFinance();
+    }
+
+    async function loadTrainerModules() {
+      const { data, error } = await supabase
+        .from("trainer_modules")
+        .select("*")
+        .order("module_name", { ascending: true });
+
+      if (error) {
+        console.error(error);
+        trainerModulesWrap.innerHTML = `<div class="error">Impossible de charger les modules certifiés.</div>`;
+        return;
+      }
+
+      trainerModulesData = data || [];
+      renderTrainerModules(trainerModulesData);
+    }
+
+    async function loadTrainerSessions() {
+      const { data, error } = await supabase
+        .from("trainer_sessions")
+        .select("*")
+        .order("start_date", { ascending: true });
+
+      if (error) {
+        console.error(error);
+        trainerSessionsWrap.innerHTML = `<div class="error">Impossible de charger les formations formateur.</div>`;
+        return;
+      }
+
+      trainerSessionsData = data || [];
+      renderTrainerSessions(trainerSessionsData);
+    }
+
+    window.contactStageRegistrants = async (stageId, stageTitle) => {
+      const { data, error } = await supabase
+        .from("reservations")
+        .select("email, first_name, last_name")
+        .eq("stage_id", stageId);
+
+      if (error) {
+        console.error(error);
+        alert("Impossible de récupérer les inscrits.");
+        return;
+      }
+
+      const emails = [...new Set((data || []).map(item => item.email).filter(Boolean))];
+
+      if (!emails.length) {
+        alert("Aucun inscrit à contacter pour ce stage.");
+        return;
+      }
+
+      const subject = encodeURIComponent(`Information importante concernant votre stage VITAL PROTECT : ${stageTitle}`);
+      const body = encodeURIComponent(
+`Bonjour,
+
+Nous vous contactons concernant le stage suivant :
+${stageTitle}
+
+Merci de consulter ce message et de revenir vers nous si nécessaire.
+
+Cordialement,
+VITAL PROTECT`
+      );
+
+      window.location.href = `mailto:?bcc=${encodeURIComponent(emails.join(","))}&subject=${subject}&body=${body}`;
+    };
+
+    window.deleteStage = async (stageId, stageTitle) => {
+      const reservationCount = reservationsData.filter(r => r.stage_id === stageId).length;
+
+      const warningText = reservationCount
+        ? `Ce stage a ${reservationCount} inscrit(s). Pensez à utiliser "Contacter les inscrits" avant suppression.`
+        : "Aucun inscrit détecté sur ce stage.";
+
+      const confirmed = window.confirm(
+        `Supprimer le stage "${stageTitle}" ?\n\n${warningText}\n\nCette action est irréversible.`
+      );
+
+      if (!confirmed) return;
+
+      try {
+        const headers = await getAuthHeaders();
+
+        const res = await fetch("/api/admin-tools", {
+          method: "POST",
+          headers,
+          body: JSON.stringify({
+            action: "delete_stage",
+            stage_id: stageId
+          })
+        });
+
+        const result = await parseApiResponse(res);
+
+        if (result.success) {
+          alert("Stage supprimé avec succès.");
+          await loadStages();
+          await loadReservations();
+        } else {
+          alert(result.error || "Erreur lors de la suppression du stage.");
+        }
+      } catch (error) {
+        console.error(error);
+        alert(error.message || "Erreur lors de la suppression du stage.");
+      }
+    };
+
+    window.captureTrainerPayment = async (registrationId, paymentIntentId) => {
+      const confirmed = window.confirm("Accepter le dossier de ce candidat et encaisser le paiement ?");
+      if (!confirmed) return;
+
+      try {
+        const headers = await getAuthHeaders();
+
+        const res = await fetch("/api/capture-payment", {
+          method: "POST",
+          headers,
+          body: JSON.stringify({
+            registration_id: registrationId,
+            payment_intent_id: paymentIntentId
+          })
+        });
+
+        const result = await parseApiResponse(res);
+
+        if (result.success) {
+          alert("Dossier accepté et paiement capturé avec succès.");
+          await loadTrainerRegistrations();
+          await loadTrainers();
+        } else {
+          alert(result.error || "Erreur lors de la capture du paiement.");
+        }
+      } catch (error) {
+        console.error(error);
+        alert(error.message || "Erreur lors de la capture du paiement.");
+      }
+    };
+
+    window.rejectTrainerCandidate = async (registrationId) => {
+      const confirmed = window.confirm("Refuser ce dossier candidat et annuler le paiement autorisé ?");
+      if (!confirmed) return;
+
+      try {
+        const headers = await getAuthHeaders();
+
+        const res = await fetch("/api/reject-trainer-candidate", {
+          method: "POST",
+          headers,
+          body: JSON.stringify({
+            registration_id: registrationId
+          })
+        });
+
+        const result = await parseApiResponse(res);
+
+        if (result.success) {
+          alert("Dossier refusé et candidat archivé.");
+          await loadTrainerRegistrations();
+          await loadArchives();
+          await loadTrainers();
+        } else {
+          alert(result.error || "Erreur lors du refus du dossier.");
+        }
+      } catch (error) {
+        console.error(error);
+        alert(error.message || "Erreur lors du refus du dossier.");
+      }
+    };
+
+    window.updateTrainingResult = async (registrationId, result) => {
+      const labels = {
+        passed: "marquer ce candidat comme RÉUSSI",
+        failed: "marquer ce candidat comme RECALÉ",
+        resit: "marquer ce candidat en RATTRAPAGE"
+      };
+
+      const confirmed = window.confirm(`Confirmer : ${labels[result]} ?`);
+      if (!confirmed) return;
+
+      try {
+        const headers = await getAuthHeaders();
+
+        const res = await fetch("/api/update-training-result", {
+          method: "POST",
+          headers,
+          body: JSON.stringify({
+            registration_id: registrationId,
+            result
+          })
+        });
+
+        const apiResult = await parseApiResponse(res);
+
+        if (apiResult.success) {
+          alert("Résultat de formation mis à jour.");
+          await loadTrainerRegistrations();
+          await loadArchives();
+          await loadTrainers();
+        } else {
+          alert(apiResult.error || "Erreur lors de la mise à jour du résultat.");
+        }
+      } catch (error) {
+        console.error(error);
+        alert(error.message || "Erreur lors de la mise à jour du résultat.");
+      }
+    };
+
+    window.finalizeTrainer = async (registrationId) => {
+      const confirmed = window.confirm("Activer ce formateur et démarrer sa certification + son affiliation ?");
+      if (!confirmed) return;
+
+      try {
+        const headers = await getAuthHeaders();
+
+        const res = await fetch("/api/finalize-trainer", {
+          method: "POST",
+          headers,
+          body: JSON.stringify({
+            registration_id: registrationId
+          })
+        });
+
+        const result = await parseApiResponse(res);
+
+        if (result.success) {
+          alert("Formateur activé avec succès.");
+          await loadTrainerRegistrations();
+          await loadTrainers();
+          await loadTrainerModules();
+        } else {
+          alert(result.error || "Erreur lors de l’activation du formateur.");
+        }
+      } catch (error) {
+        console.error(error);
+        alert(error.message || "Erreur lors de l’activation du formateur.");
+      }
+    };
+
+    window.updateTrainerModuleAction = async (moduleId, moduleAction) => {
+      const labels = {
+        extend_2_years: "prolonger ce module de 2 ans",
+        reactivate_2_years: "réactiver ce module pour 2 ans",
+        mark_expired: "marquer ce module comme expiré"
+      };
+
+      const confirmed = window.confirm(`Confirmer : ${labels[moduleAction]} ?`);
+      if (!confirmed) return;
+
+      try {
+        const headers = await getAuthHeaders();
+
+        const res = await fetch("/api/admin-tools", {
+          method: "POST",
+          headers,
+          body: JSON.stringify({
+            action: "update_trainer_module",
+            module_id: moduleId,
+            module_action: moduleAction
+          })
+        });
+
+        const result = await parseApiResponse(res);
+
+        if (result.success) {
+          alert("Module mis à jour avec succès.");
+          await loadTrainerModules();
+        } else {
+          alert(result.error || "Erreur lors de la mise à jour du module.");
+        }
+      } catch (error) {
+        console.error(error);
+        alert(error.message || "Erreur lors de la mise à jour du module.");
+      }
+    };
+
+    document.getElementById("trainerModuleForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      try {
+        const headers = await getAuthHeaders();
+
+        const payload = {
+          action: "upsert_trainer_module",
+          trainer_id: trainerModuleTrainerIdInput.value,
+          module_name: trainerModuleNameInput.value,
+          status: document.getElementById("trainerModuleStatusInput").value,
+          validated_at: trainerModuleValidatedAtInput.value,
+          expires_at: trainerModuleExpiresAtInput.value
+        };
+
+        const res = await fetch("/api/admin-tools", {
+          method: "POST",
+          headers,
+          body: JSON.stringify(payload)
+        });
+
+        const result = await parseApiResponse(res);
+
+        if (!result.success) {
+          showTrainerModuleFormStatus(result.error || "Erreur lors de l’enregistrement du module.", true);
+          return;
+        }
+
+        showTrainerModuleFormStatus("Module enregistré avec succès.");
+        document.getElementById("trainerModuleForm").reset();
+        populateTrainerModuleTrainerSelect();
+        populateTrainerModuleModuleSelect();
+        setDefaultTrainerModuleDates();
+        await loadTrainerModules();
+      } catch (error) {
+        console.error(error);
+        showTrainerModuleFormStatus(error.message || "Erreur lors de l’enregistrement du module.", true);
+      }
+    });
+
+    document.getElementById("candidateSearch").addEventListener("input", applyCandidateFilters);
+    document.getElementById("candidateValidationFilter").addEventListener("change", applyCandidateFilters);
+    document.getElementById("candidateResultFilter").addEventListener("change", applyCandidateFilters);
+    document.getElementById("candidatePaymentFilter").addEventListener("change", applyCandidateFilters);
+
+    document.getElementById("archiveSearch").addEventListener("input", applyArchiveFilters);
+    document.getElementById("archiveReasonFilter").addEventListener("change", applyArchiveFilters);
+    document.getElementById("archivePaymentFilter").addEventListener("change", applyArchiveFilters);
+
+    document.getElementById("trainerSearch").addEventListener("input", applyTrainerFilters);
+    document.getElementById("trainerRegionFilter").addEventListener("input", applyTrainerFilters);
+    document.getElementById("trainerDepartmentFilter").addEventListener("input", applyTrainerFilters);
+    document.getElementById("trainerCityFilter").addEventListener("input", applyTrainerFilters);
+    document.getElementById("trainerAffiliationFilter").addEventListener("change", applyTrainerFilters);
+    document.getElementById("trainerCertificationFilter").addEventListener("change", applyTrainerFilters);
+
+    document.getElementById("trainerModuleSearch").addEventListener("input", applyTrainerModulesFilters);
+    document.getElementById("trainerModuleNameFilter").addEventListener("input", applyTrainerModulesFilters);
+    document.getElementById("trainerModuleStatusFilter").addEventListener("change", applyTrainerModulesFilters);
+    document.getElementById("trainerModuleExpiryFilter").addEventListener("change", applyTrainerModulesFilters);
+
+    document.getElementById("stageRegionFilter").addEventListener("input", applyStageFilters);
+    document.getElementById("stageDepartmentFilter").addEventListener("input", applyStageFilters);
+    document.getElementById("stageCityFilter").addEventListener("input", applyStageFilters);
+    document.getElementById("stageTrainerFilter").addEventListener("input", applyStageFilters);
+    document.getElementById("stageStatusFilter").addEventListener("change", applyStageFilters);
+
+    document.getElementById("trainerSessionModuleFilter").addEventListener("input", applyTrainerSessionFilters);
+    document.getElementById("trainerSessionCityFilter").addEventListener("input", applyTrainerSessionFilters);
+    document.getElementById("trainerSessionStatusFilter").addEventListener("change", applyTrainerSessionFilters);
+
+    document.getElementById("createStageForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      try {
+        const trainerEmail = document.getElementById("stageTrainerEmailInput").value.trim().toLowerCase();
+        let trainerId = null;
+
+        if (trainerEmail) {
+          const { data: trainer, error: trainerError } = await supabase
+            .from("trainers")
+            .select("id")
+            .eq("email", trainerEmail)
+            .maybeSingle();
+
+          if (trainerError) {
+            console.error(trainerError);
+          }
+
+          trainerId = trainer?.id || null;
+        }
+
+        const moduleName = document.getElementById("stageModuleInput").value;
+
+        const payload = {
+          action: "create_stage",
+          trainer_id: trainerId,
+          title: moduleName,
+          training_type: moduleName,
+          description: document.getElementById("stageDescriptionInput").value,
+          city: document.getElementById("stageCityInput").value,
+          department: document.getElementById("stageDepartmentInput").value,
+          region: document.getElementById("stageRegionInput").value,
+          address: document.getElementById("stageAddressInput").value,
+          stage_date: document.getElementById("stageDateInput").value,
+          start_time: document.getElementById("stageTimeInput").value,
+          duration: document.getElementById("stageDurationInput").value,
+          max_participants: Number(document.getElementById("stageMaxParticipantsInput").value || 20),
+          remaining_places: Number(document.getElementById("stageRemainingPlacesInput").value || 20),
+          price: Number(document.getElementById("stagePriceInput").value || 0),
+          status: "published"
+        };
+
+        const headers = await getAuthHeaders();
+
+        const res = await fetch("/api/admin-tools", {
+          method: "POST",
+          headers,
+          body: JSON.stringify(payload)
+        });
+
+        const result = await parseApiResponse(res);
+
+        if (!result.success) {
+          alert(result.error || "Erreur lors de la création du stage.");
+          return;
+        }
+
+        alert("Stage créé avec succès.");
+        e.target.reset();
+        populateModuleSelect("stageModuleInput");
+        await loadStages();
+      } catch (error) {
+        console.error(error);
+        alert(error.message || "Erreur lors de la création du stage.");
+      }
+    });
+
+    document.getElementById("createTrainerSessionForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      try {
+        const moduleName = document.getElementById("trainerSessionModuleInput").value;
+
+        const payload = {
+          action: "create_trainer_session",
+          module_name: moduleName,
+          title: moduleName,
+          city: document.getElementById("trainerSessionCityInput").value,
+          address: document.getElementById("trainerSessionAddressInput").value,
+          start_date: document.getElementById("trainerSessionStartDateInput").value,
+          end_date: document.getElementById("trainerSessionEndDateInput").value,
+          duration_days: Number(document.getElementById("trainerSessionDurationInput").value || 3),
+          max_places: Number(document.getElementById("trainerSessionMaxPlacesInput").value || 10),
+          remaining_places: Number(document.getElementById("trainerSessionRemainingPlacesInput").value || 10),
+          standard_price: Number(document.getElementById("trainerSessionStandardPriceInput").value || 590),
+          launch_price: Number(document.getElementById("trainerSessionLaunchPriceInput").value || 490),
+          status: document.getElementById("trainerSessionStatusInput").value
+        };
+
+        const headers = await getAuthHeaders();
+
+        const res = await fetch("/api/admin-tools", {
+          method: "POST",
+          headers,
+          body: JSON.stringify(payload)
+        });
+
+        const result = await parseApiResponse(res);
+
+        if (!result.success) {
+          alert(result.error || "Erreur lors de la création de la session formateur.");
+          return;
+        }
+
+        alert("Session formateur créée avec succès.");
+        e.target.reset();
+        populateModuleSelect("trainerSessionModuleInput");
+        await loadTrainerSessions();
+      } catch (error) {
+        console.error(error);
+        alert(error.message || "Erreur lors de la création de la session formateur.");
+      }
+    });
+
+    const adminUser = await requireAdmin();
+
+    if (adminUser) {
+      await loadReservations();
+      await loadStages();
+      await loadTrainerRegistrations();
+      await loadArchives();
+      await loadTrainers();
+      await loadTrainerModules();
+      await loadTrainerSessions();
+    }
+  </script>
+</body>
+</html>
