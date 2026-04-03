@@ -373,7 +373,6 @@
     .proof-card,
     .faq-card,
     .stage-card,
-    .booking-card,
     .map-card,
     .map-sidebar,
     .cta-panel {
@@ -498,8 +497,7 @@
     }
 
     .map-card,
-    .map-sidebar,
-    .booking-card {
+    .map-sidebar {
       padding: 20px;
     }
 
@@ -711,111 +709,6 @@
       box-shadow: var(--shadow);
     }
 
-    .booking-layout {
-      display: grid;
-      grid-template-columns: 0.95fr 1.05fr;
-      gap: 20px;
-      margin-top: 24px;
-      align-items: start;
-    }
-
-    .booking-selected {
-      background: #f8fbff;
-      border: 1px solid #e7eef8;
-      border-radius: 18px;
-      padding: 16px;
-      margin-bottom: 18px;
-    }
-
-    .booking-selected h3 {
-      margin: 0 0 10px;
-      font-size: 1.15rem;
-      color: var(--navy);
-    }
-
-    .booking-placeholder {
-      color: var(--muted);
-      line-height: 1.6;
-    }
-
-    .booking-status {
-      margin-top: 16px;
-      padding: 14px 16px;
-      border-radius: 14px;
-      font-weight: 600;
-      display: none;
-    }
-
-    .booking-status.show {
-      display: block;
-    }
-
-    .booking-status.success {
-      background: #eaf8f0;
-      color: #0f7d46;
-      border: 1px solid #cdeedb;
-    }
-
-    .booking-status.error {
-      background: var(--danger-bg);
-      color: var(--danger-text);
-      border: 1px solid #f2c7c7;
-    }
-
-    .booking-status.info {
-      background: #f8fbff;
-      color: var(--navy);
-      border: 1px solid var(--border);
-    }
-
-    .form-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 14px;
-    }
-
-    .field {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      margin-bottom: 14px;
-    }
-
-    .field.full {
-      grid-column: 1 / -1;
-    }
-
-    .field label {
-      font-size: 0.92rem;
-      font-weight: 700;
-      color: var(--muted);
-    }
-
-    .field input,
-    .field textarea,
-    .field select {
-      width: 100%;
-      border: 1px solid var(--border);
-      background: white;
-      border-radius: 12px;
-      padding: 12px;
-      font-size: 0.98rem;
-      color: var(--text);
-      font-family: inherit;
-    }
-
-    .field textarea {
-      min-height: 100px;
-      resize: vertical;
-    }
-
-    .booking-total {
-      margin-top: 8px;
-      font-size: 1.05rem;
-      font-weight: 800;
-      color: var(--navy);
-    }
-
     .faq-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -915,7 +808,6 @@
     @media (max-width: 1180px) {
       .hero-grid,
       .map-layout,
-      .booking-layout,
       .split-panel,
       .card-grid-4,
       .card-grid-3,
@@ -965,7 +857,6 @@
 
       .hero-points,
       .pillars-grid,
-      .form-grid,
       .stage-meta {
         grid-template-columns: 1fr;
       }
@@ -1261,7 +1152,7 @@
           <h2>Choisissez un stage selon votre zone et votre besoin</h2>
           <p>
             Parcourez les sessions disponibles, filtrez par département et consultez
-            les informations essentielles avant d’ouvrir la fiche détaillée.
+            les informations essentielles avant de réserver votre place.
           </p>
         </div>
 
@@ -1314,74 +1205,6 @@
         </div>
 
         <div id="stagesContainer" class="stages-grid"></div>
-      </div>
-    </section>
-
-    <section id="reservation">
-      <div class="container">
-        <div class="section-head">
-          <span class="eyebrow">Réservation</span>
-          <h2>Réserver votre place</h2>
-          <p>
-            La réservation se fait depuis la page de détail du stage, avec toutes les informations utiles avant paiement.
-          </p>
-        </div>
-
-        <div class="booking-layout">
-          <div class="booking-card">
-            <div id="selectedStageBox" class="booking-selected">
-              <div class="booking-placeholder">
-                Ouvrez la fiche d’un stage via le bouton <strong>Voir le détail</strong> pour réserver votre place.
-              </div>
-            </div>
-
-            <div class="booking-total" id="bookingTotal">Total : —</div>
-            <div id="bookingStatus" class="booking-status"></div>
-          </div>
-
-          <div class="booking-card">
-            <form id="bookingForm">
-              <div class="form-grid">
-                <div class="field">
-                  <label for="firstName">Prénom</label>
-                  <input id="firstName" type="text" required />
-                </div>
-
-                <div class="field">
-                  <label for="lastName">Nom</label>
-                  <input id="lastName" type="text" required />
-                </div>
-
-                <div class="field">
-                  <label for="email">Email</label>
-                  <input id="email" type="email" required />
-                </div>
-
-                <div class="field">
-                  <label for="phone">Téléphone</label>
-                  <input id="phone" type="tel" required />
-                </div>
-
-                <div class="field">
-                  <label for="places">Nombre de places</label>
-                  <input id="places" type="number" min="1" value="1" required />
-                </div>
-
-                <div class="field">
-                  <label for="cityDisplay">Ville du stage</label>
-                  <input id="cityDisplay" type="text" disabled />
-                </div>
-
-                <div class="field full">
-                  <label for="notes">Message complémentaire</label>
-                  <textarea id="notes" placeholder="Optionnel"></textarea>
-                </div>
-              </div>
-
-              <button class="btn btn-dark" type="submit">Procéder au paiement</button>
-            </form>
-          </div>
-        </div>
       </div>
     </section>
 
@@ -1442,7 +1265,7 @@
 
           <article class="faq-card">
             <h3>Comment se déroule un stage ?</h3>
-            <p>Chaque stage suit une progression claire : explication, démonstration, pratique, répétition et mises en situation encadrées.</p>
+            <p>Chaque stage suit une progression claire : explication, démonstration, pratique et mises en situation encadrées.</p>
           </article>
 
           <article class="faq-card">
@@ -1510,16 +1333,8 @@
     const mapPathBox = document.getElementById("mapPathBox");
     const resetSelectionBtn = document.getElementById("resetSelectionBtn");
 
-    const bookingForm = document.getElementById("bookingForm");
-    const selectedStageBox = document.getElementById("selectedStageBox");
-    const bookingTotal = document.getElementById("bookingTotal");
-    const bookingStatus = document.getElementById("bookingStatus");
-    const placesInput = document.getElementById("places");
-    const cityDisplay = document.getElementById("cityDisplay");
-
     let allStages = [];
     let selectedDepartment = "";
-    let selectedStage = null;
     let svgRoot = null;
 
     mapPathBox.textContent = `Chemin SVG utilisé : ${SVG_MAP_PATH}`;
@@ -1551,12 +1366,12 @@
 
       raw = raw.replace(",", ".");
 
-      if (/^\d+(\.\d+)?$/.test(raw)) {
+      if (/^\\d+(\\.\\d+)?$/.test(raw)) {
         raw = String(parseInt(raw, 10));
       }
 
-      if (/^\d{1}$/.test(raw)) return raw.padStart(2, "0");
-      if (/^\d{2}$/.test(raw)) return raw;
+      if (/^\\d{1}$/.test(raw)) return raw.padStart(2, "0");
+      if (/^\\d{2}$/.test(raw)) return raw;
       if (/^(2A|2B)$/.test(raw)) return raw;
 
       return raw;
@@ -1569,48 +1384,6 @@
         .replaceAll(">", "&gt;")
         .replaceAll('"', "&quot;")
         .replaceAll("'", "&#39;");
-    }
-
-    function showBookingStatus(message, type = "info") {
-      bookingStatus.className = `booking-status show ${type}`;
-      bookingStatus.textContent = message;
-    }
-
-    function clearBookingStatus() {
-      bookingStatus.className = "booking-status";
-      bookingStatus.textContent = "";
-    }
-
-    function updateBookingTotal() {
-      if (!selectedStage) {
-        bookingTotal.textContent = "Total : —";
-        return;
-      }
-
-      const places = Math.max(1, Number(placesInput.value || 1));
-      const total = Number(selectedStage.price || 0) * places;
-      bookingTotal.textContent = `Total : ${formatPrice(total)}`;
-    }
-
-    function selectStage(stage) {
-      selectedStage = stage;
-      cityDisplay.value = stage.city || "";
-      updateBookingTotal();
-      clearBookingStatus();
-
-      selectedStageBox.innerHTML = `
-        <h3>${escapeHtml(stage.title || "Stage Vital Protect")}</h3>
-        <div class="stage-badge">${escapeHtml(stage.training_type || "Stage Vital Protect")}</div>
-        <p class="map-note">
-          <strong>Ville :</strong> ${escapeHtml(stage.city || "Non précisée")}<br>
-          <strong>Date :</strong> ${escapeHtml(formatDate(stage.stage_date))}<br>
-          <strong>Région :</strong> ${escapeHtml(stage.region || "Non précisée")}<br>
-          <strong>Département :</strong> ${escapeHtml(stage.department || "Non précisé")}<br>
-          <strong>Prix :</strong> ${escapeHtml(formatPrice(stage.price))}
-        </p>
-      `;
-
-      document.getElementById("reservation").scrollIntoView({ behavior: "smooth" });
     }
 
     function updateSelectionLabel() {
@@ -1666,7 +1439,6 @@
 
     function getFilteredStages() {
       if (!selectedDepartment) return allStages;
-
       return allStages.filter(stage => normalizeDepartment(stage.department) === selectedDepartment);
     }
 
@@ -1682,7 +1454,7 @@
         return;
       }
 
-      container.innerHTML = data.map((stage) => `
+      container.innerHTML = data.map(stage => `
         <article class="stage-card">
           <div class="stage-top">
             <div>
@@ -1725,8 +1497,10 @@
           </div>
 
           <div class="stage-actions">
-            <div class="stage-action-text">Consultez la fiche complète du stage</div>
-            <a class="btn btn-dark" href="/stage.html?id=${encodeURIComponent(stage.id)}">Voir le détail</a>
+            <div class="stage-action-text">Découvrir le cadre, les objectifs et les informations pratiques</div>
+            <a class="btn btn-dark" href="/stage.html?id=${stage.id}">
+              Voir le détail
+            </a>
           </div>
         </article>
       `).join("");
@@ -1811,67 +1585,11 @@
       renderStages();
     }
 
-    bookingForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
-
-      if (!selectedStage) {
-        showBookingStatus("Veuillez ouvrir la page détail d’un stage pour poursuivre la réservation.", "error");
-        return;
-      }
-
-      const firstName = document.getElementById("firstName").value.trim();
-      const lastName = document.getElementById("lastName").value.trim();
-      const email = document.getElementById("email").value.trim();
-      const phone = document.getElementById("phone").value.trim();
-      const places = Math.max(1, Number(document.getElementById("places").value || 1));
-
-      if (!firstName || !lastName || !email || !phone) {
-        showBookingStatus("Merci de remplir tous les champs obligatoires.", "error");
-        return;
-      }
-
-      showBookingStatus("Redirection vers le paiement Stripe...", "info");
-
-      try {
-        const res = await fetch("/api/create-checkout-session", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            stage_id: selectedStage.id,
-            stage_title: selectedStage.title || "",
-            first_name: firstName,
-            last_name: lastName,
-            email: email,
-            phone: phone,
-            places: places,
-            unit_price: Number(selectedStage.price || 0)
-          })
-        });
-
-        const result = await res.json();
-
-        if (result.url) {
-          window.location.href = result.url;
-        } else {
-          showBookingStatus(result.error || "Erreur lors de la redirection vers Stripe.", "error");
-          console.error(result);
-        }
-      } catch (error) {
-        showBookingStatus("Erreur réseau.", "error");
-        console.error(error);
-      }
-    });
-
-    placesInput.addEventListener("input", updateBookingTotal);
-    resetSelectionBtn.addEventListener("click", resetSelection);
-
     bindDepartmentTags();
     updateSelectionLabel();
-    updateBookingTotal();
     loadSvgMap();
     loadStages();
+    resetSelectionBtn.addEventListener("click", resetSelection);
   </script>
 
 </body>
