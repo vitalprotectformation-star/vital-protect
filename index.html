@@ -1261,7 +1261,7 @@
           <h2>Choisissez un stage selon votre zone et votre besoin</h2>
           <p>
             Parcourez les sessions disponibles, filtrez par département et consultez
-            les informations essentielles avant de réserver votre place.
+            les informations essentielles avant d’ouvrir la fiche détaillée.
           </p>
         </div>
 
@@ -1323,7 +1323,7 @@
           <span class="eyebrow">Réservation</span>
           <h2>Réserver votre place</h2>
           <p>
-            Sélectionnez un stage puis complétez vos informations pour accéder au paiement sécurisé.
+            La réservation se fait depuis la page de détail du stage, avec toutes les informations utiles avant paiement.
           </p>
         </div>
 
@@ -1331,7 +1331,7 @@
           <div class="booking-card">
             <div id="selectedStageBox" class="booking-selected">
               <div class="booking-placeholder">
-                Aucun stage sélectionné pour le moment. Cliquez sur <strong>Réserver</strong> sur une carte stage.
+                Ouvrez la fiche d’un stage via le bouton <strong>Voir le détail</strong> pour réserver votre place.
               </div>
             </div>
 
@@ -1682,7 +1682,7 @@
         return;
       }
 
-      container.innerHTML = data.map((stage, index) => `
+      container.innerHTML = data.map((stage) => `
         <article class="stage-card">
           <div class="stage-top">
             <div>
@@ -1725,22 +1725,11 @@
           </div>
 
           <div class="stage-actions">
-            <div class="stage-action-text">Réservation simple • paiement sécurisé</div>
-            <button class="btn btn-dark" type="button" data-stage-index="${index}">
-              Réserver
-            </button>
+            <div class="stage-action-text">Consultez la fiche complète du stage</div>
+            <a class="btn btn-dark" href="/stage.html?id=${encodeURIComponent(stage.id)}">Voir le détail</a>
           </div>
         </article>
       `).join("");
-
-      container.querySelectorAll("[data-stage-index]").forEach(button => {
-        button.addEventListener("click", () => {
-          const stage = data[Number(button.dataset.stageIndex)];
-          if (stage) {
-            selectStage(stage);
-          }
-        });
-      });
     }
 
     function bindDepartmentTags() {
@@ -1826,7 +1815,7 @@
       e.preventDefault();
 
       if (!selectedStage) {
-        showBookingStatus("Veuillez d’abord sélectionner un stage.", "error");
+        showBookingStatus("Veuillez ouvrir la page détail d’un stage pour poursuivre la réservation.", "error");
         return;
       }
 
