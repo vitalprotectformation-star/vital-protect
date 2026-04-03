@@ -157,6 +157,7 @@ async function handleCreateTrainerSession(req, res) {
   const moduleName = sanitizeText(req.body?.module_name);
   const title = sanitizeText(req.body?.title || moduleName);
   const city = sanitizeText(req.body?.city);
+  const department = sanitizeText(req.body?.department);
   const address = sanitizeText(req.body?.address);
   const startDate = sanitizeText(req.body?.start_date);
   const endDate = sanitizeText(req.body?.end_date);
@@ -175,6 +176,10 @@ async function handleCreateTrainerSession(req, res) {
     return res.status(400).json({ error: "city manquante" });
   }
 
+  if (!department) {
+    return res.status(400).json({ error: "department manquant" });
+  }
+
   if (!startDate || !isValidDate(startDate)) {
     return res.status(400).json({ error: "start_date invalide" });
   }
@@ -187,6 +192,7 @@ async function handleCreateTrainerSession(req, res) {
     module_name: moduleName,
     title,
     city,
+    department,
     address,
     start_date: startDate,
     end_date: endDate,
