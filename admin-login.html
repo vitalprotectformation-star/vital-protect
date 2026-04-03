@@ -168,9 +168,30 @@
       }
 
       submitBtn.disabled = true;
-      setStatus("Envoi du lien de connexion...");
+      setStatus("Vérification de votre accès admin...");
 
       try {
+        const { data: adminUser, error: adminCheckError } = await supabase
+          .from("admin_users")
+          .select("id, email")
+          .eq("email", email)
+          .maybeSingle();
+
+        if (adminCheckError) {
+          console.error("Erreur vérification admin:", adminCheckError);
+          setStatus("Erreur lors de la vérification admin.", "error");
+          submitBtn.disabled = false;
+          return;
+        }
+
+        if (!adminUser) {
+          setStatus("Cet email n’est pas autorisé pour l’administration.", "error");
+          submitBtn.disabled = false;
+          return;
+        }
+
+        setStatus("Envoi du lien de connexion...");
+
         const { error } = await supabase.auth.signInWithOtp({
           email,
           options: {
