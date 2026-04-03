@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Inscription annulée — VITAL PROTECT</title>
+  <style>
+    :root {
+      --navy: #0b2e59;
+      --blue: #1f6feb;
+      --bg: #f4f7fb;
+      --card: #ffffff;
+      --border: #dbe4f0;
+      --text: #142033;
+      --muted: #667085;
+      --warning: #b7791f;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .wrapper {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 760px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 40px 32px;
+      box-shadow: 0 10px 30px rgba(11, 46, 89, 0.08);
+      text-align: center;
+    }
+
+    .icon {
+      width: 72px;
+      height: 72px;
+      margin: 0 auto 20px;
+      border-radius: 999px;
+      background: rgba(183, 121, 31, 0.12);
+      color: var(--warning);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      font-weight: bold;
+    }
+
+    h1 {
+      margin: 0 0 14px;
+      font-size: 2rem;
+    }
+
+    p {
+      margin: 0 0 12px;
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 1.05rem;
+    }
+
+    .actions {
+      margin-top: 28px;
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      text-decoration: none;
+      border-radius: 14px;
+      padding: 14px 18px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .btn-primary {
+      background: var(--blue);
+      color: white;
+    }
+
+    .btn-secondary {
+      background: white;
+      color: var(--navy);
+      border: 1px solid var(--border);
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <div class="card">
+      <div class="icon">!</div>
+      <h1>Inscription non finalisée</h1>
+      <p>Le paiement n’a pas été finalisé.</p>
+      <p>Votre dossier formateur n’a donc pas été enregistré.</p>
+
+      <div class="actions">
+        <a href="/devenir-formateur.html" class="btn btn-primary">Réessayer</a>
+        <a href="/" class="btn btn-secondary">Retour à l’accueil</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
