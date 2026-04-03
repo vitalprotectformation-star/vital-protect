@@ -2212,10 +2212,11 @@ VITAL PROTECT`
       try {
         const headers = await getAuthHeaders();
 
-        const res = await fetch("/api/admin-delete-stage", {
+        const res = await fetch("/api/admin-tools", {
           method: "POST",
           headers,
           body: JSON.stringify({
+            action: "delete_stage",
             stage_id: stageId
           })
         });
@@ -2366,25 +2367,26 @@ VITAL PROTECT`
       }
     };
 
-    window.updateTrainerModuleAction = async (moduleId, action) => {
+    window.updateTrainerModuleAction = async (moduleId, moduleAction) => {
       const labels = {
         extend_2_years: "prolonger ce module de 2 ans",
         reactivate_2_years: "réactiver ce module pour 2 ans",
         mark_expired: "marquer ce module comme expiré"
       };
 
-      const confirmed = window.confirm(`Confirmer : ${labels[action]} ?`);
+      const confirmed = window.confirm(`Confirmer : ${labels[moduleAction]} ?`);
       if (!confirmed) return;
 
       try {
         const headers = await getAuthHeaders();
 
-        const res = await fetch("/api/admin-update-trainer-module", {
+        const res = await fetch("/api/admin-tools", {
           method: "POST",
           headers,
           body: JSON.stringify({
+            action: "update_trainer_module",
             module_id: moduleId,
-            action
+            module_action: moduleAction
           })
         });
 
@@ -2409,6 +2411,7 @@ VITAL PROTECT`
         const headers = await getAuthHeaders();
 
         const payload = {
+          action: "upsert_trainer_module",
           trainer_id: trainerModuleTrainerIdInput.value,
           module_name: trainerModuleNameInput.value,
           status: document.getElementById("trainerModuleStatusInput").value,
@@ -2416,7 +2419,7 @@ VITAL PROTECT`
           expires_at: trainerModuleExpiresAtInput.value
         };
 
-        const res = await fetch("/api/admin-upsert-trainer-module", {
+        const res = await fetch("/api/admin-tools", {
           method: "POST",
           headers,
           body: JSON.stringify(payload)
@@ -2496,6 +2499,7 @@ VITAL PROTECT`
         const moduleName = document.getElementById("stageModuleInput").value;
 
         const payload = {
+          action: "create_stage",
           trainer_id: trainerId,
           title: moduleName,
           training_type: moduleName,
@@ -2515,7 +2519,7 @@ VITAL PROTECT`
 
         const headers = await getAuthHeaders();
 
-        const res = await fetch("/api/admin-create-stage", {
+        const res = await fetch("/api/admin-tools", {
           method: "POST",
           headers,
           body: JSON.stringify(payload)
@@ -2545,6 +2549,7 @@ VITAL PROTECT`
         const moduleName = document.getElementById("trainerSessionModuleInput").value;
 
         const payload = {
+          action: "create_trainer_session",
           module_name: moduleName,
           title: moduleName,
           city: document.getElementById("trainerSessionCityInput").value,
@@ -2561,7 +2566,7 @@ VITAL PROTECT`
 
         const headers = await getAuthHeaders();
 
-        const res = await fetch("/api/admin-create-trainer-session", {
+        const res = await fetch("/api/admin-tools", {
           method: "POST",
           headers,
           body: JSON.stringify(payload)
