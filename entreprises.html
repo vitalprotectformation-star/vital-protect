@@ -159,13 +159,69 @@
     }
 
     .hero-side {
-      background: white;
-      color: var(--text);
-      padding: 28px;
+      position: relative;
+      overflow: hidden;
+      min-height: 100%;
       border: 1px solid rgba(255,255,255,0.14);
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
+      background: white;
+    }
+
+    .hero-side img {
+      width: 100%;
+      height: 100%;
+      min-height: 620px;
+      object-fit: cover;
+      object-position: 63% center;
+      display: block;
+    }
+
+    .hero-side-overlay {
+      position: absolute;
+      left: 18px;
+      right: 18px;
+      bottom: 18px;
+      background: rgba(255,255,255,0.96);
+      border-radius: 18px;
+      padding: 20px;
+      color: var(--text);
+      box-shadow: 0 12px 30px rgba(13, 35, 64, 0.14);
+    }
+
+    .hero-side-overlay h2 {
+      margin: 0 0 10px;
+      font-size: 1.4rem;
+      color: var(--navy);
+    }
+
+    .hero-side-overlay p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .hero-side-list {
+      margin-top: 18px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .hero-side-item {
+      background: #f8fbff;
+      border: 1px solid #e6edf7;
+      border-radius: 16px;
+      padding: 14px;
+    }
+
+    .hero-side-item strong {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--navy);
+    }
+
+    .hero-side-item span {
+      color: var(--muted);
+      line-height: 1.55;
+      font-size: 0.96rem;
     }
 
     .eyebrow-invert,
@@ -208,43 +264,6 @@
       display: flex;
       gap: 12px;
       flex-wrap: wrap;
-    }
-
-    .hero-side h2 {
-      margin: 0 0 10px;
-      font-size: 1.4rem;
-      color: var(--navy);
-    }
-
-    .hero-side p {
-      margin: 0;
-      color: var(--muted);
-      line-height: 1.7;
-    }
-
-    .hero-side-list {
-      margin-top: 18px;
-      display: grid;
-      gap: 12px;
-    }
-
-    .hero-side-item {
-      background: #f8fbff;
-      border: 1px solid #e6edf7;
-      border-radius: 16px;
-      padding: 14px;
-    }
-
-    .hero-side-item strong {
-      display: block;
-      margin-bottom: 6px;
-      color: var(--navy);
-    }
-
-    .hero-side-item span {
-      color: var(--muted);
-      line-height: 1.55;
-      font-size: 0.96rem;
     }
 
     .btn {
@@ -344,7 +363,9 @@
     .format-card,
     .faq-card,
     .cta-panel,
-    .contact-card {
+    .contact-card,
+    .image-panel,
+    .image-feature-content {
       background: var(--card);
       border: 1px solid var(--border);
       border-radius: var(--radius-lg);
@@ -425,6 +446,49 @@
       grid-template-columns: 1.05fr 0.95fr;
       gap: 20px;
       align-items: start;
+    }
+
+    .image-feature {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 22px;
+      align-items: stretch;
+    }
+
+    .image-panel {
+      overflow: hidden;
+      min-height: 520px;
+    }
+
+    .image-panel img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .image-panel.image-1 img {
+      object-position: 63% center;
+    }
+
+    .image-panel.image-2 img {
+      object-position: 61% center;
+    }
+
+    .image-feature-content {
+      padding: 28px;
+    }
+
+    .image-feature-content h3 {
+      margin: 0 0 12px;
+      font-size: 1.4rem;
+      color: var(--navy);
+    }
+
+    .image-feature-content p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.75;
     }
 
     form {
@@ -555,12 +619,21 @@
       .card-grid-3,
       .card-grid-2,
       .faq-grid,
-      .contact-grid {
+      .contact-grid,
+      .image-feature {
         grid-template-columns: 1fr;
       }
 
       .hero h1 {
         font-size: 2.4rem;
+      }
+
+      .hero-side img {
+        min-height: 500px;
+      }
+
+      .image-panel {
+        min-height: 420px;
       }
     }
 
@@ -582,7 +655,8 @@
 
       .hero-copy,
       .hero-side,
-      .cta-panel {
+      .cta-panel,
+      .image-feature-content {
         padding: 24px;
       }
 
@@ -601,6 +675,24 @@
 
       .section-head h2 {
         font-size: 1.8rem;
+      }
+
+      .hero-side {
+        padding: 0;
+      }
+
+      .hero-side img {
+        min-height: 380px;
+        object-position: 63% center;
+      }
+
+      .hero-side-overlay {
+        position: static;
+        margin: 16px;
+      }
+
+      .image-panel {
+        min-height: 320px;
       }
     }
   </style>
@@ -648,7 +740,8 @@
         </div>
 
         <aside class="hero-side">
-          <div>
+          <img src="/groupe-dehors-briefing-securite.png" alt="Briefing sécurité d’un groupe en extérieur" />
+          <div class="hero-side-overlay">
             <h2>Ce que Vital Protect apporte aux structures</h2>
             <p>
               L’objectif n’est pas de transformer les équipes en combattants.
@@ -746,6 +839,30 @@
       </div>
     </section>
 
+    <section>
+      <div class="container image-feature">
+        <div class="image-panel image-1">
+          <img src="/discussion-informelle-participants.png" alt="Participants échangeant dans un cadre professionnel Vital Protect" />
+        </div>
+
+        <div class="image-feature-content">
+          <span class="eyebrow">Travail collectif</span>
+          <h3>Installer des repères partagés au sein d’une équipe</h3>
+          <p>
+            Une organisation gagne en efficacité lorsque ses équipes partagent une même lecture
+            des situations sensibles, des critères communs de vigilance et une compréhension claire
+            de la posture à adopter selon le contexte.
+          </p>
+
+          <div class="bullet-list">
+            <div class="bullet-item"><strong>Clarifier :</strong> donner aux équipes un langage commun et des repères lisibles.</div>
+            <div class="bullet-item"><strong>Préparer :</strong> réduire l’improvisation dans les moments de tension.</div>
+            <div class="bullet-item"><strong>Coordonner :</strong> favoriser des réactions plus cohérentes et plus calmes.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <section id="formats">
       <div class="container">
         <div class="section-head">
@@ -806,6 +923,30 @@
               <div class="bullet-item">Des réponses réalistes, simples et cohérentes avec le contexte professionnel.</div>
             </div>
           </article>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="container image-feature">
+        <div class="image-feature-content">
+          <span class="eyebrow">Transmission encadrée</span>
+          <h3>Des formats concrets, lisibles et applicables sur le terrain</h3>
+          <p>
+            Le travail en entreprise ne se résume pas à une accumulation de conseils abstraits.
+            Il s’agit de construire des repères directement mobilisables, avec une pédagogie adaptée
+            au niveau du groupe, au métier et à la réalité du terrain.
+          </p>
+
+          <div class="bullet-list">
+            <div class="bullet-item"><strong>Lisibilité :</strong> comprendre ce qui est utile, et pourquoi.</div>
+            <div class="bullet-item"><strong>Progressivité :</strong> avancer étape par étape, sans surcharger les équipes.</div>
+            <div class="bullet-item"><strong>Applicabilité :</strong> rester connecté aux situations réellement rencontrées.</div>
+          </div>
+        </div>
+
+        <div class="image-panel image-2">
+          <img src="/formatrice-briefe-groupe-assis.png" alt="Formatrice Vital Protect briefant un groupe assis" />
         </div>
       </div>
     </section>
