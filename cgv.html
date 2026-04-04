@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Conditions Générales de Vente — Vital Protect</title>
+
+  <style>
+    :root {
+      --navy: #0d2340;
+      --navy-dark: #09182c;
+      --steel: #244a73;
+      --blue-soft: #dce8f5;
+      --bg: #f7f9fc;
+      --card: #ffffff;
+      --border: #d9e3ef;
+      --text: #142033;
+      --muted: #6e7c8c;
+      --shadow: 0 16px 40px rgba(13, 35, 64, 0.08);
+      --container: 1180px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    a { color: inherit; }
+
+    .container {
+      width: min(var(--container), calc(100% - 32px));
+      margin: 0 auto;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(9, 24, 44, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      min-height: 86px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: white;
+    }
+
+    .brand img {
+      height: 68px;
+      width: auto;
+      display: block;
+    }
+
+    .brand-text {
+      font-size: 1.3rem;
+      font-weight: 800;
+      line-height: 1.05;
+    }
+
+    .brand-sub {
+      color: rgba(255,255,255,0.72);
+      font-size: 0.9rem;
+      margin-top: 4px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: flex-end;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: rgba(255,255,255,0.92);
+      font-weight: 700;
+      padding: 10px 14px;
+      border-radius: 12px;
+      transition: 0.2s ease;
+      font-size: 0.96rem;
+    }
+
+    .nav-links a:hover,
+    .nav-links a.active {
+      background: rgba(255,255,255,0.1);
+    }
+
+    .nav-links .nav-cta {
+      background: white;
+      color: var(--navy);
+    }
+
+    .hero {
+      background: linear-gradient(135deg, var(--navy-dark), var(--navy));
+      color: white;
+      padding: 64px 0 40px;
+    }
+
+    .hero-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 28px;
+      padding: 34px;
+      max-width: 920px;
+    }
+
+    .hero h1 {
+      margin: 0 0 16px;
+      font-size: 2.6rem;
+      line-height: 1.08;
+    }
+
+    .hero p {
+      margin: 0;
+      color: rgba(255,255,255,0.84);
+      line-height: 1.75;
+      font-size: 1.05rem;
+    }
+
+    main {
+      padding: 48px 0 64px;
+    }
+
+    .legal-card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      padding: 32px;
+    }
+
+    .legal-card h2 {
+      margin-top: 0;
+      color: var(--navy);
+      font-size: 1.45rem;
+    }
+
+    .legal-card h3 {
+      margin-top: 28px;
+      color: var(--navy);
+      font-size: 1.1rem;
+    }
+
+    .legal-card p,
+    .legal-card li {
+      color: var(--text);
+      line-height: 1.8;
+    }
+
+    .legal-card ul {
+      padding-left: 20px;
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    .placeholder {
+      background: #fff8db;
+      border: 1px solid #f0df9d;
+      border-radius: 12px;
+      padding: 12px 14px;
+      margin: 14px 0;
+      color: #5f4c00;
+      font-weight: 700;
+    }
+
+    footer {
+      background: var(--navy-dark);
+      color: rgba(255,255,255,0.88);
+      padding: 36px 0;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 20px;
+      align-items: start;
+    }
+
+    .footer-brand strong {
+      display: block;
+      color: white;
+      font-size: 1.1rem;
+      margin-bottom: 8px;
+    }
+
+    .footer-brand p {
+      margin: 0;
+      color: rgba(255,255,255,0.72);
+      line-height: 1.7;
+      max-width: 720px;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .footer-links a {
+      text-decoration: none;
+      color: rgba(255,255,255,0.88);
+      font-weight: 700;
+      padding: 8px 10px;
+      border-radius: 10px;
+    }
+
+    .footer-links a:hover {
+      background: rgba(255,255,255,0.08);
+    }
+
+    @media (max-width: 760px) {
+      .header-inner,
+      .footer-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+      }
+
+      .nav-links,
+      .footer-links {
+        justify-content: flex-start;
+      }
+
+      .brand img {
+        height: 56px;
+      }
+
+      .hero-card,
+      .legal-card {
+        padding: 24px;
+      }
+
+      .hero h1 {
+        font-size: 2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="container header-inner">
+      <a href="/index.html" class="brand">
+        <img src="/logo.png" alt="Vital Protect" />
+        <div>
+          <div class="brand-text">VITAL PROTECT</div>
+          <div class="brand-sub">Méthode de sécurité personnelle</div>
+        </div>
+      </a>
+
+      <nav class="nav-links">
+        <a href="/index.html">Accueil</a>
+        <a href="/methode.html">La méthode</a>
+        <a href="/index.html#stages">Nos stages</a>
+        <a href="/entreprises.html">Entreprises</a>
+        <a href="/devenir-formateur.html">Devenir formateur</a>
+        <a href="/faq.html">FAQ</a>
+        <a href="/contact.html">Contact</a>
+        <a href="/formateur-login.html" class="nav-cta">Espace formateur</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="container">
+      <div class="hero-card">
+        <h1>Conditions Générales de Vente</h1>
+        <p>
+          Les présentes Conditions Générales de Vente régissent les ventes de stages,
+          formations et prestations proposées sous la marque Vital Protect.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <main>
+    <div class="container">
+      <div class="legal-card">
+        <div class="placeholder">
+          À compléter avant mise en ligne : raison sociale, adresse, email, SIREN/SIRET,
+          TVA, médiateur, politique exacte d’annulation/remboursement.
+        </div>
+
+        <h2>1. Identification du vendeur</h2>
+        <p>
+          Les présentes CGV sont proposées par :
+        </p>
+        <ul>
+          <li><strong>Dénomination sociale :</strong> [À COMPLÉTER]</li>
+          <li><strong>Nom commercial :</strong> Vital Protect</li>
+          <li><strong>Forme juridique :</strong> [À COMPLÉTER]</li>
+          <li><strong>Adresse du siège :</strong> [À COMPLÉTER]</li>
+          <li><strong>Email :</strong> [À COMPLÉTER]</li>
+          <li><strong>Téléphone :</strong> [À COMPLÉTER]</li>
+          <li><strong>SIREN / SIRET :</strong> [À COMPLÉTER]</li>
+          <li><strong>TVA intracommunautaire :</strong> [À COMPLÉTER]</li>
+        </ul>
+
+        <h2>2. Objet</h2>
+        <p>
+          Les présentes Conditions Générales de Vente ont pour objet de définir les droits
+          et obligations des parties dans le cadre de la vente en ligne ou hors ligne de
+          stages, formations, sessions formateur, prestations de sensibilisation ou
+          interventions professionnelles proposées par Vital Protect.
+        </p>
+
+        <h2>3. Présentation des prestations</h2>
+        <p>
+          Vital Protect propose un système structuré de formation à la sécurité personnelle,
+          fondé sur des modules pédagogiques organisés, un protocole pédagogique standardisé
+          et un réseau de formateurs certifiés. Les prestations peuvent s’adresser au grand
+          public, aux professionnels exposés, aux entreprises, aux collectivités et aux
+          candidats formateurs. :contentReference[oaicite:3]{index=3}
+        </p>
+        <p>
+          Les formations Vital Protect reposent sur une approche globale intégrant
+          anticipation, observation, évitement, réaction et gestion de l’après-conflit. :contentReference[oaicite:4]{index=4}
+        </p>
+        <p>
+          Les contenus spécifiques des stages sont organisés par modules, avec objectifs
+          pédagogiques, déroulé structuré, exercices spécifiques et mises en situation. :contentReference[oaicite:5]{index=5}
+        </p>
+
+        <h2>4. Champ d’application</h2>
+        <p>
+          Les présentes CGV s’appliquent à toute commande de prestation passée par un client
+          particulier ou professionnel auprès de Vital Protect, sauf conditions particulières
+          convenues par écrit.
+        </p>
+
+        <h2>5. Informations précontractuelles</h2>
+        <p>
+          Avant toute commande, le client reconnaît avoir pris connaissance des caractéristiques
+          essentielles de la prestation, de son prix, de ses modalités de déroulement et des
+          présentes CGV.
+        </p>
+
+        <h2>6. Commande</h2>
+        <p>
+          La commande peut être réalisée via le site internet, un formulaire d’inscription,
+          un échange écrit ou tout autre moyen validé par Vital Protect.
+        </p>
+        <p>
+          Toute commande devient définitive après validation du paiement ou après acceptation
+          expresse par Vital Protect selon la nature de la prestation.
+        </p>
+
+        <h2>7. Prix</h2>
+        <p>
+          Les prix sont indiqués en euros. Ils sont ceux en vigueur au jour de la commande.
+          Vital Protect se réserve le droit de modifier ses prix à tout moment, sans effet sur
+          les commandes déjà validées.
+        </p>
+        <p>
+          Sauf mention contraire, les frais éventuels de déplacement, d’hébergement ou de
+          logistique spécifique ne sont pas inclus et peuvent faire l’objet d’un devis séparé.
+        </p>
+
+        <h2>8. Modalités de paiement</h2>
+        <p>
+          Le règlement peut s’effectuer par paiement en ligne sécurisé, virement bancaire
+          ou tout autre moyen accepté par Vital Protect.
+        </p>
+        <p>
+          Pour certaines prestations, notamment les formations de formateur, Vital Protect
+          peut prévoir un mécanisme d’autorisation préalable du paiement, suivi d’une capture
+          effective après validation du dossier. Cette logique est cohérente avec le parcours
+          de certification et la validation des compétences prévu par l’organisation Vital Protect. :contentReference[oaicite:6]{index=6} :contentReference[oaicite:7]{index=7}
+        </p>
+
+        <h2>9. Conditions spécifiques aux formations de formateur</h2>
+        <p>
+          L’accès à la formation de formateur peut être soumis à des prérequis, notamment
+          un âge minimum de 18 ans, une certification de secourisme valide, un casier judiciaire
+          compatible avec l’activité d’encadrement et une aptitude médicale à la pratique
+          d’activités physiques. 
+        </p>
+        <p>
+          Le dossier d’inscription peut notamment comprendre un formulaire, un CV, une pièce
+          d’identité, un certificat de secourisme, un extrait de casier judiciaire et un
+          certificat médical. :contentReference[oaicite:9]{index=9}
+        </p>
+        <p>
+          La certification formateur Vital Protect est spécifique à chaque module. Un formateur
+          ne peut enseigner que les modules pour lesquels il est certifié. 
+        </p>
+
+        <h2>10. Déroulement des prestations</h2>
+        <p>
+          Les prestations sont organisées selon les modalités précisées dans la fiche stage,
+          la convocation, le devis ou les documents de référence communiqués au client.
+        </p>
+        <p>
+          Les formations Vital Protect reposent sur une pédagogie active alternant apports
+          théoriques, démonstrations, exercices pratiques et mises en situation. 
+        </p>
+
+        <h2>11. Règles de sécurité</h2>
+        <p>
+          La sécurité des participants constitue une priorité absolue dans les formations
+          Vital Protect. Les séances sont conduites dans le respect de règles strictes de
+          sécurité, incluant la vérification du lieu, l’adaptation de l’intensité des exercices,
+          la surveillance constante par le formateur et l’interruption immédiate de tout
+          exercice présentant un risque. 
+        </p>
+        <p>
+          Certaines catégories de matériel dangereux, notamment les armes réelles et tout objet
+          susceptible de présenter un danger pour les participants, sont interdites en formation. :contentReference[oaicite:13]{index=13}
+        </p>
+
+        <h2>12. Responsabilité du client / participant</h2>
+        <p>
+          Le client ou participant s’engage à :
+        </p>
+        <ul>
+          <li>communiquer des informations exactes lors de l’inscription ;</li>
+          <li>respecter les consignes de sécurité données par le formateur ;</li>
+          <li>signaler toute contre-indication médicale ou difficulté particulière ;</li>
+          <li>adopter un comportement respectueux envers les autres participants et les encadrants.</li>
+        </ul>
+        <p>
+          Vital Protect se réserve le droit d’exclure toute personne dont le comportement
+          compromettrait la sécurité, le bon déroulement de la séance ou le respect du cadre pédagogique.
+        </p>
+
+        <h2>13. Annulation / report par le client</h2>
+        <p>
+          <strong>Clause à personnaliser.</strong> Exemple de base :
+        </p>
+        <ul>
+          <li>annulation plus de 14 jours avant la prestation : remboursement intégral ou report ;</li>
+          <li>annulation entre 14 et 7 jours avant : report possible ou retenue partielle ;</li>
+          <li>annulation moins de 7 jours avant : somme due, sauf cas de force majeure dûment justifié.</li>
+        </ul>
+
+        <h2>14. Annulation / report par Vital Protect</h2>
+        <p>
+          Vital Protect se réserve la possibilité de reporter ou d’annuler une prestation en cas
+          de force majeure, d’indisponibilité du formateur, de conditions matérielles incompatibles
+          avec la sécurité, ou d’effectif insuffisant.
+        </p>
+        <p>
+          En pareil cas, le client pourra se voir proposer un report, un avoir ou un remboursement
+          selon la situation.
+        </p>
+
+        <h2>15. Droit de rétractation</h2>
+        <p>
+          <strong>Clause à adapter selon ton mode de vente réel.</strong> Pour un client consommateur
+          et une vente à distance, le droit de rétractation légal peut s’appliquer sauf exceptions
+          prévues par la loi. Si la prestation est pleinement exécutée avant la fin du délai légal
+          ou si elle est fixée à une date déterminée relevant d’une exception, le régime applicable
+          doit être précisé juridiquement.
+        </p>
+
+        <h2>16. Évaluation, validation et certification</h2>
+        <p>
+          Dans le cadre des formations formateur, l’évaluation peut comprendre une phase formative
+          et une phase certificative, avec épreuves théoriques et pratiques. La décision finale
+          peut être “certifié”, “ajourné” ou “non certifié”. 
+        </p>
+        <p>
+          Une inscription à une formation ne garantit pas automatiquement l’obtention d’une certification.
+        </p>
+
+        <h2>17. Propriété intellectuelle</h2>
+        <p>
+          L’ensemble des contenus, documents, référentiels, manuels, guides modules, supports,
+          visuels, textes, marques, logos et ressources Vital Protect est protégé au titre de la
+          propriété intellectuelle.
+        </p>
+        <p>
+          Toute reproduction, diffusion, adaptation, exploitation ou transmission non autorisée,
+          totale ou partielle, est interdite sauf accord écrit préalable.
+        </p>
+
+        <h2>18. Données personnelles</h2>
+        <p>
+          Les données personnelles collectées dans le cadre de la commande ou de l’inscription
+          sont traitées pour la gestion administrative, pédagogique, commerciale et logistique
+          des prestations.
+        </p>
+        <p>
+          Une politique de confidentialité dédiée doit préciser les finalités, durées de conservation,
+          base légale, destinataires et modalités d’exercice des droits.
+        </p>
+
+        <h2>19. Responsabilité</h2>
+        <p>
+          Vital Protect est tenu à une obligation de moyens dans l’exécution de ses prestations.
+          Sa responsabilité ne saurait être engagée en cas de mauvaise utilisation des enseignements,
+          de non-respect des consignes de sécurité par un participant, ou d’événements extérieurs
+          ne relevant pas de son contrôle.
+        </p>
+
+        <h2>20. Force majeure</h2>
+        <p>
+          Aucune des parties ne pourra être tenue responsable de l’inexécution de ses obligations
+          si cette inexécution résulte d’un événement de force majeure au sens du droit français.
+        </p>
+
+        <h2>21. Droit applicable et litiges</h2>
+        <p>
+          Les présentes CGV sont soumises au droit français.
+        </p>
+        <p>
+          En cas de litige, les parties rechercheront une solution amiable préalable. À défaut,
+          compétence est attribuée aux juridictions légalement compétentes.
+        </p>
+
+        <h2>22. Médiation de la consommation</h2>
+        <p>
+          <strong>À compléter obligatoirement</strong> si tu vends à des consommateurs :
+          coordonnées du médiateur compétent.
+        </p>
+
+        <h2>23. Mise à jour</h2>
+        <p>
+          Vital Protect se réserve le droit de modifier les présentes CGV à tout moment.
+          Les CGV applicables sont celles en vigueur à la date de la commande.
+        </p>
+
+        <h3>Dernière mise à jour</h3>
+        <p class="muted">[À COMPLÉTER]</p>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container footer-grid">
+      <div class="footer-brand">
+        <strong>VITAL PROTECT</strong>
+        <p>
+          Une méthode structurée de sécurité personnelle fondée sur la prévention, l’évitement,
+          la réaction réaliste, la pédagogie progressive et la certification des formateurs.
+        </p>
+      </div>
+
+      <div class="footer-links">
+        <a href="/methode.html">La méthode</a>
+        <a href="/entreprises.html">Entreprises</a>
+        <a href="/devenir-formateur.html">Devenir formateur</a>
+        <a href="/faq.html">FAQ</a>
+        <a href="/contact.html">Contact</a>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
