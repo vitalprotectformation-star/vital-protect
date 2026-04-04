@@ -187,6 +187,14 @@
       box-shadow: 0 12px 30px rgba(13, 35, 64, 0.14);
     }
 
+    .hero-side-overlay,
+    .hero-side-overlay h2,
+    .hero-side-overlay p,
+    .hero-side-overlay strong,
+    .hero-side-overlay span {
+      color: #142033 !important;
+    }
+
     .hero-side-overlay h2 {
       margin: 0 0 10px;
       font-size: 1.4rem;
@@ -195,7 +203,7 @@
 
     .hero-side-overlay p {
       margin: 0;
-      color: var(--muted);
+      color: #142033 !important;
       line-height: 1.7;
     }
 
@@ -219,9 +227,61 @@
     }
 
     .hero-side-item span {
-      color: var(--muted);
+      color: #142033 !important;
       line-height: 1.55;
       font-size: 0.96rem;
+    }
+
+    .hero-side-actions {
+      margin-top: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+    }
+
+    .hero-side-toggle {
+      appearance: none;
+      border: 1px solid #cfdceb;
+      background: #f4f8fd;
+      color: #0d2340;
+      border-radius: 999px;
+      padding: 10px 16px;
+      font-size: 0.94rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .hero-side-toggle:hover {
+      background: #eaf2fb;
+    }
+
+    .hero-side-more {
+      margin-top: 14px;
+      padding: 14px;
+      border-radius: 14px;
+      background: rgba(244, 248, 253, 0.98);
+      border: 1px solid #d6e2f0;
+      display: none;
+      color: #142033 !important;
+    }
+
+    .hero-side-more.show {
+      display: block;
+    }
+
+    .hero-side-more,
+    .hero-side-more p {
+      color: #142033 !important;
+    }
+
+    .hero-side-more p {
+      margin: 0 0 10px;
+      line-height: 1.7;
+    }
+
+    .hero-side-more p:last-child {
+      margin-bottom: 0;
     }
 
     .eyebrow-invert,
@@ -769,6 +829,24 @@
                 <span>Se mettre en sécurité, alerter, protéger les autres et retrouver du contrôle.</span>
               </div>
             </div>
+
+            <div class="hero-side-actions">
+              <button id="heroSideToggle" class="hero-side-toggle" type="button" aria-expanded="false">
+                Lire plus
+              </button>
+            </div>
+
+            <div id="heroSideMore" class="hero-side-more">
+              <p>
+                La méthode Vital Protect ne cherche pas à produire une illusion de maîtrise totale.
+                Elle transmet des repères simples, cohérents et applicables dans la vie réelle,
+                pour mieux comprendre une situation, limiter l’escalade et agir avec plus de lucidité.
+              </p>
+              <p>
+                Elle s’adresse aussi bien aux débutants qu’aux personnes souhaitant structurer leur lecture
+                du risque, leur posture et leur capacité de réaction dans un cadre progressif et sécurisé.
+              </p>
+            </div>
           </div>
         </aside>
       </div>
@@ -1099,6 +1177,19 @@
       </div>
     </div>
   </footer>
+
+  <script>
+    const heroSideToggle = document.getElementById("heroSideToggle");
+    const heroSideMore = document.getElementById("heroSideMore");
+
+    if (heroSideToggle && heroSideMore) {
+      heroSideToggle.addEventListener("click", () => {
+        const isOpen = heroSideMore.classList.toggle("show");
+        heroSideToggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
+        heroSideToggle.textContent = isOpen ? "Lire moins" : "Lire plus";
+      });
+    }
+  </script>
 
 </body>
 </html>
