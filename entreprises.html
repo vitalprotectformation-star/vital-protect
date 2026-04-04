@@ -180,24 +180,73 @@
       left: 18px;
       right: 18px;
       bottom: 18px;
-      background: rgba(255,255,255,0.94);
+      background: rgba(255,255,255,0.96);
       border-radius: 18px;
       padding: 18px;
       color: var(--text);
       box-shadow: 0 12px 30px rgba(13, 35, 64, 0.14);
-      max-width: 82%;
+      max-width: 84%;
+      z-index: 2;
     }
 
     .hero-side-overlay h2 {
       margin: 0 0 8px;
       font-size: 1.2rem;
-      color: var(--navy);
+      color: #081a33;
+      line-height: 1.3;
     }
 
     .hero-side-overlay p {
       margin: 0;
-      color: var(--muted);
+      color: #24364d;
       line-height: 1.65;
+    }
+
+    .hero-side-preview {
+      color: #2c3f57;
+      font-size: 0.98rem;
+      line-height: 1.65;
+      margin-bottom: 14px;
+    }
+
+    .hero-side-toggle {
+      appearance: none;
+      border: 1px solid #c8d7ea;
+      background: #f4f8fd;
+      color: #0d2340;
+      border-radius: 12px;
+      padding: 10px 14px;
+      font-size: 0.96rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .hero-side-toggle:hover {
+      background: #eaf2fb;
+    }
+
+    .hero-side-more {
+      margin-top: 14px;
+      padding: 14px;
+      border-radius: 14px;
+      background: rgba(244, 248, 253, 0.98);
+      border: 1px solid #d6e2f0;
+      display: none;
+    }
+
+    .hero-side-more.show {
+      display: block;
+    }
+
+    .hero-side-more p {
+      color: #1f3147;
+      margin: 0 0 10px;
+      line-height: 1.7;
+    }
+
+    .hero-side-more p:last-child {
+      margin-bottom: 0;
     }
 
     .eyebrow-invert,
@@ -595,9 +644,10 @@
       }
 
       .hero-side-overlay {
-        position: static;
-        margin: 16px;
-        max-width: none;
+        left: 14px;
+        right: 14px;
+        bottom: 14px;
+        max-width: calc(100% - 28px);
       }
 
       .hero h1 {
@@ -663,12 +713,36 @@
 
         <aside class="hero-side">
           <img src="/groupe-dehors-briefing-securite.png" alt="Briefing sécurité d’un groupe en extérieur" />
+
           <div class="hero-side-overlay">
-            <h2>Prévenir, gérer, adapter</h2>
-            <p>
-              Une approche structurée pour aider les équipes à mieux lire les situations,
-              limiter l’escalade et agir avec plus de cohérence dans leur contexte professionnel.
+            <h2>Ce que Vital Protect apporte aux structures</h2>
+
+            <p class="hero-side-preview">
+              Prévenir les tensions, améliorer la lecture des situations et transmettre
+              des repères simples, réalistes et adaptés au terrain.
             </p>
+
+            <button
+              type="button"
+              class="hero-side-toggle"
+              id="heroReadMoreBtn"
+              aria-expanded="false"
+              aria-controls="heroReadMoreContent"
+            >
+              Lire plus
+            </button>
+
+            <div class="hero-side-more" id="heroReadMoreContent">
+              <p>
+                L’objectif n’est pas de transformer les équipes en combattants.
+                Il s’agit de leur donner une méthode de lecture, de posture
+                et de gestion qui reste applicable dans le quotidien professionnel.
+              </p>
+              <p>
+                Vital Protect privilégie la prévention, la réduction de l’escalade,
+                la clarté pédagogique et l’adaptation au contexte métier.
+              </p>
+            </div>
           </div>
         </aside>
       </div>
@@ -963,6 +1037,19 @@
       </div>
     </div>
   </footer>
+
+  <script>
+    const heroReadMoreBtn = document.getElementById("heroReadMoreBtn");
+    const heroReadMoreContent = document.getElementById("heroReadMoreContent");
+
+    if (heroReadMoreBtn && heroReadMoreContent) {
+      heroReadMoreBtn.addEventListener("click", () => {
+        const isOpen = heroReadMoreContent.classList.toggle("show");
+        heroReadMoreBtn.setAttribute("aria-expanded", isOpen ? "true" : "false");
+        heroReadMoreBtn.textContent = isOpen ? "Lire moins" : "Lire plus";
+      });
+    }
+  </script>
 
 </body>
 </html>
