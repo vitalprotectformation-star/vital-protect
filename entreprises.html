@@ -171,7 +171,7 @@
       height: 100%;
       min-height: 620px;
       object-fit: cover;
-      object-position: 68% center;
+      object-position: 64% center;
       display: block;
     }
 
@@ -182,41 +182,71 @@
       bottom: 18px;
       background: rgba(255,255,255,0.96);
       border-radius: 18px;
-      padding: 18px;
+      padding: 20px;
       color: var(--text);
       box-shadow: 0 12px 30px rgba(13, 35, 64, 0.14);
-      max-width: 84%;
-      z-index: 2;
+    }
+
+    .hero-side-overlay,
+    .hero-side-overlay h2,
+    .hero-side-overlay p,
+    .hero-side-overlay strong,
+    .hero-side-overlay span {
+      color: #142033 !important;
     }
 
     .hero-side-overlay h2 {
-      margin: 0 0 8px;
-      font-size: 1.2rem;
-      color: #081a33;
-      line-height: 1.3;
+      margin: 0 0 10px;
+      font-size: 1.4rem;
+      color: var(--navy);
     }
 
     .hero-side-overlay p {
       margin: 0;
-      color: #24364d;
-      line-height: 1.65;
+      color: #142033 !important;
+      line-height: 1.7;
     }
 
-    .hero-side-preview {
-      color: #2c3f57;
-      font-size: 0.98rem;
-      line-height: 1.65;
-      margin-bottom: 14px;
+    .hero-side-list {
+      margin-top: 18px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .hero-side-item {
+      background: #f8fbff;
+      border: 1px solid #e6edf7;
+      border-radius: 16px;
+      padding: 14px;
+    }
+
+    .hero-side-item strong {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--navy);
+    }
+
+    .hero-side-item span {
+      color: #142033 !important;
+      line-height: 1.55;
+      font-size: 0.96rem;
+    }
+
+    .hero-side-actions {
+      margin-top: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
     }
 
     .hero-side-toggle {
       appearance: none;
-      border: 1px solid #c8d7ea;
+      border: 1px solid #cfdceb;
       background: #f4f8fd;
       color: #0d2340;
-      border-radius: 12px;
-      padding: 10px 14px;
-      font-size: 0.96rem;
+      border-radius: 999px;
+      padding: 10px 16px;
+      font-size: 0.94rem;
       font-weight: 700;
       cursor: pointer;
       transition: 0.2s ease;
@@ -233,14 +263,19 @@
       background: rgba(244, 248, 253, 0.98);
       border: 1px solid #d6e2f0;
       display: none;
+      color: #142033 !important;
     }
 
     .hero-side-more.show {
       display: block;
     }
 
+    .hero-side-more,
     .hero-side-more p {
-      color: #1f3147;
+      color: #142033 !important;
+    }
+
+    .hero-side-more p {
       margin: 0 0 10px;
       line-height: 1.7;
     }
@@ -609,7 +644,6 @@
 
       .hero-side img {
         min-height: 500px;
-        object-position: 66% center;
       }
     }
 
@@ -630,24 +664,9 @@
       }
 
       .hero-copy,
+      .hero-side,
       .cta-panel {
         padding: 24px;
-      }
-
-      .hero-side {
-        padding: 0;
-      }
-
-      .hero-side img {
-        min-height: 380px;
-        object-position: 70% center;
-      }
-
-      .hero-side-overlay {
-        left: 14px;
-        right: 14px;
-        bottom: 14px;
-        max-width: calc(100% - 28px);
       }
 
       .hero h1 {
@@ -665,6 +684,20 @@
 
       .section-head h2 {
         font-size: 1.8rem;
+      }
+
+      .hero-side {
+        padding: 0;
+      }
+
+      .hero-side img {
+        min-height: 380px;
+        object-position: 64% center;
+      }
+
+      .hero-side-overlay {
+        position: static;
+        margin: 16px;
       }
     }
   </style>
@@ -712,35 +745,45 @@
         </div>
 
         <aside class="hero-side">
-          <img src="/groupe-dehors-briefing-securite.png" alt="Briefing sécurité d’un groupe en extérieur" />
-
+          <img src="/femme-travail-tablette-public.png" alt="Professionnelle en situation d’accueil avec tablette" />
           <div class="hero-side-overlay">
             <h2>Ce que Vital Protect apporte aux structures</h2>
-
-            <p class="hero-side-preview">
-              Prévenir les tensions, améliorer la lecture des situations et transmettre
-              des repères simples, réalistes et adaptés au terrain.
+            <p>
+              L’objectif n’est pas de transformer les équipes en combattants.
+              Il s’agit de leur donner une méthode de lecture, de posture et de gestion
+              qui reste applicable dans le quotidien professionnel.
             </p>
 
-            <button
-              type="button"
-              class="hero-side-toggle"
-              id="heroReadMoreBtn"
-              aria-expanded="false"
-              aria-controls="heroReadMoreContent"
-            >
-              Lire plus
-            </button>
+            <div class="hero-side-list">
+              <div class="hero-side-item">
+                <strong>Prévention</strong>
+                <span>Renforcer la lecture des situations, la vigilance utile et la réduction du risque.</span>
+              </div>
+              <div class="hero-side-item">
+                <strong>Gestion</strong>
+                <span>Développer des réflexes simples pour mieux gérer tensions, agressivité et dégradation.</span>
+              </div>
+              <div class="hero-side-item">
+                <strong>Adaptation</strong>
+                <span>Construire un format cohérent avec le public, le métier et les contraintes de la structure.</span>
+              </div>
+            </div>
 
-            <div class="hero-side-more" id="heroReadMoreContent">
-              <p>
-                L’objectif n’est pas de transformer les équipes en combattants.
-                Il s’agit de leur donner une méthode de lecture, de posture
-                et de gestion qui reste applicable dans le quotidien professionnel.
-              </p>
+            <div class="hero-side-actions">
+              <button id="heroSideToggle" class="hero-side-toggle" type="button" aria-expanded="false">
+                Lire plus
+              </button>
+            </div>
+
+            <div id="heroSideMore" class="hero-side-more">
               <p>
                 Vital Protect privilégie la prévention, la réduction de l’escalade,
                 la clarté pédagogique et l’adaptation au contexte métier.
+              </p>
+              <p>
+                L’approche vise à transmettre des repères concrets pour mieux lire
+                les situations, ajuster sa posture, protéger les équipes et garder
+                une capacité d’action réaliste dans le cadre professionnel.
               </p>
             </div>
           </div>
@@ -1039,14 +1082,14 @@
   </footer>
 
   <script>
-    const heroReadMoreBtn = document.getElementById("heroReadMoreBtn");
-    const heroReadMoreContent = document.getElementById("heroReadMoreContent");
+    const heroSideToggle = document.getElementById("heroSideToggle");
+    const heroSideMore = document.getElementById("heroSideMore");
 
-    if (heroReadMoreBtn && heroReadMoreContent) {
-      heroReadMoreBtn.addEventListener("click", () => {
-        const isOpen = heroReadMoreContent.classList.toggle("show");
-        heroReadMoreBtn.setAttribute("aria-expanded", isOpen ? "true" : "false");
-        heroReadMoreBtn.textContent = isOpen ? "Lire moins" : "Lire plus";
+    if (heroSideToggle && heroSideMore) {
+      heroSideToggle.addEventListener("click", () => {
+        const isOpen = heroSideMore.classList.toggle("show");
+        heroSideToggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
+        heroSideToggle.textContent = isOpen ? "Lire moins" : "Lire plus";
       });
     }
   </script>
