@@ -48,6 +48,11 @@
       color: inherit;
     }
 
+    img {
+      max-width: 100%;
+      display: block;
+    }
+
     .container {
       width: min(1180px, calc(100% - 32px));
       margin: 0 auto;
@@ -145,7 +150,7 @@
 
     .hero-grid {
       display: grid;
-      grid-template-columns: 1.15fr 0.85fr;
+      grid-template-columns: 1.05fr 0.95fr;
       gap: 28px;
       align-items: stretch;
     }
@@ -207,6 +212,59 @@
       flex-wrap: wrap;
     }
 
+    .hero-visual {
+      position: relative;
+      min-height: 100%;
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      box-shadow: 0 18px 40px rgba(0,0,0,0.18);
+      border: 1px solid rgba(255,255,255,0.12);
+      background: #0f223d;
+    }
+
+    .hero-visual img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      min-height: 560px;
+    }
+
+    .hero-visual::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(9,24,44,0.04), rgba(9,24,44,0.42));
+      pointer-events: none;
+    }
+
+    .hero-visual-caption {
+      position: absolute;
+      left: 20px;
+      right: 20px;
+      bottom: 20px;
+      z-index: 2;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255,255,255,0.6);
+      border-radius: 18px;
+      padding: 16px;
+      color: var(--text);
+      box-shadow: 0 10px 26px rgba(9,24,44,0.14);
+    }
+
+    .hero-visual-caption strong {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--navy);
+      font-size: 1rem;
+    }
+
+    .hero-visual-caption span {
+      color: var(--muted);
+      line-height: 1.55;
+      font-size: 0.95rem;
+    }
+
     .btn {
       display: inline-flex;
       align-items: center;
@@ -257,56 +315,6 @@
       background: white;
       color: var(--navy);
       border: 1px solid var(--border);
-    }
-
-    .hero-side {
-      background: white;
-      color: var(--text);
-      border-radius: var(--radius-xl);
-      padding: 28px;
-      box-shadow: var(--shadow);
-      border: 1px solid rgba(255,255,255,0.14);
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      min-height: 100%;
-    }
-
-    .hero-side h2 {
-      margin: 0 0 10px;
-      font-size: 1.45rem;
-      color: var(--navy);
-    }
-
-    .hero-side p {
-      margin: 0;
-      color: var(--muted);
-      line-height: 1.7;
-    }
-
-    .hero-side-list {
-      margin-top: 18px;
-      display: grid;
-      gap: 12px;
-    }
-
-    .hero-side-item {
-      background: #f8fbff;
-      border: 1px solid #e6edf7;
-      border-radius: 16px;
-      padding: 14px;
-    }
-
-    .hero-side-item strong {
-      display: block;
-      margin-bottom: 6px;
-      color: var(--navy);
-    }
-
-    .hero-side-item span {
-      color: var(--muted);
-      line-height: 1.55;
-      font-size: 0.96rem;
     }
 
     section {
@@ -376,7 +384,9 @@
     .stage-card,
     .map-card,
     .map-sidebar,
-    .cta-panel {
+    .cta-panel,
+    .image-panel,
+    .image-text-panel {
       background: var(--card);
       border: 1px solid var(--border);
       border-radius: var(--radius-lg);
@@ -487,6 +497,42 @@
 
     .bullet-item strong {
       color: var(--navy);
+    }
+
+    .image-showcase {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      align-items: stretch;
+    }
+
+    .image-panel {
+      overflow: hidden;
+      min-height: 100%;
+    }
+
+    .image-panel img {
+      width: 100%;
+      height: 100%;
+      min-height: 420px;
+      object-fit: cover;
+    }
+
+    .image-text-panel {
+      padding: 28px;
+      background: linear-gradient(180deg, #ffffff, #f8fbff);
+    }
+
+    .image-text-panel h3 {
+      margin: 0 0 12px;
+      font-size: 1.4rem;
+      color: var(--navy);
+    }
+
+    .image-text-panel p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.72;
     }
 
     .map-layout {
@@ -813,7 +859,8 @@
       .card-grid-4,
       .card-grid-3,
       .faq-grid,
-      .stages-grid {
+      .stages-grid,
+      .image-showcase {
         grid-template-columns: 1fr;
       }
 
@@ -827,6 +874,10 @@
 
       .map-svg-wrap {
         min-height: 580px;
+      }
+
+      .hero-visual img {
+        min-height: 420px;
       }
     }
 
@@ -848,7 +899,8 @@
 
       .hero-copy,
       .hero-side,
-      .cta-panel {
+      .cta-panel,
+      .image-text-panel {
         padding: 24px;
       }
 
@@ -879,6 +931,19 @@
 
       .section-head h2 {
         font-size: 1.8rem;
+      }
+
+      .hero-visual-caption {
+        position: static;
+        margin: 16px;
+      }
+
+      .hero-visual img {
+        min-height: 320px;
+      }
+
+      .image-panel img {
+        min-height: 300px;
       }
     }
   </style>
@@ -932,29 +997,17 @@
           </div>
         </div>
 
-        <aside class="hero-side">
-          <div>
-            <h2>Ce qui différencie Vital Protect</h2>
-            <p>
-              Notre objectif n’est pas d’enseigner une logique de combat spectaculaire,
-              mais de transmettre une méthode claire pour comprendre le risque,
-              prévenir l’escalade et agir avec maîtrise dans des situations réelles.
-            </p>
-
-            <div class="hero-side-list">
-              <div class="hero-side-item">
-                <strong>Une approche globale</strong>
-                <span>Anticipation, observation, évitement, réaction et gestion de l’après-conflit.</span>
-              </div>
-              <div class="hero-side-item">
-                <strong>Une pédagogie sérieuse</strong>
-                <span>Explication, démonstration, pratique, répétition et mises en situation encadrées.</span>
-              </div>
-              <div class="hero-side-item">
-                <strong>Un réseau structuré</strong>
-                <span>Certification par module, maintien des standards et cadre de sécurité exigeant.</span>
-              </div>
-            </div>
+        <aside class="hero-visual">
+          <img
+            src="/femme-mise-a-distance-formateur-guide.png"
+            alt="Mise en situation pratique de sécurité personnelle encadrée par un formateur Vital Protect"
+          />
+          <div class="hero-visual-caption">
+            <strong>Du concret, pas du discours abstrait</strong>
+            <span>
+              Prévenir, gérer la distance, réagir avec simplicité et comprendre la situation :
+              voilà ce que Vital Protect cherche à transmettre.
+            </span>
           </div>
         </aside>
       </div>
@@ -1107,6 +1160,33 @@
             <div class="bullet-item"><strong>Pédagogie active :</strong> comprendre avant de faire, pratiquer avant de répéter.</div>
             <div class="bullet-item"><strong>Cadre sécurisé :</strong> règles claires, adaptation au public, vigilance constante sur la sécurité.</div>
             <div class="bullet-item"><strong>Transmission standardisée :</strong> une cohérence entre les contenus, les modules et les formateurs certifiés.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="container image-showcase">
+        <div class="image-panel">
+          <img
+            src="/formatrice-briefe-groupe-assis.png"
+            alt="Présentation d’un atelier de sécurité personnelle Vital Protect"
+          />
+        </div>
+
+        <div class="image-text-panel">
+          <span class="eyebrow">Déroulé pédagogique</span>
+          <h3>Une formation lisible, progressive et encadrée</h3>
+          <p>
+            Les stages Vital Protect ne reposent pas sur une logique confuse ou improvisée.
+            Chaque session suit un cadre pédagogique précis : explication du contexte, repères
+            utiles, démonstration, pratique et mise en application progressive.
+          </p>
+
+          <div class="bullet-list">
+            <div class="bullet-item"><strong>Un cadre clair :</strong> les participants comprennent ce qu’ils apprennent et pourquoi.</div>
+            <div class="bullet-item"><strong>Une progression utile :</strong> on avance étape par étape, sans brutalité ni folklore.</div>
+            <div class="bullet-item"><strong>Une pédagogie rassurante :</strong> accessible aux débutants comme aux publics professionnels.</div>
           </div>
         </div>
       </div>
