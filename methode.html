@@ -159,13 +159,69 @@
     }
 
     .hero-side {
-      background: white;
-      color: var(--text);
-      padding: 28px;
+      position: relative;
+      overflow: hidden;
+      min-height: 100%;
       border: 1px solid rgba(255,255,255,0.14);
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
+      background: white;
+    }
+
+    .hero-side img {
+      width: 100%;
+      height: 100%;
+      min-height: 620px;
+      object-fit: cover;
+      object-position: 62% center;
+      display: block;
+    }
+
+    .hero-side-overlay {
+      position: absolute;
+      left: 18px;
+      right: 18px;
+      bottom: 18px;
+      background: rgba(255,255,255,0.96);
+      border-radius: 18px;
+      padding: 20px;
+      color: var(--text);
+      box-shadow: 0 12px 30px rgba(13, 35, 64, 0.14);
+    }
+
+    .hero-side-overlay h2 {
+      margin: 0 0 10px;
+      font-size: 1.4rem;
+      color: var(--navy);
+    }
+
+    .hero-side-overlay p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .hero-side-list {
+      margin-top: 18px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .hero-side-item {
+      background: #f8fbff;
+      border: 1px solid #e6edf7;
+      border-radius: 16px;
+      padding: 14px;
+    }
+
+    .hero-side-item strong {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--navy);
+    }
+
+    .hero-side-item span {
+      color: var(--muted);
+      line-height: 1.55;
+      font-size: 0.96rem;
     }
 
     .eyebrow-invert,
@@ -208,43 +264,6 @@
       display: flex;
       gap: 12px;
       flex-wrap: wrap;
-    }
-
-    .hero-side h2 {
-      margin: 0 0 10px;
-      font-size: 1.4rem;
-      color: var(--navy);
-    }
-
-    .hero-side p {
-      margin: 0;
-      color: var(--muted);
-      line-height: 1.7;
-    }
-
-    .hero-side-list {
-      margin-top: 18px;
-      display: grid;
-      gap: 12px;
-    }
-
-    .hero-side-item {
-      background: #f8fbff;
-      border: 1px solid #e6edf7;
-      border-radius: 16px;
-      padding: 14px;
-    }
-
-    .hero-side-item strong {
-      display: block;
-      margin-bottom: 6px;
-      color: var(--navy);
-    }
-
-    .hero-side-item span {
-      color: var(--muted);
-      line-height: 1.55;
-      font-size: 0.96rem;
     }
 
     .btn {
@@ -344,7 +363,9 @@
     .pillar-card,
     .timeline-card,
     .faq-card,
-    .cta-panel {
+    .cta-panel,
+    .image-panel,
+    .image-feature-content {
       background: var(--card);
       border: 1px solid var(--border);
       border-radius: var(--radius-lg);
@@ -472,6 +493,49 @@
       gap: 18px;
     }
 
+    .image-feature {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 22px;
+      align-items: stretch;
+    }
+
+    .image-panel {
+      overflow: hidden;
+      min-height: 520px;
+    }
+
+    .image-panel img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .image-panel.image-1 img {
+      object-position: 64% center;
+    }
+
+    .image-panel.image-2 img {
+      object-position: 60% center;
+    }
+
+    .image-feature-content {
+      padding: 28px;
+    }
+
+    .image-feature-content h3 {
+      margin: 0 0 12px;
+      font-size: 1.4rem;
+      color: var(--navy);
+    }
+
+    .image-feature-content p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.75;
+    }
+
     .cta-panel {
       padding: 34px;
       background:
@@ -552,7 +616,8 @@
       .card-grid-3,
       .card-grid-2,
       .faq-grid,
-      .timeline-grid {
+      .timeline-grid,
+      .image-feature {
         grid-template-columns: 1fr;
       }
 
@@ -562,6 +627,14 @@
 
       .hero h1 {
         font-size: 2.4rem;
+      }
+
+      .hero-side img {
+        min-height: 500px;
+      }
+
+      .image-panel {
+        min-height: 420px;
       }
     }
 
@@ -583,7 +656,8 @@
 
       .hero-copy,
       .hero-side,
-      .cta-panel {
+      .cta-panel,
+      .image-feature-content {
         padding: 24px;
       }
 
@@ -606,6 +680,24 @@
 
       .section-head h2 {
         font-size: 1.8rem;
+      }
+
+      .hero-side {
+        padding: 0;
+      }
+
+      .hero-side img {
+        min-height: 380px;
+        object-position: 64% center;
+      }
+
+      .hero-side-overlay {
+        position: static;
+        margin: 16px;
+      }
+
+      .image-panel {
+        min-height: 320px;
       }
     }
   </style>
@@ -654,7 +746,8 @@
         </div>
 
         <aside class="hero-side">
-          <div>
+          <img src="/formateur-devant-public-assis-salle.png" alt="Formateur Vital Protect devant un groupe assis en salle" />
+          <div class="hero-side-overlay">
             <h2>Ce que cherche à transmettre Vital Protect</h2>
             <p>
               Plus qu’un cours technique, la méthode vise à développer des repères concrets,
@@ -782,6 +875,30 @@
       </div>
     </section>
 
+    <section>
+      <div class="container image-feature">
+        <div class="image-panel image-1">
+          <img src="/discussion-informelle-participants.png" alt="Discussion informelle entre participants dans un cadre Vital Protect" />
+        </div>
+
+        <div class="image-feature-content">
+          <span class="eyebrow">Lecture des situations</span>
+          <h3>Comprendre l’ambiance, les signaux et les interactions</h3>
+          <p>
+            La méthode ne se limite pas au moment où la tension explose. Elle apprend aussi à lire
+            les comportements, l’environnement, les postures, les dynamiques de groupe et les indices
+            qui permettent d’anticiper ou de désamorcer une situation avant qu’elle ne se dégrade.
+          </p>
+
+          <div class="bullet-list">
+            <div class="bullet-item"><strong>Observer :</strong> mieux comprendre ce qui se joue réellement dans l’environnement.</div>
+            <div class="bullet-item"><strong>Repérer :</strong> identifier les signes utiles sans surinterpréter.</div>
+            <div class="bullet-item"><strong>Décider :</strong> savoir quand éviter, se repositionner ou alerter.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <section class="soft-band">
       <div class="container">
         <div class="section-head">
@@ -848,6 +965,30 @@
             <h3>Encadrement rigoureux</h3>
             <p>Les exercices sont adaptés au public, au niveau et au contexte afin de préserver l’intégrité physique et psychologique.</p>
           </article>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="container image-feature">
+        <div class="image-feature-content">
+          <span class="eyebrow">Transmission</span>
+          <h3>Une méthode vivante, mais jamais improvisée</h3>
+          <p>
+            Vital Protect repose sur une logique de transmission standardisée. Cela permet de conserver
+            un haut niveau de cohérence entre les formateurs, les contenus transmis, les objectifs
+            pédagogiques et les exigences de sécurité.
+          </p>
+
+          <div class="bullet-list">
+            <div class="bullet-item"><strong>Une logique commune :</strong> les contenus restent lisibles et cohérents d’un formateur à l’autre.</div>
+            <div class="bullet-item"><strong>Une exigence pédagogique :</strong> expliquer, démontrer, corriger et encadrer sont au cœur de la méthode.</div>
+            <div class="bullet-item"><strong>Un cadre sécuritaire :</strong> la progression reste pensée pour favoriser l’apprentissage réel.</div>
+          </div>
+        </div>
+
+        <div class="image-panel image-2">
+          <img src="/formateur-petit-groupe-cercle.png" alt="Formateur Vital Protect avec un petit groupe en cercle" />
         </div>
       </div>
     </section>
