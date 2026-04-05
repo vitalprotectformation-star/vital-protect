@@ -126,23 +126,6 @@
       font-size: 0.98rem;
     }
 
-    .hero-home__annotation {
-      position: absolute;
-      top: 18px;
-      right: 18px;
-      z-index: 2;
-      max-width: 260px;
-      border-radius: 16px;
-      padding: 12px 14px;
-      font-size: 0.82rem;
-      font-weight: 700;
-      line-height: 1.5;
-      color: rgba(255, 255, 255, 0.88);
-      background: rgba(7, 17, 31, 0.48);
-      border: 1px dashed rgba(255, 255, 255, 0.22);
-      backdrop-filter: blur(8px);
-    }
-
     .proof-band {
       padding-top: 0;
       margin-top: -14px;
@@ -222,23 +205,7 @@
       height: 100%;
       object-fit: cover;
       object-position: 22% center;
-    }
-
-    .pedagogy-media__annotation {
-      position: absolute;
-      top: 18px;
-      left: 18px;
-      z-index: 2;
-      max-width: 240px;
-      border-radius: 16px;
-      padding: 12px 14px;
-      font-size: 0.82rem;
-      font-weight: 700;
-      line-height: 1.5;
-      color: rgba(255, 255, 255, 0.9);
-      background: rgba(7, 17, 31, 0.50);
-      border: 1px dashed rgba(255, 255, 255, 0.20);
-      backdrop-filter: blur(8px);
+      display: block;
     }
 
     .pedagogy-content {
@@ -623,9 +590,6 @@
 
         <aside class="surface-panel hero-home__media">
           <div class="hero-home__image-wrap">
-            <!-- IMAGE RECOMMANDÉE ICI :
-                 scène réelle de mise à distance / guidage pédagogique / interaction encadrée.
-                 Fichier actuel utilisé : /femme-mise-a-distance-formateur-guide.png -->
             <img
               src="/femme-mise-a-distance-formateur-guide.png"
               alt="Mise en situation Vital Protect encadrée par un formateur"
@@ -790,13 +754,11 @@
     <section>
       <div class="container pedagogy-feature">
         <div class="card pedagogy-media">
-          <!-- IMAGE RECOMMANDÉE ICI :
-               briefing formateur devant un groupe assis, cadrage éditorial, ambiance premium.
-               Fichier actuel utilisé : /formatrice-briefe-groupe-assis.png -->
           <img
             src="/formatrice-briefe-groupe-assis.png"
             alt="Formatrice Vital Protect en briefing devant un groupe assis"
           />
+        </div>
 
         <div class="card pedagogy-content">
           <span class="eyebrow">Déroulé pédagogique</span>
