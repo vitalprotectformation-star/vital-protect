@@ -1,0 +1,52 @@
+:root {
+  --vp-bg: #f5f7fa;
+  --vp-bg-soft: #f8fafc;
+  --vp-surface: rgba(255,255,255,0.78);
+  --vp-surface-solid: #ffffff;
+  --vp-surface-dark: #0d1b2a;
+  --vp-border: rgba(13, 27, 42, 0.10);
+  --vp-border-strong: rgba(13, 27, 42, 0.18);
+
+  --vp-text: #0f1724;
+  --vp-text-soft: #5b6675;
+  --vp-text-invert: rgba(255,255,255,0.92);
+  --vp-text-invert-soft: rgba(255,255,255,0.72);
+
+  --vp-navy-900: #07111f;
+  --vp-navy-800: #0d1b2a;
+  --vp-navy-700: #10243b;
+  --vp-navy-600: #17314f;
+  --vp-steel: #7f96ad;
+  --vp-gold: #c4a46b;
+  --vp-blue-soft: #dbe7f4;
+
+  --vp-success: #127a46;
+  --vp-warning: #946200;
+  --vp-danger: #b3261e;
+  --vp-success-bg: #ebf7ef;
+  --vp-warning-bg: #fff6e4;
+  --vp-danger-bg: #fff1f1;
+
+  --vp-shadow-sm: 0 8px 24px rgba(7, 17, 31, 0.06);
+  --vp-shadow-md: 0 18px 50px rgba(7, 17, 31, 0.10);
+  --vp-shadow-lg: 0 28px 80px rgba(7, 17, 31, 0.16);
+
+  --vp-radius-sm: 14px;
+  --vp-radius-md: 20px;
+  --vp-radius-lg: 28px;
+  --vp-radius-xl: 36px;
+
+  --vp-space-1: 8px;
+  --vp-space-2: 12px;
+  --vp-space-3: 16px;
+  --vp-space-4: 24px;
+  --vp-space-5: 32px;
+  --vp-space-6: 48px;
+  --vp-space-7: 64px;
+  --vp-space-8: 96px;
+
+  --vp-container: 1220px;
+
+  --vp-font-heading: "Manrope", "Inter", sans-serif;
+  --vp-font-body: "Inter", sans-serif;
+}
