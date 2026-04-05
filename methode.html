@@ -11,12 +11,12 @@
 
   <style>
     .method-hero {
-      padding: 72px 0 50px;
+      padding: 72px 0 56px;
     }
 
     .method-hero__grid {
       display: grid;
-      grid-template-columns: 1.04fr 0.96fr;
+      grid-template-columns: 1.08fr 0.92fr;
       gap: 28px;
       align-items: stretch;
     }
@@ -27,19 +27,19 @@
 
     .method-hero__title {
       margin: 14px 0 18px;
-      font-size: clamp(2.5rem, 4.8vw, 4.8rem);
+      font-size: clamp(2.6rem, 5vw, 4.8rem);
       line-height: 0.96;
       letter-spacing: -0.04em;
       color: white;
-      max-width: 11ch;
+      max-width: 10.5ch;
     }
 
     .method-hero__lead {
       margin: 0;
       color: var(--vp-text-invert-soft);
-      line-height: 1.86;
-      font-size: 1.04rem;
-      max-width: 58ch;
+      line-height: 1.88;
+      font-size: 1.05rem;
+      max-width: 60ch;
     }
 
     .method-hero__actions {
@@ -49,54 +49,27 @@
       gap: 12px;
     }
 
-    .method-hero__points {
+    .method-hero__proofs {
       margin-top: 24px;
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 12px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
     }
 
-    .method-point {
-      padding: 15px 16px;
-      border-radius: 18px;
-      background: rgba(255,255,255,0.08);
-      border: 1px solid rgba(255,255,255,0.10);
-      color: white;
-      font-weight: 700;
-      line-height: 1.5;
-    }
-
-    .method-hero__visual {
-      position: relative;
-      min-height: 620px;
-      overflow: hidden;
-      border-radius: 32px;
-      box-shadow: var(--vp-shadow-xl);
-      background:
-        linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02)),
-        linear-gradient(135deg, #f4efe7, #dfe8f4 45%, #cfdcf0);
-      border: 1px solid rgba(255,255,255,0.14);
-    }
-
-    .method-hero__placeholder-note {
-      position: absolute;
-      top: 22px;
-      left: 22px;
+    .method-proof {
       display: inline-flex;
       align-items: center;
       gap: 8px;
       padding: 10px 14px;
       border-radius: 999px;
-      background: rgba(13, 27, 42, 0.66);
-      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.10);
       color: white;
-      font-size: 0.88rem;
+      font-size: 0.92rem;
       font-weight: 700;
-      z-index: 2;
-      backdrop-filter: blur(10px);
     }
 
-    .method-hero__placeholder-note::before {
+    .method-proof::before {
       content: "";
       width: 8px;
       height: 8px;
@@ -105,120 +78,125 @@
       display: inline-block;
     }
 
-    .method-hero__visual-center {
+    .method-hero__visual {
+      min-height: 100%;
+      overflow: hidden;
+      position: relative;
+      padding: 0;
+    }
+
+    .method-hero__visual img {
+      width: 100%;
+      height: 100%;
+      min-height: 680px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .method-hero__overlay {
       position: absolute;
-      inset: 0;
-      display: grid;
-      place-items: center;
-      padding: 28px;
-      text-align: center;
+      left: 20px;
+      right: 20px;
+      bottom: 20px;
+      padding: 18px 20px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.94);
+      border: 1px solid rgba(13,27,42,0.08);
+      box-shadow: 0 12px 30px rgba(13, 27, 42, 0.16);
     }
 
-    .method-hero__visual-card {
-      width: min(540px, 100%);
-      padding: 28px;
-      border-radius: 24px;
-      background: rgba(255,255,255,0.82);
-      border: 1px solid rgba(13, 27, 42, 0.08);
-      box-shadow: 0 20px 40px rgba(13, 27, 42, 0.10);
-      backdrop-filter: blur(10px);
-    }
-
-    .method-hero__visual-card h2 {
-      margin: 0 0 10px;
-      font-size: 1.4rem;
+    .method-hero__overlay strong {
+      display: block;
+      margin-bottom: 6px;
       color: var(--vp-navy-850);
+      font-size: 1.02rem;
     }
 
-    .method-hero__visual-card p {
+    .method-hero__overlay span {
+      color: var(--vp-text-soft);
+      line-height: 1.65;
+      font-size: 0.95rem;
+    }
+
+    .section-intro {
+      max-width: 860px;
+      margin-bottom: 28px;
+    }
+
+    .section-intro--center {
+      text-align: center;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .section-intro h2 {
       margin: 0;
-      color: var(--vp-text-soft);
-      line-height: 1.72;
+      color: var(--vp-navy-850);
+      font-size: clamp(2rem, 3vw, 3rem);
+      line-height: 1.05;
+      letter-spacing: -0.03em;
     }
 
-    .method-hero__visual-card .note {
-      margin-top: 14px;
-      font-size: 0.92rem;
+    .section-intro p {
+      margin: 14px 0 0;
       color: var(--vp-text-soft);
-      font-style: italic;
+      line-height: 1.85;
+      font-size: 1.03rem;
     }
 
-    .section-grid-3,
-    .section-grid-4,
-    .faq-grid {
+    .pillars-grid {
       display: grid;
-      gap: 18px;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 16px;
     }
 
-    .section-grid-3 {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
-
-    .section-grid-4 {
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-    }
-
-    .faq-grid {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-
-    .method-card,
-    .pillar-card,
-    .proof-card,
-    .faq-card {
+    .pillar-card {
       padding: 24px;
     }
 
-    .method-card h3,
-    .pillar-card h3,
-    .proof-card h3,
-    .faq-card h3 {
-      margin: 0 0 10px;
-      color: var(--vp-navy-850);
-      font-size: 1.14rem;
-    }
-
-    .method-card p,
-    .pillar-card p,
-    .proof-card p,
-    .faq-card p {
-      margin: 0;
-      color: var(--vp-text-soft);
-      line-height: 1.75;
-    }
-
-    .pillar-number {
+    .pillar-index {
       width: 42px;
       height: 42px;
-      border-radius: 999px;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      background: linear-gradient(135deg, var(--vp-navy-700), var(--vp-navy-850));
+      border-radius: 999px;
+      background: var(--vp-navy-850);
       color: white;
       font-weight: 800;
       margin-bottom: 14px;
-      box-shadow: 0 12px 24px rgba(13, 27, 42, 0.14);
     }
 
-    .method-split {
+    .pillar-card h3 {
+      margin: 0 0 10px;
+      color: var(--vp-navy-850);
+      font-size: 1.08rem;
+    }
+
+    .pillar-card p {
+      margin: 0;
+      color: var(--vp-text-soft);
+      line-height: 1.74;
+    }
+
+    .split-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 20px;
       align-items: start;
     }
 
-    .method-panel {
+    .soft-panel {
       padding: 28px;
     }
 
-    .method-panel h3 {
-      margin: 12px 0;
-      font-size: 1.4rem;
+    .soft-panel h3 {
+      margin: 0 0 12px;
       color: var(--vp-navy-850);
+      font-size: 1.34rem;
     }
 
-    .method-panel p {
+    .soft-panel p {
       margin: 0;
       color: var(--vp-text-soft);
       line-height: 1.82;
@@ -236,7 +214,7 @@
       background: var(--vp-blue-soft-2);
       border: 1px solid rgba(13, 27, 42, 0.06);
       color: var(--vp-text);
-      line-height: 1.68;
+      line-height: 1.7;
     }
 
     .bullet-item strong {
@@ -245,65 +223,26 @@
 
     .pedagogy-feature {
       display: grid;
-      grid-template-columns: 0.92fr 1.08fr;
+      grid-template-columns: 1fr 1fr;
       gap: 22px;
       align-items: stretch;
     }
 
     .pedagogy-media {
       min-height: 560px;
-      border-radius: 28px;
       overflow: hidden;
-      position: relative;
-      background:
-        linear-gradient(135deg, #ebe4db, #dce7f5 48%, #cbd8ef);
-      border: 1px solid rgba(13, 27, 42, 0.06);
-      box-shadow: var(--vp-shadow-lg);
+      padding: 0;
     }
 
-    .pedagogy-media__note {
-      position: absolute;
-      left: 18px;
-      top: 18px;
-      padding: 10px 14px;
-      border-radius: 999px;
-      background: rgba(13, 27, 42, 0.66);
-      color: white;
-      font-size: 0.86rem;
-      font-weight: 700;
-      border: 1px solid rgba(255,255,255,0.10);
-      z-index: 2;
+    .pedagogy-media img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
     }
 
-    .pedagogy-media__center {
-      position: absolute;
-      inset: 0;
-      display: grid;
-      place-items: center;
-      padding: 22px;
-    }
-
-    .pedagogy-media__card {
-      max-width: 420px;
-      text-align: center;
-      padding: 24px;
-      border-radius: 22px;
-      background: rgba(255,255,255,0.84);
-      border: 1px solid rgba(13, 27, 42, 0.08);
-      box-shadow: 0 20px 40px rgba(13, 27, 42, 0.10);
-      backdrop-filter: blur(10px);
-    }
-
-    .pedagogy-media__card h3 {
-      margin: 0 0 10px;
-      color: var(--vp-navy-850);
-      font-size: 1.22rem;
-    }
-
-    .pedagogy-media__card p {
-      margin: 0;
-      color: var(--vp-text-soft);
-      line-height: 1.72;
+    .pedagogy-img-left {
+      object-position: 18% center;
     }
 
     .pedagogy-content {
@@ -311,16 +250,17 @@
     }
 
     .pedagogy-content h2 {
-      margin: 12px 0 16px;
-      font-size: 2rem;
-      line-height: 1.15;
+      margin: 0 0 16px;
       color: var(--vp-navy-850);
+      font-size: clamp(2rem, 3vw, 3rem);
+      line-height: 1.06;
+      letter-spacing: -0.03em;
     }
 
     .pedagogy-content p {
       margin: 0 0 22px;
       color: var(--vp-text-soft);
-      line-height: 1.82;
+      line-height: 1.84;
       font-size: 1.03rem;
     }
 
@@ -330,16 +270,49 @@
     }
 
     .pedagogy-point {
+      padding: 16px;
+      border-radius: 16px;
       background: var(--vp-blue-soft-2);
       border: 1px solid rgba(13, 27, 42, 0.06);
-      border-radius: 18px;
-      padding: 16px;
-      line-height: 1.68;
       color: var(--vp-text);
+      line-height: 1.7;
     }
 
     .pedagogy-point strong {
       color: var(--vp-navy-850);
+    }
+
+    .audiences-grid,
+    .faq-grid {
+      display: grid;
+      gap: 18px;
+    }
+
+    .audiences-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .faq-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .audience-card,
+    .faq-card {
+      padding: 24px;
+    }
+
+    .audience-card h3,
+    .faq-card h3 {
+      margin: 0 0 10px;
+      color: var(--vp-navy-850);
+      font-size: 1.12rem;
+    }
+
+    .audience-card p,
+    .faq-card p {
+      margin: 0;
+      color: var(--vp-text-soft);
+      line-height: 1.76;
     }
 
     .method-cta {
@@ -348,20 +321,16 @@
 
     @media (max-width: 1180px) {
       .method-hero__grid,
-      .method-split,
-      .section-grid-3,
-      .section-grid-4,
-      .faq-grid,
-      .pedagogy-feature {
+      .split-grid,
+      .pedagogy-feature,
+      .pillars-grid,
+      .audiences-grid,
+      .faq-grid {
         grid-template-columns: 1fr;
       }
 
-      .method-hero__points {
-        grid-template-columns: 1fr;
-      }
-
-      .method-hero__visual {
-        min-height: 480px;
+      .method-hero__visual img {
+        min-height: 520px;
       }
 
       .pedagogy-media {
@@ -375,11 +344,10 @@
       }
 
       .method-hero__copy,
-      .method-panel,
-      .pedagogy-content,
-      .method-card,
       .pillar-card,
-      .proof-card,
+      .soft-panel,
+      .pedagogy-content,
+      .audience-card,
       .faq-card,
       .method-cta {
         padding: 24px;
@@ -391,6 +359,15 @@
 
       .btn {
         width: 100%;
+      }
+
+      .method-hero__visual img {
+        min-height: 400px;
+      }
+
+      .method-hero__overlay {
+        position: static;
+        margin: 16px;
       }
     }
   </style>
@@ -412,8 +389,9 @@
         <a href="/methode.html" class="active">La méthode</a>
         <a href="/index.html#stages">Nos stages</a>
         <a href="/entreprises.html">Entreprises</a>
-        <a href="/contact.html">Contact</a>
         <a href="/devenir-formateur.html">Devenir formateur</a>
+        <a href="/faq.html">FAQ</a>
+        <a href="/contact.html">Contact</a>
         <a href="/formateur-login.html" class="nav-cta">Espace formateur</a>
       </nav>
     </div>
@@ -424,11 +402,11 @@
       <div class="container method-hero__grid">
         <div class="glass-panel method-hero__copy">
           <div class="eyebrow eyebrow--invert">La méthode Vital Protect</div>
-          <h1 class="method-hero__title">Comprendre avant d’agir. Prévenir avant de subir.</h1>
+          <h1 class="method-hero__title">Une méthode de sécurité personnelle, pas une collection de gestes.</h1>
           <p class="method-hero__lead">
-            Vital Protect n’est pas une accumulation de techniques. C’est une méthode structurée
-            de sécurité personnelle fondée sur l’anticipation, la lecture des situations,
-            l’évitement, la réaction réaliste et la gestion de l’après-conflit.
+            Vital Protect s’appuie sur une logique claire : comprendre les situations,
+            prévenir l’escalade, réduire l’exposition au risque et transmettre des réponses
+            simples, réalistes et applicables dans la vie réelle.
           </p>
 
           <div class="method-hero__actions">
@@ -436,31 +414,25 @@
             <a href="/devenir-formateur.html" class="btn btn-secondary">Découvrir le parcours formateur</a>
           </div>
 
-          <div class="method-hero__points">
-            <div class="method-point">Une logique claire plutôt qu’un empilement de gestes.</div>
-            <div class="method-point">Une pédagogie progressive plutôt qu’une démonstration spectaculaire.</div>
-            <div class="method-point">Une réponse réaliste pour la vraie vie, pas pour la performance.</div>
-            <div class="method-point">Un cadre de transmission cohérent, certifié et sécurisé.</div>
+          <div class="method-hero__proofs">
+            <div class="method-proof">Prévention</div>
+            <div class="method-proof">Lecture des situations</div>
+            <div class="method-proof">Réaction réaliste</div>
+            <div class="method-proof">Pédagogie structurée</div>
           </div>
         </div>
 
-        <aside class="method-hero__visual">
-          <div class="method-hero__placeholder-note">
-            Emplacement image héro
-          </div>
-
-          <div class="method-hero__visual-center">
-            <div class="method-hero__visual-card">
-              <h2>Image recommandée</h2>
-              <p>
-                Ici, place une photo premium d’un formateur Vital Protect guidant calmement
-                une mise en situation avec un participant, dans un environnement propre, lumineux,
-                professionnel, sans agressivité visuelle.
-              </p>
-              <div class="note">
-                Annotation image : “formateur encadrant une mise à distance / briefing sécurité, rendu haut de gamme, tons sobres, crédibilité forte”.
-              </div>
-            </div>
+        <aside class="card method-hero__visual">
+          <img
+            src="/emplacement-image-hero-methode.png"
+            alt="Image hero méthode Vital Protect"
+          />
+          <div class="method-hero__overlay">
+            <strong>Image hero méthode</strong>
+            <span>
+              Visuel recommandé : scène de briefing, mise en situation ou encadrement pédagogique
+              incarnant la méthode, la posture et la sécurité.
+            </span>
           </div>
         </aside>
       </div>
@@ -468,169 +440,109 @@
 
     <section>
       <div class="container">
-        <div class="section-head center">
-          <span class="eyebrow">Positionnement</span>
-          <h2>Une méthode de sécurité personnelle, pas un spectacle de self-défense</h2>
+        <div class="section-intro section-intro--center">
+          <span class="eyebrow">Les fondations</span>
+          <h2>Les 5 piliers de la sécurité personnelle</h2>
           <p>
-            Vital Protect repose sur une conviction simple : dans la réalité, la sécurité
-            commence bien avant le contact physique. Ce qui compte, c’est la capacité à lire,
-            éviter, désamorcer, se protéger et reprendre le contrôle avec lucidité.
+            La sécurité personnelle ne commence pas au contact. Elle se construit avant,
+            pendant et après une situation tendue. La méthode Vital Protect structure
+            cette logique de manière claire et progressive.
           </p>
         </div>
 
-        <div class="section-grid-3">
-          <article class="card method-card">
-            <h3>Clarté</h3>
-            <p>La méthode donne des repères compréhensibles, mémorisables et utilisables dans le quotidien.</p>
-          </article>
-
-          <article class="card method-card">
-            <h3>Réalisme</h3>
-            <p>Les réponses recherchées restent simples, accessibles et cohérentes avec des situations réelles.</p>
-          </article>
-
-          <article class="card method-card">
-            <h3>Responsabilité</h3>
-            <p>L’objectif n’est pas la domination, mais la réduction du risque, la protection et la sortie de crise.</p>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <section>
-      <div class="container">
-        <div class="section-head center">
-          <span class="eyebrow">Les 5 piliers</span>
-          <h2>Les fondations de la méthode</h2>
-          <p>
-            La sécurité personnelle ne se limite pas à la réaction. Elle s’organise autour de cinq piliers
-            complémentaires, pensés pour avant, pendant et après la situation.
-          </p>
-        </div>
-
-        <div class="section-grid-4">
+        <div class="pillars-grid">
           <article class="card pillar-card">
-            <div class="pillar-number">1</div>
+            <div class="pillar-index">1</div>
             <h3>Anticipation</h3>
-            <p>Développer des réflexes de prudence, mieux identifier les contextes à risque et réduire l’exposition inutile.</p>
+            <p>Reconnaître les contextes à risque et développer des réflexes de prudence utiles au quotidien.</p>
           </article>
 
           <article class="card pillar-card">
-            <div class="pillar-number">2</div>
+            <div class="pillar-index">2</div>
             <h3>Observation</h3>
-            <p>Lire l’environnement, repérer les signaux utiles et comprendre plus vite la dynamique d’une situation.</p>
+            <p>Lire l’environnement, repérer les signaux pertinents et mieux comprendre la dynamique d’une situation.</p>
           </article>
 
           <article class="card pillar-card">
-            <div class="pillar-number">3</div>
+            <div class="pillar-index">3</div>
             <h3>Évitement</h3>
-            <p>Se repositionner, désamorcer, s’extraire, conserver une distance utile et empêcher l’escalade.</p>
+            <p>Réduire l’exposition, se repositionner, désamorcer et éviter l’escalade quand cela reste possible.</p>
           </article>
 
           <article class="card pillar-card">
-            <div class="pillar-number">4</div>
+            <div class="pillar-index">4</div>
             <h3>Réaction</h3>
-            <p>Mobiliser des réponses simples, réalistes, rapides et proportionnées quand la situation l’impose.</p>
+            <p>Utiliser des réponses simples, cohérentes et réalistes sans entrer dans une logique spectaculaire.</p>
           </article>
 
           <article class="card pillar-card">
-            <div class="pillar-number">5</div>
+            <div class="pillar-index">5</div>
             <h3>Après-conflit</h3>
-            <p>Se mettre en sécurité, alerter, protéger les autres, retrouver de la clarté et reprendre la main.</p>
-          </article>
-
-          <article class="card pillar-card">
-            <div class="pillar-number">+</div>
-            <h3>Pédagogie</h3>
-            <p>La méthode existe aussi par sa manière d’être transmise : progression, cadre, répétition, sécurité et cohérence.</p>
-          </article>
-
-          <article class="card pillar-card">
-            <div class="pillar-number">+</div>
-            <h3>Cadre</h3>
-            <p>Un environnement structuré, des consignes explicites et une logique professionnelle au service de l’apprentissage.</p>
-          </article>
-
-          <article class="card pillar-card">
-            <div class="pillar-number">+</div>
-            <h3>Transmission</h3>
-            <p>Des contenus stabilisés, des modules lisibles et des standards de qualité portés par le réseau.</p>
+            <p>Se mettre en sécurité, alerter, protéger et retrouver une capacité d’action après l’incident.</p>
           </article>
         </div>
       </div>
     </section>
 
     <section>
-      <div class="container method-split">
-        <div class="soft-card method-panel">
-          <span class="eyebrow">Ce que la méthode cherche à produire</span>
-          <h3>Des repères utiles, pas une illusion de maîtrise totale</h3>
+      <div class="container split-grid">
+        <article class="card soft-panel">
+          <span class="eyebrow">Ce que la méthode transmet</span>
+          <h3>Comprendre, prévenir, gérer, protéger</h3>
           <p>
-            Vital Protect ne promet pas une invincibilité artificielle. La méthode vise au contraire
-            à améliorer la lucidité, la prévention, la gestion de la distance, la capacité de décision
-            et la protection concrète dans les situations du quotidien.
+            Vital Protect ne repose pas sur une promesse de domination ou de performance martiale.
+            La méthode vise à donner des repères utiles, lisibles et utilisables dans le réel.
           </p>
 
           <div class="bullet-list">
-            <div class="bullet-item"><strong>Mieux lire :</strong> comprendre plus vite ce qui se passe.</div>
-            <div class="bullet-item"><strong>Mieux choisir :</strong> savoir quand éviter, temporiser, se repositionner ou agir.</div>
-            <div class="bullet-item"><strong>Mieux réagir :</strong> garder des réponses simples sous stress.</div>
-            <div class="bullet-item"><strong>Mieux sortir :</strong> retrouver la sécurité, l’alerte et la reprise de contrôle.</div>
+            <div class="bullet-item"><strong>Repérer :</strong> mieux identifier les contextes et comportements qui annoncent un risque.</div>
+            <div class="bullet-item"><strong>Prévenir :</strong> adopter une posture et des réflexes qui limitent l’exposition.</div>
+            <div class="bullet-item"><strong>Garder la lucidité :</strong> mieux gérer la distance, la tension et la dégradation d’une situation.</div>
+            <div class="bullet-item"><strong>Réagir :</strong> mobiliser des réponses simples, réalistes et cohérentes avec le contexte.</div>
           </div>
-        </div>
+        </article>
 
-        <div class="soft-card method-panel">
+        <article class="card soft-panel">
           <span class="eyebrow">Ce que la méthode refuse</span>
-          <h3>Pas de folklore, pas de démonstration vide, pas de faux héroïsme</h3>
+          <h3>Ni folklore, ni illusion de maîtrise totale</h3>
           <p>
-            L’approche Vital Protect se distingue volontairement d’une mise en scène martiale ou d’une
-            logique de performance. Ce qui est recherché, c’est l’utilité réelle, la sobriété,
-            la cohérence pédagogique et la sécurité des participants.
+            La méthode Vital Protect s’éloigne volontairement des codes trop martiaux,
+            du sensationnalisme et des démonstrations déconnectées du réel.
           </p>
 
           <div class="bullet-list">
-            <div class="bullet-item"><strong>Pas de promesse absolue :</strong> la méthode cherche à mieux préparer, pas à nier le réel.</div>
-            <div class="bullet-item"><strong>Pas de brutalité gratuite :</strong> la pédagogie reste progressive et encadrée.</div>
-            <div class="bullet-item"><strong>Pas d’effet de manche :</strong> la priorité est donnée à la compréhension et à l’applicabilité.</div>
-            <div class="bullet-item"><strong>Pas de transmission floue :</strong> les contenus suivent une structure claire.</div>
+            <div class="bullet-item"><strong>Pas de folklore :</strong> on évite les effets visuels qui ne servent pas l’apprentissage.</div>
+            <div class="bullet-item"><strong>Pas de promesse irréaliste :</strong> aucune méthode ne supprime totalement le risque.</div>
+            <div class="bullet-item"><strong>Pas de confusion :</strong> la progression pédagogique reste claire, lisible et encadrée.</div>
+            <div class="bullet-item"><strong>Pas de brutalité gratuite :</strong> la sécurité des participants reste prioritaire.</div>
           </div>
-        </div>
+        </article>
       </div>
     </section>
 
     <section>
       <div class="container pedagogy-feature">
-        <div class="pedagogy-media">
-          <div class="pedagogy-media__note">Emplacement image pédagogique</div>
-
-          <div class="pedagogy-media__center">
-            <div class="pedagogy-media__card">
-              <h3>Image recommandée</h3>
-              <p>
-                Ici, place une image montrant un briefing de groupe, une démonstration calme,
-                ou un formateur expliquant un principe devant des participants attentifs.
-              </p>
-              <p style="margin-top:12px; font-style:italic;">
-                Annotation image : “briefing pédagogique / groupe attentif / atmosphère premium / sécurité / professionnalisme”.
-              </p>
-            </div>
-          </div>
+        <div class="card pedagogy-media">
+          <img
+            src="/emplacement-image-pedagogique-methode.png"
+            alt="Image pédagogique méthode Vital Protect"
+            class="pedagogy-img-left"
+          />
         </div>
 
         <div class="card pedagogy-content">
-          <span class="eyebrow">Pédagogie Vital Protect</span>
-          <h2>Une méthode n’existe que si elle est bien transmise</h2>
+          <span class="eyebrow">Déroulé pédagogique</span>
+          <h2>Une pédagogie progressive, lisible et encadrée</h2>
           <p>
-            La force de Vital Protect vient autant du contenu que de la manière de le transmettre.
-            Chaque stage repose sur une pédagogie claire : explication, démonstration, pratique,
-            répétition et mise en application progressive dans un cadre sécurisé.
+            Les formations Vital Protect suivent une structure claire : explication,
+            démonstration, pratique, répétition et mise en situation. Le cadre est pensé
+            pour favoriser l’apprentissage réel, sans confusion ni sensationnalisme.
           </p>
 
           <div class="pedagogy-points">
-            <div class="pedagogy-point"><strong>Comprendre avant de faire :</strong> les participants savent ce qu’ils apprennent et pourquoi.</div>
-            <div class="pedagogy-point"><strong>Progresser étape par étape :</strong> l’apprentissage suit une montée logique et rassurante.</div>
-            <div class="pedagogy-point"><strong>Répéter utilement :</strong> on consolide les repères au lieu d’empiler des gestes.</div>
-            <div class="pedagogy-point"><strong>Encadrer avec exigence :</strong> la sécurité et la cohérence pédagogique passent avant tout.</div>
+            <div class="pedagogy-point"><strong>Un cadre clair :</strong> les participants comprennent ce qu’ils apprennent et pourquoi.</div>
+            <div class="pedagogy-point"><strong>Une progression utile :</strong> on avance étape par étape, sans brutalité ni folklore.</div>
+            <div class="pedagogy-point"><strong>Une pédagogie rassurante :</strong> accessible aux débutants comme aux publics professionnels.</div>
           </div>
         </div>
       </div>
@@ -638,30 +550,30 @@
 
     <section>
       <div class="container">
-        <div class="section-head center">
-          <span class="eyebrow">Ce qui donne de la crédibilité au système</span>
-          <h2>Une méthode, des modules, un réseau, un cadre</h2>
+        <div class="section-intro">
+          <span class="eyebrow">À qui s’adresse cette approche</span>
+          <h2>Une méthode pensée pour plusieurs réalités</h2>
           <p>
-            Vital Protect ne repose pas sur une seule page ou un seul discours. Le projet s’appuie
-            sur une logique globale de transmission : contenus organisés, formateurs certifiés,
-            cadre réseau et standards de qualité.
+            Vital Protect s’adresse au grand public, aux professionnels exposés,
+            aux structures accueillant du public et aux candidats formateurs.
+            La méthode reste cohérente tout en s’adaptant aux contextes.
           </p>
         </div>
 
-        <div class="section-grid-3">
-          <article class="card proof-card">
-            <h3>Modules structurés</h3>
-            <p>Les contenus ne sont pas flous : ils s’inscrivent dans des modules précis, avec une logique pédagogique identifiable.</p>
+        <div class="audiences-grid">
+          <article class="card audience-card">
+            <h3>Grand public</h3>
+            <p>Pour acquérir des repères concrets, mieux lire les situations et développer des réflexes utiles.</p>
           </article>
 
-          <article class="card proof-card">
-            <h3>Certification par module</h3>
-            <p>Un formateur Vital Protect est certifié pour transmettre des contenus définis, pas “globalement” sans cadre clair.</p>
+          <article class="card audience-card">
+            <h3>Entreprises & professionnels</h3>
+            <p>Pour travailler la prévention, la posture, la gestion de tension et l’adaptation au contexte métier.</p>
           </article>
 
-          <article class="card proof-card">
-            <h3>Exigence réseau</h3>
-            <p>Le maintien de la cohérence repose sur la qualité de transmission, le respect du protocole et la sécurité.</p>
+          <article class="card audience-card">
+            <h3>Formateurs</h3>
+            <p>Pour transmettre une méthode dans un cadre structuré, avec une certification par module et des standards clairs.</p>
           </article>
         </div>
       </div>
@@ -669,33 +581,33 @@
 
     <section>
       <div class="container">
-        <div class="section-head center">
+        <div class="section-intro section-intro--center">
           <span class="eyebrow">Questions fréquentes</span>
-          <h2>Ce que la méthode soulève souvent</h2>
+          <h2>Ce que l’on demande souvent sur la méthode</h2>
           <p>
-            Quelques réponses simples pour clarifier la philosophie Vital Protect.
+            Quelques repères rapides pour mieux comprendre le positionnement Vital Protect.
           </p>
         </div>
 
         <div class="faq-grid">
           <article class="card faq-card">
-            <h3>Est-ce un cours de combat ?</h3>
-            <p>Non. La méthode donne la priorité à la prévention, à l’évitement, à la lecture des situations et à des réponses réalistes.</p>
+            <h3>Est-ce un simple cours de self-défense ?</h3>
+            <p>Non. La méthode travaille aussi la prévention, la lecture des situations, l’évitement et l’après-conflit.</p>
           </article>
 
           <article class="card faq-card">
             <h3>Faut-il être sportif ?</h3>
-            <p>Non. La pédagogie est conçue pour être accessible, progressive et adaptée à un large public.</p>
+            <p>Non. La pédagogie est conçue pour rester progressive, accessible et structurée.</p>
           </article>
 
           <article class="card faq-card">
-            <h3>Pourquoi parler d’après-conflit ?</h3>
-            <p>Parce que la sécurité ne s’arrête pas à la réaction immédiate : il faut aussi savoir se sécuriser, alerter et reprendre le contrôle.</p>
+            <h3>Est-ce une méthode très martiale ?</h3>
+            <p>Non. Le but n’est pas de créer un imaginaire combatif, mais des repères réalistes et utilisables.</p>
           </article>
 
           <article class="card faq-card">
-            <h3>Pourquoi insister sur la pédagogie ?</h3>
-            <p>Parce qu’une méthode mal transmise perd sa valeur. Le cadre pédagogique fait partie intégrante du sérieux Vital Protect.</p>
+            <h3>Qui transmet cette méthode ?</h3>
+            <p>Des formateurs certifiés, tenus de respecter les contenus, le protocole pédagogique et les règles du réseau.</p>
           </article>
         </div>
       </div>
@@ -703,16 +615,17 @@
 
     <section>
       <div class="container">
-        <div class="cta-panel method-cta">
-          <h2>Découvrir la méthode en situation réelle</h2>
+        <div class="soft-card method-cta">
+          <h2>Comprendre la méthode, puis choisir le bon point d’entrée</h2>
           <p>
-            La meilleure manière de comprendre Vital Protect reste de vivre un stage dans son cadre pédagogique :
-            progression, clarté, mise en pratique et sécurité.
+            Vous pouvez maintenant découvrir les stages disponibles, explorer l’offre entreprises
+            ou consulter le parcours formateur selon votre besoin.
           </p>
 
           <div class="cta-actions">
             <a href="/index.html#stages" class="btn btn-dark">Voir les stages</a>
-            <a href="/devenir-formateur.html" class="btn btn-outline">Découvrir le parcours formateur</a>
+            <a href="/entreprises.html" class="btn btn-outline">Offre entreprises</a>
+            <a href="/devenir-formateur.html" class="btn btn-outline">Devenir formateur</a>
           </div>
         </div>
       </div>
@@ -734,6 +647,7 @@
         <a href="/entreprises.html">Entreprises</a>
         <a href="/devenir-formateur.html">Devenir formateur</a>
         <a href="/faq.html">FAQ</a>
+        <a href="/contact.html">Contact</a>
         <a href="/formateur-login.html">Espace formateur</a>
         <a href="/admin-login.html">Admin</a>
       </div>
