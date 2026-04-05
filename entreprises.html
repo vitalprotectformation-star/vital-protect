@@ -131,8 +131,6 @@
       background: #edf3fa;
     }
 
-    /* ===== HERO REWORK ===== */
-
     .hero {
       background:
         radial-gradient(circle at top right, rgba(201, 164, 106, 0.16), transparent 24%),
@@ -143,22 +141,18 @@
 
     .hero-grid {
       display: grid;
-      grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
-      gap: 34px;
+      grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr);
+      gap: 36px;
       align-items: center;
-    }
-
-    .hero-copy,
-    .hero-side {
-      border-radius: var(--radius-xl);
     }
 
     .hero-copy {
       background: rgba(255,255,255,0.035);
       border: 1px solid rgba(255,255,255,0.08);
-      padding: 42px 38px;
+      padding: 36px 34px;
       backdrop-filter: blur(8px);
       box-shadow: 0 18px 40px rgba(0,0,0,0.14);
+      border-radius: 28px;
     }
 
     .eyebrow-invert,
@@ -171,11 +165,7 @@
     }
 
     .eyebrow-invert {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
       margin-bottom: 18px;
-      padding: 9px 14px;
       background: rgba(255,255,255,0.1);
       color: #eaf2fb;
       letter-spacing: 0.2px;
@@ -189,48 +179,73 @@
 
     .hero h1 {
       margin: 0 0 18px;
-      font-size: clamp(2.5rem, 4vw, 4.1rem);
+      font-size: clamp(2.4rem, 3.8vw, 3.8rem);
       line-height: 1.02;
       letter-spacing: -0.03em;
-      max-width: 12ch;
+      max-width: 10.5ch;
     }
 
     .hero-copy-lead {
       margin: 0 0 14px;
       color: rgba(255,255,255,0.92);
-      font-size: 1.06rem;
+      font-size: 1.02rem;
       line-height: 1.8;
-      max-width: 58ch;
+      max-width: 52ch;
     }
 
     .hero-copy-sub {
       margin: 0;
       color: rgba(255,255,255,0.76);
-      font-size: 1rem;
+      font-size: 0.98rem;
       line-height: 1.8;
-      max-width: 56ch;
+      max-width: 50ch;
     }
 
     .hero-actions {
-      margin-top: 28px;
+      margin-top: 26px;
       display: flex;
       gap: 12px;
       flex-wrap: wrap;
     }
 
+    .hero-proofbar {
+      margin-top: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .hero-proof {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: rgba(255,255,255,0.88);
+      font-size: 0.92rem;
+    }
+
+    .hero-proof::before {
+      content: "";
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: var(--gold);
+      display: inline-block;
+    }
+
     .hero-side.hero-side-photo {
       position: relative;
-      overflow: visible;
-      min-height: 680px;
+      min-height: 700px;
       border-radius: 32px;
-      background: transparent;
-      border: none;
-      box-shadow: none;
+      overflow: visible;
     }
 
     .hero-side-media {
       position: relative;
-      min-height: 680px;
+      min-height: 700px;
       border-radius: 32px;
       overflow: hidden;
       box-shadow: 0 28px 60px rgba(0,0,0,0.22);
@@ -288,18 +303,15 @@
 
     .hero-side-overlay {
       position: absolute;
-      left: -24px;
-      right: auto;
-      bottom: 28px;
-      width: min(460px, calc(100% - 44px));
-      background: rgba(255,255,255,0.96);
+      left: -18px;
+      bottom: 26px;
+      width: min(430px, calc(100% - 40px));
+      background: rgba(255,255,255,0.94);
       border: 1px solid rgba(218, 229, 241, 0.96);
       border-radius: 24px;
-      padding: 24px;
-      color: var(--text);
-      box-shadow: 0 18px 40px rgba(13, 35, 64, 0.2);
+      padding: 22px;
+      box-shadow: 0 18px 40px rgba(13, 35, 64, 0.18);
       z-index: 4;
-      transition: 0.25s ease;
     }
 
     .hero-side-overlay,
@@ -312,20 +324,20 @@
 
     .hero-side-overlay h2 {
       margin: 0 0 10px;
-      font-size: 1.45rem;
-      line-height: 1.15;
+      font-size: 1.15rem;
+      line-height: 1.2;
       color: var(--navy);
     }
 
     .hero-side-intro {
       margin: 0;
-      line-height: 1.7;
-      font-size: 1rem;
+      line-height: 1.65;
+      font-size: 0.96rem;
       color: #334155 !important;
     }
 
     .hero-side-list {
-      margin-top: 18px;
+      margin-top: 16px;
       display: grid;
       gap: 10px;
     }
@@ -334,24 +346,24 @@
       background: linear-gradient(180deg, #f9fbfe, #f3f7fc);
       border: 1px solid #dfe9f3;
       border-radius: 16px;
-      padding: 14px 14px;
+      padding: 12px 14px;
     }
 
     .hero-side-item strong {
       display: block;
-      margin-bottom: 5px;
+      margin-bottom: 4px;
       color: var(--navy);
-      font-size: 1rem;
+      font-size: 0.98rem;
     }
 
     .hero-side-item span {
       color: #334155 !important;
-      line-height: 1.55;
-      font-size: 0.95rem;
+      line-height: 1.5;
+      font-size: 0.92rem;
     }
 
     .hero-side-actions {
-      margin-top: 16px;
+      margin-top: 14px;
       display: flex;
       align-items: center;
       justify-content: flex-start;
@@ -393,34 +405,6 @@
 
     .hero-side-more p:last-child {
       margin-bottom: 0;
-    }
-
-    .hero-proofbar {
-      margin-top: 18px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-
-    .hero-proof {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 9px 12px;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.08);
-      border: 1px solid rgba(255,255,255,0.1);
-      color: rgba(255,255,255,0.88);
-      font-size: 0.92rem;
-    }
-
-    .hero-proof::before {
-      content: "";
-      width: 7px;
-      height: 7px;
-      border-radius: 999px;
-      background: var(--gold);
-      display: inline-block;
     }
 
     .btn {
@@ -745,9 +729,8 @@
       }
 
       .hero-side-overlay {
-        left: 22px;
-        bottom: 22px;
-        width: min(500px, calc(100% - 44px));
+        left: 20px;
+        width: min(460px, calc(100% - 40px));
       }
     }
 
@@ -773,17 +756,17 @@
 
       .hero-copy,
       .cta-panel {
-        padding: 28px 22px;
+        padding: 26px 22px;
       }
 
       .hero h1 {
-        font-size: 2.2rem;
-        line-height: 1.06;
+        font-size: 2.15rem;
+        max-width: none;
       }
 
       .hero-copy-lead,
       .hero-copy-sub {
-        font-size: 0.98rem;
+        font-size: 0.96rem;
         line-height: 1.72;
       }
 
@@ -818,25 +801,16 @@
         bottom: 14px;
         width: auto;
         padding: 18px;
-        border-radius: 20px;
       }
 
       .hero-side-overlay h2 {
-        font-size: 1.2rem;
+        font-size: 1.1rem;
       }
 
       .hero-side-intro,
       .hero-side-item span,
       .hero-side-more p {
-        font-size: 0.92rem;
-      }
-
-      .hero-proofbar {
-        gap: 8px;
-      }
-
-      .hero-proof {
-        font-size: 0.86rem;
+        font-size: 0.9rem;
       }
     }
   </style>
@@ -907,7 +881,7 @@
             <div class="hero-side-badge">Formation contextualisée</div>
 
             <div class="hero-side-overlay" id="heroSideCard">
-              <h2>Ce que Vital Protect apporte aux structures</h2>
+              <h2>Ce que Vital Protect<br>apporte aux structures</h2>
 
               <p class="hero-side-intro">
                 Donner aux équipes une méthode de lecture, de posture et de gestion
