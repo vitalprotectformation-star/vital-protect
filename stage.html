@@ -5,210 +5,63 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Fiche stage — Vital Protect</title>
 
+  <link rel="stylesheet" href="/styles/tokens.css" />
+  <link rel="stylesheet" href="/styles/base.css" />
+  <link rel="stylesheet" href="/styles/components.css" />
+
   <style>
-    :root {
-      --navy: #0d2340;
-      --navy-dark: #09182c;
-      --steel: #244a73;
-      --blue-soft: #dce8f5;
-      --bg: #f7f9fc;
-      --card: #ffffff;
-      --border: #d9e3ef;
-      --text: #142033;
-      --muted: #6e7c8c;
-      --success: #2e8b57;
-      --warning: #9a6a22;
-      --danger: #b42318;
-      --gold: #c9a46a;
-      --shadow: 0 16px 40px rgba(13, 35, 64, 0.08);
-      --radius-xl: 28px;
-      --radius-lg: 20px;
-      --radius-md: 14px;
-    }
-
-    * { box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
-
-    body {
-      margin: 0;
-      font-family: Arial, Helvetica, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-    }
-
-    a { color: inherit; }
-
-    .container {
-      width: min(1180px, calc(100% - 32px));
-      margin: 0 auto;
-    }
-
-    header {
-      position: sticky;
-      top: 0;
-      z-index: 50;
-      background: rgba(9, 24, 44, 0.95);
-      backdrop-filter: blur(10px);
-      border-bottom: 1px solid rgba(255,255,255,0.08);
-    }
-
-    .header-inner {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      min-height: 86px;
-    }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      text-decoration: none;
-      color: white;
-      min-width: 0;
-    }
-
-    .brand img {
-      height: 68px;
-      width: auto;
-      display: block;
-      flex: 0 0 auto;
-    }
-
-    .brand-text-wrap {
-      min-width: 0;
-    }
-
-    .brand-text {
-      font-size: 1.3rem;
-      font-weight: 800;
-      letter-spacing: 0.4px;
-      line-height: 1.05;
-    }
-
-    .brand-sub {
-      color: rgba(255,255,255,0.72);
-      font-size: 0.9rem;
-      margin-top: 4px;
-    }
-
-    .nav-links {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: flex-end;
-    }
-
-    .nav-links a {
-      text-decoration: none;
-      color: rgba(255,255,255,0.92);
-      font-weight: 700;
-      padding: 10px 14px;
-      border-radius: 12px;
-      transition: 0.2s ease;
-      font-size: 0.96rem;
-    }
-
-    .nav-links a:hover,
-    .nav-links a.active {
-      background: rgba(255,255,255,0.1);
-    }
-
-    .nav-links .nav-cta {
-      background: white;
-      color: var(--navy);
-    }
-
-    .nav-links .nav-cta:hover {
-      background: #edf3fa;
-    }
-
-    .hero {
-      background:
-        radial-gradient(circle at top right, rgba(201, 164, 106, 0.14), transparent 26%),
-        linear-gradient(135deg, var(--navy-dark), var(--navy));
-      color: white;
+    .stage-hero {
       padding: 68px 0 46px;
     }
 
-    .hero-grid {
+    .stage-hero__grid {
       display: grid;
-      grid-template-columns: 1.1fr 0.9fr;
+      grid-template-columns: 1.08fr 0.92fr;
       gap: 26px;
       align-items: stretch;
     }
 
-    .hero-copy,
-    .hero-side {
-      border-radius: var(--radius-xl);
-      box-shadow: 0 18px 40px rgba(0,0,0,0.15);
-    }
-
-    .hero-copy {
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.08);
+    .stage-hero__copy {
       padding: 34px;
     }
 
-    .hero-side {
-      background: white;
-      color: var(--text);
-      padding: 28px;
-      border: 1px solid rgba(255,255,255,0.14);
+    .stage-hero__title {
+      margin: 16px 0;
+      font-size: clamp(2.3rem, 4.4vw, 4.2rem);
+      line-height: 0.98;
+      color: white;
+      max-width: 11ch;
     }
 
-    .eyebrow,
-    .eyebrow-invert {
-      display: inline-block;
-      margin-bottom: 14px;
-      border-radius: 999px;
-      padding: 8px 12px;
-      font-size: 0.88rem;
-      font-weight: 700;
-    }
-
-    .eyebrow-invert {
-      background: rgba(255,255,255,0.12);
-      color: #eaf2fb;
-    }
-
-    .eyebrow {
-      color: var(--steel);
-      background: var(--blue-soft);
-    }
-
-    .hero h1 {
-      margin: 0 0 16px;
-      font-size: 2.8rem;
-      line-height: 1.05;
-    }
-
-    .hero p {
+    .stage-hero__desc {
       margin: 0;
-      color: rgba(255,255,255,0.84);
-      font-size: 1.05rem;
-      line-height: 1.75;
+      color: var(--vp-text-invert-soft);
+      line-height: 1.82;
+      font-size: 1.02rem;
+      max-width: 58ch;
     }
 
-    .hero-actions {
+    .stage-hero__actions {
       margin-top: 24px;
       display: flex;
-      gap: 12px;
       flex-wrap: wrap;
+      gap: 12px;
     }
 
-    .hero-side h2 {
+    .stage-hero__side {
+      padding: 28px;
+    }
+
+    .stage-hero__side h2 {
       margin: 0 0 10px;
-      font-size: 1.35rem;
-      color: var(--navy);
+      font-size: 1.34rem;
+      color: var(--vp-navy-850);
     }
 
-    .hero-side p {
+    .stage-hero__side p {
       margin: 0;
-      color: var(--muted);
-      line-height: 1.7;
+      color: var(--vp-text-soft);
+      line-height: 1.72;
     }
 
     .meta-grid {
@@ -219,15 +72,15 @@
     }
 
     .meta-item {
-      background: #f8fbff;
-      border: 1px solid #e6edf7;
-      border-radius: 14px;
-      padding: 12px;
+      background: var(--vp-blue-soft-2);
+      border: 1px solid rgba(13, 27, 42, 0.06);
+      border-radius: 16px;
+      padding: 13px;
     }
 
     .meta-label {
       display: block;
-      color: var(--muted);
+      color: var(--vp-text-soft);
       font-size: 0.84rem;
       margin-bottom: 4px;
       font-weight: 700;
@@ -235,72 +88,7 @@
 
     .meta-value {
       font-weight: 800;
-      color: var(--navy);
-    }
-
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      text-decoration: none;
-      border: none;
-      border-radius: 14px;
-      padding: 14px 18px;
-      font-size: 1rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: transform 0.15s ease, background 0.2s ease;
-    }
-
-    .btn:hover { transform: translateY(-1px); }
-
-    .btn-primary {
-      background: white;
-      color: var(--navy);
-    }
-
-    .btn-secondary {
-      background: transparent;
-      color: white;
-      border: 1px solid rgba(255,255,255,0.25);
-    }
-
-    .btn-dark {
-      background: var(--navy);
-      color: white;
-    }
-
-    .btn-outline {
-      background: white;
-      color: var(--navy);
-      border: 1px solid var(--border);
-    }
-
-    section {
-      padding: 64px 0;
-    }
-
-    .section-head {
-      max-width: 860px;
-      margin-bottom: 26px;
-    }
-
-    .section-head h2 {
-      margin: 0;
-      font-size: 2.1rem;
-      line-height: 1.15;
-      color: var(--navy);
-    }
-
-    .section-head p {
-      margin: 12px 0 0;
-      color: var(--muted);
-      line-height: 1.75;
-      font-size: 1.04rem;
-    }
-
-    .soft-band {
-      background: linear-gradient(180deg, #ffffff, #f8fbff);
+      color: var(--vp-navy-850);
     }
 
     .split-panel {
@@ -310,54 +98,20 @@
       align-items: start;
     }
 
-    .card-grid-3,
-    .card-grid-2,
-    .faq-grid {
-      display: grid;
-      gap: 18px;
+    .soft-panel {
+      padding: 28px;
     }
 
-    .card-grid-3 {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+    .soft-panel h3 {
+      margin: 12px 0;
+      font-size: 1.38rem;
+      color: var(--vp-navy-850);
     }
 
-    .card-grid-2,
-    .faq-grid {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-
-    .soft-panel,
-    .info-card,
-    .faq-card,
-    .booking-card,
-    .selected-stage-box,
-    .cta-panel {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      box-shadow: var(--shadow);
-    }
-
-    .soft-panel,
-    .info-card,
-    .faq-card {
-      padding: 24px;
-    }
-
-    .soft-panel h3,
-    .info-card h3,
-    .faq-card h3 {
-      margin: 0 0 10px;
-      color: var(--navy);
-      font-size: 1.16rem;
-    }
-
-    .soft-panel p,
-    .info-card p,
-    .faq-card p {
+    .soft-panel p {
       margin: 0;
-      color: var(--muted);
-      line-height: 1.72;
+      color: var(--vp-text-soft);
+      line-height: 1.8;
     }
 
     .bullet-list {
@@ -367,21 +121,32 @@
     }
 
     .bullet-item {
-      background: #f8fbff;
-      border: 1px solid #e6edf7;
-      border-radius: 14px;
-      padding: 14px;
-      color: var(--text);
-      line-height: 1.65;
+      background: var(--vp-blue-soft-2);
+      border: 1px solid rgba(13, 27, 42, 0.06);
+      border-radius: 16px;
+      padding: 15px 16px;
+      line-height: 1.68;
+      color: var(--vp-text);
     }
 
     .bullet-item strong {
-      color: var(--navy);
+      color: var(--vp-navy-850);
+    }
+
+    .card-grid-3,
+    .faq-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .faq-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
     .booking-layout {
       display: grid;
-      grid-template-columns: 0.95fr 1.05fr;
+      grid-template-columns: 0.9fr 1.1fr;
       gap: 20px;
       align-items: start;
     }
@@ -392,22 +157,31 @@
 
     .selected-stage-box {
       padding: 16px;
-      background: #f8fbff;
-      border: 1px solid #d7e6ff;
+      background: var(--vp-blue-soft-2);
+      border: 1px solid rgba(23, 49, 79, 0.10);
+      border-radius: 18px;
       margin-bottom: 18px;
     }
 
     .selected-stage-label {
       display: block;
       font-size: 0.9rem;
-      color: var(--muted);
+      color: var(--vp-text-soft);
       font-weight: 700;
       margin-bottom: 6px;
     }
 
     .selected-stage-value {
       font-weight: 800;
-      color: var(--navy);
+      color: var(--vp-navy-850);
+      line-height: 1.5;
+    }
+
+    .booking-total {
+      margin-top: 8px;
+      font-size: 1.12rem;
+      font-weight: 800;
+      color: var(--vp-navy-850);
     }
 
     .booking-status {
@@ -416,6 +190,7 @@
       border-radius: 14px;
       font-weight: 600;
       display: none;
+      line-height: 1.6;
     }
 
     .booking-status.show {
@@ -423,32 +198,21 @@
     }
 
     .booking-status.success {
-      background: #eaf8f0;
+      background: var(--vp-success-bg);
       color: #0f7d46;
       border: 1px solid #cdeedb;
     }
 
     .booking-status.error {
-      background: #fff1f1;
+      background: var(--vp-danger-bg);
       color: #a32020;
       border: 1px solid #f2c7c7;
     }
 
     .booking-status.info {
-      background: #f8fbff;
-      color: var(--navy);
-      border: 1px solid var(--border);
-    }
-
-    .booking-total {
-      margin-top: 8px;
-      font-size: 1.05rem;
-      font-weight: 800;
-      color: var(--navy);
-    }
-
-    form {
-      margin-top: 8px;
+      background: var(--vp-info-bg);
+      color: var(--vp-navy-700);
+      border: 1px solid rgba(23, 49, 79, 0.10);
     }
 
     .form-grid {
@@ -457,126 +221,74 @@
       gap: 14px;
     }
 
-    .field {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      margin-bottom: 14px;
-    }
-
-    .field.full {
+    .form-field.full {
       grid-column: 1 / -1;
     }
 
-    .field label {
-      font-size: 0.92rem;
-      font-weight: 700;
-      color: var(--muted);
+    .stage-summary-card {
+      padding: 24px;
+      position: relative;
+      overflow: hidden;
     }
 
-    .field input,
-    .field textarea {
-      width: 100%;
-      border: 1px solid var(--border);
-      background: white;
-      border-radius: 12px;
-      padding: 12px;
-      font-size: 0.98rem;
-      color: var(--text);
-      font-family: inherit;
-    }
-
-    .field textarea {
-      min-height: 100px;
-      resize: vertical;
-    }
-
-    .cta-panel {
-      padding: 34px;
+    .stage-summary-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
       background:
-        radial-gradient(circle at top right, rgba(201, 164, 106, 0.12), transparent 22%),
-        linear-gradient(135deg, #ffffff, #f8fbff);
+        radial-gradient(circle at top right, rgba(196, 164, 107, 0.10), transparent 28%);
+      pointer-events: none;
     }
 
-    .cta-panel h2 {
+    .stage-summary-card h3 {
       margin: 0 0 12px;
-      font-size: 2rem;
-      color: var(--navy);
+      color: var(--vp-navy-850);
+      font-size: 1.2rem;
+      position: relative;
+      z-index: 1;
     }
 
-    .cta-panel p {
+    .stage-summary-card p {
       margin: 0;
-      color: var(--muted);
+      color: var(--vp-text-soft);
       line-height: 1.75;
-      max-width: 820px;
+      position: relative;
+      z-index: 1;
     }
 
-    .cta-actions {
-      margin-top: 22px;
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
+    .info-card {
+      padding: 24px;
     }
 
-    footer {
-      margin-top: 24px;
-      background: var(--navy-dark);
-      color: rgba(255,255,255,0.88);
-      padding: 36px 0;
+    .info-card h3,
+    .faq-card h3 {
+      margin: 0 0 10px;
+      color: var(--vp-navy-850);
+      font-size: 1.12rem;
     }
 
-    .footer-grid {
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 20px;
-      align-items: start;
-    }
-
-    .footer-brand strong {
-      display: block;
-      color: white;
-      font-size: 1.1rem;
-      margin-bottom: 8px;
-    }
-
-    .footer-brand p {
+    .info-card p,
+    .faq-card p {
       margin: 0;
-      color: rgba(255,255,255,0.72);
-      line-height: 1.7;
-      max-width: 720px;
+      color: var(--vp-text-soft);
+      line-height: 1.72;
     }
 
-    .footer-links {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      justify-content: flex-end;
+    .faq-card {
+      padding: 22px;
     }
 
-    .footer-links a {
-      text-decoration: none;
-      color: rgba(255,255,255,0.88);
-      font-weight: 700;
-      padding: 8px 10px;
-      border-radius: 10px;
-    }
-
-    .footer-links a:hover {
-      background: rgba(255,255,255,0.08);
+    .cta-stage {
+      padding: 34px;
     }
 
     @media (max-width: 1180px) {
-      .hero-grid,
+      .stage-hero__grid,
       .split-panel,
       .card-grid-3,
-      .card-grid-2,
-      .faq-grid,
-      .booking-layout {
+      .booking-layout,
+      .faq-grid {
         grid-template-columns: 1fr;
-      }
-
-      .hero h1 {
-        font-size: 2.3rem;
       }
 
       .meta-grid,
@@ -586,60 +298,42 @@
     }
 
     @media (max-width: 760px) {
-      .header-inner,
-      .footer-grid {
-        grid-template-columns: 1fr;
-        display: grid;
+      .stage-hero {
+        padding: 54px 0 40px;
       }
 
-      .nav-links,
-      .footer-links {
-        justify-content: flex-start;
-      }
-
-      .brand img {
-        height: 56px;
-      }
-
-      .hero-copy,
-      .hero-side,
-      .cta-panel,
-      .booking-card {
+      .stage-hero__copy,
+      .stage-hero__side,
+      .soft-panel,
+      .booking-card,
+      .stage-summary-card,
+      .cta-stage {
         padding: 24px;
       }
 
-      .hero h1 {
-        font-size: 1.95rem;
-      }
-
-      .hero-actions,
-      .cta-actions {
+      .stage-hero__actions {
         flex-direction: column;
       }
 
       .btn {
         width: 100%;
       }
-
-      .section-head h2 {
-        font-size: 1.8rem;
-      }
     }
   </style>
 </head>
 <body>
 
-  <header>
-    <div class="container header-inner">
-      <a href="/index.html" class="brand">
+  <header class="site-header">
+    <div class="container site-header__inner">
+      <a href="/index.html" class="site-brand">
         <img src="/logo.png" alt="Vital Protect" />
-        <div class="brand-text-wrap">
-          <div class="brand-text">VITAL PROTECT</div>
-          <div class="brand-sub">Méthode de sécurité personnelle</div>
+        <div class="site-brand__text">
+          <div class="site-brand__title">VITAL PROTECT</div>
+          <div class="site-brand__subtitle">Méthode de sécurité personnelle</div>
         </div>
       </a>
 
-      <nav class="nav-links">
+      <nav class="site-nav">
         <a href="/index.html">Accueil</a>
         <a href="/methode.html">La méthode</a>
         <a href="/index.html#stages" class="active">Nos stages</a>
@@ -652,22 +346,22 @@
   </header>
 
   <main>
-    <section class="hero">
-      <div class="container hero-grid">
-        <div class="hero-copy">
-          <div class="eyebrow-invert" id="heroType">Stage Vital Protect</div>
-          <h1 id="heroTitle">Chargement du stage…</h1>
-          <p id="heroDescription">
+    <section class="hero-shell stage-hero">
+      <div class="container stage-hero__grid">
+        <div class="glass-panel stage-hero__copy">
+          <div class="eyebrow eyebrow--invert" id="heroType">Stage Vital Protect</div>
+          <h1 class="stage-hero__title" id="heroTitle">Chargement du stage…</h1>
+          <p class="stage-hero__desc" id="heroDescription">
             Chargement des informations du stage.
           </p>
 
-          <div class="hero-actions">
+          <div class="stage-hero__actions">
             <a href="#reservation" class="btn btn-primary">Réserver ce stage</a>
             <a href="/index.html#stages" class="btn btn-secondary">Retour aux stages</a>
           </div>
         </div>
 
-        <aside class="hero-side">
+        <aside class="surface-panel stage-hero__side">
           <h2>Informations essentielles</h2>
           <p>
             Retrouvez ici les objectifs du stage, son cadre pédagogique, son déroulé
@@ -706,7 +400,7 @@
 
     <section>
       <div class="container split-panel">
-        <div class="soft-panel">
+        <div class="soft-card soft-panel">
           <span class="eyebrow">Objectif du stage</span>
           <h3>Ce que ce stage cherche à transmettre</h3>
           <p id="objectiveText">
@@ -720,7 +414,7 @@
           </div>
         </div>
 
-        <div class="soft-panel">
+        <div class="soft-card soft-panel">
           <span class="eyebrow">Public concerné</span>
           <h3>À qui s’adresse ce stage</h3>
           <p>
@@ -737,7 +431,7 @@
       </div>
     </section>
 
-    <section class="soft-band">
+    <section>
       <div class="container">
         <div class="section-head">
           <span class="eyebrow">Déroulé pédagogique</span>
@@ -769,7 +463,7 @@
 
     <section>
       <div class="container split-panel">
-        <div class="soft-panel">
+        <div class="soft-card soft-panel">
           <span class="eyebrow">Cadre de sécurité</span>
           <h3>La sécurité des participants passe avant tout</h3>
           <p>
@@ -784,9 +478,10 @@
           </div>
         </div>
 
-        <div class="soft-panel">
+        <div class="soft-card soft-panel">
           <span class="eyebrow">Informations pratiques</span>
           <h3>Détails de la session</h3>
+
           <div class="bullet-list">
             <div class="bullet-item"><strong>Adresse :</strong> <span id="practicalAddress">—</span></div>
             <div class="bullet-item"><strong>Heure :</strong> <span id="practicalTime">—</span></div>
@@ -797,7 +492,7 @@
       </div>
     </section>
 
-    <section id="reservation" class="soft-band">
+    <section id="reservation">
       <div class="container">
         <div class="section-head">
           <span class="eyebrow">Réservation</span>
@@ -808,7 +503,7 @@
         </div>
 
         <div class="booking-layout">
-          <div class="booking-card">
+          <div class="card stage-summary-card">
             <div class="selected-stage-box">
               <span class="selected-stage-label">Stage sélectionné</span>
               <div class="selected-stage-value" id="selectedStageValue">Chargement…</div>
@@ -816,42 +511,48 @@
 
             <div class="booking-total" id="bookingTotal">Total : —</div>
             <div id="bookingStatus" class="booking-status"></div>
+
+            <div class="bullet-list" style="margin-top: 20px;">
+              <div class="bullet-item"><strong>Paiement :</strong> sécurisé via Stripe.</div>
+              <div class="bullet-item"><strong>Réservation :</strong> votre place est enregistrée après validation du paiement.</div>
+              <div class="bullet-item"><strong>Conseil :</strong> présentez-vous quelques minutes avant le début du stage.</div>
+            </div>
           </div>
 
-          <div class="booking-card">
+          <div class="card booking-card">
             <form id="bookingForm">
               <div class="form-grid">
-                <div class="field">
+                <div class="form-field">
                   <label for="firstName">Prénom</label>
                   <input id="firstName" type="text" required />
                 </div>
 
-                <div class="field">
+                <div class="form-field">
                   <label for="lastName">Nom</label>
                   <input id="lastName" type="text" required />
                 </div>
 
-                <div class="field">
+                <div class="form-field">
                   <label for="email">Email</label>
                   <input id="email" type="email" required />
                 </div>
 
-                <div class="field">
+                <div class="form-field">
                   <label for="phone">Téléphone</label>
                   <input id="phone" type="tel" required />
                 </div>
 
-                <div class="field">
+                <div class="form-field">
                   <label for="places">Nombre de places</label>
                   <input id="places" type="number" min="1" value="1" required />
                 </div>
 
-                <div class="field">
+                <div class="form-field">
                   <label for="cityDisplay">Ville du stage</label>
                   <input id="cityDisplay" type="text" disabled />
                 </div>
 
-                <div class="field full">
+                <div class="form-field full">
                   <label for="notes">Message complémentaire</label>
                   <textarea id="notes" placeholder="Optionnel"></textarea>
                 </div>
@@ -900,7 +601,7 @@
 
     <section>
       <div class="container">
-        <div class="cta-panel">
+        <div class="cta-panel cta-stage">
           <h2>Comprendre le stage avant de réserver</h2>
           <p>
             Cette fiche existe pour donner une vision claire du cadre, des objectifs et des informations pratiques,
@@ -916,9 +617,9 @@
     </section>
   </main>
 
-  <footer>
-    <div class="container footer-grid">
-      <div class="footer-brand">
+  <footer class="site-footer">
+    <div class="container site-footer__grid">
+      <div class="site-footer__brand">
         <strong>VITAL PROTECT</strong>
         <p>
           Une méthode structurée de sécurité personnelle fondée sur la prévention, l’évitement,
@@ -926,7 +627,7 @@
         </p>
       </div>
 
-      <div class="footer-links">
+      <div class="site-footer__links">
         <a href="/methode.html">La méthode</a>
         <a href="/entreprises.html">Entreprises</a>
         <a href="/devenir-formateur.html">Devenir formateur</a>
