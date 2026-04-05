@@ -1,0 +1,25 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@600;700;800&display=swap');
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: var(--vp-font-body);
+  background: linear-gradient(180deg, #f6f8fb 0%, #f4f7fa 100%);
+  color: var(--vp-text);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+img { max-width: 100%; display: block; }
+a { color: inherit; }
+button, input, select, textarea { font: inherit; }
+
+.container {
+  width: min(var(--vp-container), calc(100% - 32px));
+  margin: 0 auto;
+}
+
+h1, h2, h3, h4, h5 {
+  font-family: var(--vp-font-heading);
+  letter-spacing: -0.03em;
+}
