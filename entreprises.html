@@ -162,8 +162,10 @@
       position: relative;
       overflow: hidden;
       min-height: 620px;
+      border-radius: var(--radius-xl);
       border: 1px solid rgba(255,255,255,0.14);
       background: #0f1f35;
+      box-shadow: 0 18px 40px rgba(0,0,0,0.15);
     }
 
     .hero-side-img {
@@ -184,16 +186,27 @@
       left: 18px;
       right: 18px;
       bottom: 18px;
-      background: rgba(255,255,255,0.96);
+      background: rgba(255,255,255,0.94);
       border-radius: 18px;
-      padding: 20px;
+      padding: 18px;
       color: var(--text);
       box-shadow: 0 12px 30px rgba(13, 35, 64, 0.14);
       z-index: 2;
+      transition: all 0.25s ease;
     }
 
     .hero-side-overlay-enterprises {
-      max-width: 500px;
+      max-width: 430px;
+    }
+
+    .hero-side-overlay.compact {
+      max-height: 320px;
+      overflow: hidden;
+    }
+
+    .hero-side-overlay.expanded {
+      max-height: 900px;
+      overflow: visible;
     }
 
     .hero-side-overlay,
@@ -206,39 +219,42 @@
 
     .hero-side-overlay h2 {
       margin: 0 0 10px;
-      font-size: 1.4rem;
+      font-size: 1.3rem;
+      line-height: 1.2;
       color: var(--navy);
     }
 
-    .hero-side-overlay p {
+    .hero-side-intro {
       margin: 0;
       color: #142033 !important;
-      line-height: 1.7;
+      line-height: 1.65;
+      font-size: 1rem;
     }
 
     .hero-side-list {
-      margin-top: 18px;
+      margin-top: 16px;
       display: grid;
-      gap: 12px;
+      gap: 10px;
     }
 
     .hero-side-item {
       background: #f8fbff;
       border: 1px solid #e6edf7;
-      border-radius: 16px;
-      padding: 14px;
+      border-radius: 14px;
+      padding: 12px;
     }
 
     .hero-side-item strong {
       display: block;
-      margin-bottom: 6px;
+      margin-bottom: 4px;
       color: var(--navy);
+      font-size: 1rem;
     }
 
     .hero-side-item span {
       color: #142033 !important;
-      line-height: 1.55;
-      font-size: 0.96rem;
+      line-height: 1.5;
+      font-size: 0.94rem;
     }
 
     .hero-side-actions {
@@ -272,21 +288,16 @@
       background: rgba(244, 248, 253, 0.98);
       border: 1px solid #d6e2f0;
       display: none;
-      color: #142033 !important;
     }
 
     .hero-side-more.show {
       display: block;
     }
 
-    .hero-side-more,
-    .hero-side-more p {
-      color: #142033 !important;
-    }
-
     .hero-side-more p {
       margin: 0 0 10px;
       line-height: 1.7;
+      color: #142033 !important;
     }
 
     .hero-side-more p:last-child {
@@ -655,8 +666,8 @@
         min-height: 520px;
       }
 
-      .hero-side-img-enterprises {
-        object-position: center center;
+      .hero-side-overlay-enterprises {
+        max-width: 460px;
       }
     }
 
@@ -702,16 +713,26 @@
         min-height: 420px;
       }
 
-      .hero-side-img-enterprises {
-        object-position: center center;
-      }
-
       .hero-side-overlay {
         left: 16px;
         right: 16px;
         bottom: 16px;
         max-width: none;
-        padding: 18px;
+        padding: 16px;
+      }
+
+      .hero-side-overlay.compact {
+        max-height: 290px;
+      }
+
+      .hero-side-overlay h2 {
+        font-size: 1.16rem;
+      }
+
+      .hero-side-intro,
+      .hero-side-item span,
+      .hero-side-more p {
+        font-size: 0.92rem;
       }
     }
   </style>
@@ -765,26 +786,25 @@
             class="hero-side-img hero-side-img-enterprises"
           />
 
-          <div class="hero-side-overlay hero-side-overlay-enterprises">
+          <div class="hero-side-overlay hero-side-overlay-enterprises compact" id="heroSideCard">
             <h2>Ce que Vital Protect apporte aux structures</h2>
-            <p>
-              L’objectif n’est pas de transformer les équipes en combattants.
-              Il s’agit de leur donner une méthode de lecture, de posture et de gestion
-              qui reste applicable dans le quotidien professionnel.
+            <p class="hero-side-intro">
+              Donner aux équipes une méthode de lecture, de posture et de gestion
+              applicable dans le quotidien professionnel.
             </p>
 
             <div class="hero-side-list">
               <div class="hero-side-item">
                 <strong>Prévention</strong>
-                <span>Renforcer la lecture des situations, la vigilance utile et la réduction du risque.</span>
+                <span>Lecture des situations et réduction du risque.</span>
               </div>
               <div class="hero-side-item">
                 <strong>Gestion</strong>
-                <span>Développer des réflexes simples pour mieux gérer tensions, agressivité et dégradation.</span>
+                <span>Réflexes simples face aux tensions et à la dégradation.</span>
               </div>
               <div class="hero-side-item">
                 <strong>Adaptation</strong>
-                <span>Construire un format cohérent avec le public, le métier et les contraintes de la structure.</span>
+                <span>Format cohérent avec le public, le métier et les contraintes.</span>
               </div>
             </div>
 
@@ -1103,10 +1123,13 @@
   <script>
     const heroSideToggle = document.getElementById("heroSideToggle");
     const heroSideMore = document.getElementById("heroSideMore");
+    const heroSideCard = document.getElementById("heroSideCard");
 
-    if (heroSideToggle && heroSideMore) {
+    if (heroSideToggle && heroSideMore && heroSideCard) {
       heroSideToggle.addEventListener("click", () => {
         const isOpen = heroSideMore.classList.toggle("show");
+        heroSideCard.classList.toggle("expanded", isOpen);
+        heroSideCard.classList.toggle("compact", !isOpen);
         heroSideToggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
         heroSideToggle.textContent = isOpen ? "Lire moins" : "Lire plus";
       });
