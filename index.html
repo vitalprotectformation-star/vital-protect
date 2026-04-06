@@ -137,23 +137,22 @@
       gap: 18px;
     }
 
-    .pillars-grid {
-      display: grid;
-      grid-template-columns: repeat(5, minmax(0, 1fr));
-      gap: 16px;
+    .pillars-banner-section {
+      padding-top: 12px;
     }
 
-    .pillar-number {
-      display: inline-flex;
-      width: 42px;
-      height: 42px;
-      border-radius: 999px;
-      align-items: center;
-      justify-content: center;
-      background: var(--vp-navy-850);
-      color: white;
-      font-weight: 800;
-      margin-bottom: 14px;
+    .pillars-banner {
+      overflow: hidden;
+      border-radius: 24px;
+      box-shadow: var(--vp-shadow-lg);
+      border: 1px solid rgba(13, 27, 42, 0.06);
+      background: white;
+    }
+
+    .pillars-banner__image {
+      display: block;
+      width: 100%;
+      height: auto;
     }
 
     .split-panel {
@@ -479,7 +478,6 @@
 
     @media (max-width: 1180px) {
       .proof-band__grid,
-      .pillars-grid,
       .split-panel,
       .pedagogy-feature,
       .map-layout,
@@ -639,47 +637,14 @@
       </div>
     </section>
 
-    <section>
+    <section class="pillars-banner-section">
       <div class="container">
-        <div class="section-head section-head--center">
-          <span class="eyebrow">Les fondamentaux</span>
-          <h2>Les 5 piliers de la sécurité personnelle</h2>
-          <p>
-            La sécurité personnelle ne commence pas au moment du contact. Elle se construit avant,
-            pendant et après une situation de tension ou d’agression.
-          </p>
-        </div>
-
-        <div class="pillars-grid">
-          <article class="pillar-card">
-            <div class="pillar-number">1</div>
-            <h3>Anticipation</h3>
-            <p>Reconnaître les contextes à risque et développer des réflexes de prudence utiles au quotidien.</p>
-          </article>
-
-          <article class="pillar-card">
-            <div class="pillar-number">2</div>
-            <h3>Observation</h3>
-            <p>Lire l’environnement, repérer les signaux utiles et mieux comprendre la dynamique d’une situation.</p>
-          </article>
-
-          <article class="pillar-card">
-            <div class="pillar-number">3</div>
-            <h3>Évitement</h3>
-            <p>Réduire l’exposition, se repositionner, éviter l’escalade et préserver des options d’action.</p>
-          </article>
-
-          <article class="pillar-card">
-            <div class="pillar-number">4</div>
-            <h3>Réaction</h3>
-            <p>Mobiliser des réponses simples, réalistes et accessibles, sans logique de performance martiale.</p>
-          </article>
-
-          <article class="pillar-card">
-            <div class="pillar-number">5</div>
-            <h3>Après-conflit</h3>
-            <p>Se mettre en sécurité, alerter, protéger les autres et retrouver une capacité de maîtrise.</p>
-          </article>
+        <div class="pillars-banner">
+          <img
+            src="/image-les-5-piliers.png"
+            alt="Les 5 piliers de la sécurité personnelle - Vital Protect"
+            class="pillars-banner__image"
+          />
         </div>
       </div>
     </section>
