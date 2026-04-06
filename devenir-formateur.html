@@ -11,6 +11,7 @@
       --navy-dark: #09182c;
       --steel: #244a73;
       --blue-soft: #dce8f5;
+      --blue-soft-2: #f5f9fe;
       --bg: #f7f9fc;
       --card: #ffffff;
       --border: #d9e3ef;
@@ -124,137 +125,110 @@
     }
 
     .hero {
+      padding: 34px 0 12px;
       background:
-        radial-gradient(circle at top right, rgba(201, 164, 106, 0.14), transparent 26%),
-        linear-gradient(135deg, var(--navy-dark), var(--navy));
-      color: white;
-      padding: 72px 0 54px;
+        radial-gradient(circle at top right, rgba(201, 164, 106, 0.10), transparent 28%),
+        linear-gradient(180deg, #f7f9fc 0%, #f3f7fb 100%);
     }
 
-    .hero-grid {
-      display: grid;
-      grid-template-columns: 1.08fr 0.92fr;
-      gap: 26px;
-      align-items: stretch;
-    }
-
-    .hero-copy,
-    .hero-side {
-      border-radius: var(--radius-xl);
-      box-shadow: 0 18px 40px rgba(0,0,0,0.15);
-    }
-
-    .hero-copy {
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.08);
-      padding: 34px;
-    }
-
-    .hero-side {
-      background: white;
-      color: var(--text);
-      padding: 28px;
-      border: 1px solid rgba(255,255,255,0.14);
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-    }
-
-    .hero-side-photo {
-      padding: 0;
+    .hero-banner {
       overflow: hidden;
-      position: relative;
-      min-height: 100%;
+      border-radius: 30px;
+      height: clamp(280px, 42vw, 560px);
+      background: #0b2039;
+      box-shadow: 0 24px 60px rgba(8, 24, 46, 0.16);
+      border: 1px solid rgba(13, 35, 64, 0.08);
     }
 
-    .hero-side-media {
-      position: relative;
-      min-height: 100%;
-      height: 100%;
-    }
-
-    .hero-side-img {
+    .hero-banner img {
       width: 100%;
       height: 100%;
-      min-height: 680px;
       object-fit: cover;
       object-position: center center;
       display: block;
     }
 
-    .hero-side-overlay {
-      position: absolute;
-      left: 18px;
-      right: 18px;
-      bottom: 18px;
-      background: rgba(255,255,255,0.94);
-      border: 1px solid rgba(13, 27, 42, 0.08);
-      border-radius: 20px;
-      padding: 22px;
-      box-shadow: 0 12px 30px rgba(13, 27, 42, 0.16);
+    .hero-intro {
+      position: relative;
+      margin-top: -56px;
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(320px, 0.92fr);
+      gap: 22px;
+      align-items: stretch;
     }
 
-    .hero-side-overlay h2 {
-      margin: 0 0 10px;
-      font-size: 1.32rem;
-      color: var(--navy);
+    .hero-main-card,
+    .hero-side-card {
+      background: rgba(255,255,255,0.97);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      box-shadow: 0 20px 44px rgba(13, 35, 64, 0.10);
+      backdrop-filter: blur(10px);
     }
 
-    .hero-side-overlay p {
-      margin: 0;
-      color: var(--muted);
-      line-height: 1.7;
+    .hero-main-card {
+      padding: 34px;
     }
 
-    .eyebrow-invert,
-    .eyebrow {
-      display: inline-block;
-      margin-bottom: 14px;
+    .hero-side-card {
+      padding: 24px;
+    }
+
+    .eyebrow,
+    .eyebrow-soft {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 16px;
+      padding: 8px 13px;
       border-radius: 999px;
-      padding: 8px 12px;
       font-size: 0.88rem;
       font-weight: 700;
-    }
-
-    .eyebrow-invert {
-      background: rgba(255,255,255,0.12);
-      color: #eaf2fb;
+      border: 1px solid rgba(49, 91, 134, 0.10);
     }
 
     .eyebrow {
-      color: var(--steel);
       background: var(--blue-soft);
+      color: var(--steel);
+    }
+
+    .eyebrow-soft {
+      background: #f3f7fc;
+      color: var(--steel);
     }
 
     .hero h1 {
-      margin: 0 0 16px;
-      font-size: 3rem;
-      line-height: 1.05;
-      max-width: 760px;
+      margin: 0 0 18px;
+      font-size: clamp(2rem, 4.2vw, 3.8rem);
+      line-height: 1.03;
+      color: var(--navy);
+      max-width: 14ch;
     }
 
     .hero p {
       margin: 0;
-      color: rgba(255,255,255,0.84);
-      font-size: 1.08rem;
-      line-height: 1.75;
-      max-width: 760px;
+      color: var(--muted);
+      font-size: 1.06rem;
+      line-height: 1.82;
+      max-width: 68ch;
     }
 
     .hero-points {
-      margin: 24px 0 0;
+      margin-top: 24px;
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 12px;
+      max-width: 620px;
     }
 
     .hero-point {
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.08);
+      background: linear-gradient(180deg, #ffffff 0%, #f7fbff 100%);
+      border: 1px solid var(--border);
+      color: var(--text);
       border-radius: 16px;
-      padding: 14px;
+      padding: 14px 16px;
       font-weight: 700;
-      color: #f3f7fb;
+      line-height: 1.45;
     }
 
     .hero-actions {
@@ -262,6 +236,19 @@
       display: flex;
       gap: 12px;
       flex-wrap: wrap;
+    }
+
+    .hero-side-card h2 {
+      margin: 0 0 12px;
+      color: var(--navy);
+      font-size: 1.22rem;
+      line-height: 1.3;
+    }
+
+    .hero-side-card > p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.72;
     }
 
     .hero-side-list {
@@ -285,8 +272,17 @@
 
     .hero-side-item span {
       color: var(--muted);
-      line-height: 1.55;
+      line-height: 1.6;
       font-size: 0.96rem;
+    }
+
+    .hero-side-note {
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      line-height: 1.66;
+      font-size: 0.95rem;
     }
 
     .btn {
@@ -300,25 +296,25 @@
       font-size: 1rem;
       font-weight: 700;
       cursor: pointer;
-      transition: transform 0.15s ease, background 0.2s ease;
+      transition: transform 0.15s ease, background 0.2s ease, border-color 0.2s ease;
     }
 
     .btn:hover { transform: translateY(-1px); }
 
     .btn-primary {
-      background: white;
-      color: var(--navy);
+      background: var(--navy);
+      color: white;
     }
 
-    .btn-primary:hover { background: #edf3fa; }
+    .btn-primary:hover { background: #14325d; }
 
     .btn-secondary {
-      background: transparent;
-      color: white;
-      border: 1px solid rgba(255,255,255,0.25);
+      background: white;
+      color: var(--navy);
+      border: 1px solid var(--border);
     }
 
-    .btn-secondary:hover { background: rgba(255,255,255,0.08); }
+    .btn-secondary:hover { background: #edf3fa; }
 
     .btn-dark {
       background: var(--navy);
@@ -348,7 +344,7 @@
 
     .section-head h2 {
       margin: 0;
-      font-size: 2.2rem;
+      font-size: clamp(1.9rem, 3vw, 2.5rem);
       line-height: 1.15;
       color: var(--navy);
     }
@@ -749,7 +745,7 @@
     }
 
     @media (max-width: 1180px) {
-      .hero-grid,
+      .hero-intro,
       .split-panel,
       .card-grid-3,
       .card-grid-2,
@@ -759,12 +755,15 @@
         grid-template-columns: 1fr;
       }
 
-      .hero h1 { font-size: 2.4rem; }
-      .hero-points,
-      .session-meta { grid-template-columns: 1fr; }
+      .hero-intro {
+        margin-top: 18px;
+      }
 
-      .hero-side-img {
-        min-height: 520px;
+      .hero h1 { max-width: none; }
+
+      .hero-points,
+      .session-meta {
+        grid-template-columns: 1fr;
       }
     }
 
@@ -777,19 +776,32 @@
 
       .nav-links,
       .footer-links { justify-content: flex-start; }
+
       .brand img { height: 56px; }
 
-      .hero-copy,
-      .hero-side,
-      .cta-panel,
-      .form-card { padding: 24px; }
+      .hero {
+        padding: 22px 0 10px;
+      }
 
-      .hero h1 { font-size: 2rem; }
+      .hero-main-card,
+      .hero-side-card,
+      .cta-panel,
+      .form-card,
+      .soft-panel,
+      .info-card,
+      .step-card,
+      .faq-card {
+        padding: 22px;
+      }
+
       .hero-actions,
       .cta-actions,
-      .session-actions { flex-direction: column; }
+      .session-actions {
+        flex-direction: column;
+      }
 
       .btn { width: 100%; }
+
       .section-head h2 { font-size: 1.8rem; }
 
       .session-top {
@@ -797,13 +809,8 @@
         align-items: stretch;
       }
 
-      .hero-side-img {
-        min-height: 380px;
-      }
-
-      .hero-side-overlay {
-        position: static;
-        margin: 16px;
+      .hero-banner {
+        height: clamp(220px, 48vw, 320px);
       }
     }
   </style>
@@ -834,61 +841,67 @@
 
   <main>
     <section class="hero">
-      <div class="container hero-grid">
-        <div class="hero-copy">
-          <div class="eyebrow-invert">Parcours formateur Vital Protect</div>
-          <h1>Rejoindre Vital Protect, ce n’est pas seulement animer un stage.</h1>
-          <p>
-            C’est intégrer un système structuré, fondé sur une méthode claire,
-            un cadre pédagogique exigeant, une logique de certification par module
-            et un engagement réel envers la sécurité et la qualité de transmission.
-          </p>
-
-          <div class="hero-points">
-            <div class="hero-point">Certification par module</div>
-            <div class="hero-point">Exigence pédagogique claire</div>
-            <div class="hero-point">Cadre de sécurité fort</div>
-            <div class="hero-point">Réseau structuré et cohérent</div>
-          </div>
-
-          <div class="hero-actions">
-            <a href="#sessions" class="btn btn-primary">Voir les sessions disponibles</a>
-            <a href="#formulaire" class="btn btn-secondary">Réserver ma place</a>
-          </div>
+      <div class="container">
+        <div class="hero-banner">
+          <img
+            src="/formateur-devant-public-assis-salle.png"
+            alt="Formateur Vital Protect devant un public assis"
+          />
         </div>
 
-        <aside class="hero-side hero-side-photo">
-          <div class="hero-side-media">
-            <img
-              src="/formateur-devant-public-assis-salle.png"
-              alt="Formateur Vital Protect devant un public assis"
-              class="hero-side-img"
-            />
+        <div class="hero-intro">
+          <div class="hero-main-card">
+            <div class="eyebrow">Parcours formateur Vital Protect</div>
 
-            <div class="hero-side-overlay">
-              <h2>Ce que le réseau attend</h2>
-              <p>
-                Devenir formateur Vital Protect suppose de savoir transmettre une méthode avec cohérence,
-                progression et maîtrise, dans le respect des contenus officiels et des règles de sécurité.
-              </p>
+            <h1>Rejoindre Vital Protect, ce n’est pas seulement animer un stage.</h1>
 
-              <div class="hero-side-list">
-                <div class="hero-side-item">
-                  <strong>Responsabilité pédagogique</strong>
-                  <span>Expliquer, démontrer, faire pratiquer, corriger et encadrer.</span>
-                </div>
-                <div class="hero-side-item">
-                  <strong>Certification par module</strong>
-                  <span>Un formateur est certifié pour transmettre des contenus précis, pas de manière abstraite.</span>
-                </div>
-                <div class="hero-side-item">
-                  <strong>Maintien des standards</strong>
-                  <span>La qualité du réseau repose sur la cohérence de la méthode et l’exigence continue.</span>
-                </div>
-              </div>
+            <p>
+              C’est intégrer un système structuré, fondé sur une méthode claire,
+              un cadre pédagogique exigeant, une logique de certification par module
+              et un engagement réel envers la sécurité et la qualité de transmission.
+            </p>
+
+            <div class="hero-points">
+              <div class="hero-point">Certification par module</div>
+              <div class="hero-point">Exigence pédagogique claire</div>
+              <div class="hero-point">Cadre de sécurité fort</div>
+              <div class="hero-point">Réseau structuré et cohérent</div>
+            </div>
+
+            <div class="hero-actions">
+              <a href="#sessions" class="btn btn-primary">Voir les sessions disponibles</a>
+              <a href="#formulaire" class="btn btn-secondary">Réserver ma place</a>
             </div>
           </div>
-        </aside>
+
+          <aside class="hero-side-card">
+            <div class="eyebrow-soft">Ce que le réseau attend</div>
+            <h2>Une transmission maîtrisée, cohérente et sécurisée</h2>
+            <p>
+              Devenir formateur Vital Protect suppose de savoir transmettre une méthode avec progression,
+              précision et maîtrise, dans le respect des contenus officiels et des règles de sécurité du réseau.
+            </p>
+
+            <div class="hero-side-list">
+              <div class="hero-side-item">
+                <strong>Responsabilité pédagogique</strong>
+                <span>Expliquer, démontrer, faire pratiquer, corriger et encadrer avec clarté.</span>
+              </div>
+              <div class="hero-side-item">
+                <strong>Certification par module</strong>
+                <span>Un formateur est certifié pour transmettre des contenus précis, pas de manière abstraite.</span>
+              </div>
+              <div class="hero-side-item">
+                <strong>Maintien des standards</strong>
+                <span>La qualité du réseau repose sur la cohérence de la méthode et l’exigence continue.</span>
+              </div>
+            </div>
+
+            <div class="hero-side-note">
+              L’image valorise le parcours. Le contenu, lui, reste parfaitement lisible et structuré.
+            </div>
+          </aside>
+        </div>
       </div>
     </section>
 
