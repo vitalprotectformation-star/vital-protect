@@ -184,6 +184,60 @@
       padding: 34px;
     }
 
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .form-field--full {
+      grid-column: 1 / -1;
+    }
+
+    .form-actions {
+      margin-top: 10px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .form-status {
+      margin-top: 14px;
+      padding: 14px 16px;
+      border-radius: 14px;
+      font-weight: 600;
+      line-height: 1.6;
+      display: none;
+    }
+
+    .form-status.show {
+      display: block;
+    }
+
+    .form-status.success {
+      background: var(--vp-success-bg);
+      color: #0f7d46;
+      border: 1px solid #cdeedb;
+    }
+
+    .form-status.error {
+      background: var(--vp-danger-bg);
+      color: #a32020;
+      border: 1px solid #f2c7c7;
+    }
+
+    .honeypot {
+      position: absolute;
+      left: -9999px;
+      opacity: 0;
+      pointer-events: none;
+      height: 0;
+      width: 0;
+      overflow: hidden;
+    }
+
     @media (max-width: 1180px) {
       .contact-hero__grid,
       .contact-layout,
@@ -212,6 +266,14 @@
 
       .btn {
         width: 100%;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .form-field--full {
+        grid-column: auto;
       }
     }
   </style>
@@ -325,25 +387,29 @@
         <div class="card form-card" id="formulaire">
           <h3>Formulaire de contact</h3>
           <p>
-            Ce formulaire reste volontairement visuel pour ne pas toucher au fonctionnement actuel.
-            Il pourra ensuite être relié à Resend, à une adresse email ou à une route API dédiée.
+            Décrivez votre besoin. Votre demande sera envoyée directement à l’équipe Vital Protect.
           </p>
 
-          <form class="contact-form">
+          <form id="contactForm">
+            <div class="honeypot">
+              <label for="website">Ne pas remplir ce champ</label>
+              <input id="website" name="website" type="text" tabindex="-1" autocomplete="off" />
+            </div>
+
             <div class="form-grid">
               <div class="form-field">
                 <label for="contactFirstName">Prénom</label>
-                <input id="contactFirstName" type="text" placeholder="Votre prénom" />
+                <input id="contactFirstName" type="text" placeholder="Votre prénom" required />
               </div>
 
               <div class="form-field">
                 <label for="contactLastName">Nom</label>
-                <input id="contactLastName" type="text" placeholder="Votre nom" />
+                <input id="contactLastName" type="text" placeholder="Votre nom" required />
               </div>
 
               <div class="form-field">
                 <label for="contactEmail">Email</label>
-                <input id="contactEmail" type="email" placeholder="vous@email.fr" />
+                <input id="contactEmail" type="email" placeholder="vous@email.fr" required />
               </div>
 
               <div class="form-field">
@@ -353,27 +419,27 @@
 
               <div class="form-field form-field--full">
                 <label for="contactSubject">Sujet</label>
-                <select id="contactSubject">
+                <select id="contactSubject" required>
                   <option value="">Choisir un sujet</option>
-                  <option>Question sur un stage</option>
-                  <option>Demande entreprise / structure</option>
-                  <option>Question sur le parcours formateur</option>
-                  <option>Autre demande</option>
+                  <option value="Question sur un stage">Question sur un stage</option>
+                  <option value="Demande entreprise / structure">Demande entreprise / structure</option>
+                  <option value="Question sur le parcours formateur">Question sur le parcours formateur</option>
+                  <option value="Autre demande">Autre demande</option>
                 </select>
               </div>
 
               <div class="form-field form-field--full">
                 <label for="contactMessage">Votre message</label>
-                <textarea id="contactMessage" placeholder="Décrivez votre besoin ou votre question."></textarea>
+                <textarea id="contactMessage" placeholder="Décrivez votre besoin ou votre question." required></textarea>
               </div>
             </div>
 
-            <button type="button" class="btn btn-dark">Envoyer la demande</button>
-          </form>
+            <div class="form-actions">
+              <button type="submit" class="btn btn-dark" id="contactSubmitBtn">Envoyer la demande</button>
+            </div>
 
-          <p style="margin-top:12px; color: var(--vp-text-soft); line-height:1.72;">
-            Le design est prêt. Le branchement technique pourra être fait ensuite sans casser la structure.
-          </p>
+            <div id="contactStatus" class="form-status"></div>
+          </form>
         </div>
       </div>
     </section>
@@ -444,9 +510,66 @@
         <a href="/faq.html">FAQ</a>
         <a href="/contact.html">Contact</a>
         <a href="/formateur-login.html">Espace formateur</a>
-        <a href="/admin-login.html">Admin</a>
       </div>
     </div>
   </footer>
+
+  <script>
+    const form = document.getElementById("contactForm");
+    const submitBtn = document.getElementById("contactSubmitBtn");
+    const statusBox = document.getElementById("contactStatus");
+
+    function showStatus(message, type) {
+      statusBox.textContent = message;
+      statusBox.className = `form-status show ${type}`;
+    }
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const payload = {
+        first_name: document.getElementById("contactFirstName").value.trim(),
+        last_name: document.getElementById("contactLastName").value.trim(),
+        email: document.getElementById("contactEmail").value.trim(),
+        phone: document.getElementById("contactPhone").value.trim(),
+        subject: document.getElementById("contactSubject").value.trim(),
+        message: document.getElementById("contactMessage").value.trim(),
+        website: document.getElementById("website").value.trim()
+      };
+
+      if (!payload.first_name || !payload.last_name || !payload.email || !payload.subject || !payload.message) {
+        showStatus("Merci de remplir tous les champs obligatoires.", "error");
+        return;
+      }
+
+      submitBtn.disabled = true;
+      showStatus("Envoi de votre demande...", "success");
+
+      try {
+        const res = await fetch("/api/contact", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          showStatus(data.error || "Impossible d’envoyer votre demande.", "error");
+          return;
+        }
+
+        showStatus("Votre demande a bien été envoyée. Nous vous répondrons dès que possible.", "success");
+        form.reset();
+      } catch (error) {
+        console.error("Contact form error:", error);
+        showStatus("Erreur réseau. Merci de réessayer.", "error");
+      } finally {
+        submitBtn.disabled = false;
+      }
+    });
+  </script>
 </body>
 </html>
