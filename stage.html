@@ -632,7 +632,6 @@
         <a href="/entreprises.html">Entreprises</a>
         <a href="/devenir-formateur.html">Devenir formateur</a>
         <a href="/formateur-login.html">Espace formateur</a>
-        <a href="/admin-login.html">Admin</a>
       </div>
     </div>
   </footer>
@@ -787,13 +786,11 @@
           },
           body: JSON.stringify({
             stage_id: stage.id,
-            stage_title: stage.title || "",
             first_name: firstName,
             last_name: lastName,
             email: email,
             phone: phone,
-            places: places,
-            unit_price: Number(stage.price || 0)
+            places: places
           })
         });
 
