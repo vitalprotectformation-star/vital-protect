@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Vital Protect — Méthode de sécurité personnelle</title>
+  <title>Vital Protect — Formation de sécurité personnelle et gestion de situation à risque</title>
 
   <link rel="stylesheet" href="/styles/tokens.css" />
   <link rel="stylesheet" href="/styles/base.css" />
@@ -18,24 +18,37 @@
       padding: 36px;
     }
 
+    .hero-home__eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-size: 0.86rem;
+      font-weight: 700;
+      background: rgba(255,255,255,0.10);
+      color: rgba(255,255,255,0.92);
+      border: 1px solid rgba(255,255,255,0.12);
+    }
+
     .hero-home__title {
       margin: 16px 0;
       font-size: clamp(2.5rem, 5vw, 4.6rem);
-      line-height: 0.98;
-      max-width: 10ch;
+      line-height: 0.96;
+      max-width: 11ch;
       color: white;
     }
 
     .hero-home__lead {
       margin: 0;
-      max-width: 58ch;
+      max-width: 62ch;
       color: var(--vp-text-invert-soft);
       font-size: 1.04rem;
       line-height: 1.85;
     }
 
     .hero-home__proofs {
-      margin-top: 24px;
+      margin-top: 22px;
       display: flex;
       flex-wrap: wrap;
       gap: 10px;
@@ -126,9 +139,74 @@
       font-size: 0.98rem;
     }
 
+    .trust-section {
+      padding-top: 10px;
+    }
+
+    .trust-kpis {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 18px;
+      margin-top: 26px;
+    }
+
+    .trust-kpi {
+      background: white;
+      border: 1px solid rgba(13, 27, 42, 0.06);
+      border-radius: var(--vp-radius-md);
+      box-shadow: var(--vp-shadow-md);
+      padding: 22px;
+    }
+
+    .trust-kpi__value {
+      font-size: clamp(1.8rem, 3vw, 2.4rem);
+      font-weight: 800;
+      color: var(--vp-navy-850);
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+
+    .trust-kpi__label {
+      color: var(--vp-text-soft);
+      line-height: 1.6;
+      font-weight: 600;
+    }
+
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+      margin-top: 22px;
+    }
+
+    .testimonial-card {
+      background: white;
+      border: 1px solid rgba(13, 27, 42, 0.06);
+      border-radius: var(--vp-radius-md);
+      box-shadow: var(--vp-shadow-md);
+      padding: 24px;
+    }
+
+    .testimonial-card p {
+      margin: 0 0 16px;
+      color: var(--vp-text);
+      line-height: 1.75;
+    }
+
+    .testimonial-card strong {
+      display: block;
+      color: var(--vp-navy-850);
+      font-size: 0.98rem;
+    }
+
+    .testimonial-card span {
+      color: var(--vp-text-soft);
+      font-size: 0.92rem;
+    }
+
     .proof-band {
       padding-top: 0;
-      margin-top: -14px;
+      margin-top: -4px;
     }
 
     .proof-band__grid {
@@ -478,6 +556,8 @@
 
     @media (max-width: 1180px) {
       .proof-band__grid,
+      .trust-kpis,
+      .testimonials-grid,
       .split-panel,
       .pedagogy-feature,
       .map-layout,
@@ -562,27 +642,26 @@
     <section class="hero-shell hero-home">
       <div class="container hero-grid">
         <div class="glass-panel hero-home__copy">
-          <div class="eyebrow eyebrow--invert">Méthode structurée • Formateurs certifiés • Cadre sécurisé</div>
+          <div class="hero-home__eyebrow">Formation structurée • Prévention • Gestion de situation à risque</div>
 
-          <h1 class="hero-home__title">Prévenir. Gérer. Se protéger.</h1>
+          <h1 class="hero-home__title">Formation de sécurité personnelle et gestion de situation à risque</h1>
 
           <p class="hero-home__lead">
-            Vital Protect transmet des repères simples, réalistes et applicables pour mieux lire une situation,
-            réduire l’escalade, protéger sa distance et développer des réflexes utiles dans la vie réelle.
-            Notre approche repose sur une pédagogie progressive, une architecture claire des contenus
-            et un cadre d’encadrement exigeant.
+            Pour particuliers, professionnels et entreprises : apprenez à prévenir, désamorcer,
+            protéger votre distance et réagir avec simplicité dans des situations réelles,
+            dans un cadre pédagogique progressif et encadré.
           </p>
 
           <div class="hero-home__proofs">
-            <div class="hero-home__proof">Prévention avant confrontation</div>
+            <div class="hero-home__proof">Méthode structurée</div>
+            <div class="hero-home__proof">Formateurs certifiés</div>
             <div class="hero-home__proof">Pédagogie progressive</div>
-            <div class="hero-home__proof">Accessible au grand public</div>
-            <div class="hero-home__proof">Adaptable au contexte pro</div>
+            <div class="hero-home__proof">Sessions disponibles en France</div>
           </div>
 
           <div class="hero-home__actions">
-            <a href="/methode.html" class="btn btn-primary">Découvrir la méthode</a>
-            <a href="#stages" class="btn btn-secondary">Voir les stages</a>
+            <a href="#stages" class="btn btn-primary">Réserver un stage</a>
+            <a href="/contact.html" class="btn btn-secondary">Demander un échange</a>
           </div>
         </div>
 
@@ -604,6 +683,77 @@
             </span>
           </div>
         </aside>
+      </div>
+    </section>
+
+    <section class="trust-section">
+      <div class="container">
+        <div class="section-head section-head--center">
+          <span class="eyebrow">Pourquoi nous faire confiance</span>
+          <h2>Une méthode claire, un cadre sérieux, une vraie logique de transmission</h2>
+          <p>
+            Cette section est pensée pour rassurer rapidement. Remplace simplement les chiffres et les témoignages
+            par tes données réelles dès que tu les centralises.
+          </p>
+        </div>
+
+        <div class="trust-kpis">
+          <article class="trust-kpi">
+            <div class="trust-kpi__value">120+</div>
+            <div class="trust-kpi__label">stages réalisés</div>
+          </article>
+
+          <article class="trust-kpi">
+            <div class="trust-kpi__value">1 500+</div>
+            <div class="trust-kpi__label">participants formés</div>
+          </article>
+
+          <article class="trust-kpi">
+            <div class="trust-kpi__value">25+</div>
+            <div class="trust-kpi__label">villes / départements couverts</div>
+          </article>
+
+          <article class="trust-kpi">
+            <div class="trust-kpi__value">12</div>
+            <div class="trust-kpi__label">formateurs actifs</div>
+          </article>
+
+          <article class="trust-kpi">
+            <div class="trust-kpi__value">Depuis 2021</div>
+            <div class="trust-kpi__label">déploiement de la méthode</div>
+          </article>
+        </div>
+
+        <div class="testimonials-grid">
+          <article class="testimonial-card">
+            <p>
+              “Stage clair, utile et accessible. On comprend enfin quoi regarder, quoi éviter et comment réagir sans chercher le combat.”
+            </p>
+            <strong>Claire</strong>
+            <span>Participante — stage grand public</span>
+          </article>
+
+          <article class="testimonial-card">
+            <p>
+              “L’approche est sérieuse, structurée et très pédagogique. On repart avec des repères concrets, pas avec du folklore.”
+            </p>
+            <strong>Karim</strong>
+            <span>Professionnel — contexte exposé au public</span>
+          </article>
+
+          <article class="testimonial-card">
+            <p>
+              “Ce qui m’a marqué, c’est la progression et le cadre. On apprend dans le bon ordre, avec une vraie logique.”
+            </p>
+            <strong>Julie</strong>
+            <span>Candidate formateur</span>
+          </article>
+        </div>
+
+        <div class="cta-actions" style="margin-top: 22px; justify-content: center;">
+          <a href="#stages" class="btn btn-dark">Voir les stages</a>
+          <a href="/contact.html" class="btn btn-outline">Parler de votre besoin</a>
+        </div>
       </div>
     </section>
 
@@ -653,27 +803,36 @@
       <div class="container">
         <div class="section-head">
           <span class="eyebrow">Pour qui ?</span>
-          <h2>Une méthode pensée pour plusieurs réalités</h2>
+          <h2>Trois parcours clairs selon votre besoin</h2>
           <p>
-            Vital Protect s’adresse au grand public, aux professionnels exposés, aux entreprises,
-            aux structures accueillant du public et aux candidats formateurs.
+            Vital Protect s’adresse au grand public, aux entreprises et professionnels, ainsi qu’aux candidats formateurs.
+            Chaque page doit ensuite pousser vers une action concrète.
           </p>
         </div>
 
         <div class="card-grid-3">
           <article class="audience-card">
-            <h3>Grand public</h3>
+            <h3>Particuliers</h3>
             <p>Pour acquérir des repères concrets, mieux lire les situations et développer des réflexes utiles.</p>
+            <div class="cta-actions" style="margin-top:16px;">
+              <a href="#stages" class="btn btn-outline">Réserver un stage</a>
+            </div>
           </article>
 
           <article class="audience-card">
             <h3>Entreprises & professionnels</h3>
             <p>Pour travailler la prévention, la posture, la gestion des tensions et l’adaptation au contexte métier.</p>
+            <div class="cta-actions" style="margin-top:16px;">
+              <a href="/entreprises.html" class="btn btn-outline">Voir l’offre entreprises</a>
+            </div>
           </article>
 
           <article class="audience-card">
             <h3>Candidats formateurs</h3>
             <p>Pour rejoindre un réseau structuré et transmettre une méthode dans un cadre pédagogique exigeant.</p>
+            <div class="cta-actions" style="margin-top:16px;">
+              <a href="/devenir-formateur.html" class="btn btn-outline">Découvrir le parcours</a>
+            </div>
           </article>
         </div>
       </div>
@@ -682,19 +841,23 @@
     <section>
       <div class="container split-panel">
         <div class="soft-card soft-panel">
-          <span class="eyebrow">Ce qu’on apprend réellement</span>
-          <h3>Comprendre, prévenir, gérer, protéger</h3>
+          <span class="eyebrow">Ce que vous allez réellement apprendre</span>
+          <h3>À l’issue d’un stage, vous saurez</h3>
           <p>
-            Nos formations ne se limitent pas à quelques gestes. Elles visent à développer
-            une compréhension plus juste du risque et des réponses simples, réalistes et utilisables.
+            L’objectif n’est pas d’impressionner. L’objectif est de repartir avec des repères utilisables
+            dans la vraie vie, dans un cadre clair, progressif et encadré.
           </p>
 
           <div class="bullet-list">
-            <div class="bullet-item"><strong>Repérer les signaux :</strong> mieux identifier les contextes et comportements qui annoncent un risque.</div>
-            <div class="bullet-item"><strong>Réduire l’exposition :</strong> adopter une posture et des réflexes qui limitent l’escalade.</div>
-            <div class="bullet-item"><strong>Gérer la distance et le stress :</strong> gagner en lucidité dans une situation tendue.</div>
-            <div class="bullet-item"><strong>Réagir avec simplicité :</strong> utiliser des réponses accessibles et cohérentes avec le réel.</div>
-            <div class="bullet-item"><strong>Savoir quoi faire après :</strong> sécuriser, alerter, protéger et reprendre le contrôle.</div>
+            <div class="bullet-item"><strong>Identifier plus tôt</strong> une situation qui bascule.</div>
+            <div class="bullet-item"><strong>Adopter une posture</strong> qui réduit l’escalade.</div>
+            <div class="bullet-item"><strong>Garder une distance utile</strong> dans une situation tendue.</div>
+            <div class="bullet-item"><strong>Réagir simplement</strong> sans chercher le combat.</div>
+            <div class="bullet-item"><strong>Sécuriser l’après-incident</strong> et retrouver de la maîtrise.</div>
+          </div>
+
+          <div class="cta-actions">
+            <a href="#stages" class="btn btn-dark">Voir les sessions</a>
           </div>
         </div>
 
@@ -711,6 +874,10 @@
             <div class="bullet-item"><strong>Pédagogie active :</strong> comprendre avant de faire, pratiquer avant de répéter.</div>
             <div class="bullet-item"><strong>Cadre sécurisé :</strong> règles claires, adaptation au public, vigilance constante sur la sécurité.</div>
             <div class="bullet-item"><strong>Transmission standardisée :</strong> une cohérence entre les contenus, les modules et les formateurs certifiés.</div>
+          </div>
+
+          <div class="cta-actions">
+            <a href="/methode.html" class="btn btn-outline">Comprendre la méthode</a>
           </div>
         </div>
       </div>
@@ -738,6 +905,10 @@
             <div class="pedagogy-point"><strong>Un cadre clair :</strong> les participants comprennent ce qu’ils apprennent et pourquoi.</div>
             <div class="pedagogy-point"><strong>Une progression utile :</strong> on avance étape par étape, sans brutalité ni folklore.</div>
             <div class="pedagogy-point"><strong>Une pédagogie rassurante :</strong> accessible aux débutants comme aux publics professionnels.</div>
+          </div>
+
+          <div class="cta-actions">
+            <a href="/contact.html" class="btn btn-dark">Demander un échange</a>
           </div>
         </div>
       </div>
@@ -803,6 +974,10 @@
         </div>
 
         <div id="stagesContainer" class="stages-grid"></div>
+
+        <div class="cta-actions" style="margin-top: 24px;">
+          <a href="/contact.html" class="btn btn-dark">Poser une question avant réservation</a>
+        </div>
       </div>
     </section>
 
@@ -871,6 +1046,11 @@
             <p>Des formateurs certifiés, tenus de respecter les standards pédagogiques et les règles de sécurité Vital Protect.</p>
           </article>
         </div>
+
+        <div class="cta-actions" style="margin-top: 24px; justify-content: center;">
+          <a href="/faq.html" class="btn btn-outline">Voir toute la FAQ</a>
+          <a href="/contact.html" class="btn btn-dark">Nous contacter</a>
+        </div>
       </div>
     </section>
 
@@ -908,8 +1088,8 @@
         <a href="/methode.html">La méthode</a>
         <a href="/entreprises.html">Entreprises</a>
         <a href="/devenir-formateur.html">Devenir formateur</a>
-        <a href="/formateur-login.html">Espace formateur</a>
-        <a href="/admin-login.html">Admin</a>
+        <a href="/faq.html">FAQ</a>
+        <a href="/contact.html">Contact</a>
       </div>
     </div>
   </footer>
