@@ -16,13 +16,17 @@ function sanitizeText(value, fallback = "") {
   return String(value || fallback).trim();
 }
 
+function isPositiveInteger(value) {
+  return Number.isInteger(value) && value > 0;
+}
+
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).send("Method not allowed");
   }
 
   try {
-    const origin = req.headers.origin || "https://www.vital-protect.fr";
+    const origin = process.env.APP_BASE_URL || "https://www.vital-protect.fr";
     const type = sanitizeText(req.body?.type).toLowerCase();
 
     if (type === "trainer") {
@@ -131,13 +135,11 @@ export default async function handler(req, res) {
     }
 
     const stageId = sanitizeText(req.body?.stage_id);
-    const stageTitle = sanitizeText(req.body?.stage_title, "Stage VITAL PROTECT");
     const firstName = sanitizeText(req.body?.first_name);
     const lastName = sanitizeText(req.body?.last_name);
     const email = normalizeEmail(req.body?.email);
     const phone = sanitizeText(req.body?.phone);
-    const quantity = Math.max(1, Number(req.body?.places || 1));
-    const unitPrice = Math.max(0, Number(req.body?.unit_price || 0));
+    const quantity = Number(req.body?.places || 1);
 
     if (!stageId) {
       return res.status(400).json({ error: "Stage manquant" });
@@ -147,13 +149,46 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: "Email manquant" });
     }
 
-    if (!unitPrice) {
+    if (!isPositiveInteger(quantity)) {
+      return res.status(400).json({ error: "Nombre de places invalide" });
+    }
+
+    const { data: stage, error: stageError } = await supabase
+      .from("stages")
+      .select("*")
+      .eq("id", stageId)
+      .maybeSingle();
+
+    if (stageError) {
+      return res.status(500).json({ error: stageError.message });
+    }
+
+    if (!stage) {
+      return res.status(404).json({ error: "Stage introuvable" });
+    }
+
+    if (String(stage.status || "").toLowerCase() !== "published") {
+      return res.status(400).json({ error: "Ce stage n'est pas disponible à la réservation" });
+    }
+
+    const remainingPlaces = Number(stage.remaining_places || 0);
+    if (remainingPlaces < quantity) {
+      return res.status(400).json({
+        error: `Places insuffisantes. Il reste ${remainingPlaces} place(s).`
+      });
+    }
+
+    const unitPrice = Number(stage.price || 0);
+    if (!unitPrice || unitPrice <= 0) {
       return res.status(400).json({ error: "Prix du stage invalide" });
     }
+
+    const stageTitle = sanitizeText(stage.title, "Stage VITAL PROTECT");
 
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
       mode: "payment",
+      customer_email: email,
       line_items: [
         {
           price_data: {
@@ -169,7 +204,7 @@ export default async function handler(req, res) {
       ],
       metadata: {
         type: "stage",
-        stage_id: stageId,
+        stage_id: stage.id,
         stage_title: stageTitle,
         first_name: firstName,
         last_name: lastName,
@@ -178,7 +213,6 @@ export default async function handler(req, res) {
         places: String(quantity),
         unit_price: String(unitPrice)
       },
-      customer_email: email,
       success_url: `${origin}/success.html`,
       cancel_url: `${origin}/cancel.html`
     });
