@@ -141,7 +141,7 @@
       border-radius: 28px;
       padding: 34px;
       box-shadow: 0 18px 40px rgba(0,0,0,0.15);
-      max-width: 900px;
+      max-width: 940px;
     }
 
     .eyebrow {
@@ -157,8 +157,9 @@
 
     .hero h1 {
       margin: 0 0 16px;
-      font-size: 2.9rem;
+      font-size: clamp(2.1rem, 4.8vw, 3.3rem);
       line-height: 1.05;
+      max-width: 14ch;
     }
 
     .hero p {
@@ -169,6 +170,79 @@
       max-width: 780px;
     }
 
+    .hero-actions {
+      margin-top: 24px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .hero-proofs {
+      margin-top: 20px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .hero-proof {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 13px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.10);
+      color: rgba(255,255,255,0.88);
+      font-size: 0.92rem;
+      font-weight: 700;
+    }
+
+    .hero-proof::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--gold);
+      display: inline-block;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      border: none;
+      border-radius: 14px;
+      padding: 14px 18px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.15s ease, background 0.2s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .btn-dark {
+      background: white;
+      color: var(--navy);
+    }
+
+    .btn-dark:hover {
+      background: #edf3fa;
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: white;
+      border: 1px solid rgba(255,255,255,0.22);
+    }
+
+    .btn-outline:hover {
+      background: rgba(255,255,255,0.08);
+    }
+
     section {
       padding: 64px 0;
     }
@@ -176,6 +250,12 @@
     .section-head {
       max-width: 840px;
       margin-bottom: 26px;
+    }
+
+    .section-head.center {
+      text-align: center;
+      margin-left: auto;
+      margin-right: auto;
     }
 
     .section-head h2 {
@@ -201,6 +281,7 @@
 
     .faq-nav,
     .faq-group,
+    .info-strip,
     .cta-panel {
       background: var(--card);
       border: 1px solid var(--border);
@@ -293,6 +374,51 @@
       line-height: 1.75;
     }
 
+    .info-strip {
+      padding: 28px;
+      margin-bottom: 26px;
+    }
+
+    .info-strip h2 {
+      margin: 0 0 10px;
+      color: var(--navy);
+      font-size: 1.6rem;
+    }
+
+    .info-strip p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.75;
+      max-width: 860px;
+    }
+
+    .info-strip__grid {
+      margin-top: 18px;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .info-strip__item {
+      background: #f8fbff;
+      border: 1px solid #e6edf7;
+      border-radius: 16px;
+      padding: 16px;
+    }
+
+    .info-strip__item strong {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--navy);
+      font-size: 0.98rem;
+    }
+
+    .info-strip__item span {
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 0.94rem;
+    }
+
     .soft-band {
       background: linear-gradient(180deg, #ffffff, #f8fbff);
     }
@@ -324,37 +450,23 @@
       flex-wrap: wrap;
     }
 
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      text-decoration: none;
-      border: none;
-      border-radius: 14px;
-      padding: 14px 18px;
-      font-size: 1rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: transform 0.15s ease, background 0.2s ease;
-    }
-
-    .btn:hover {
-      transform: translateY(-1px);
-    }
-
-    .btn-dark {
+    .btn-solid {
       background: var(--navy);
       color: white;
     }
 
-    .btn-dark:hover {
+    .btn-solid:hover {
       background: #14325d;
     }
 
-    .btn-outline {
+    .btn-light {
       background: white;
       color: var(--navy);
       border: 1px solid var(--border);
+    }
+
+    .btn-light:hover {
+      background: #edf3fa;
     }
 
     footer {
@@ -404,6 +516,12 @@
       background: rgba(255,255,255,0.08);
     }
 
+    @media (max-width: 1100px) {
+      .info-strip__grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
     @media (max-width: 980px) {
       .faq-layout {
         grid-template-columns: 1fr;
@@ -433,7 +551,8 @@
       .hero-card,
       .faq-group,
       .faq-nav,
-      .cta-panel {
+      .cta-panel,
+      .info-strip {
         padding: 24px;
       }
 
@@ -441,12 +560,19 @@
         font-size: 2rem;
       }
 
+      .hero-actions,
       .cta-actions {
         flex-direction: column;
       }
 
-      .btn {
+      .btn,
+      .btn-solid,
+      .btn-light {
         width: 100%;
+      }
+
+      .info-strip__grid {
+        grid-template-columns: 1fr;
       }
     }
   </style>
@@ -470,7 +596,7 @@
         <a href="/entreprises.html">Entreprises</a>
         <a href="/devenir-formateur.html">Devenir formateur</a>
         <a href="/faq.html" class="active">FAQ</a>
-        <a href="/formateur-login.html" class="nav-cta">Espace formateur</a>
+        <a href="/contact.html" class="nav-cta">Contact</a>
       </nav>
     </div>
   </header>
@@ -485,6 +611,50 @@
             Cette page répond aux questions les plus fréquentes sur la méthode Vital Protect,
             les stages, les réservations, les entreprises et le parcours formateur.
           </p>
+
+          <div class="hero-proofs">
+            <div class="hero-proof">Réponses concrètes</div>
+            <div class="hero-proof">Méthode structurée</div>
+            <div class="hero-proof">Pédagogie progressive</div>
+            <div class="hero-proof">Cadre sécurisé</div>
+          </div>
+
+          <div class="hero-actions">
+            <a href="/index.html#stages" class="btn btn-dark">Voir les stages</a>
+            <a href="/contact.html" class="btn btn-outline">Poser une question</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="container">
+        <div class="info-strip">
+          <h2>Avant de réserver ou de nous contacter</h2>
+          <p>
+            Voici les points que les visiteurs veulent comprendre le plus souvent :
+            à qui s’adresse la méthode, comment se déroule un stage, comment fonctionne la réservation
+            et ce qui distingue Vital Protect d’une approche plus classique de self-défense.
+          </p>
+
+          <div class="info-strip__grid">
+            <div class="info-strip__item">
+              <strong>Méthode</strong>
+              <span>Comprendre la logique Vital Protect et son positionnement réel.</span>
+            </div>
+            <div class="info-strip__item">
+              <strong>Stages</strong>
+              <span>Savoir comment se passe un stage et à qui il s’adresse.</span>
+            </div>
+            <div class="info-strip__item">
+              <strong>Réservation</strong>
+              <span>Comprendre le paiement, la confirmation et le fonctionnement pratique.</span>
+            </div>
+            <div class="info-strip__item">
+              <strong>Formateurs / entreprises</strong>
+              <span>Clarifier l’offre réseau et l’offre professionnelle.</span>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -536,6 +706,15 @@
                 et à des réponses simples et réalistes, pas à une logique martiale spectaculaire.
               </div>
             </details>
+
+            <details>
+              <summary>Qu’est-ce qui distingue votre approche ?</summary>
+              <div class="answer">
+                La méthode Vital Protect met l’accent sur la compréhension des situations,
+                la posture, la distance, la prévention et la simplicité d’action.
+                L’objectif est d’apprendre utile, pas d’impressionner.
+              </div>
+            </details>
           </div>
 
           <div class="faq-group" id="stages">
@@ -574,6 +753,15 @@
                 des exercices adaptés au niveau des participants et un encadrement rigoureux.
               </div>
             </details>
+
+            <details>
+              <summary>Que vais-je réellement apprendre ?</summary>
+              <div class="answer">
+                Vous allez travailler la lecture des situations, les signaux d’alerte,
+                la posture, la gestion de la distance, la prévention de l’escalade
+                et des réponses simples adaptées à des situations réalistes.
+              </div>
+            </details>
           </div>
 
           <div class="faq-group" id="reservation">
@@ -598,7 +786,7 @@
               <summary>Que se passe-t-il après le paiement d’un stage ?</summary>
               <div class="answer">
                 La réservation est enregistrée en base, les places restantes sont mises à jour
-                et un email de confirmation métier peut être envoyé.
+                et un email de confirmation peut être envoyé automatiquement.
               </div>
             </details>
 
@@ -607,6 +795,14 @@
               <div class="answer">
                 Non. Pour la formation formateur, le paiement est d’abord autorisé puis capturé
                 uniquement après validation du dossier par l’équipe.
+              </div>
+            </details>
+
+            <details>
+              <summary>Puis-je vous contacter avant de réserver ?</summary>
+              <div class="answer">
+                Oui. Si vous avez un doute sur le bon stage, votre niveau ou votre situation,
+                vous pouvez utiliser la page contact pour obtenir une réponse plus précise.
               </div>
             </details>
           </div>
@@ -635,6 +831,14 @@
               <div class="answer">
                 Oui. Les formats peuvent être contextualisés selon les besoins, le niveau d’exposition,
                 le public concerné et les objectifs de la structure.
+              </div>
+            </details>
+
+            <details>
+              <summary>Intervenez-vous sur site ?</summary>
+              <div class="answer">
+                Oui, selon le format retenu. Une intervention sur site peut être proposée
+                lorsqu’elle est cohérente avec le besoin de la structure.
               </div>
             </details>
           </div>
@@ -673,6 +877,14 @@
                 et de maintien des standards pédagogiques et sécuritaires.
               </div>
             </details>
+
+            <details>
+              <summary>Comment réserver une session formateur ?</summary>
+              <div class="answer">
+                Depuis la page devenir formateur, vous choisissez une session disponible,
+                complétez vos informations et suivez ensuite le parcours de réservation prévu.
+              </div>
+            </details>
           </div>
         </div>
       </div>
@@ -683,14 +895,14 @@
         <div class="cta-panel">
           <h2>Vous avez encore une question ?</h2>
           <p>
-            Découvrez la méthode, consultez les stages disponibles ou explorez le parcours formateur
-            pour choisir l’entrée qui vous correspond le mieux.
+            Découvrez la méthode, consultez les stages disponibles ou contactez-nous
+            pour être orienté vers le bon point d’entrée selon votre besoin.
           </p>
 
           <div class="cta-actions">
-            <a href="/methode.html" class="btn btn-dark">Découvrir la méthode</a>
-            <a href="/index.html#stages" class="btn btn-outline">Voir les stages</a>
-            <a href="/devenir-formateur.html" class="btn btn-outline">Devenir formateur</a>
+            <a href="/index.html#stages" class="btn btn-solid">Voir les stages</a>
+            <a href="/methode.html" class="btn btn-light">Découvrir la méthode</a>
+            <a href="/contact.html" class="btn btn-light">Nous contacter</a>
           </div>
         </div>
       </div>
@@ -712,8 +924,7 @@
         <a href="/entreprises.html">Entreprises</a>
         <a href="/devenir-formateur.html">Devenir formateur</a>
         <a href="/faq.html">FAQ</a>
-        <a href="/formateur-login.html">Espace formateur</a>
-        <a href="/admin-login.html">Admin</a>
+        <a href="/contact.html">Contact</a>
       </div>
     </div>
   </footer>
