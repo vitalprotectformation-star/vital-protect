@@ -41,6 +41,35 @@
       max-width: 58ch;
     }
 
+    .stage-hero__proofs {
+      margin-top: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .stage-hero__proof {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 13px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.10);
+      color: rgba(255,255,255,0.88);
+      font-size: 0.92rem;
+      font-weight: 700;
+    }
+
+    .stage-hero__proof::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--vp-gold);
+      display: inline-block;
+    }
+
     .stage-hero__actions {
       margin-top: 24px;
       display: flex;
@@ -355,6 +384,13 @@
             Chargement des informations du stage.
           </p>
 
+          <div class="stage-hero__proofs">
+            <div class="stage-hero__proof">Méthode structurée</div>
+            <div class="stage-hero__proof">Pédagogie progressive</div>
+            <div class="stage-hero__proof">Cadre sécurisé</div>
+            <div class="stage-hero__proof">Réservation en ligne</div>
+          </div>
+
           <div class="stage-hero__actions">
             <a href="#reservation" class="btn btn-primary">Réserver ce stage</a>
             <a href="/index.html#stages" class="btn btn-secondary">Retour aux stages</a>
@@ -401,31 +437,33 @@
     <section>
       <div class="container split-panel">
         <div class="soft-card soft-panel">
-          <span class="eyebrow">Objectif du stage</span>
-          <h3>Ce que ce stage cherche à transmettre</h3>
-          <p id="objectiveText">
-            Ce stage s’inscrit dans la méthode Vital Protect : comprendre le risque, améliorer la lecture des situations, prévenir l’escalade et développer des réponses simples et réalistes.
+          <span class="eyebrow">Pour qui ?</span>
+          <h3>À qui s’adresse ce stage</h3>
+          <p id="audienceText">
+            Ce stage s’adresse aux personnes qui veulent développer des repères concrets de sécurité personnelle
+            dans un cadre accessible, progressif et sérieux.
           </p>
 
           <div class="bullet-list">
-            <div class="bullet-item"><strong>Comprendre :</strong> mieux lire une situation et ses signaux utiles.</div>
-            <div class="bullet-item"><strong>Prévenir :</strong> réduire l’exposition et éviter certaines escalades.</div>
-            <div class="bullet-item"><strong>Réagir :</strong> mobiliser des réponses simples, cohérentes et accessibles.</div>
+            <div class="bullet-item"><strong>Accessible :</strong> pas besoin d’être sportif ou expérimenté.</div>
+            <div class="bullet-item"><strong>Progressif :</strong> le contenu est pensé pour être compris puis appliqué.</div>
+            <div class="bullet-item"><strong>Encadré :</strong> le cadre pédagogique et la sécurité restent prioritaires.</div>
           </div>
         </div>
 
         <div class="soft-card soft-panel">
-          <span class="eyebrow">Public concerné</span>
-          <h3>À qui s’adresse ce stage</h3>
-          <p>
-            Ce format est pensé pour des participants souhaitant développer des repères concrets
-            de sécurité personnelle dans un cadre progressif, structuré et encadré.
+          <span class="eyebrow">Ce que vous allez apprendre</span>
+          <h3>Des repères simples, utiles et applicables</h3>
+          <p id="objectiveText">
+            Ce stage s’inscrit dans la méthode Vital Protect : comprendre le risque, améliorer la lecture des situations,
+            prévenir l’escalade et développer des réponses simples et réalistes.
           </p>
 
           <div class="bullet-list">
-            <div class="bullet-item"><strong>Accessible :</strong> aucun profil “combattant” n’est nécessaire.</div>
-            <div class="bullet-item"><strong>Progressif :</strong> la pédagogie est conçue pour favoriser l’apprentissage réel.</div>
-            <div class="bullet-item"><strong>Encadré :</strong> le cadre de sécurité est une priorité absolue.</div>
+            <div class="bullet-item"><strong>Repérer :</strong> mieux lire les signaux et contextes à risque.</div>
+            <div class="bullet-item"><strong>Prévenir :</strong> réduire l’exposition et éviter certaines escalades.</div>
+            <div class="bullet-item"><strong>Réagir :</strong> mobiliser des réponses simples, cohérentes et accessibles.</div>
+            <div class="bullet-item"><strong>Sécuriser :</strong> savoir quoi faire après un incident ou une tension.</div>
           </div>
         </div>
       </div>
@@ -444,17 +482,17 @@
 
         <div class="card-grid-3">
           <article class="info-card">
-            <h3>Explication</h3>
-            <p>Présentation des situations, des enjeux, des repères et de la logique d’action recherchée.</p>
+            <h3>1. Explication</h3>
+            <p>Présentation du contexte, des erreurs fréquentes, des bons repères et de la logique d’action recherchée.</p>
           </article>
 
           <article class="info-card">
-            <h3>Démonstration & pratique</h3>
+            <h3>2. Démonstration & pratique</h3>
             <p>Mise en œuvre progressive, adaptée au niveau des participants et centrée sur des réponses simples.</p>
           </article>
 
           <article class="info-card">
-            <h3>Mise en situation encadrée</h3>
+            <h3>3. Mise en situation encadrée</h3>
             <p>Consolidation des acquis dans un cadre maîtrisé, sécurisé et cohérent avec les objectifs du stage.</p>
           </article>
         </div>
@@ -487,6 +525,7 @@
             <div class="bullet-item"><strong>Heure :</strong> <span id="practicalTime">—</span></div>
             <div class="bullet-item"><strong>Durée :</strong> <span id="practicalDuration">—</span></div>
             <div class="bullet-item"><strong>Type :</strong> <span id="practicalType">—</span></div>
+            <div class="bullet-item"><strong>Niveau :</strong> <span id="practicalLevel">Accessible à tous</span></div>
           </div>
         </div>
       </div>
@@ -504,6 +543,8 @@
 
         <div class="booking-layout">
           <div class="card stage-summary-card">
+            <h3>Résumé de votre réservation</h3>
+
             <div class="selected-stage-box">
               <span class="selected-stage-label">Stage sélectionné</span>
               <div class="selected-stage-value" id="selectedStageValue">Chargement…</div>
@@ -631,7 +672,8 @@
         <a href="/methode.html">La méthode</a>
         <a href="/entreprises.html">Entreprises</a>
         <a href="/devenir-formateur.html">Devenir formateur</a>
-        <a href="/formateur-login.html">Espace formateur</a>
+        <a href="/faq.html">FAQ</a>
+        <a href="/contact.html">Contact</a>
       </div>
     </div>
   </footer>
@@ -662,6 +704,9 @@
     const practicalTime = document.getElementById("practicalTime");
     const practicalDuration = document.getElementById("practicalDuration");
     const practicalType = document.getElementById("practicalType");
+
+    const audienceText = document.getElementById("audienceText");
+    const objectiveText = document.getElementById("objectiveText");
 
     const selectedStageValue = document.getElementById("selectedStageValue");
     const cityDisplay = document.getElementById("cityDisplay");
@@ -729,6 +774,14 @@
         `${stage.title || "Stage"} — ${stage.city || "Ville"} — ${formatDate(stage.stage_date)}`;
 
       cityDisplay.value = stage.city || "";
+
+      audienceText.textContent =
+        "Ce stage s’adresse aux personnes qui veulent développer des repères concrets de sécurité personnelle dans un cadre accessible, progressif et sérieux.";
+
+      objectiveText.textContent =
+        stage.description ||
+        "Ce stage s’inscrit dans la méthode Vital Protect : comprendre le risque, améliorer la lecture des situations, prévenir l’escalade et développer des réponses simples et réalistes.";
+
       updateBookingTotal();
     }
 
@@ -786,11 +839,13 @@
           },
           body: JSON.stringify({
             stage_id: stage.id,
+            stage_title: stage.title || "",
             first_name: firstName,
             last_name: lastName,
             email: email,
             phone: phone,
-            places: places
+            places: places,
+            unit_price: Number(stage.price || 0)
           })
         });
 
