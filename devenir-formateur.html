@@ -3,7 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Devenir formateur Vital Protect — Parcours de certification</title>
+  <title>Devenir formateur Vital Protect — Intégrer un cadre de transmission certifié</title>
+  <meta
+    name="description"
+    content="Intégrez le parcours formateur Vital Protect : certification par module, cadre pédagogique, standard de transmission, affiliation réseau et activation progressive."
+  />
 
   <link rel="stylesheet" href="/styles/tokens.css" />
   <link rel="stylesheet" href="/styles/base.css" />
@@ -130,19 +134,17 @@
     .benefit-grid,
     .testimonial-grid,
     .sessions-grid,
-    .faq-grid {
+    .faq-grid,
+    .authority-grid,
+    .network-grid {
       display: grid;
       gap: 18px;
     }
 
-    .profile-grid {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
-
-    .benefit-grid {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
-
+    .profile-grid,
+    .benefit-grid,
+    .authority-grid,
+    .network-grid,
     .testimonial-grid {
       grid-template-columns: repeat(3, minmax(0, 1fr));
     }
@@ -164,7 +166,9 @@
     .info-panel,
     .session-card,
     .form-card,
-    .selected-session-box {
+    .selected-session-box,
+    .authority-card,
+    .network-card {
       background: white;
       border: 1px solid rgba(13, 27, 42, 0.06);
       border-radius: var(--vp-radius-md);
@@ -176,7 +180,9 @@
     .testimonial-card,
     .faq-card,
     .step-card,
-    .info-panel {
+    .info-panel,
+    .authority-card,
+    .network-card {
       padding: 24px;
     }
 
@@ -185,7 +191,9 @@
     .testimonial-card h3,
     .faq-card h3,
     .step-card h3,
-    .info-panel h3 {
+    .info-panel h3,
+    .authority-card h3,
+    .network-card h3 {
       margin: 0 0 10px;
       color: var(--vp-navy-850);
       font-size: 1.12rem;
@@ -196,7 +204,9 @@
     .testimonial-card p,
     .faq-card p,
     .step-card p,
-    .info-panel p {
+    .info-panel p,
+    .authority-card p,
+    .network-card p {
       margin: 0;
       color: var(--vp-text-soft);
       line-height: 1.75;
@@ -377,7 +387,7 @@
     }
 
     .form-card {
-      max-width: 780px;
+      max-width: 820px;
       margin: auto;
       padding: 30px;
     }
@@ -475,7 +485,9 @@
       .split-panel,
       .steps-grid,
       .sessions-grid,
-      .faq-grid {
+      .faq-grid,
+      .authority-grid,
+      .network-grid {
         grid-template-columns: 1fr;
       }
 
@@ -501,7 +513,9 @@
       .faq-card,
       .step-card,
       .info-panel,
-      .form-card {
+      .form-card,
+      .authority-card,
+      .network-card {
         padding: 24px;
       }
 
@@ -535,17 +549,18 @@
         <img src="/logo.png" alt="Vital Protect" />
         <div class="site-brand__text">
           <div class="site-brand__title">VITAL PROTECT</div>
-          <div class="site-brand__subtitle">Méthode de sécurité personnelle</div>
+          <div class="site-brand__subtitle">Standard de sécurité personnelle</div>
         </div>
       </a>
 
       <nav class="site-nav">
         <a href="/index.html">Accueil</a>
-        <a href="/methode.html">La méthode</a>
+        <a href="/methode.html">Le standard</a>
         <a href="/index.html#stages">Nos stages</a>
         <a href="/entreprises.html">Entreprises</a>
-        <a href="/contact.html">Contact</a>
         <a href="/devenir-formateur.html" class="active">Devenir formateur</a>
+        <a href="/faq.html">FAQ</a>
+        <a href="/contact.html">Contact</a>
         <a href="/formateur-login.html" class="nav-cta">Espace formateur</a>
       </nav>
     </div>
@@ -555,21 +570,22 @@
     <section class="hero-shell trainer-hero">
       <div class="container trainer-hero__grid">
         <div class="glass-panel trainer-hero__copy">
-          <div class="eyebrow eyebrow--invert">Parcours formateur • Certification par module • Réseau structuré</div>
+          <div class="eyebrow eyebrow--invert">Certification par module • Cadre de transmission • Réseau structuré</div>
 
-          <h1 class="trainer-hero__title">Rejoindre Vital Protect, ce n’est pas seulement animer un stage</h1>
+          <h1 class="trainer-hero__title">Transmettre Vital Protect, ce n’est pas seulement animer un stage</h1>
 
           <p class="trainer-hero__lead">
-            C’est intégrer un cadre pédagogique clair, une logique de certification par module,
-            un standard de transmission précis et un réseau qui met la cohérence,
-            la sécurité et la qualité au centre.
+            Intégrer le parcours formateur Vital Protect, c’est entrer dans un cadre
+            de transmission structuré, avec une logique de certification par module,
+            des exigences pédagogiques claires et une responsabilité réelle dans la
+            qualité de ce qui est transmis au public.
           </p>
 
           <div class="trainer-hero__proofs">
             <div class="trainer-hero__proof">Certification par module</div>
-            <div class="trainer-hero__proof">Exigence pédagogique</div>
-            <div class="trainer-hero__proof">Cadre structuré</div>
-            <div class="trainer-hero__proof">Activation réseau</div>
+            <div class="trainer-hero__proof">Périmètre de transmission défini</div>
+            <div class="trainer-hero__proof">Affiliation réseau</div>
+            <div class="trainer-hero__proof">Cadre de qualité</div>
           </div>
 
           <div class="trainer-hero__actions">
@@ -581,19 +597,63 @@
         <aside class="surface-panel trainer-hero__media">
           <img
             src="/formateur-devant-public-assis-salle.png"
-            alt="Formateur Vital Protect devant un public assis"
+            alt="Formateur Vital Protect devant un groupe"
           />
           <div class="trainer-hero__overlay"></div>
 
           <div class="trainer-hero__note">
-            <strong>Un vrai cadre de certification</strong>
+            <strong>Le vrai sujet : qui transmet, quoi, dans quel cadre ?</strong>
             <span>
-              Le parcours formateur Vital Protect vise une transmission cohérente,
-              maîtrisée et sécurisée. On ne valide pas un “titre abstrait” :
-              on certifie la capacité à transmettre des modules précis.
+              Vital Protect veut rendre cette réponse claire. Un formateur n’est pas
+              simplement “quelqu’un qui anime”. Il intervient dans un périmètre défini,
+              sur des contenus identifiés, avec une exigence de cohérence.
             </span>
           </div>
         </aside>
+      </div>
+    </section>
+
+    <section>
+      <div class="container">
+        <div class="section-head section-head--center">
+          <span class="eyebrow">Positionnement</span>
+          <h2>Le formateur Vital Protect n’est pas un titre vague</h2>
+          <p>
+            Le parcours n’a pas vocation à distribuer une étiquette abstraite.
+            Il sert à reconnaître la capacité à transmettre des contenus précis,
+            selon une méthode précise, dans un cadre de sécurité, de pédagogie
+            et de cohérence de réseau.
+          </p>
+        </div>
+
+        <div class="authority-grid">
+          <article class="authority-card">
+            <div class="icon-dot"></div>
+            <h3>Un périmètre défini</h3>
+            <p>
+              Le formateur Vital Protect n’est pas validé “sur tout”.
+              Il est certifié sur des modules, avec un champ de transmission clair.
+            </p>
+          </article>
+
+          <article class="authority-card">
+            <div class="icon-dot"></div>
+            <h3>Une responsabilité réelle</h3>
+            <p>
+              Transmettre au nom du standard implique de respecter le fond,
+              la progression, le cadre pédagogique et les règles de sécurité.
+            </p>
+          </article>
+
+          <article class="authority-card">
+            <div class="icon-dot"></div>
+            <h3>Une cohérence de marque</h3>
+            <p>
+              Le réseau doit donner la même impression de sérieux, de clarté
+              et de fiabilité quel que soit l’intervenant habilité.
+            </p>
+          </article>
+        </div>
       </div>
     </section>
 
@@ -604,7 +664,7 @@
           <h2>Le profil recherché</h2>
           <p>
             Cette page s’adresse aux personnes qui veulent transmettre sérieusement,
-            avec une logique pédagogique claire et un vrai respect du cadre Vital Protect.
+            dans un cadre lisible, exigeant et plus structuré qu’un simple stage indépendant.
           </p>
         </div>
 
@@ -613,8 +673,8 @@
             <div class="icon-dot"></div>
             <h3>Pédagogie</h3>
             <p>
-              Vous aimez expliquer, démontrer, faire pratiquer, corriger
-              et transmettre avec clarté.
+              Vous aimez expliquer, guider, démontrer, faire pratiquer et corriger
+              avec clarté, calme et cohérence.
             </p>
           </article>
 
@@ -622,17 +682,17 @@
             <div class="icon-dot"></div>
             <h3>Posture sérieuse</h3>
             <p>
-              Vous cherchez un cadre crédible, exigeant et structuré,
-              pas une logique de démonstration spectaculaire.
+              Vous cherchez un cadre crédible, une logique claire et un niveau d’exigence
+              supérieur à une simple logique commerciale.
             </p>
           </article>
 
           <article class="profile-card">
             <div class="icon-dot"></div>
-            <h3>Engagement réseau</h3>
+            <h3>Engagement de standard</h3>
             <p>
-              Vous êtes prêt à respecter des contenus officiels,
-              des standards pédagogiques et une logique de suivi.
+              Vous êtes prêt à transmettre selon un cadre commun et à ne pas transformer
+              la méthode au gré des interprétations personnelles.
             </p>
           </article>
         </div>
@@ -646,34 +706,36 @@
     <section>
       <div class="container split-panel">
         <div class="soft-card info-panel">
-          <span class="eyebrow">Prérequis</span>
-          <h3>Ce qu’il faut avoir en tête avant de candidater</h3>
+          <span class="eyebrow">Ce qu’on certifie</span>
+          <h3>Une capacité à transmettre, pas seulement à pratiquer</h3>
           <p>
-            Le parcours n’est pas présenté comme une simple formalité.
-            Il suppose un engagement réel envers la qualité de transmission.
+            Le parcours vise à vérifier que le candidat peut comprendre la logique Vital Protect,
+            la restituer fidèlement, l’expliquer clairement, l’enseigner de manière progressive
+            et la faire appliquer dans un cadre sécurisé.
           </p>
 
           <div class="bullet-list">
-            <div class="bullet-item"><strong>Motivation sérieuse :</strong> volonté de transmettre dans un cadre cohérent.</div>
-            <div class="bullet-item"><strong>Capacité pédagogique :</strong> expliquer, guider, corriger, encadrer.</div>
-            <div class="bullet-item"><strong>Respect des standards :</strong> fidélité à la méthode et aux contenus du réseau.</div>
-            <div class="bullet-item"><strong>Disponibilité :</strong> être prêt à suivre un vrai parcours, pas un simple passage administratif.</div>
+            <div class="bullet-item"><strong>Compréhension :</strong> saisir la logique de la méthode et son positionnement.</div>
+            <div class="bullet-item"><strong>Transmission :</strong> expliquer clairement et sans confusion inutile.</div>
+            <div class="bullet-item"><strong>Pédagogie :</strong> construire une progression lisible et adaptée.</div>
+            <div class="bullet-item"><strong>Sécurité :</strong> encadrer sans dérive ni mise en danger.</div>
           </div>
         </div>
 
         <div class="soft-card info-panel">
-          <span class="eyebrow">Ce que la certification implique</span>
-          <h3>Une responsabilité pédagogique réelle</h3>
+          <span class="eyebrow">Ce qu’on ne certifie pas</span>
+          <h3>Pas un statut vague, pas une liberté totale d’interprétation</h3>
           <p>
-            Être certifié Vital Protect implique de transmettre avec cohérence,
-            précision, sécurité et fidélité à la méthode.
+            La certification Vital Protect ne consiste pas à valider quelqu’un “dans l’absolu”.
+            Elle ne donne pas un blanc-seing général. Elle reconnaît la capacité à transmettre
+            des contenus déterminés dans un cadre déterminé.
           </p>
 
           <div class="bullet-list">
-            <div class="bullet-item"><strong>Certification par module :</strong> vous n’êtes pas validé “globalement”, mais sur des contenus précis.</div>
-            <div class="bullet-item"><strong>Maintien de certification :</strong> logique de suivi, renouvellement et exigence continue.</div>
-            <div class="bullet-item"><strong>Affiliation réseau :</strong> l’activation s’inscrit dans un cadre vivant, pas dans un label figé.</div>
-            <div class="bullet-item"><strong>Exigence de qualité :</strong> sécurité, progression pédagogique et cohérence restent prioritaires.</div>
+            <div class="bullet-item"><strong>Pas une validation globale :</strong> la certification est liée à des modules précis.</div>
+            <div class="bullet-item"><strong>Pas un droit illimité :</strong> le périmètre de transmission reste défini.</div>
+            <div class="bullet-item"><strong>Pas une personnalisation libre :</strong> le standard doit rester identifiable.</div>
+            <div class="bullet-item"><strong>Pas un label figé :</strong> le maintien de qualité compte autant que l’entrée.</div>
           </div>
         </div>
       </div>
@@ -685,8 +747,9 @@
           <span class="eyebrow">Pourquoi rejoindre le réseau</span>
           <h2>Ce que vous obtenez vraiment</h2>
           <p>
-            Rejoindre Vital Protect, ce n’est pas seulement suivre une formation :
-            c’est intégrer une structure lisible, crédible et organisée.
+            Rejoindre Vital Protect, ce n’est pas seulement suivre une formation.
+            C’est intégrer un cadre de méthode, un standard de transmission
+            et une logique de développement cohérente.
           </p>
         </div>
 
@@ -694,24 +757,24 @@
           <article class="benefit-card">
             <h3>Une méthode claire</h3>
             <p>
-              Vous rejoignez un système fondé sur une logique pédagogique identifiable,
-              structurée et transmissible.
+              Vous rejoignez une architecture pédagogique identifiable, avec un langage,
+              une logique et des repères de transmission plus solides.
             </p>
           </article>
 
           <article class="benefit-card">
-            <h3>Une certification reconnue en interne</h3>
+            <h3>Une certification exploitable</h3>
             <p>
-              Votre validation ouvre un droit de transmission sur des modules précis,
-              dans le cadre du réseau Vital Protect.
+              Votre validation ouvre un droit de transmission sur des modules définis,
+              dans le cadre du standard Vital Protect.
             </p>
           </article>
 
           <article class="benefit-card">
-            <h3>Un cadre durable</h3>
+            <h3>Un cadre de réseau</h3>
             <p>
-              Vous n’êtes pas laissé seul : l’affiliation, les standards
-              et le maintien de cohérence font partie du système.
+              Vous n’avancez pas seul : affiliation, cohérence, suivi, espace formateur,
+              standards et renouvellement font partie du système.
             </p>
           </article>
         </div>
@@ -725,11 +788,51 @@
     <section>
       <div class="container">
         <div class="section-head section-head--center">
+          <span class="eyebrow">Affiliation & réseau</span>
+          <h2>Faire partie du réseau, ce n’est pas juste “être listé”</h2>
+          <p>
+            L’affiliation Vital Protect sert à maintenir un cadre actif, vivant et contrôlé.
+            Elle soutient la cohérence du réseau, la mise à jour du standard et la lisibilité
+            du statut du formateur dans le temps.
+          </p>
+        </div>
+
+        <div class="network-grid">
+          <article class="network-card">
+            <h3>Une appartenance lisible</h3>
+            <p>
+              Le public et les structures doivent pouvoir comprendre si un formateur
+              est réellement actif et à jour dans le cadre Vital Protect.
+            </p>
+          </article>
+
+          <article class="network-card">
+            <h3>Un maintien de cohérence</h3>
+            <p>
+              L’affiliation ne sert pas seulement à “payer une place”.
+              Elle participe à la continuité du cadre, du suivi et du standard.
+            </p>
+          </article>
+
+          <article class="network-card">
+            <h3>Une logique durable</h3>
+            <p>
+              Plus le réseau est tenu sérieusement, plus la méthode gagne en crédibilité,
+              en stabilité et en potentiel d’institutionnalisation.
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="container">
+        <div class="section-head section-head--center">
           <span class="eyebrow">Étapes</span>
           <h2>Comment se déroule le parcours</h2>
           <p>
-            Le parcours formateur suit une logique claire, pour structurer l’entrée dans le réseau
-            et protéger la qualité pédagogique de la certification.
+            Le parcours formateur suit une logique claire pour structurer l’entrée dans le réseau
+            et protéger la qualité pédagogique du standard.
           </p>
         </div>
 
@@ -737,31 +840,31 @@
           <article class="step-card">
             <div class="step-index">1</div>
             <h3>Choix d’une session</h3>
-            <p>Vous sélectionnez la session adaptée à votre module et à votre disponibilité.</p>
+            <p>Vous sélectionnez une session liée à un module précis et à votre disponibilité.</p>
           </article>
 
           <article class="step-card">
             <div class="step-index">2</div>
             <h3>Réservation</h3>
-            <p>Vous complétez vos coordonnées et réalisez une réservation sécurisée.</p>
+            <p>Vous réservez votre place avec paiement sécurisé en autorisation bancaire.</p>
           </article>
 
           <article class="step-card">
             <div class="step-index">3</div>
             <h3>Étude du dossier</h3>
-            <p>Le paiement est d’abord autorisé, puis capturé uniquement après validation du dossier.</p>
+            <p>Le dossier est examiné avant validation définitive de votre entrée en parcours.</p>
           </article>
 
           <article class="step-card">
             <div class="step-index">4</div>
             <h3>Formation & évaluation</h3>
-            <p>Vous travaillez la méthode, la pédagogie, la posture et le respect du cadre réseau.</p>
+            <p>Vous travaillez la méthode, la pédagogie, le cadre et la cohérence de transmission.</p>
           </article>
 
           <article class="step-card">
             <div class="step-index">5</div>
             <h3>Activation</h3>
-            <p>En cas de réussite, votre profil formateur est activé et le module validé est enregistré.</p>
+            <p>En cas de réussite, votre profil est activé avec certification du module concerné.</p>
           </article>
         </div>
 
@@ -793,58 +896,16 @@
           <span class="eyebrow">Ce que vous obtenez à la fin</span>
           <h3>En cas de validation</h3>
           <p>
-            Si vous validez le parcours, vous entrez dans un cadre précis
+            Si vous validez le parcours, vous entrez dans un système précis
             avec une activation concrète dans le réseau.
           </p>
 
           <div class="bullet-list">
             <div class="bullet-item"><strong>Activation du profil formateur</strong> dans le système Vital Protect.</div>
-            <div class="bullet-item"><strong>Certification du module concerné</strong> avec enregistrement de la validité.</div>
-            <div class="bullet-item"><strong>Affiliation réseau</strong> avec logique de suivi et de renouvellement.</div>
+            <div class="bullet-item"><strong>Certification du module concerné</strong> avec enregistrement de validité.</div>
+            <div class="bullet-item"><strong>Affiliation réseau</strong> avec logique de suivi et renouvellement.</div>
             <div class="bullet-item"><strong>Accès à l’espace formateur</strong> et au cadre d’exploitation associé.</div>
           </div>
-        </div>
-      </div>
-    </section>
-
-    <section>
-      <div class="container">
-        <div class="section-head section-head--center">
-          <span class="eyebrow">Retours d’expérience</span>
-          <h2>Témoignages à remplacer ensuite par vos vrais retours formateurs</h2>
-          <p>
-            Garde cette structure pour l’instant. Dès que tu as 2 vrais témoignages,
-            on les remplace immédiatement.
-          </p>
-        </div>
-
-        <div class="testimonial-grid">
-          <article class="testimonial-card">
-            <h3>Formateur — module essentiel</h3>
-            <p>
-              “Ce que j’ai apprécié, c’est la clarté du cadre :
-              on comprend ce qu’on transmet, pourquoi on le transmet et comment le transmettre.”
-            </p>
-          </article>
-
-          <article class="testimonial-card">
-            <h3>Formateur — parcours réseau</h3>
-            <p>
-              “On sent qu’il y a une vraie logique de méthode et de cohérence,
-              pas juste un stage isolé sans structure derrière.”
-            </p>
-          </article>
-
-          <article class="testimonial-card">
-            <h3>Formateur — activation</h3>
-            <p>
-              “Le parcours demande du sérieux, mais c’est justement ce qui lui donne de la valeur.”
-            </p>
-          </article>
-        </div>
-
-        <div class="timeline-cta">
-          <a href="#sessions" class="btn btn-outline">Choisir une session</a>
         </div>
       </div>
     </section>
@@ -874,7 +935,8 @@
           <div class="form-head">
             <h2>Réserver votre place</h2>
             <p>
-              Sélectionnez votre session, renseignez vos coordonnées puis finalisez votre réservation sécurisée.
+              Sélectionnez votre session, renseignez vos coordonnées puis finalisez
+              votre réservation sécurisée dans le cadre du parcours formateur Vital Protect.
             </p>
           </div>
 
@@ -924,7 +986,7 @@
 
               <div class="form-field full">
                 <label for="message">Votre message</label>
-                <textarea id="message" placeholder="Présentez brièvement votre profil, votre motivation ou votre contexte."></textarea>
+                <textarea id="message" placeholder="Présentez brièvement votre profil, votre motivation et votre intention de transmission."></textarea>
               </div>
             </div>
 
@@ -959,7 +1021,7 @@
           <article class="faq-card">
             <h3>Suis-je certifié “globalement” après la formation ?</h3>
             <p>
-              Non. La certification est liée à des modules précis.
+              Non. La certification est liée à des modules précis, avec un périmètre de transmission défini.
             </p>
           </article>
 
@@ -975,7 +1037,7 @@
             <h3>Le parcours est-il une simple formalité ?</h3>
             <p>
               Non. Il repose sur une logique d’exigence pédagogique,
-              de cohérence de transmission et de responsabilité.
+              de cohérence de transmission et de responsabilité de standard.
             </p>
           </article>
         </div>
@@ -990,16 +1052,16 @@
     <section>
       <div class="container">
         <div class="cta-panel">
-          <h2>Rejoindre une structure, pas seulement suivre une formation</h2>
+          <h2>Intégrer un cadre de transmission, pas seulement suivre une formation</h2>
           <p>
             Vital Protect s’adresse aux personnes qui veulent transmettre une méthode cohérente,
-            pédagogique et sécurisée dans un cadre de certification clair.
+            pédagogique et sécurisée dans un standard de plus en plus structuré.
           </p>
 
           <div class="cta-actions">
             <a href="#sessions" class="btn btn-dark">Voir les sessions</a>
-            <a href="#formulaire" class="btn btn-outline">Réserver ma place</a>
-            <a href="/methode.html" class="btn btn-outline">Comprendre la méthode</a>
+            <a href="/methode.html" class="btn btn-outline">Voir le standard</a>
+            <a href="/contact.html" class="btn btn-outline">Nous contacter</a>
           </div>
         </div>
       </div>
@@ -1011,17 +1073,22 @@
       <div class="site-footer__brand">
         <strong>VITAL PROTECT</strong>
         <p>
-          Une méthode structurée de sécurité personnelle fondée sur la prévention, l’évitement,
-          la réaction réaliste, la pédagogie progressive et la certification des formateurs.
+          Un standard structuré de sécurité personnelle fondé sur la prévention,
+          l’évitement, la réaction réaliste, la pédagogie progressive
+          et la cohérence de transmission.
         </p>
       </div>
 
       <div class="site-footer__links">
-        <a href="/methode.html">La méthode</a>
+        <a href="/index.html">Accueil</a>
+        <a href="/methode.html">Le standard</a>
         <a href="/entreprises.html">Entreprises</a>
         <a href="/devenir-formateur.html">Devenir formateur</a>
         <a href="/faq.html">FAQ</a>
         <a href="/contact.html">Contact</a>
+        <a href="/mentions-legales.html">Mentions légales</a>
+        <a href="/politique-confidentialite.html">Confidentialité</a>
+        <a href="/cgv.html">CGV</a>
       </div>
     </div>
   </footer>
@@ -1134,7 +1201,7 @@
         .select("*")
         .eq("status", "open")
         .gt("remaining_places", 0)
-        .order("end_date", { ascending: true });
+        .order("start_date", { ascending: true });
 
       if (error) {
         console.error(error);
@@ -1167,8 +1234,8 @@
 
           <div class="session-body">
             <div class="session-description">
-              Parcours de certification Vital Protect avec exigence pédagogique,
-              logique de transmission, cadre de sécurité et activation réseau.
+              Intégration au cadre Vital Protect : logique de méthode, cohérence de transmission,
+              exigence pédagogique, sécurité et activation progressive dans le réseau.
             </div>
 
             <div class="session-meta">
