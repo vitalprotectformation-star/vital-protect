@@ -5,359 +5,209 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Devenir formateur Vital Protect — Parcours de certification</title>
 
+  <link rel="stylesheet" href="/styles/tokens.css" />
+  <link rel="stylesheet" href="/styles/base.css" />
+  <link rel="stylesheet" href="/styles/components.css" />
+
   <style>
-    :root {
-      --navy: #0d2340;
-      --navy-dark: #09182c;
-      --steel: #244a73;
-      --blue-soft: #dce8f5;
-      --blue-soft-2: #f5f9fe;
-      --bg: #f7f9fc;
-      --card: #ffffff;
-      --border: #d9e3ef;
-      --text: #142033;
-      --muted: #6e7c8c;
-      --success: #2e8b57;
-      --warning: #9a6a22;
-      --danger: #b42318;
-      --gold: #c9a46a;
-      --shadow: 0 16px 40px rgba(13, 35, 64, 0.08);
-      --radius-xl: 28px;
-      --radius-lg: 20px;
-      --radius-md: 14px;
+    .trainer-hero {
+      padding: 72px 0 54px;
     }
 
-    * { box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
-
-    body {
-      margin: 0;
-      font-family: Arial, Helvetica, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-    }
-
-    a { color: inherit; }
-
-    .container {
-      width: min(1180px, calc(100% - 32px));
-      margin: 0 auto;
-    }
-
-    header {
-      position: sticky;
-      top: 0;
-      z-index: 50;
-      background: rgba(9, 24, 44, 0.95);
-      backdrop-filter: blur(10px);
-      border-bottom: 1px solid rgba(255,255,255,0.08);
-    }
-
-    .header-inner {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      min-height: 86px;
-    }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      text-decoration: none;
-      color: white;
-      min-width: 0;
-    }
-
-    .brand img {
-      height: 68px;
-      width: auto;
-      display: block;
-      flex: 0 0 auto;
-    }
-
-    .brand-text-wrap { min-width: 0; }
-
-    .brand-text {
-      font-size: 1.3rem;
-      font-weight: 800;
-      letter-spacing: 0.4px;
-      line-height: 1.05;
-    }
-
-    .brand-sub {
-      color: rgba(255,255,255,0.72);
-      font-size: 0.9rem;
-      margin-top: 4px;
-    }
-
-    .nav-links {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: flex-end;
-    }
-
-    .nav-links a {
-      text-decoration: none;
-      color: rgba(255,255,255,0.92);
-      font-weight: 700;
-      padding: 10px 14px;
-      border-radius: 12px;
-      transition: 0.2s ease;
-      font-size: 0.96rem;
-    }
-
-    .nav-links a:hover,
-    .nav-links a.active {
-      background: rgba(255,255,255,0.1);
-    }
-
-    .nav-links .nav-cta {
-      background: white;
-      color: var(--navy);
-    }
-
-    .nav-links .nav-cta:hover {
-      background: #edf3fa;
-    }
-
-    .hero {
-      padding: 34px 0 12px;
-      background:
-        radial-gradient(circle at top right, rgba(201, 164, 106, 0.10), transparent 28%),
-        linear-gradient(180deg, #f7f9fc 0%, #f3f7fb 100%);
-    }
-
-    .hero-banner {
-      overflow: hidden;
-      border-radius: 30px;
-      height: clamp(280px, 42vw, 560px);
-      background: #0b2039;
-      box-shadow: 0 24px 60px rgba(8, 24, 46, 0.16);
-      border: 1px solid rgba(13, 35, 64, 0.08);
-    }
-
-    .hero-banner img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      object-position: center center;
-      display: block;
-    }
-
-    .hero-intro {
-      position: relative;
-      margin-top: -56px;
+    .trainer-hero__grid {
       display: grid;
-      grid-template-columns: minmax(0, 1.35fr) minmax(320px, 0.92fr);
-      gap: 22px;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 24px;
       align-items: stretch;
     }
 
-    .hero-main-card,
-    .hero-side-card {
-      background: rgba(255,255,255,0.97);
-      border: 1px solid var(--border);
-      border-radius: 24px;
-      box-shadow: 0 20px 44px rgba(13, 35, 64, 0.10);
-      backdrop-filter: blur(10px);
+    .trainer-hero__copy {
+      padding: 36px;
     }
 
-    .hero-main-card {
-      padding: 34px;
+    .trainer-hero__title {
+      margin: 16px 0;
+      font-size: clamp(2.4rem, 5vw, 4.5rem);
+      line-height: 0.97;
+      color: white;
+      max-width: 10ch;
     }
 
-    .hero-side-card {
-      padding: 24px;
+    .trainer-hero__lead {
+      margin: 0;
+      max-width: 62ch;
+      color: var(--vp-text-invert-soft);
+      font-size: 1.04rem;
+      line-height: 1.85;
     }
 
-    .eyebrow,
-    .eyebrow-soft {
+    .trainer-hero__proofs {
+      margin-top: 22px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .trainer-hero__proof {
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      margin-bottom: 16px;
-      padding: 8px 13px;
+      padding: 10px 13px;
       border-radius: 999px;
-      font-size: 0.88rem;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.10);
+      color: rgba(255,255,255,0.88);
+      font-size: 0.92rem;
       font-weight: 700;
-      border: 1px solid rgba(49, 91, 134, 0.10);
     }
 
-    .eyebrow {
-      background: var(--blue-soft);
-      color: var(--steel);
+    .trainer-hero__proof::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--vp-gold);
+      display: inline-block;
     }
 
-    .eyebrow-soft {
-      background: #f3f7fc;
-      color: var(--steel);
-    }
-
-    .hero h1 {
-      margin: 0 0 18px;
-      font-size: clamp(2rem, 4.2vw, 3.8rem);
-      line-height: 1.03;
-      color: var(--navy);
-      max-width: 14ch;
-    }
-
-    .hero p {
-      margin: 0;
-      color: var(--muted);
-      font-size: 1.06rem;
-      line-height: 1.82;
-      max-width: 68ch;
-    }
-
-    .hero-points {
-      margin-top: 24px;
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 12px;
-      max-width: 620px;
-    }
-
-    .hero-point {
-      background: linear-gradient(180deg, #ffffff 0%, #f7fbff 100%);
-      border: 1px solid var(--border);
-      color: var(--text);
-      border-radius: 16px;
-      padding: 14px 16px;
-      font-weight: 700;
-      line-height: 1.45;
-    }
-
-    .hero-actions {
-      margin-top: 24px;
+    .trainer-hero__actions {
+      margin-top: 26px;
       display: flex;
-      gap: 12px;
       flex-wrap: wrap;
-    }
-
-    .hero-side-card h2 {
-      margin: 0 0 12px;
-      color: var(--navy);
-      font-size: 1.22rem;
-      line-height: 1.3;
-    }
-
-    .hero-side-card > p {
-      margin: 0;
-      color: var(--muted);
-      line-height: 1.72;
-    }
-
-    .hero-side-list {
-      margin-top: 18px;
-      display: grid;
       gap: 12px;
     }
 
-    .hero-side-item {
-      background: #f8fbff;
-      border: 1px solid #e6edf7;
-      border-radius: 16px;
-      padding: 14px;
+    .trainer-hero__media {
+      position: relative;
+      overflow: hidden;
+      min-height: 720px;
+      padding: 0;
+      border-radius: var(--vp-radius-lg);
     }
 
-    .hero-side-item strong {
+    .trainer-hero__media img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
       display: block;
-      margin-bottom: 6px;
-      color: var(--navy);
     }
 
-    .hero-side-item span {
-      color: var(--muted);
-      line-height: 1.6;
-      font-size: 0.96rem;
+    .trainer-hero__overlay {
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(to top, rgba(7,17,31,0.42) 0%, rgba(7,17,31,0.10) 40%, rgba(7,17,31,0.02) 100%);
     }
 
-    .hero-side-note {
-      margin-top: 16px;
-      padding-top: 16px;
-      border-top: 1px solid var(--border);
-      color: var(--muted);
-      line-height: 1.66;
-      font-size: 0.95rem;
+    .trainer-hero__note {
+      position: absolute;
+      left: 22px;
+      right: 22px;
+      bottom: 22px;
+      z-index: 2;
+      background: rgba(255,255,255,0.94);
+      border: 1px solid rgba(13, 27, 42, 0.08);
+      border-radius: 22px;
+      padding: 18px 20px;
+      box-shadow: var(--vp-shadow-lg);
     }
 
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      text-decoration: none;
-      border: none;
-      border-radius: 14px;
-      padding: 14px 18px;
-      font-size: 1rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: transform 0.15s ease, background 0.2s ease, border-color 0.2s ease;
+    .trainer-hero__note strong {
+      display: block;
+      color: var(--vp-navy-850);
+      font-size: 1.06rem;
+      margin-bottom: 8px;
     }
 
-    .btn:hover { transform: translateY(-1px); }
-
-    .btn-primary {
-      background: var(--navy);
-      color: white;
+    .trainer-hero__note span {
+      color: var(--vp-text-soft);
+      line-height: 1.7;
+      font-size: 0.98rem;
     }
 
-    .btn-primary:hover { background: #14325d; }
+    .profile-grid,
+    .benefit-grid,
+    .testimonial-grid,
+    .sessions-grid,
+    .faq-grid {
+      display: grid;
+      gap: 18px;
+    }
 
-    .btn-secondary {
+    .profile-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .benefit-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .testimonial-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .sessions-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      margin-top: 24px;
+    }
+
+    .faq-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .profile-card,
+    .benefit-card,
+    .testimonial-card,
+    .faq-card,
+    .step-card,
+    .info-panel,
+    .session-card,
+    .form-card,
+    .selected-session-box {
       background: white;
-      color: var(--navy);
-      border: 1px solid var(--border);
+      border: 1px solid rgba(13, 27, 42, 0.06);
+      border-radius: var(--vp-radius-md);
+      box-shadow: var(--vp-shadow-md);
     }
 
-    .btn-secondary:hover { background: #edf3fa; }
-
-    .btn-dark {
-      background: var(--navy);
-      color: white;
+    .profile-card,
+    .benefit-card,
+    .testimonial-card,
+    .faq-card,
+    .step-card,
+    .info-panel {
+      padding: 24px;
     }
 
-    .btn-dark:hover { background: #14325d; }
-
-    .btn-outline {
-      background: white;
-      color: var(--navy);
-      border: 1px solid var(--border);
+    .profile-card h3,
+    .benefit-card h3,
+    .testimonial-card h3,
+    .faq-card h3,
+    .step-card h3,
+    .info-panel h3 {
+      margin: 0 0 10px;
+      color: var(--vp-navy-850);
+      font-size: 1.12rem;
     }
 
-    section { padding: 68px 0; }
-
-    .section-head {
-      max-width: 860px;
-      margin-bottom: 26px;
-    }
-
-    .section-head.center {
-      text-align: center;
-      margin-left: auto;
-      margin-right: auto;
-    }
-
-    .section-head h2 {
+    .profile-card p,
+    .benefit-card p,
+    .testimonial-card p,
+    .faq-card p,
+    .step-card p,
+    .info-panel p {
       margin: 0;
-      font-size: clamp(1.9rem, 3vw, 2.5rem);
-      line-height: 1.15;
-      color: var(--navy);
-    }
-
-    .section-head p {
-      margin: 12px 0 0;
-      color: var(--muted);
+      color: var(--vp-text-soft);
       line-height: 1.75;
-      font-size: 1.04rem;
     }
 
-    .soft-band {
-      background: linear-gradient(180deg, #ffffff, #f8fbff);
+    .icon-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 999px;
+      background: var(--vp-gold);
+      margin-bottom: 14px;
     }
 
     .split-panel {
@@ -367,45 +217,6 @@
       align-items: start;
     }
 
-    .soft-panel,
-    .info-card,
-    .step-card,
-    .session-card,
-    .faq-card,
-    .form-card,
-    .selected-session-box,
-    .cta-panel {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      box-shadow: var(--shadow);
-    }
-
-    .soft-panel,
-    .info-card,
-    .step-card,
-    .faq-card {
-      padding: 24px;
-    }
-
-    .soft-panel h3,
-    .info-card h3,
-    .step-card h3,
-    .faq-card h3 {
-      margin: 0 0 10px;
-      color: var(--navy);
-      font-size: 1.16rem;
-    }
-
-    .soft-panel p,
-    .info-card p,
-    .step-card p,
-    .faq-card p {
-      margin: 0;
-      color: var(--muted);
-      line-height: 1.72;
-    }
-
     .bullet-list {
       margin: 18px 0 0;
       display: grid;
@@ -413,37 +224,23 @@
     }
 
     .bullet-item {
-      background: #f8fbff;
-      border: 1px solid #e6edf7;
-      border-radius: 14px;
-      padding: 14px;
-      color: var(--text);
-      line-height: 1.65;
+      background: var(--vp-blue-soft-2);
+      border: 1px solid rgba(13, 27, 42, 0.06);
+      border-radius: 16px;
+      padding: 15px 16px;
+      line-height: 1.68;
+      color: var(--vp-text);
     }
 
-    .bullet-item strong { color: var(--navy); }
+    .bullet-item strong {
+      color: var(--vp-navy-850);
+    }
 
-    .card-grid-3,
-    .card-grid-2,
-    .steps-grid,
-    .faq-grid,
-    .sessions-grid {
+    .steps-grid {
       display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
       gap: 18px;
-    }
-
-    .card-grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-    .card-grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .steps-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-    .faq-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .sessions-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: 24px; }
-
-    .icon-dot {
-      width: 14px;
-      height: 14px;
-      border-radius: 999px;
-      background: var(--gold);
-      margin-bottom: 14px;
+      margin-top: 24px;
     }
 
     .step-index {
@@ -453,8 +250,8 @@
       border-radius: 999px;
       align-items: center;
       justify-content: center;
-      background: var(--blue-soft);
-      color: var(--steel);
+      background: var(--vp-blue-soft);
+      color: var(--vp-navy-700);
       font-weight: 800;
       margin-bottom: 14px;
     }
@@ -463,6 +260,12 @@
       overflow: hidden;
       display: flex;
       flex-direction: column;
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
+    }
+
+    .session-card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--vp-shadow-lg);
     }
 
     .session-top {
@@ -475,8 +278,8 @@
 
     .session-type {
       display: inline-block;
-      background: var(--blue-soft);
-      color: var(--steel);
+      background: var(--vp-blue-soft);
+      color: var(--vp-navy-700);
       font-size: 0.82rem;
       font-weight: 700;
       padding: 8px 10px;
@@ -486,16 +289,16 @@
 
     .session-title {
       margin: 0;
-      font-size: 1.4rem;
-      line-height: 1.25;
-      color: var(--navy);
+      font-size: 1.34rem;
+      line-height: 1.24;
+      color: var(--vp-navy-850);
     }
 
     .session-price {
       white-space: nowrap;
       font-weight: 800;
       font-size: 1.45rem;
-      color: var(--navy);
+      color: var(--vp-navy-850);
     }
 
     .session-body {
@@ -503,8 +306,8 @@
     }
 
     .session-description {
-      color: var(--muted);
-      line-height: 1.68;
+      color: var(--vp-text-soft);
+      line-height: 1.7;
       margin-bottom: 18px;
     }
 
@@ -516,21 +319,24 @@
     }
 
     .meta-item {
-      background: #f8fbff;
-      border: 1px solid #e7eef8;
+      background: var(--vp-blue-soft-2);
+      border: 1px solid rgba(13, 27, 42, 0.05);
       border-radius: 14px;
       padding: 12px;
     }
 
     .meta-label {
       display: block;
-      color: var(--muted);
-      font-size: 0.85rem;
+      color: var(--vp-text-soft);
+      font-size: 0.84rem;
       margin-bottom: 4px;
       font-weight: 700;
     }
 
-    .meta-value { font-weight: 700; }
+    .meta-value {
+      font-weight: 700;
+      color: var(--vp-navy-850);
+    }
 
     .availability {
       display: inline-flex;
@@ -539,12 +345,20 @@
       font-weight: 700;
       border-radius: 999px;
       padding: 8px 12px;
-      background: #eaf8f0;
-      color: var(--success);
+    }
+
+    .availability.success {
+      background: var(--vp-success-bg);
+      color: var(--vp-success);
+    }
+
+    .availability.warning {
+      background: var(--vp-warning-bg);
+      color: var(--vp-warning);
     }
 
     .session-actions {
-      border-top: 1px solid var(--border);
+      border-top: 1px solid rgba(13, 27, 42, 0.06);
       padding: 18px 22px 22px;
       display: flex;
       gap: 12px;
@@ -552,18 +366,18 @@
     }
 
     .empty-state {
-      background: white;
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      box-shadow: var(--shadow);
       padding: 28px;
       text-align: center;
-      color: var(--muted);
+      color: var(--vp-text-soft);
       grid-column: 1 / -1;
+      background: white;
+      border: 1px solid rgba(13, 27, 42, 0.07);
+      border-radius: var(--vp-radius-md);
+      box-shadow: var(--vp-shadow-md);
     }
 
     .form-card {
-      max-width: 760px;
+      max-width: 780px;
       margin: auto;
       padding: 30px;
     }
@@ -574,36 +388,39 @@
 
     .form-head h2 {
       margin: 0 0 8px;
-      color: var(--navy);
+      color: var(--vp-navy-850);
     }
 
     .form-head p {
       margin: 0;
-      color: var(--muted);
+      color: var(--vp-text-soft);
       line-height: 1.7;
     }
 
     .selected-session-box {
       display: none;
       margin-bottom: 18px;
-      background: #f8fbff;
-      border: 1px solid #d7e6ff;
+      background: var(--vp-blue-soft-2);
+      border: 1px solid rgba(23, 49, 79, 0.10);
       padding: 14px 16px;
     }
 
-    .selected-session-box.active { display: block; }
+    .selected-session-box.active {
+      display: block;
+    }
 
     .selected-session-label {
       display: block;
       font-size: 0.9rem;
-      color: var(--muted);
+      color: var(--vp-text-soft);
       font-weight: 700;
       margin-bottom: 6px;
     }
 
     .selected-session-value {
       font-weight: 800;
-      color: var(--navy);
+      color: var(--vp-navy-850);
+      line-height: 1.5;
     }
 
     .alert {
@@ -615,359 +432,248 @@
     }
 
     .alert-success {
-      background: #eaf8f0;
+      background: var(--vp-success-bg);
       border: 1px solid #cdeedb;
       color: #0f7d46;
     }
 
     .alert-warning {
-      background: #fff4df;
+      background: var(--vp-warning-bg);
       border: 1px solid #f0d9a7;
       color: #8a5a00;
     }
 
     .alert-error {
-      background: #fff1f1;
+      background: var(--vp-danger-bg);
       border: 1px solid #f2c7c7;
       color: #a32020;
     }
 
-    form { margin-top: 16px; }
-
-    .field {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      margin-bottom: 14px;
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
     }
 
-    .field label {
-      font-size: 0.92rem;
-      font-weight: 700;
-      color: var(--muted);
+    .form-field.full {
+      grid-column: 1 / -1;
     }
 
-    input, select, textarea {
-      width: 100%;
-      border: 1px solid var(--border);
-      background: white;
-      border-radius: 12px;
-      padding: 12px;
-      font-size: 0.98rem;
-      color: var(--text);
-      font-family: inherit;
-    }
-
-    textarea {
-      min-height: 120px;
-      resize: vertical;
-    }
-
-    .note {
-      font-size: 0.92rem;
-      color: var(--muted);
-      margin-top: 10px;
-      line-height: 1.7;
-    }
-
-    .cta-panel {
-      padding: 34px;
-      background:
-        radial-gradient(circle at top right, rgba(201, 164, 106, 0.12), transparent 22%),
-        linear-gradient(135deg, #ffffff, #f8fbff);
-    }
-
-    .cta-panel h2 {
-      margin: 0 0 12px;
-      font-size: 2rem;
-      color: var(--navy);
-    }
-
-    .cta-panel p {
-      margin: 0;
-      color: var(--muted);
-      line-height: 1.75;
-      max-width: 820px;
-    }
-
-    .cta-actions {
+    .timeline-cta {
       margin-top: 22px;
       display: flex;
+      flex-wrap: wrap;
       gap: 12px;
-      flex-wrap: wrap;
-    }
-
-    footer {
-      margin-top: 24px;
-      background: var(--navy-dark);
-      color: rgba(255,255,255,0.88);
-      padding: 36px 0;
-    }
-
-    .footer-grid {
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 20px;
-      align-items: start;
-    }
-
-    .footer-brand strong {
-      display: block;
-      color: white;
-      font-size: 1.1rem;
-      margin-bottom: 8px;
-    }
-
-    .footer-brand p {
-      margin: 0;
-      color: rgba(255,255,255,0.72);
-      line-height: 1.7;
-      max-width: 720px;
-    }
-
-    .footer-links {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      justify-content: flex-end;
-    }
-
-    .footer-links a {
-      text-decoration: none;
-      color: rgba(255,255,255,0.88);
-      font-weight: 700;
-      padding: 8px 10px;
-      border-radius: 10px;
-    }
-
-    .footer-links a:hover {
-      background: rgba(255,255,255,0.08);
+      justify-content: center;
     }
 
     @media (max-width: 1180px) {
-      .hero-intro,
+      .trainer-hero__grid,
+      .profile-grid,
+      .benefit-grid,
+      .testimonial-grid,
       .split-panel,
-      .card-grid-3,
-      .card-grid-2,
       .steps-grid,
-      .faq-grid,
-      .sessions-grid {
+      .sessions-grid,
+      .faq-grid {
         grid-template-columns: 1fr;
       }
 
-      .hero-intro {
-        margin-top: 18px;
+      .trainer-hero__media {
+        min-height: 520px;
       }
 
-      .hero h1 { max-width: none; }
-
-      .hero-points,
-      .session-meta {
+      .session-meta,
+      .form-grid {
         grid-template-columns: 1fr;
       }
     }
 
     @media (max-width: 760px) {
-      .header-inner,
-      .footer-grid {
-        grid-template-columns: 1fr;
-        display: grid;
+      .trainer-hero {
+        padding: 54px 0 42px;
       }
 
-      .nav-links,
-      .footer-links { justify-content: flex-start; }
-
-      .brand img { height: 56px; }
-
-      .hero {
-        padding: 22px 0 10px;
-      }
-
-      .hero-main-card,
-      .hero-side-card,
-      .cta-panel,
-      .form-card,
-      .soft-panel,
-      .info-card,
+      .trainer-hero__copy,
+      .profile-card,
+      .benefit-card,
+      .testimonial-card,
+      .faq-card,
       .step-card,
-      .faq-card {
-        padding: 22px;
+      .info-panel,
+      .form-card {
+        padding: 24px;
       }
 
-      .hero-actions,
-      .cta-actions,
+      .trainer-hero__actions,
+      .timeline-cta,
       .session-actions {
         flex-direction: column;
       }
 
-      .btn { width: 100%; }
+      .trainer-hero__note {
+        position: static;
+        margin: 16px;
+      }
 
-      .section-head h2 { font-size: 1.8rem; }
+      .btn {
+        width: 100%;
+      }
 
       .session-top {
         flex-direction: column;
         align-items: stretch;
-      }
-
-      .hero-banner {
-        height: clamp(220px, 48vw, 320px);
       }
     }
   </style>
 </head>
 <body>
 
-  <header>
-    <div class="container header-inner">
-      <a href="/index.html" class="brand">
+  <header class="site-header">
+    <div class="container site-header__inner">
+      <a href="/index.html" class="site-brand">
         <img src="/logo.png" alt="Vital Protect" />
-        <div class="brand-text-wrap">
-          <div class="brand-text">VITAL PROTECT</div>
-          <div class="brand-sub">Méthode de sécurité personnelle</div>
+        <div class="site-brand__text">
+          <div class="site-brand__title">VITAL PROTECT</div>
+          <div class="site-brand__subtitle">Méthode de sécurité personnelle</div>
         </div>
       </a>
 
-      <nav class="nav-links">
+      <nav class="site-nav">
         <a href="/index.html">Accueil</a>
         <a href="/methode.html">La méthode</a>
         <a href="/index.html#stages">Nos stages</a>
         <a href="/entreprises.html">Entreprises</a>
-        <a href="/devenir-formateur.html" class="active">Devenir formateur</a>
         <a href="/contact.html">Contact</a>
+        <a href="/devenir-formateur.html" class="active">Devenir formateur</a>
         <a href="/formateur-login.html" class="nav-cta">Espace formateur</a>
       </nav>
     </div>
   </header>
 
   <main>
-    <section class="hero">
-      <div class="container">
-        <div class="hero-banner">
+    <section class="hero-shell trainer-hero">
+      <div class="container trainer-hero__grid">
+        <div class="glass-panel trainer-hero__copy">
+          <div class="eyebrow eyebrow--invert">Parcours formateur • Certification par module • Réseau structuré</div>
+
+          <h1 class="trainer-hero__title">Rejoindre Vital Protect, ce n’est pas seulement animer un stage</h1>
+
+          <p class="trainer-hero__lead">
+            C’est intégrer un cadre pédagogique clair, une logique de certification par module,
+            un standard de transmission précis et un réseau qui met la cohérence,
+            la sécurité et la qualité au centre.
+          </p>
+
+          <div class="trainer-hero__proofs">
+            <div class="trainer-hero__proof">Certification par module</div>
+            <div class="trainer-hero__proof">Exigence pédagogique</div>
+            <div class="trainer-hero__proof">Cadre structuré</div>
+            <div class="trainer-hero__proof">Activation réseau</div>
+          </div>
+
+          <div class="trainer-hero__actions">
+            <a href="#sessions" class="btn btn-primary">Voir les sessions disponibles</a>
+            <a href="#formulaire" class="btn btn-secondary">Réserver ma place</a>
+          </div>
+        </div>
+
+        <aside class="surface-panel trainer-hero__media">
           <img
             src="/formateur-devant-public-assis-salle.png"
             alt="Formateur Vital Protect devant un public assis"
           />
-        </div>
+          <div class="trainer-hero__overlay"></div>
 
-        <div class="hero-intro">
-          <div class="hero-main-card">
-            <div class="eyebrow">Parcours formateur Vital Protect</div>
-
-            <h1>Rejoindre Vital Protect, ce n’est pas seulement animer un stage.</h1>
-
-            <p>
-              C’est intégrer un système structuré, fondé sur une méthode claire,
-              un cadre pédagogique exigeant, une logique de certification par module
-              et un engagement réel envers la sécurité et la qualité de transmission.
-            </p>
-
-            <div class="hero-points">
-              <div class="hero-point">Certification par module</div>
-              <div class="hero-point">Exigence pédagogique claire</div>
-              <div class="hero-point">Cadre de sécurité fort</div>
-              <div class="hero-point">Réseau structuré et cohérent</div>
-            </div>
-
-            <div class="hero-actions">
-              <a href="#sessions" class="btn btn-primary">Voir les sessions disponibles</a>
-              <a href="#formulaire" class="btn btn-secondary">Réserver ma place</a>
-            </div>
+          <div class="trainer-hero__note">
+            <strong>Un vrai cadre de certification</strong>
+            <span>
+              Le parcours formateur Vital Protect vise une transmission cohérente,
+              maîtrisée et sécurisée. On ne valide pas un “titre abstrait” :
+              on certifie la capacité à transmettre des modules précis.
+            </span>
           </div>
-
-          <aside class="hero-side-card">
-            <div class="eyebrow-soft">Ce que le réseau attend</div>
-            <h2>Une transmission maîtrisée, cohérente et sécurisée</h2>
-            <p>
-              Devenir formateur Vital Protect suppose de savoir transmettre une méthode avec progression,
-              précision et maîtrise, dans le respect des contenus officiels et des règles de sécurité du réseau.
-            </p>
-
-            <div class="hero-side-list">
-              <div class="hero-side-item">
-                <strong>Responsabilité pédagogique</strong>
-                <span>Expliquer, démontrer, faire pratiquer, corriger et encadrer avec clarté.</span>
-              </div>
-              <div class="hero-side-item">
-                <strong>Certification par module</strong>
-                <span>Un formateur est certifié pour transmettre des contenus précis, pas de manière abstraite.</span>
-              </div>
-              <div class="hero-side-item">
-                <strong>Maintien des standards</strong>
-                <span>La qualité du réseau repose sur la cohérence de la méthode et l’exigence continue.</span>
-              </div>
-            </div>
-
-            
-            </div>
-          </aside>
-        </div>
+        </aside>
       </div>
     </section>
 
     <section>
       <div class="container">
-        <div class="section-head center">
-          <span class="eyebrow">Pourquoi rejoindre le réseau</span>
-          <h2>Un cadre plus lisible, plus crédible et plus durable</h2>
+        <div class="section-head section-head--center">
+          <span class="eyebrow">Pour qui ?</span>
+          <h2>Le profil recherché</h2>
           <p>
-            Intégrer Vital Protect, c’est rejoindre une structure qui valorise la pédagogie,
-            la méthode, la sécurité et la cohérence de transmission, au-delà d’une logique
-            d’intervention isolée.
+            Cette page s’adresse aux personnes qui veulent transmettre sérieusement,
+            avec une logique pédagogique claire et un vrai respect du cadre Vital Protect.
           </p>
         </div>
 
-        <div class="card-grid-3">
-          <article class="info-card">
+        <div class="profile-grid">
+          <article class="profile-card">
             <div class="icon-dot"></div>
-            <h3>Méthode claire</h3>
-            <p>Un système fondé sur des piliers identifiables, une logique de progression et des contenus structurés.</p>
+            <h3>Pédagogie</h3>
+            <p>
+              Vous aimez expliquer, démontrer, faire pratiquer, corriger
+              et transmettre avec clarté.
+            </p>
           </article>
 
-          <article class="info-card">
+          <article class="profile-card">
             <div class="icon-dot"></div>
-            <h3>Cadre professionnel</h3>
-            <p>Une transmission standardisée, une exigence réseau et une meilleure lisibilité de l’offre sur le terrain.</p>
+            <h3>Posture sérieuse</h3>
+            <p>
+              Vous cherchez un cadre crédible, exigeant et structuré,
+              pas une logique de démonstration spectaculaire.
+            </p>
           </article>
 
-          <article class="info-card">
+          <article class="profile-card">
             <div class="icon-dot"></div>
-            <h3>Déploiement réel</h3>
-            <p>Un parcours conçu pour permettre ensuite l’animation de stages dans un cadre cohérent et certifié.</p>
+            <h3>Engagement réseau</h3>
+            <p>
+              Vous êtes prêt à respecter des contenus officiels,
+              des standards pédagogiques et une logique de suivi.
+            </p>
           </article>
+        </div>
+
+        <div class="timeline-cta">
+          <a href="#formulaire" class="btn btn-dark">Réserver une session</a>
         </div>
       </div>
     </section>
 
-    <section class="soft-band">
+    <section>
       <div class="container split-panel">
-        <div class="soft-panel">
-          <span class="eyebrow">Le parcours</span>
-          <h3>Un vrai parcours de formation, pas une simple formalité</h3>
+        <div class="soft-card info-panel">
+          <span class="eyebrow">Prérequis</span>
+          <h3>Ce qu’il faut avoir en tête avant de candidater</h3>
           <p>
-            Le parcours formateur repose sur l’acquisition de compétences techniques,
-            pédagogiques et comportementales. L’objectif est de transmettre une méthode
-            de sécurité personnelle de manière cohérente, progressive et sécurisée.
+            Le parcours n’est pas présenté comme une simple formalité.
+            Il suppose un engagement réel envers la qualité de transmission.
           </p>
 
           <div class="bullet-list">
-            <div class="bullet-item"><strong>Comprendre la méthode :</strong> logique générale, philosophie, piliers, cadre d’intervention.</div>
-            <div class="bullet-item"><strong>Transmettre :</strong> savoir expliquer, démontrer, faire pratiquer et corriger.</div>
-            <div class="bullet-item"><strong>Encadrer :</strong> respecter les règles de sécurité, la progression et l’adaptation au public.</div>
+            <div class="bullet-item"><strong>Motivation sérieuse :</strong> volonté de transmettre dans un cadre cohérent.</div>
+            <div class="bullet-item"><strong>Capacité pédagogique :</strong> expliquer, guider, corriger, encadrer.</div>
+            <div class="bullet-item"><strong>Respect des standards :</strong> fidélité à la méthode et aux contenus du réseau.</div>
+            <div class="bullet-item"><strong>Disponibilité :</strong> être prêt à suivre un vrai parcours, pas un simple passage administratif.</div>
           </div>
         </div>
 
-        <div class="soft-panel">
-          <span class="eyebrow">Les exigences</span>
-          <h3>Ce que la certification implique concrètement</h3>
+        <div class="soft-card info-panel">
+          <span class="eyebrow">Ce que la certification implique</span>
+          <h3>Une responsabilité pédagogique réelle</h3>
           <p>
-            La certification Vital Protect s’inscrit dans une logique d’exigence. Elle suppose
-            de respecter les contenus officiels, le protocole pédagogique et les standards de sécurité du réseau.
+            Être certifié Vital Protect implique de transmettre avec cohérence,
+            précision, sécurité et fidélité à la méthode.
           </p>
 
           <div class="bullet-list">
-            <div class="bullet-item"><strong>Contenus officiels :</strong> cohérence de transmission et fidélité à la méthode.</div>
-            <div class="bullet-item"><strong>Règles pédagogiques :</strong> progression, clarté, encadrement, correction.</div>
+            <div class="bullet-item"><strong>Certification par module :</strong> vous n’êtes pas validé “globalement”, mais sur des contenus précis.</div>
             <div class="bullet-item"><strong>Maintien de certification :</strong> logique de suivi, renouvellement et exigence continue.</div>
+            <div class="bullet-item"><strong>Affiliation réseau :</strong> l’activation s’inscrit dans un cadre vivant, pas dans un label figé.</div>
+            <div class="bullet-item"><strong>Exigence de qualité :</strong> sécurité, progression pédagogique et cohérence restent prioritaires.</div>
           </div>
         </div>
       </div>
@@ -975,55 +681,190 @@
 
     <section>
       <div class="container">
-        <div class="section-head center">
+        <div class="section-head section-head--center">
+          <span class="eyebrow">Pourquoi rejoindre le réseau</span>
+          <h2>Ce que vous obtenez vraiment</h2>
+          <p>
+            Rejoindre Vital Protect, ce n’est pas seulement suivre une formation :
+            c’est intégrer une structure lisible, crédible et organisée.
+          </p>
+        </div>
+
+        <div class="benefit-grid">
+          <article class="benefit-card">
+            <h3>Une méthode claire</h3>
+            <p>
+              Vous rejoignez un système fondé sur une logique pédagogique identifiable,
+              structurée et transmissible.
+            </p>
+          </article>
+
+          <article class="benefit-card">
+            <h3>Une certification reconnue en interne</h3>
+            <p>
+              Votre validation ouvre un droit de transmission sur des modules précis,
+              dans le cadre du réseau Vital Protect.
+            </p>
+          </article>
+
+          <article class="benefit-card">
+            <h3>Un cadre durable</h3>
+            <p>
+              Vous n’êtes pas laissé seul : l’affiliation, les standards
+              et le maintien de cohérence font partie du système.
+            </p>
+          </article>
+        </div>
+
+        <div class="timeline-cta">
+          <a href="#sessions" class="btn btn-outline">Voir les sessions</a>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="container">
+        <div class="section-head section-head--center">
           <span class="eyebrow">Étapes</span>
           <h2>Comment se déroule le parcours</h2>
           <p>
-            Le parcours a été pensé pour structurer l’entrée dans le réseau et préserver
-            la qualité pédagogique de la certification.
+            Le parcours formateur suit une logique claire, pour structurer l’entrée dans le réseau
+            et protéger la qualité pédagogique de la certification.
           </p>
         </div>
 
         <div class="steps-grid">
           <article class="step-card">
             <div class="step-index">1</div>
-            <h3>Réservation</h3>
-            <p>Choix d’une session, inscription et paiement sécurisé avec autorisation bancaire.</p>
+            <h3>Choix d’une session</h3>
+            <p>Vous sélectionnez la session adaptée à votre module et à votre disponibilité.</p>
           </article>
 
           <article class="step-card">
             <div class="step-index">2</div>
-            <h3>Étude du dossier</h3>
-            <p>Le dossier est examiné avant toute capture définitive du paiement.</p>
+            <h3>Réservation</h3>
+            <p>Vous complétez vos coordonnées et réalisez une réservation sécurisée.</p>
           </article>
 
           <article class="step-card">
             <div class="step-index">3</div>
-            <h3>Formation & évaluation</h3>
-            <p>Travail sur la méthode, la transmission, les standards de sécurité et la capacité à encadrer.</p>
+            <h3>Étude du dossier</h3>
+            <p>Le paiement est d’abord autorisé, puis capturé uniquement après validation du dossier.</p>
           </article>
 
           <article class="step-card">
             <div class="step-index">4</div>
-            <h3>Activation</h3>
-            <p>En cas de validation, activation du profil formateur et certification sur le module concerné.</p>
+            <h3>Formation & évaluation</h3>
+            <p>Vous travaillez la méthode, la pédagogie, la posture et le respect du cadre réseau.</p>
           </article>
+
+          <article class="step-card">
+            <div class="step-index">5</div>
+            <h3>Activation</h3>
+            <p>En cas de réussite, votre profil formateur est activé et le module validé est enregistré.</p>
+          </article>
+        </div>
+
+        <div class="timeline-cta">
+          <a href="#formulaire" class="btn btn-dark">Réserver ma place</a>
         </div>
       </div>
     </section>
 
-    <section id="sessions" class="soft-band">
+    <section>
+      <div class="container split-panel">
+        <div class="soft-card info-panel">
+          <span class="eyebrow">Coût & logique de paiement</span>
+          <h3>Une réservation claire et sécurisée</h3>
+          <p>
+            Le tarif dépend de la session choisie. Le paiement est sécurisé
+            et reste en autorisation bancaire tant que le dossier n’est pas validé.
+          </p>
+
+          <div class="bullet-list">
+            <div class="bullet-item"><strong>Tarif :</strong> affiché session par session.</div>
+            <div class="bullet-item"><strong>Mode :</strong> paiement sécurisé Stripe.</div>
+            <div class="bullet-item"><strong>Encaissement :</strong> capture uniquement après validation du dossier.</div>
+            <div class="bullet-item"><strong>Clarté :</strong> le parcours reste cadré du début à la fin.</div>
+          </div>
+        </div>
+
+        <div class="soft-card info-panel">
+          <span class="eyebrow">Ce que vous obtenez à la fin</span>
+          <h3>En cas de validation</h3>
+          <p>
+            Si vous validez le parcours, vous entrez dans un cadre précis
+            avec une activation concrète dans le réseau.
+          </p>
+
+          <div class="bullet-list">
+            <div class="bullet-item"><strong>Activation du profil formateur</strong> dans le système Vital Protect.</div>
+            <div class="bullet-item"><strong>Certification du module concerné</strong> avec enregistrement de la validité.</div>
+            <div class="bullet-item"><strong>Affiliation réseau</strong> avec logique de suivi et de renouvellement.</div>
+            <div class="bullet-item"><strong>Accès à l’espace formateur</strong> et au cadre d’exploitation associé.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="container">
+        <div class="section-head section-head--center">
+          <span class="eyebrow">Retours d’expérience</span>
+          <h2>Témoignages à remplacer ensuite par vos vrais retours formateurs</h2>
+          <p>
+            Garde cette structure pour l’instant. Dès que tu as 2 vrais témoignages,
+            on les remplace immédiatement.
+          </p>
+        </div>
+
+        <div class="testimonial-grid">
+          <article class="testimonial-card">
+            <h3>Formateur — module essentiel</h3>
+            <p>
+              “Ce que j’ai apprécié, c’est la clarté du cadre :
+              on comprend ce qu’on transmet, pourquoi on le transmet et comment le transmettre.”
+            </p>
+          </article>
+
+          <article class="testimonial-card">
+            <h3>Formateur — parcours réseau</h3>
+            <p>
+              “On sent qu’il y a une vraie logique de méthode et de cohérence,
+              pas juste un stage isolé sans structure derrière.”
+            </p>
+          </article>
+
+          <article class="testimonial-card">
+            <h3>Formateur — activation</h3>
+            <p>
+              “Le parcours demande du sérieux, mais c’est justement ce qui lui donne de la valeur.”
+            </p>
+          </article>
+        </div>
+
+        <div class="timeline-cta">
+          <a href="#sessions" class="btn btn-outline">Choisir une session</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="sessions">
       <div class="container">
         <div class="section-head">
           <span class="eyebrow">Sessions disponibles</span>
           <h2>Choisissez une session de certification</h2>
           <p>
             Sélectionnez la session qui vous correspond, puis complétez votre demande de réservation.
-            Le paiement est sécurisé et reste en autorisation avant validation du dossier.
+            Le paiement reste en autorisation avant validation du dossier.
           </p>
         </div>
 
         <div id="sessionsContainer" class="sessions-grid"></div>
+
+        <div class="timeline-cta">
+          <a href="#formulaire" class="btn btn-dark">Réserver ma place</a>
+        </div>
       </div>
     </section>
 
@@ -1045,50 +886,52 @@
           </div>
 
           <form id="trainerForm">
-            <div class="field">
-              <label for="firstName">Prénom</label>
-              <input type="text" id="firstName" required />
-            </div>
+            <div class="form-grid">
+              <div class="form-field">
+                <label for="firstName">Prénom</label>
+                <input type="text" id="firstName" required />
+              </div>
 
-            <div class="field">
-              <label for="lastName">Nom</label>
-              <input type="text" id="lastName" required />
-            </div>
+              <div class="form-field">
+                <label for="lastName">Nom</label>
+                <input type="text" id="lastName" required />
+              </div>
 
-            <div class="field">
-              <label for="email">Email</label>
-              <input type="email" id="email" required />
-            </div>
+              <div class="form-field">
+                <label for="email">Email</label>
+                <input type="email" id="email" required />
+              </div>
 
-            <div class="field">
-              <label for="phone">Téléphone</label>
-              <input type="tel" id="phone" required />
-            </div>
+              <div class="form-field">
+                <label for="phone">Téléphone</label>
+                <input type="tel" id="phone" required />
+              </div>
 
-            <div class="field">
-              <label for="city">Ville</label>
-              <input type="text" id="city" required />
-            </div>
+              <div class="form-field">
+                <label for="city">Ville</label>
+                <input type="text" id="city" required />
+              </div>
 
-            <div class="field">
-              <label for="trainingType">Module</label>
-              <select id="trainingType" required>
-                <option value="">Choisir un module</option>
-                <option>Self Défense Essentielle</option>
-                <option>Self Défense Essentielle Niveau 2</option>
-                <option>Self Défense en entreprise</option>
-              </select>
-            </div>
+              <div class="form-field">
+                <label for="trainingType">Module</label>
+                <select id="trainingType" required>
+                  <option value="">Choisir un module</option>
+                  <option>Self Défense Essentielle</option>
+                  <option>Self Défense Essentielle Niveau 2</option>
+                  <option>Self Défense en entreprise</option>
+                </select>
+              </div>
 
-            <div class="field">
-              <label for="message">Votre message</label>
-              <textarea id="message" placeholder="Votre message"></textarea>
+              <div class="form-field full">
+                <label for="message">Votre message</label>
+                <textarea id="message" placeholder="Présentez brièvement votre profil, votre motivation ou votre contexte."></textarea>
+              </div>
             </div>
 
             <button class="btn btn-dark" type="submit">Réserver ma place</button>
 
-            <div class="note">
-              Réservation sécurisée — le montant est autorisé puis capturé uniquement après validation du dossier par l’équipe.
+            <div class="form-note" style="margin-top:10px; color: var(--vp-text-soft); line-height:1.7;">
+              Réservation sécurisée — le montant est autorisé puis capturé uniquement après validation du dossier.
             </div>
           </form>
         </div>
@@ -1097,34 +940,49 @@
 
     <section>
       <div class="container">
-        <div class="section-head center">
+        <div class="section-head section-head--center">
           <span class="eyebrow">Questions fréquentes</span>
           <h2>Ce qu’il faut savoir avant de candidater</h2>
           <p>
-            Quelques réponses rapides sur le fonctionnement du parcours formateur.
+            Quelques réponses rapides pour clarifier le fonctionnement du parcours.
           </p>
         </div>
 
         <div class="faq-grid">
           <article class="faq-card">
             <h3>Le paiement est-il encaissé immédiatement ?</h3>
-            <p>Non. Le paiement est d’abord autorisé, puis capturé uniquement après validation du dossier par l’équipe.</p>
+            <p>
+              Non. Le paiement est d’abord autorisé, puis capturé uniquement après validation du dossier.
+            </p>
           </article>
 
           <article class="faq-card">
             <h3>Suis-je certifié “globalement” après la formation ?</h3>
-            <p>Non. La certification est liée à des modules précis. Elle n’est pas une validation générale abstraite.</p>
-          </article>
-
-          <article class="faq-card">
-            <h3>Que signifie intégrer le réseau ?</h3>
-            <p>Rejoindre le réseau implique de respecter les contenus officiels, le protocole pédagogique et les règles de sécurité Vital Protect.</p>
+            <p>
+              Non. La certification est liée à des modules précis.
+            </p>
           </article>
 
           <article class="faq-card">
             <h3>Que se passe-t-il après validation ?</h3>
-            <p>Le profil formateur est activé, la certification est enregistrée et les droits associés au module validé sont ouverts.</p>
+            <p>
+              Votre profil formateur est activé, votre module est enregistré
+              et votre affiliation entre dans le cadre du réseau.
+            </p>
           </article>
+
+          <article class="faq-card">
+            <h3>Le parcours est-il une simple formalité ?</h3>
+            <p>
+              Non. Il repose sur une logique d’exigence pédagogique,
+              de cohérence de transmission et de responsabilité.
+            </p>
+          </article>
+        </div>
+
+        <div class="timeline-cta">
+          <a href="#formulaire" class="btn btn-dark">Candidater maintenant</a>
+          <a href="/contact.html" class="btn btn-outline">Poser une question</a>
         </div>
       </div>
     </section>
@@ -1140,17 +998,17 @@
 
           <div class="cta-actions">
             <a href="#sessions" class="btn btn-dark">Voir les sessions</a>
+            <a href="#formulaire" class="btn btn-outline">Réserver ma place</a>
             <a href="/methode.html" class="btn btn-outline">Comprendre la méthode</a>
-            <a href="/formateur-login.html" class="btn btn-outline">Accéder à l’espace formateur</a>
           </div>
         </div>
       </div>
     </section>
   </main>
 
-  <footer>
-    <div class="container footer-grid">
-      <div class="footer-brand">
+  <footer class="site-footer">
+    <div class="container site-footer__grid">
+      <div class="site-footer__brand">
         <strong>VITAL PROTECT</strong>
         <p>
           Une méthode structurée de sécurité personnelle fondée sur la prévention, l’évitement,
@@ -1158,12 +1016,12 @@
         </p>
       </div>
 
-      <div class="footer-links">
+      <div class="site-footer__links">
         <a href="/methode.html">La méthode</a>
         <a href="/entreprises.html">Entreprises</a>
         <a href="/devenir-formateur.html">Devenir formateur</a>
-        <a href="/formateur-login.html">Espace formateur</a>
-        <a href="/admin-login.html">Admin</a>
+        <a href="/faq.html">FAQ</a>
+        <a href="/contact.html">Contact</a>
       </div>
     </div>
   </footer>
@@ -1266,6 +1124,10 @@
       checkoutFeedback.innerHTML = "";
     }
 
+    function getAvailabilityClass(remainingPlaces) {
+      return Number(remainingPlaces || 0) <= 3 ? "warning" : "success";
+    }
+
     async function loadSessions() {
       const { data, error } = await supabase
         .from("trainer_sessions")
@@ -1305,7 +1167,8 @@
 
           <div class="session-body">
             <div class="session-description">
-              Parcours de certification Vital Protect avec méthode structurée, exigence pédagogique, cadre de sécurité et logique d’activation réseau.
+              Parcours de certification Vital Protect avec exigence pédagogique,
+              logique de transmission, cadre de sécurité et activation réseau.
             </div>
 
             <div class="session-meta">
@@ -1315,7 +1178,12 @@
               </div>
 
               <div class="meta-item">
-                <span class="meta-label">Date de fin</span>
+                <span class="meta-label">Début</span>
+                <span class="meta-value">${formatDate(session.start_date)}</span>
+              </div>
+
+              <div class="meta-item">
+                <span class="meta-label">Fin</span>
                 <span class="meta-value">${formatDate(session.end_date)}</span>
               </div>
 
@@ -1328,9 +1196,14 @@
                 <span class="meta-label">Tarif standard</span>
                 <span class="meta-value">${formatPrice(session.standard_price || 0)}</span>
               </div>
+
+              <div class="meta-item">
+                <span class="meta-label">Places restantes</span>
+                <span class="meta-value">${session.remaining_places || 0}</span>
+              </div>
             </div>
 
-            <div class="availability">
+            <div class="availability ${getAvailabilityClass(session.remaining_places)}">
               ${session.remaining_places || 0} place(s) restante(s)
             </div>
           </div>
@@ -1438,6 +1311,5 @@
     renderCheckoutFeedback();
     loadSessions();
   </script>
-
 </body>
 </html>
