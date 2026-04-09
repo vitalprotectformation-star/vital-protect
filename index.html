@@ -18,37 +18,24 @@
       padding: 36px;
     }
 
-    .hero-home__eyebrow {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      border-radius: 999px;
-      padding: 8px 12px;
-      font-size: 0.86rem;
-      font-weight: 700;
-      background: rgba(255,255,255,0.10);
-      color: rgba(255,255,255,0.92);
-      border: 1px solid rgba(255,255,255,0.12);
-    }
-
     .hero-home__title {
       margin: 16px 0;
       font-size: clamp(2.5rem, 5vw, 4.6rem);
-      line-height: 0.96;
+      line-height: 0.98;
       max-width: 11ch;
       color: white;
     }
 
     .hero-home__lead {
       margin: 0;
-      max-width: 62ch;
+      max-width: 60ch;
       color: var(--vp-text-invert-soft);
       font-size: 1.04rem;
       line-height: 1.85;
     }
 
     .hero-home__proofs {
-      margin-top: 22px;
+      margin-top: 24px;
       display: flex;
       flex-wrap: wrap;
       gap: 10px;
@@ -140,73 +127,88 @@
     }
 
     .trust-section {
-      padding-top: 10px;
+      padding-top: 0;
+      margin-top: -8px;
+    }
+
+    .trust-panel {
+      padding: 34px;
+    }
+
+    .trust-panel h2 {
+      margin: 0 0 12px;
+      color: var(--vp-navy-850);
+      font-size: clamp(1.9rem, 3vw, 2.5rem);
+      line-height: 1.08;
+    }
+
+    .trust-panel p {
+      margin: 0;
+      color: var(--vp-text-soft);
+      line-height: 1.8;
+      max-width: 850px;
     }
 
     .trust-kpis {
       display: grid;
       grid-template-columns: repeat(5, minmax(0, 1fr));
-      gap: 18px;
-      margin-top: 26px;
+      gap: 16px;
+      margin-top: 24px;
     }
 
     .trust-kpi {
       background: white;
       border: 1px solid rgba(13, 27, 42, 0.06);
-      border-radius: var(--vp-radius-md);
+      border-radius: 20px;
       box-shadow: var(--vp-shadow-md);
       padding: 22px;
     }
 
-    .trust-kpi__value {
-      font-size: clamp(1.45rem, 2.5vw, 2.1rem);
-      font-weight: 800;
+    .trust-kpi strong {
+      display: block;
+      font-size: 2rem;
+      line-height: 1;
       color: var(--vp-navy-850);
-      line-height: 1.1;
       margin-bottom: 8px;
     }
 
-    .trust-kpi__label {
+    .trust-kpi span {
+      display: block;
       color: var(--vp-text-soft);
       line-height: 1.6;
-      font-weight: 600;
+      font-size: 0.95rem;
+      font-weight: 700;
     }
 
-    .testimonials-grid {
+    .trust-grid {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-columns: 1fr 1fr;
       gap: 18px;
-      margin-top: 22px;
+      margin-top: 20px;
     }
 
-    .testimonial-card {
-      background: white;
+    .trust-card {
+      background: rgba(255,255,255,0.94);
       border: 1px solid rgba(13, 27, 42, 0.06);
-      border-radius: var(--vp-radius-md);
+      border-radius: 20px;
       box-shadow: var(--vp-shadow-md);
-      padding: 24px;
+      padding: 22px;
     }
 
-    .testimonial-card p {
-      margin: 0 0 16px;
-      color: var(--vp-text);
+    .trust-card h3 {
+      margin: 0 0 10px;
+      color: var(--vp-navy-850);
+      font-size: 1.12rem;
+    }
+
+    .trust-card p {
+      margin: 0;
+      color: var(--vp-text-soft);
       line-height: 1.75;
     }
 
-    .testimonial-card strong {
-      display: block;
-      color: var(--vp-navy-850);
-      font-size: 0.98rem;
-    }
-
-    .testimonial-card span {
-      color: var(--vp-text-soft);
-      font-size: 0.92rem;
-    }
-
     .proof-band {
-      padding-top: 0;
-      margin-top: -4px;
+      padding-top: 8px;
     }
 
     .proof-band__grid {
@@ -555,14 +557,14 @@
     }
 
     @media (max-width: 1180px) {
-      .proof-band__grid,
       .trust-kpis,
-      .testimonials-grid,
+      .proof-band__grid,
       .split-panel,
       .pedagogy-feature,
       .map-layout,
       .stages-grid,
-      .faq-grid {
+      .faq-grid,
+      .trust-grid {
         grid-template-columns: 1fr;
       }
 
@@ -581,7 +583,8 @@
       }
 
       .hero-home__copy,
-      .pedagogy-content {
+      .pedagogy-content,
+      .trust-panel {
         padding: 24px;
       }
 
@@ -642,7 +645,7 @@
     <section class="hero-shell hero-home">
       <div class="container hero-grid">
         <div class="glass-panel hero-home__copy">
-          <div class="hero-home__eyebrow">Formation structurée • Prévention • Gestion de situation à risque</div>
+          <div class="eyebrow eyebrow--invert">Formation structurée • Prévention • Gestion de situation à risque</div>
 
           <h1 class="hero-home__title">Formation de sécurité personnelle et gestion de situation à risque</h1>
 
@@ -688,75 +691,64 @@
 
     <section class="trust-section">
       <div class="container">
-        <div class="section-head section-head--center">
-          <span class="eyebrow">Pourquoi nous faire confiance</span>
-          <h2>Une méthode claire, un cadre sérieux, un déploiement maîtrisé</h2>
+        <div class="soft-card trust-panel">
+          <h2>Pourquoi nous faire confiance</h2>
           <p>
-            Vital Protect est une structure jeune, en construction exigeante.
-            Nous préférons un développement progressif, cohérent et bien encadré
-            plutôt qu’un réseau étendu sans contrôle réel sur la qualité de transmission.
+            Vital Protect est une structure jeune, en construction exigeante. Nous préférons un développement
+            progressif, cohérent et bien encadré plutôt qu’un réseau étendu sans contrôle réel sur la qualité
+            de transmission. Le site assume aujourd’hui un déploiement volontairement maîtrisé.
           </p>
-        </div>
 
-        <div class="trust-kpis">
-          <article class="trust-kpi">
-            <div class="trust-kpi__value">3</div>
-            <div class="trust-kpi__label">formateurs actifs actuellement</div>
-          </article>
+          <div class="trust-kpis">
+            <div class="trust-kpi">
+              <strong>3</strong>
+              <span>formateurs actifs actuellement</span>
+            </div>
 
-          <article class="trust-kpi">
-            <div class="trust-kpi__value">1</div>
-            <div class="trust-kpi__label">méthode structurée avec logique pédagogique claire</div>
-          </article>
+            <div class="trust-kpi">
+              <strong>1</strong>
+              <span>méthode structurée avec logique pédagogique claire</span>
+            </div>
 
-          <article class="trust-kpi">
-            <div class="trust-kpi__value">100%</div>
-            <div class="trust-kpi__label">des sessions publiées dans un cadre certifié et encadré</div>
-          </article>
+            <div class="trust-kpi">
+              <strong>100%</strong>
+              <span>des sessions publiées dans un cadre certifié et encadré</span>
+            </div>
 
-          <article class="trust-kpi">
-            <div class="trust-kpi__value">Par module</div>
-            <div class="trust-kpi__label">certification formateur liée à des contenus précis</div>
-          </article>
+            <div class="trust-kpi">
+              <strong>Par module</strong>
+              <span>certification formateur liée à des contenus précis</span>
+            </div>
 
-          <article class="trust-kpi">
-            <div class="trust-kpi__value">Progressif</div>
-            <div class="trust-kpi__label">déploiement volontairement maîtrisé pour préserver la qualité</div>
-          </article>
-        </div>
+            <div class="trust-kpi">
+              <strong>Progressif</strong>
+              <span>déploiement volontairement maîtrisé pour préserver la qualité</span>
+            </div>
+          </div>
 
-        <div class="testimonials-grid">
-          <article class="testimonial-card">
-            <p>
-              “Ce que j’ai apprécié, c’est le sérieux du cadre et la clarté de la progression.
-              On comprend ce qu’on apprend et pourquoi on l’apprend.”
-            </p>
-            <strong>Témoignage participant</strong>
-            <span>À remplacer par un vrai prénom + contexte</span>
-          </article>
+          <div class="trust-grid">
+            <article class="trust-card">
+              <h3>Une promesse assumée avec transparence</h3>
+              <p>
+                Nous ne gonflons pas artificiellement des chiffres ou des références.
+                La priorité actuelle est de bâtir une structure crédible, cohérente et propre,
+                avec des contenus clairs et un cadre sérieux.
+              </p>
+            </article>
 
-          <article class="testimonial-card">
-            <p>
-              “L’approche est simple, réaliste et pédagogique. On n’est pas dans le spectaculaire,
-              on est dans quelque chose d’utile et de concret.”
-            </p>
-            <strong>Témoignage participant</strong>
-            <span>À remplacer par un vrai prénom + contexte</span>
-          </article>
+            <article class="trust-card">
+              <h3>Les preuves terrain vont enrichir le site</h3>
+              <p>
+                À mesure du développement, des photos réelles, retours d’expérience vérifiés,
+                références clients et profils formateurs détaillés viendront compléter cette base.
+              </p>
+            </article>
+          </div>
 
-          <article class="testimonial-card">
-            <p>
-              “La structure est jeune, mais justement très lisible. On sent qu’il y a une vraie
-              volonté de construire un cadre propre et cohérent.”
-            </p>
-            <strong>Témoignage professionnel / candidat</strong>
-            <span>À remplacer par un vrai prénom + contexte</span>
-          </article>
-        </div>
-
-        <div class="cta-actions" style="margin-top: 22px; justify-content: center;">
-          <a href="#stages" class="btn btn-dark">Voir les stages</a>
-          <a href="/contact.html" class="btn btn-outline">Parler de votre besoin</a>
+          <div class="cta-actions" style="margin-top:22px;">
+            <a href="#stages" class="btn btn-dark">Voir les stages</a>
+            <a href="/contact.html" class="btn btn-outline">Parler de votre besoin</a>
+          </div>
         </div>
       </div>
     </section>
@@ -809,8 +801,8 @@
           <span class="eyebrow">Pour qui ?</span>
           <h2>Trois parcours clairs selon votre besoin</h2>
           <p>
-            Vital Protect s’adresse au grand public, aux entreprises et professionnels, ainsi qu’aux candidats formateurs.
-            Chaque page doit ensuite pousser vers une action concrète.
+            Vital Protect s’adresse au grand public, aux entreprises et professionnels,
+            ainsi qu’aux candidats formateurs. Chaque page pousse ensuite vers une action concrète.
           </p>
         </div>
 
@@ -819,7 +811,7 @@
             <h3>Particuliers</h3>
             <p>Pour acquérir des repères concrets, mieux lire les situations et développer des réflexes utiles.</p>
             <div class="cta-actions" style="margin-top:16px;">
-              <a href="#stages" class="btn btn-outline">Réserver un stage</a>
+              <a href="#stages" class="btn btn-dark">Réserver un stage</a>
             </div>
           </article>
 
@@ -975,13 +967,13 @@
           <p id="stagesSubtitle">
             Chaque stage présente clairement son objectif, son contexte, son niveau et ses informations pratiques.
           </p>
+
+          <div class="cta-actions" style="margin-top:18px;">
+            <a href="/contact.html" class="btn btn-outline">Poser une question avant réservation</a>
+          </div>
         </div>
 
         <div id="stagesContainer" class="stages-grid"></div>
-
-        <div class="cta-actions" style="margin-top: 24px;">
-          <a href="/contact.html" class="btn btn-dark">Poser une question avant réservation</a>
-        </div>
       </div>
     </section>
 
@@ -1051,9 +1043,9 @@
           </article>
         </div>
 
-        <div class="cta-actions" style="margin-top: 24px; justify-content: center;">
-          <a href="/faq.html" class="btn btn-outline">Voir toute la FAQ</a>
-          <a href="/contact.html" class="btn btn-dark">Nous contacter</a>
+        <div class="cta-actions" style="margin-top:20px; justify-content:center;">
+          <a href="/faq.html" class="btn btn-dark">Voir toute la FAQ</a>
+          <a href="/contact.html" class="btn btn-outline">Nous contacter</a>
         </div>
       </div>
     </section>
