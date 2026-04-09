@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Politique de confidentialité — Vital Protect</title>
+
+  <link rel="stylesheet" href="/styles/tokens.css" />
+  <link rel="stylesheet" href="/styles/base.css" />
+  <link rel="stylesheet" href="/styles/components.css" />
+
+  <style>
+    .privacy-hero {
+      padding: 72px 0 44px;
+    }
+
+    .privacy-hero__card {
+      padding: 34px;
+    }
+
+    .privacy-hero__title {
+      margin: 16px 0 14px;
+      font-size: clamp(2.2rem, 4vw, 3.6rem);
+      line-height: 1.02;
+      color: white;
+      max-width: 12ch;
+    }
+
+    .privacy-hero__lead {
+      margin: 0;
+      max-width: 72ch;
+      color: var(--vp-text-invert-soft);
+      line-height: 1.82;
+      font-size: 1.03rem;
+    }
+
+    .privacy-layout {
+      display: grid;
+      grid-template-columns: 0.92fr 1.08fr;
+      gap: 20px;
+      align-items: start;
+    }
+
+    .privacy-side,
+    .privacy-main,
+    .privacy-box {
+      background: rgba(255,255,255,0.92);
+      border: 1px solid var(--vp-border);
+      border-radius: var(--vp-radius-md);
+      box-shadow: var(--vp-shadow-md);
+    }
+
+    .privacy-side,
+    .privacy-main {
+      padding: 26px;
+    }
+
+    .privacy-side {
+      position: sticky;
+      top: 110px;
+    }
+
+    .privacy-side h2,
+    .privacy-main h2,
+    .privacy-box h3 {
+      margin-top: 0;
+      color: var(--vp-navy-850);
+    }
+
+    .privacy-side p,
+    .privacy-main p,
+    .privacy-main li,
+    .privacy-box p {
+      color: var(--vp-text-soft);
+      line-height: 1.8;
+    }
+
+    .privacy-nav {
+      display: grid;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .privacy-nav a {
+      display: block;
+      text-decoration: none;
+      color: var(--vp-navy-850);
+      font-weight: 700;
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: var(--vp-blue-soft-2);
+      border: 1px solid rgba(13, 27, 42, 0.05);
+    }
+
+    .privacy-nav a:hover {
+      background: var(--vp-blue-soft);
+    }
+
+    .privacy-section + .privacy-section {
+      margin-top: 28px;
+      padding-top: 28px;
+      border-top: 1px solid rgba(13, 27, 42, 0.08);
+    }
+
+    .privacy-section h2 {
+      margin-bottom: 10px;
+      font-size: 1.4rem;
+    }
+
+    .privacy-list {
+      margin: 14px 0 0;
+      padding-left: 18px;
+    }
+
+    .privacy-highlight {
+      margin-top: 18px;
+      padding: 16px;
+      border-radius: 16px;
+      background: var(--vp-blue-soft-2);
+      border: 1px solid rgba(13, 27, 42, 0.06);
+    }
+
+    .privacy-highlight strong {
+      color: var(--vp-navy-850);
+    }
+
+    .privacy-box {
+      margin-top: 20px;
+      padding: 22px;
+    }
+
+    .privacy-box p {
+      margin: 0;
+    }
+
+    @media (max-width: 1100px) {
+      .privacy-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .privacy-side {
+        position: static;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .privacy-hero {
+        padding: 54px 0 36px;
+      }
+
+      .privacy-hero__card,
+      .privacy-side,
+      .privacy-main,
+      .privacy-box {
+        padding: 22px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="container site-header__inner">
+      <a href="/index.html" class="site-brand">
+        <img src="/logo.png" alt="Vital Protect" />
+        <div class="site-brand__text">
+          <div class="site-brand__title">VITAL PROTECT</div>
+          <div class="site-brand__subtitle">Méthode de sécurité personnelle</div>
+        </div>
+      </a>
+
+      <nav class="site-nav">
+        <a href="/index.html">Accueil</a>
+        <a href="/methode.html">La méthode</a>
+        <a href="/index.html#stages">Nos stages</a>
+        <a href="/entreprises.html">Entreprises</a>
+        <a href="/contact.html">Contact</a>
+        <a href="/devenir-formateur.html">Devenir formateur</a>
+        <a href="/formateur-login.html" class="nav-cta">Espace formateur</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero-shell privacy-hero">
+      <div class="container">
+        <div class="glass-panel privacy-hero__card">
+          <div class="eyebrow eyebrow--invert">Protection des données</div>
+          <h1 class="privacy-hero__title">Politique de confidentialité</h1>
+          <p class="privacy-hero__lead">
+            Cette politique de confidentialité explique comment Vital Protect collecte,
+            utilise, conserve et protège les données personnelles transmises via le site,
+            notamment dans le cadre des formulaires de contact, réservations, candidatures
+            formateur et espaces sécurisés.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="container privacy-layout">
+        <aside class="privacy-side">
+          <h2>Sommaire</h2>
+          <p>
+            Cette page présente les informations essentielles sur le traitement des données
+            personnelles conformément au Règlement Général sur la Protection des Données (RGPD).
+          </p>
+
+          <nav class="privacy-nav">
+            <a href="#responsable">Responsable du traitement</a>
+            <a href="#donnees">Données collectées</a>
+            <a href="#finalites">Finalités</a>
+            <a href="#base-legale">Base légale</a>
+            <a href="#destinataires">Destinataires</a>
+            <a href="#duree">Durée de conservation</a>
+            <a href="#droits">Vos droits</a>
+            <a href="#cookies">Cookies et mesure d’audience</a>
+            <a href="#contact">Contact RGPD</a>
+          </nav>
+
+          <div class="privacy-box">
+            <h3>À vérifier avant mise en ligne</h3>
+            <p>
+              Remplace les champs entre crochets et adapte les durées ou outils si tu ajoutes
+              Google Analytics, Meta Pixel, CRM ou d’autres services.
+            </p>
+          </div>
+        </aside>
+
+        <div class="privacy-main">
+          <section class="privacy-section" id="responsable">
+            <h2>1. Responsable du traitement</h2>
+            <p>
+              Le responsable du traitement des données personnelles collectées via le site
+              <strong>Vital Protect</strong> est :
+            </p>
+
+            <ul class="privacy-list">
+              <li><strong>Nom / dénomination :</strong> [À REMPLACER]</li>
+              <li><strong>Adresse :</strong> [À REMPLACER]</li>
+              <li><strong>Email de contact :</strong> [À REMPLACER]</li>
+              <li><strong>Téléphone :</strong> [À REMPLACER si souhaité]</li>
+            </ul>
+          </section>
+
+          <section class="privacy-section" id="donnees">
+            <h2>2. Données personnelles collectées</h2>
+            <p>
+              Selon les formulaires et fonctionnalités utilisés sur le site, Vital Protect peut
+              collecter les données suivantes :
+            </p>
+
+            <ul class="privacy-list">
+              <li>nom et prénom ;</li>
+              <li>adresse email ;</li>
+              <li>numéro de téléphone ;</li>
+              <li>ville et informations de localisation saisies par l’utilisateur ;</li>
+              <li>contenu du message envoyé via un formulaire ;</li>
+              <li>données liées à une réservation ou à une candidature ;</li>
+              <li>données techniques de connexion, de navigation ou de session ;</li>
+              <li>données strictement nécessaires à l’accès aux espaces sécurisés.</li>
+            </ul>
+
+            <div class="privacy-highlight">
+              <strong>Important :</strong> les données bancaires ne sont pas stockées directement
+              par Vital Protect lorsque le paiement passe par un prestataire sécurisé comme Stripe.
+            </div>
+          </section>
+
+          <section class="privacy-section" id="finalites">
+            <h2>3. Finalités du traitement</h2>
+            <p>Les données personnelles collectées peuvent être utilisées pour :</p>
+
+            <ul class="privacy-list">
+              <li>répondre à une demande envoyée via le formulaire de contact ;</li>
+              <li>gérer une réservation de stage ;</li>
+              <li>gérer une candidature ou un parcours formateur ;</li>
+              <li>assurer le suivi administratif, commercial et logistique ;</li>
+              <li>permettre l’accès aux espaces privés ou sécurisés ;</li>
+              <li>envoyer des emails liés à une réservation, une candidature ou une demande ;</li>
+              <li>améliorer le fonctionnement du site et la qualité des services proposés ;</li>
+              <li>assurer la sécurité technique et la prévention des usages frauduleux.</li>
+            </ul>
+          </section>
+
+          <section class="privacy-section" id="base-legale">
+            <h2>4. Base légale du traitement</h2>
+            <p>
+              Les traitements de données réalisés par Vital Protect reposent, selon les cas, sur :
+            </p>
+
+            <ul class="privacy-list">
+              <li>l’exécution de mesures précontractuelles ou d’un contrat ;</li>
+              <li>le consentement de l’utilisateur lorsqu’il est requis ;</li>
+              <li>l’intérêt légitime du responsable de traitement pour sécuriser, améliorer ou administrer le site ;</li>
+              <li>le respect d’obligations légales ou réglementaires.</li>
+            </ul>
+          </section>
+
+          <section class="privacy-section" id="destinataires">
+            <h2>5. Destinataires des données</h2>
+            <p>
+              Les données collectées sont destinées exclusivement à Vital Protect et, lorsque cela
+              est nécessaire, à ses prestataires techniques strictement habilités à intervenir dans
+              le cadre du fonctionnement du site.
+            </p>
+
+            <p>Selon les services utilisés, cela peut inclure notamment :</p>
+
+            <ul class="privacy-list">
+              <li>l’hébergement du site ;</li>
+              <li>l’hébergement des données applicatives ;</li>
+              <li>l’envoi d’emails transactionnels ;</li>
+              <li>la gestion du paiement sécurisé ;</li>
+              <li>les outils d’authentification et d’accès aux espaces privés.</li>
+            </ul>
+
+            <p>
+              Les données ne sont ni vendues ni cédées à des tiers à des fins commerciales.
+            </p>
+          </section>
+
+          <section class="privacy-section" id="duree">
+            <h2>6. Durée de conservation</h2>
+            <p>
+              Les données personnelles sont conservées pendant une durée proportionnée à la finalité
+              de leur traitement, puis supprimées ou archivées selon les obligations légales applicables.
+            </p>
+
+            <ul class="privacy-list">
+              <li><strong>Demandes de contact :</strong> jusqu’à [À REMPLACER, ex. 12 mois] après le dernier échange ;</li>
+              <li><strong>Réservations / dossiers / candidatures :</strong> pendant la durée nécessaire au suivi administratif et commercial ;</li>
+              <li><strong>Données liées aux obligations comptables ou légales :</strong> selon les durées imposées par la réglementation ;</li>
+              <li><strong>Données techniques de session :</strong> durée limitée au fonctionnement ou à la sécurité du service.</li>
+            </ul>
+          </section>
+
+          <section class="privacy-section" id="droits">
+            <h2>7. Vos droits</h2>
+            <p>
+              Conformément à la réglementation applicable, vous disposez notamment des droits suivants :
+            </p>
+
+            <ul class="privacy-list">
+              <li>droit d’accès à vos données ;</li>
+              <li>droit de rectification ;</li>
+              <li>droit d’effacement ;</li>
+              <li>droit à la limitation du traitement ;</li>
+              <li>droit d’opposition ;</li>
+              <li>droit à la portabilité lorsque celui-ci est applicable ;</li>
+              <li>droit de retirer votre consentement à tout moment lorsque le traitement repose sur celui-ci.</li>
+            </ul>
+
+            <p>
+              Vous pouvez exercer ces droits en écrivant à l’adresse suivante :
+              <strong>[À REMPLACER]</strong>.
+            </p>
+
+            <p>
+              En cas de difficulté non résolue, vous pouvez également introduire une réclamation
+              auprès de la CNIL.
+            </p>
+          </section>
+
+          <section class="privacy-section" id="cookies">
+            <h2>8. Cookies et mesure d’audience</h2>
+            <p>
+              Le site peut utiliser des cookies ou technologies similaires nécessaires à son bon
+              fonctionnement, à la sécurité des sessions ou à la mesure d’audience.
+            </p>
+
+            <p>
+              Si des outils statistiques ou publicitaires sont utilisés, une information claire
+              devra être affichée et, lorsque nécessaire, votre consentement devra être recueilli
+              avant leur dépôt.
+            </p>
+
+            <div class="privacy-highlight">
+              <strong>À adapter :</strong> si tu ajoutes Google Analytics, Meta Pixel, Google Ads,
+              hotjar ou tout autre outil de tracking, il faudra mettre à jour cette section
+              et prévoir un bandeau cookies conforme.
+            </div>
+          </section>
+
+          <section class="privacy-section" id="contact">
+            <h2>9. Contact</h2>
+            <p>
+              Pour toute question relative à la présente politique de confidentialité
+              ou à vos données personnelles, vous pouvez écrire à :
+              <strong>[adresse email à remplacer]</strong>.
+            </p>
+
+            <p>
+              Dernière mise à jour : <strong>[date à remplacer]</strong>
+            </p>
+          </section>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container site-footer__grid">
+      <div class="site-footer__brand">
+        <strong>VITAL PROTECT</strong>
+        <p>
+          Une méthode structurée de sécurité personnelle fondée sur la prévention, l’évitement,
+          la réaction réaliste, la pédagogie progressive et la certification des formateurs.
+        </p>
+      </div>
+
+      <div class="site-footer__links">
+        <a href="/methode.html">La méthode</a>
+        <a href="/entreprises.html">Entreprises</a>
+        <a href="/devenir-formateur.html">Devenir formateur</a>
+        <a href="/faq.html">FAQ</a>
+        <a href="/contact.html">Contact</a>
+        <a href="/mentions-legales.html">Mentions légales</a>
+        <a href="/politique-confidentialite.html">Confidentialité</a>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
