@@ -3,7 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Vital Protect — La méthode</title>
+  <title>Le standard Vital Protect — Référentiel structuré de sécurité personnelle</title>
+  <meta
+    name="description"
+    content="Découvrez le standard Vital Protect : un référentiel structuré de sécurité personnelle fondé sur la prévention, l’évitement, la lecture des situations, la réaction réaliste et une transmission encadrée."
+  />
 
   <link rel="stylesheet" href="/styles/tokens.css" />
   <link rel="stylesheet" href="/styles/base.css" />
@@ -35,7 +39,7 @@
 
     .method-hero__lead {
       margin: 0;
-      max-width: 60ch;
+      max-width: 62ch;
       color: var(--vp-text-invert-soft);
       font-size: 1.05rem;
       line-height: 1.85;
@@ -101,8 +105,34 @@
       pointer-events: none;
     }
 
+    .method-hero__note {
+      position: absolute;
+      left: 22px;
+      right: 22px;
+      bottom: 22px;
+      z-index: 2;
+      background: rgba(255,255,255,0.94);
+      border: 1px solid rgba(13, 27, 42, 0.08);
+      border-radius: 22px;
+      padding: 18px 20px;
+      box-shadow: var(--vp-shadow-lg);
+    }
+
+    .method-hero__note strong {
+      display: block;
+      color: var(--vp-navy-850);
+      font-size: 1.06rem;
+      margin-bottom: 8px;
+    }
+
+    .method-hero__note span {
+      color: var(--vp-text-soft);
+      line-height: 1.7;
+      font-size: 0.98rem;
+    }
+
     .section-intro {
-      max-width: 760px;
+      max-width: 820px;
     }
 
     .pillars-grid {
@@ -140,6 +170,33 @@
     }
 
     .pillar-card p {
+      margin: 0;
+      color: var(--vp-text-soft);
+      line-height: 1.75;
+    }
+
+    .standard-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+      margin-top: 24px;
+    }
+
+    .standard-card {
+      background: white;
+      border: 1px solid rgba(13, 27, 42, 0.06);
+      border-radius: var(--vp-radius-md);
+      box-shadow: var(--vp-shadow-md);
+      padding: 24px;
+    }
+
+    .standard-card h3 {
+      margin: 0 0 12px;
+      color: var(--vp-navy-850);
+      font-size: 1.14rem;
+    }
+
+    .standard-card p {
       margin: 0;
       color: var(--vp-text-soft);
       line-height: 1.75;
@@ -282,6 +339,33 @@
       color: var(--vp-navy-850);
     }
 
+    .governance-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+      margin-top: 24px;
+    }
+
+    .governance-card {
+      background: white;
+      border: 1px solid rgba(13, 27, 42, 0.06);
+      border-radius: var(--vp-radius-md);
+      box-shadow: var(--vp-shadow-md);
+      padding: 24px;
+    }
+
+    .governance-card h3 {
+      margin: 0 0 12px;
+      color: var(--vp-navy-850);
+      font-size: 1.14rem;
+    }
+
+    .governance-card p {
+      margin: 0;
+      color: var(--vp-text-soft);
+      line-height: 1.75;
+    }
+
     .difference-grid {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -342,7 +426,9 @@
       .timeline-grid,
       .difference-grid,
       .faq-grid,
-      .pillars-grid {
+      .pillars-grid,
+      .standard-grid,
+      .governance-grid {
         grid-template-columns: 1fr;
       }
 
@@ -373,6 +459,11 @@
       .method-hero__actions {
         flex-direction: column;
       }
+
+      .method-hero__note {
+        position: static;
+        margin: 16px;
+      }
     }
   </style>
 </head>
@@ -384,17 +475,18 @@
         <img src="/logo.png" alt="Vital Protect" />
         <div class="site-brand__text">
           <div class="site-brand__title">VITAL PROTECT</div>
-          <div class="site-brand__subtitle">Méthode de sécurité personnelle</div>
+          <div class="site-brand__subtitle">Standard structuré de sécurité personnelle</div>
         </div>
       </a>
 
       <nav class="site-nav">
         <a href="/index.html">Accueil</a>
-        <a href="/methode.html" class="active">La méthode</a>
-        <a href="/index.html#stages">Nos stages</a>
+        <a href="/methode.html" class="active">Le standard</a>
+        <a href="/index.html#stages">Stages</a>
         <a href="/entreprises.html">Entreprises</a>
+        <a href="/devenir-formateur.html">Réseau formateur</a>
+        <a href="/faq.html">FAQ</a>
         <a href="/contact.html">Contact</a>
-        <a href="/devenir-formateur.html">Devenir formateur</a>
         <a href="/formateur-login.html" class="nav-cta">Espace formateur</a>
       </nav>
     </div>
@@ -404,28 +496,28 @@
     <section class="hero-shell method-hero">
       <div class="container method-hero__grid">
         <div class="glass-panel method-hero__copy">
-          <div class="eyebrow eyebrow--invert">Une logique claire • Une progression réaliste • Une pédagogie encadrée</div>
+          <div class="eyebrow eyebrow--invert">Référentiel • Transmission • Certification par module • Cohérence pédagogique</div>
 
-          <h1 class="method-hero__title">Une méthode pensée pour le réel</h1>
+          <h1 class="method-hero__title">Le standard Vital Protect</h1>
 
           <p class="method-hero__lead">
-            Vital Protect ne repose pas sur une logique spectaculaire ou sur des automatismes artificiels.
-            La méthode a été conçue pour transmettre des repères simples, concrets et applicables :
-            comprendre une situation, prévenir l’escalade, gérer la distance, réagir avec cohérence
-            et retrouver de la maîtrise.
+            Vital Protect n’a pas été conçu comme une simple suite de techniques ou comme
+            une offre isolée de stages. Le projet vise à développer un standard structuré
+            de sécurité personnelle, fondé sur une logique claire de prévention,
+            de lecture des situations, d’évitement, de réaction réaliste et de transmission encadrée.
           </p>
 
           <div class="method-hero__points">
-            <div class="method-hero__point">Prévention</div>
-            <div class="method-hero__point">Observation</div>
-            <div class="method-hero__point">Évitement</div>
-            <div class="method-hero__point">Réaction simple</div>
-            <div class="method-hero__point">Cadre sécurisé</div>
+            <div class="method-hero__point">Référentiel structuré</div>
+            <div class="method-hero__point">Cadre pédagogique</div>
+            <div class="method-hero__point">Transmission cohérente</div>
+            <div class="method-hero__point">Certification par module</div>
+            <div class="method-hero__point">Maintien de niveau</div>
           </div>
 
           <div class="method-hero__actions">
             <a href="/index.html#stages" class="btn btn-primary">Voir les stages</a>
-            <a href="/contact.html" class="btn btn-secondary">Nous contacter</a>
+            <a href="/devenir-formateur.html" class="btn btn-secondary">Voir le réseau formateur</a>
           </div>
         </div>
 
@@ -435,6 +527,15 @@
             alt="Mise en situation encadrée par un formateur Vital Protect"
           />
           <div class="method-hero__overlay"></div>
+
+          <div class="method-hero__note">
+            <strong>La méthode n’a de valeur que si elle reste transmissible</strong>
+            <span>
+              La logique Vital Protect repose sur une question simple :
+              comment garantir qu’un contenu reste cohérent, lisible et sérieux,
+              quel que soit l’intervenant certifié qui le transmet ?
+            </span>
+          </div>
         </aside>
       </div>
     </section>
@@ -442,13 +543,14 @@
     <section>
       <div class="container section-intro">
         <div class="section-head">
-          <span class="eyebrow">Fondements</span>
-          <h2>La sécurité personnelle commence avant le contact</h2>
+          <span class="eyebrow">Fondement</span>
+          <h2>Une logique de sécurité personnelle qui commence avant le contact</h2>
           <p>
-            La méthode Vital Protect s’appuie sur une idée simple : la meilleure réponse
-            n’est pas toujours physique. Elle consiste d’abord à mieux lire, mieux anticiper,
-            mieux se positionner et mieux décider. Quand une réaction devient nécessaire,
-            elle doit rester accessible, réaliste et cohérente avec le contexte.
+            Le standard Vital Protect repose sur une idée simple :
+            la meilleure réponse n’est pas toujours physique, et elle n’est presque jamais improvisée.
+            Elle commence par la lecture des situations, la réduction de l’exposition,
+            le bon positionnement, la compréhension des dynamiques de tension
+            et la capacité à réagir avec cohérence quand cela devient nécessaire.
           </p>
         </div>
       </div>
@@ -458,10 +560,10 @@
       <div class="container">
         <div class="section-head section-head--center">
           <span class="eyebrow">Les 5 piliers</span>
-          <h2>Une architecture claire pour apprendre utile</h2>
+          <h2>Une architecture claire pour apprendre utile et transmettre proprement</h2>
           <p>
-            Chaque pilier complète les autres pour créer une progression lisible, applicable
-            au quotidien comme dans des contextes professionnels plus exposés.
+            Les piliers Vital Protect ne sont pas des slogans. Ils structurent le référentiel
+            et donnent un cadre commun à la transmission.
           </p>
         </div>
 
@@ -487,13 +589,53 @@
           <article class="pillar-card">
             <div class="pillar-number">4</div>
             <h3>Réaction</h3>
-            <p>Utiliser des réponses courtes, accessibles et réalistes quand une action devient nécessaire.</p>
+            <p>Utiliser des réponses courtes, accessibles et réalistes lorsqu’une action devient nécessaire.</p>
           </article>
 
           <article class="pillar-card">
             <div class="pillar-number">5</div>
-            <h3>Après-conflit</h3>
-            <p>Se sécuriser, alerter, protéger les autres et reprendre rapidement une capacité de décision.</p>
+            <h3>Après-situation</h3>
+            <p>Se sécuriser, alerter, protéger les autres et retrouver rapidement une capacité de décision.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="container">
+        <div class="section-head section-head--center">
+          <span class="eyebrow">Pourquoi parler de standard</span>
+          <h2>Parce qu’une méthode crédible doit pouvoir être transmise avec cohérence</h2>
+          <p>
+            Si la valeur d’un dispositif repose uniquement sur la personne qui l’anime,
+            il reste fragile. Vital Protect cherche au contraire à développer un cadre
+            stable, transmissible et contrôlable.
+          </p>
+        </div>
+
+        <div class="standard-grid">
+          <article class="standard-card">
+            <h3>Un référentiel commun</h3>
+            <p>
+              Les contenus s’inscrivent dans une logique identifiable, avec un vocabulaire,
+              une progression et des objectifs communs.
+            </p>
+          </article>
+
+          <article class="standard-card">
+            <h3>Une transmission maîtrisée</h3>
+            <p>
+              La qualité d’intervention ne doit pas dépendre d’un style personnel aléatoire,
+              mais d’un cadre clair et d’exigences explicites.
+            </p>
+          </article>
+
+          <article class="standard-card">
+            <h3>Une crédibilité institutionnalisable</h3>
+            <p>
+              Plus le cadre est lisible, plus il devient possible de le faire reconnaître,
+              comprendre et adopter dans des contextes professionnels et durables.
+            </p>
           </article>
         </div>
       </div>
@@ -502,37 +644,37 @@
     <section>
       <div class="container method-split">
         <div class="soft-card method-panel">
-          <span class="eyebrow">Ce que la méthode transmet</span>
-          <h3>Des repères concrets, pas un imaginaire de combat</h3>
+          <span class="eyebrow">Ce que le standard transmet</span>
+          <h3>Des repères concrets, pas un imaginaire d’affrontement</h3>
           <p>
-            Vital Protect ne cherche pas à transformer les participants en spécialistes de l’affrontement.
-            L’objectif est de leur transmettre des outils lisibles et utiles pour mieux se protéger,
-            mieux décider et mieux réagir dans des situations réelles.
+            Vital Protect ne cherche pas à transformer les participants en spécialistes du combat.
+            Le but est de transmettre une culture structurée de sécurité personnelle,
+            avec des outils lisibles et réellement mobilisables.
           </p>
 
           <div class="bullet-list">
             <div class="bullet-item"><strong>Comprendre :</strong> savoir lire une situation avant qu’elle ne dégénère.</div>
             <div class="bullet-item"><strong>Prévenir :</strong> adopter des attitudes qui réduisent le risque et l’exposition.</div>
             <div class="bullet-item"><strong>Se positionner :</strong> gérer l’espace, la distance et la posture.</div>
-            <div class="bullet-item"><strong>Réagir utile :</strong> appliquer des réponses simples quand il n’y a plus d’autre option.</div>
+            <div class="bullet-item"><strong>Réagir utile :</strong> appliquer des réponses simples lorsqu’il n’y a plus d’autre option.</div>
             <div class="bullet-item"><strong>Reprendre la main :</strong> sécuriser, alerter et sortir du moment de tension.</div>
           </div>
         </div>
 
         <div class="soft-card method-panel">
-          <span class="eyebrow">Ce que la méthode évite</span>
-          <h3>Pas de folklore, pas de brutalité, pas de confusion</h3>
+          <span class="eyebrow">Ce que le standard refuse</span>
+          <h3>Pas de folklore, pas de confusion, pas de surpromesse</h3>
           <p>
-            La méthode refuse les démonstrations inutiles, les scénarios exagérés et les réponses
-            techniquement complexes mais difficilement mobilisables sous stress. La priorité reste
-            toujours l’utilité réelle, la simplicité d’exécution et la sécurité pédagogique.
+            Le standard Vital Protect refuse les démonstrations inutiles,
+            les scénarios artificiels, les réponses techniquement complexes
+            mais difficilement mobilisables sous stress, et les promesses excessives.
           </p>
 
           <div class="bullet-list">
-            <div class="bullet-item"><strong>Pas de spectacle :</strong> on travaille l’efficacité, pas l’impression.</div>
+            <div class="bullet-item"><strong>Pas de spectacle :</strong> on travaille l’utilité réelle, pas l’impression produite.</div>
             <div class="bullet-item"><strong>Pas d’escalade inutile :</strong> la prévention et l’évitement restent prioritaires.</div>
-            <div class="bullet-item"><strong>Pas de contenu confus :</strong> chaque apprentissage a une logique claire.</div>
-            <div class="bullet-item"><strong>Pas de surpromesse :</strong> on transmet des outils réalistes, pas une illusion de contrôle absolu.</div>
+            <div class="bullet-item"><strong>Pas de transmission confuse :</strong> chaque apprentissage doit avoir une logique claire.</div>
+            <div class="bullet-item"><strong>Pas d’illusion :</strong> on transmet des repères réalistes, pas un fantasme de contrôle absolu.</div>
           </div>
         </div>
       </div>
@@ -541,11 +683,11 @@
     <section>
       <div class="container">
         <div class="section-head section-head--center">
-          <span class="eyebrow">Déroulé</span>
-          <h2>Une progression pédagogique en 4 temps</h2>
+          <span class="eyebrow">Déroulé pédagogique</span>
+          <h2>Une progression stable en 4 temps</h2>
           <p>
-            Les contenus Vital Protect suivent un fil conducteur stable pour faciliter la compréhension,
-            la mémorisation et la mise en application.
+            Les contenus Vital Protect suivent un fil conducteur constant.
+            Cette stabilité permet une meilleure appropriation et renforce la cohérence de transmission.
           </p>
         </div>
 
@@ -553,19 +695,19 @@
           <article class="timeline-card">
             <span class="timeline-step">Étape 1</span>
             <h3>Explication</h3>
-            <p>On pose le contexte, le pourquoi, les erreurs fréquentes et la logique de la réponse proposée.</p>
+            <p>Le contexte, la logique, les erreurs fréquentes et la finalité de la réponse sont posés clairement.</p>
           </article>
 
           <article class="timeline-card">
             <span class="timeline-step">Étape 2</span>
             <h3>Démonstration</h3>
-            <p>Le formateur montre le principe de manière lisible, sans mise en scène inutile ni surcharge technique.</p>
+            <p>Le formateur montre le principe sans surcharge technique ni mise en scène inutile.</p>
           </article>
 
           <article class="timeline-card">
             <span class="timeline-step">Étape 3</span>
             <h3>Pratique guidée</h3>
-            <p>Les participants répètent progressivement avec corrections, adaptation et vigilance sur la sécurité.</p>
+            <p>Les participants répètent progressivement avec corrections, adaptation et vigilance sécuritaire.</p>
           </article>
 
           <article class="timeline-card">
@@ -588,19 +730,18 @@
 
         <div class="card pedagogy-content">
           <span class="eyebrow">Pédagogie</span>
-          <h2>Une méthode progressive, rassurante et structurée</h2>
+          <h2>Une transmission progressive, rassurante et structurée</h2>
           <p>
-            Le cadre pédagogique Vital Protect est pensé pour rendre l’apprentissage lisible et sécurisant.
-            Les participants savent ce qu’ils apprennent, pourquoi ils l’apprennent et comment l’utiliser.
-            Cette clarté renforce l’appropriation et évite l’effet de confusion souvent présent dans les
-            approches trop techniques ou trop démonstratives.
+            Le cadre pédagogique Vital Protect vise à rendre l’apprentissage compréhensible,
+            sécurisant et transmissible. Les participants savent ce qu’ils apprennent,
+            pourquoi ils l’apprennent et dans quelle logique cela s’inscrit.
           </p>
 
           <div class="pedagogy-points">
             <div class="pedagogy-point"><strong>Comprendre avant d’agir :</strong> l’intelligence de situation précède toujours l’action.</div>
-            <div class="pedagogy-point"><strong>Apprendre étape par étape :</strong> la progression se fait sans brutalité ni surcharge.</div>
-            <div class="pedagogy-point"><strong>Rester accessible :</strong> la méthode s’adresse autant au grand public qu’aux milieux professionnels.</div>
-            <div class="pedagogy-point"><strong>Encadrer sérieusement :</strong> la sécurité, le respect du public et la cohérence pédagogique restent prioritaires.</div>
+            <div class="pedagogy-point"><strong>Apprendre étape par étape :</strong> la progression évite la brutalité et la surcharge.</div>
+            <div class="pedagogy-point"><strong>Rester accessible :</strong> la méthode s’adresse autant au grand public qu’aux environnements professionnels.</div>
+            <div class="pedagogy-point"><strong>Encadrer sérieusement :</strong> la sécurité, le respect du public et la cohérence restent prioritaires.</div>
           </div>
         </div>
       </div>
@@ -609,28 +750,70 @@
     <section>
       <div class="container">
         <div class="section-head">
-          <span class="eyebrow">Ce qui distingue Vital Protect</span>
-          <h2>Une logique de protection, pas une logique d’affrontement</h2>
+          <span class="eyebrow">Gouvernance de transmission</span>
+          <h2>Le rôle du formateur s’inscrit dans un cadre défini</h2>
           <p>
-            La méthode se distingue par son positionnement clair : transmettre une culture utile de la sécurité
-            personnelle plutôt qu’un empilement de techniques impressionnantes mais difficilement mobilisables.
+            La question n’est pas seulement “qui est le formateur ?”.
+            La vraie question est : dans quel cadre intervient-il, sur quel périmètre,
+            avec quelle validation et dans quelle cohérence avec le standard ?
+          </p>
+        </div>
+
+        <div class="governance-grid">
+          <article class="governance-card">
+            <h3>Certification par module</h3>
+            <p>
+              Un formateur n’est pas validé de manière vague ou globale :
+              il est certifié pour transmettre des modules déterminés.
+            </p>
+          </article>
+
+          <article class="governance-card">
+            <h3>Cadre de transmission</h3>
+            <p>
+              Les contenus, la logique pédagogique, les points de vigilance
+              et les objectifs restent encadrés par le standard Vital Protect.
+            </p>
+          </article>
+
+          <article class="governance-card">
+            <h3>Maintien de cohérence</h3>
+            <p>
+              Affiliation, suivi, maintien de certification et continuité des exigences
+              servent à préserver la qualité du dispositif dans le temps.
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow">Ce qui distingue Vital Protect</span>
+          <h2>Une logique de protection structurée, pas une addition de techniques</h2>
+          <p>
+            Le standard Vital Protect se distingue par son ambition :
+            développer une culture de sécurité personnelle cohérente,
+            transmissible et crédible plutôt qu’un empilement de gestes impressionnants
+            mais instables dans leur transmission.
           </p>
         </div>
 
         <div class="difference-grid">
           <article class="difference-card">
-            <h3>Une lecture globale de la situation</h3>
-            <p>La méthode prend en compte le contexte, l’espace, le stress, l’intention, les options de sortie et l’après-situation.</p>
+            <h3>Une lecture globale des situations</h3>
+            <p>Le standard prend en compte le contexte, l’espace, le stress, l’intention, les options de sortie et l’après-situation.</p>
           </article>
 
           <article class="difference-card">
-            <h3>Une transmission standardisée</h3>
-            <p>Les contenus suivent une architecture cohérente pour garantir une qualité de transmission stable entre les formateurs certifiés.</p>
+            <h3>Une transmission structurée</h3>
+            <p>Les contenus suivent une architecture cohérente pour garantir une qualité de transmission plus stable entre les intervenants certifiés.</p>
           </article>
 
           <article class="difference-card">
-            <h3>Une approche réaliste</h3>
-            <p>Les réponses proposées sont pensées pour être comprises, retenues et utilisées dans la vraie vie.</p>
+            <h3>Une logique institutionnalisable</h3>
+            <p>Le projet vise à construire un cadre compréhensible, crédible et durable, compatible avec des logiques de réseau et de professionnalisation.</p>
           </article>
         </div>
       </div>
@@ -640,31 +823,31 @@
       <div class="container">
         <div class="section-head section-head--center">
           <span class="eyebrow">Questions fréquentes</span>
-          <h2>Ce qu’il faut comprendre sur la méthode</h2>
+          <h2>Ce qu’il faut comprendre sur le standard Vital Protect</h2>
           <p>
-            Voici quelques réponses rapides pour clarifier l’esprit de l’approche Vital Protect.
+            Voici quelques réponses rapides pour clarifier la logique de l’approche.
           </p>
         </div>
 
         <div class="faq-grid">
           <article class="faq-card">
-            <h3>Est-ce une méthode réservée aux sportifs ?</h3>
-            <p>Non. Elle a été pensée pour rester accessible, progressive et applicable à un public large.</p>
+            <h3>Vital Protect repose-t-il sur une seule personne ?</h3>
+            <p>Non. L’objectif est précisément de construire un cadre qui dépasse la seule logique d’incarnation individuelle.</p>
           </article>
 
           <article class="faq-card">
-            <h3>Est-ce une méthode “de combat” ?</h3>
-            <p>Non. Elle privilégie la prévention, l’évitement, la distance et les réponses simples adaptées au réel.</p>
+            <h3>Pourquoi parler de standard plutôt que simplement de méthode ?</h3>
+            <p>Parce qu’il s’agit aussi d’organiser la transmission, la certification, la cohérence et le maintien de qualité.</p>
           </article>
 
           <article class="faq-card">
-            <h3>Pourquoi cette approche est-elle plus rassurante ?</h3>
-            <p>Parce qu’elle donne une logique claire, évite la surcharge technique et cadre l’apprentissage avec sérieux.</p>
+            <h3>Un formateur certifié peut-il tout transmettre ?</h3>
+            <p>Non. La certification Vital Protect est liée à des modules précis et non à une validation globale abstraite.</p>
           </article>
 
           <article class="faq-card">
-            <h3>Peut-elle s’adapter aux professionnels ?</h3>
-            <p>Oui. La structure de la méthode permet une adaptation aux métiers exposés, aux équipes et aux structures accueillant du public.</p>
+            <h3>Le standard peut-il s’adapter à différents publics ?</h3>
+            <p>Oui. Sa structure permet une adaptation au grand public, aux professionnels et à des contextes métier exposés.</p>
           </article>
         </div>
       </div>
@@ -673,16 +856,16 @@
     <section>
       <div class="container">
         <div class="cta-panel">
-          <h2>Découvrir la méthode sur le terrain</h2>
+          <h2>Découvrir le standard sur le terrain</h2>
           <p>
-            La meilleure manière de comprendre Vital Protect reste l’expérience d’un stage encadré,
-            structuré et progressif. Consultez les sessions disponibles ou contactez-nous pour en savoir plus.
+            La meilleure manière de comprendre Vital Protect reste l’expérience d’un stage encadré
+            ou l’étude du parcours formateur dans sa logique complète.
           </p>
 
           <div class="cta-actions">
             <a href="/index.html#stages" class="btn btn-dark">Voir les stages</a>
+            <a href="/devenir-formateur.html" class="btn btn-outline">Voir le réseau formateur</a>
             <a href="/contact.html" class="btn btn-outline">Nous contacter</a>
-            <a href="/devenir-formateur.html" class="btn btn-outline">Devenir formateur</a>
           </div>
         </div>
       </div>
@@ -694,17 +877,22 @@
       <div class="site-footer__brand">
         <strong>VITAL PROTECT</strong>
         <p>
-          Une méthode structurée de sécurité personnelle fondée sur la prévention, l’évitement,
-          la réaction réaliste, la pédagogie progressive et la certification des formateurs.
+          Vital Protect développe un standard structuré de sécurité personnelle
+          fondé sur la prévention, l’évitement, la lecture des situations,
+          la réaction réaliste, la transmission encadrée et la certification par module.
         </p>
       </div>
 
       <div class="site-footer__links">
-        <a href="/methode.html">La méthode</a>
+        <a href="/index.html">Accueil</a>
+        <a href="/methode.html">Le standard</a>
         <a href="/entreprises.html">Entreprises</a>
-        <a href="/devenir-formateur.html">Devenir formateur</a>
-        <a href="/formateur-login.html">Espace formateur</a>
-        <a href="/admin-login.html">Admin</a>
+        <a href="/devenir-formateur.html">Réseau formateur</a>
+        <a href="/faq.html">FAQ</a>
+        <a href="/contact.html">Contact</a>
+        <a href="/mentions-legales.html">Mentions légales</a>
+        <a href="/politique-confidentialite.html">Confidentialité</a>
+        <a href="/cgv.html">CGV</a>
       </div>
     </div>
   </footer>
