@@ -3,7 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Entreprises — Formation prévention des tensions et sécurité relationnelle | Vital Protect</title>
+  <title>Entreprises — Prévention des tensions, posture professionnelle et sécurité relationnelle | Vital Protect</title>
+  <meta
+    name="description"
+    content="Vital Protect propose aux entreprises et structures exposées une approche structurée de prévention des tensions, posture professionnelle, gestion de l’escalade et sécurité relationnelle."
+  />
 
   <link rel="stylesheet" href="/styles/tokens.css" />
   <link rel="stylesheet" href="/styles/base.css" />
@@ -30,7 +34,7 @@
       font-size: clamp(2.4rem, 5vw, 4.4rem);
       line-height: 0.97;
       color: white;
-      max-width: 11ch;
+      max-width: 10ch;
     }
 
     .enterprise-hero__lead {
@@ -126,12 +130,63 @@
       font-size: 0.98rem;
     }
 
+    .positioning-section {
+      padding-top: 0;
+      margin-top: -8px;
+    }
+
+    .positioning-panel {
+      padding: 34px;
+    }
+
+    .positioning-panel h2 {
+      margin: 0 0 12px;
+      color: var(--vp-navy-850);
+      font-size: clamp(1.9rem, 3vw, 2.5rem);
+      line-height: 1.08;
+    }
+
+    .positioning-panel p {
+      margin: 0;
+      color: var(--vp-text-soft);
+      line-height: 1.8;
+      max-width: 880px;
+    }
+
+    .positioning-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin-top: 20px;
+    }
+
+    .positioning-card {
+      background: rgba(255,255,255,0.94);
+      border: 1px solid rgba(13, 27, 42, 0.06);
+      border-radius: 20px;
+      box-shadow: var(--vp-shadow-md);
+      padding: 22px;
+    }
+
+    .positioning-card h3 {
+      margin: 0 0 10px;
+      color: var(--vp-navy-850);
+      font-size: 1.12rem;
+    }
+
+    .positioning-card p {
+      margin: 0;
+      color: var(--vp-text-soft);
+      line-height: 1.75;
+    }
+
     .problem-grid,
     .benefit-grid,
     .format-grid,
     .sector-grid,
     .testimonial-grid,
-    .faq-grid {
+    .faq-grid,
+    .authority-grid {
       display: grid;
       gap: 18px;
     }
@@ -160,6 +215,10 @@
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
+    .authority-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
     .problem-card,
     .benefit-card,
     .format-card,
@@ -168,7 +227,8 @@
     .faq-card,
     .process-card,
     .contact-panel,
-    .info-panel {
+    .info-panel,
+    .authority-card {
       background: white;
       border: 1px solid rgba(13, 27, 42, 0.06);
       border-radius: var(--vp-radius-md);
@@ -184,7 +244,8 @@
     .faq-card h3,
     .process-card h3,
     .contact-panel h3,
-    .info-panel h3 {
+    .info-panel h3,
+    .authority-card h3 {
       margin: 0 0 10px;
       color: var(--vp-navy-850);
       font-size: 1.12rem;
@@ -198,7 +259,8 @@
     .faq-card p,
     .process-card p,
     .contact-panel p,
-    .info-panel p {
+    .info-panel p,
+    .authority-card p {
       margin: 0;
       color: var(--vp-text-soft);
       line-height: 1.75;
@@ -331,6 +393,7 @@
 
     @media (max-width: 1180px) {
       .enterprise-hero__grid,
+      .positioning-grid,
       .problem-grid,
       .benefit-grid,
       .format-grid,
@@ -339,7 +402,8 @@
       .split-panel,
       .process-grid,
       .contact-layout,
-      .faq-grid {
+      .faq-grid,
+      .authority-grid {
         grid-template-columns: 1fr;
       }
 
@@ -354,6 +418,7 @@
       }
 
       .enterprise-hero__copy,
+      .positioning-panel,
       .problem-card,
       .benefit-card,
       .format-card,
@@ -362,7 +427,8 @@
       .faq-card,
       .process-card,
       .contact-panel,
-      .info-panel {
+      .info-panel,
+      .authority-card {
         padding: 24px;
       }
 
@@ -394,17 +460,18 @@
         <img src="/logo.png" alt="Vital Protect" />
         <div class="site-brand__text">
           <div class="site-brand__title">VITAL PROTECT</div>
-          <div class="site-brand__subtitle">Méthode de sécurité personnelle</div>
+          <div class="site-brand__subtitle">Standard de sécurité personnelle</div>
         </div>
       </a>
 
       <nav class="site-nav">
         <a href="/index.html">Accueil</a>
-        <a href="/methode.html">La méthode</a>
+        <a href="/methode.html">Le standard</a>
         <a href="/index.html#stages">Nos stages</a>
         <a href="/entreprises.html" class="active">Entreprises</a>
-        <a href="/contact.html">Contact</a>
         <a href="/devenir-formateur.html">Devenir formateur</a>
+        <a href="/faq.html">FAQ</a>
+        <a href="/contact.html">Contact</a>
         <a href="/formateur-login.html" class="nav-cta">Espace formateur</a>
       </nav>
     </div>
@@ -414,21 +481,22 @@
     <section class="hero-shell enterprise-hero">
       <div class="container enterprise-hero__grid">
         <div class="glass-panel enterprise-hero__copy">
-          <div class="eyebrow eyebrow--invert">Offre entreprises • Prévention • Gestion des tensions • Intervention sur mesure</div>
+          <div class="eyebrow eyebrow--invert">Entreprises • Prévention • Posture professionnelle • Gestion de l’escalade</div>
 
-          <h1 class="enterprise-hero__title">Formation prévention des tensions et sécurité relationnelle en contexte professionnel</h1>
+          <h1 class="enterprise-hero__title">Une approche structurée pour les contextes professionnels exposés</h1>
 
           <p class="enterprise-hero__lead">
-            Pour entreprises, structures accueillant du public, équipes terrain et environnements exposés :
-            apprenez à mieux prévenir, désamorcer, gérer la distance, réduire l’escalade
-            et faire face avec plus de clarté dans des situations tendues.
+            Vital Protect propose aux entreprises, structures accueillant du public
+            et environnements professionnels sensibles une approche fondée sur la prévention,
+            la posture, la gestion des tensions, la réduction de l’escalade
+            et la sécurité relationnelle dans le réel.
           </p>
 
           <div class="enterprise-hero__proofs">
             <div class="enterprise-hero__proof">Prévention avant confrontation</div>
             <div class="enterprise-hero__proof">Adaptation métier</div>
-            <div class="enterprise-hero__proof">Intra / sur mesure</div>
-            <div class="enterprise-hero__proof">Devis sous 24/48h</div>
+            <div class="enterprise-hero__proof">Cadre pédagogique structuré</div>
+            <div class="enterprise-hero__proof">Intervention sur mesure</div>
           </div>
 
           <div class="enterprise-hero__actions">
@@ -445,14 +513,55 @@
           <div class="enterprise-hero__overlay"></div>
 
           <div class="enterprise-hero__note">
-            <strong>Une approche professionnelle, pas spectaculaire</strong>
+            <strong>Une offre pensée pour la crédibilité</strong>
             <span>
-              Vital Protect ne vise pas à “former au combat”.
-              L’objectif est de renforcer la prévention, la posture,
-              la gestion des tensions et la sécurité relationnelle dans le réel.
+              Vital Protect ne propose pas une logique de “combat en entreprise”.
+              L’objectif est de renforcer les repères, la posture, la prévention,
+              la lecture des situations et la qualité de réponse face aux tensions.
             </span>
           </div>
         </aside>
+      </div>
+    </section>
+
+    <section class="positioning-section">
+      <div class="container">
+        <div class="soft-card positioning-panel">
+          <h2>Pourquoi cette offre existe</h2>
+          <p>
+            Dans beaucoup de contextes professionnels, les équipes sont confrontées
+            à des tensions, des incivilités, des comportements agressifs,
+            des interactions dégradées ou des situations relationnelles instables.
+            Pourtant, la réponse proposée sur le marché oscille souvent entre discours flou,
+            surpromesse ou approche trop martiale. Vital Protect cherche au contraire
+            à proposer un cadre lisible, professionnel et structuré.
+          </p>
+
+          <div class="positioning-grid">
+            <article class="positioning-card">
+              <h3>Une logique de prévention et de posture</h3>
+              <p>
+                L’objectif n’est pas de “former au combat”, mais d’aider les équipes
+                à mieux lire une situation, mieux se positionner, mieux désamorcer
+                et mieux réagir quand la tension monte.
+              </p>
+            </article>
+
+            <article class="positioning-card">
+              <h3>Une logique de standard et de cohérence</h3>
+              <p>
+                L’offre entreprises s’inscrit dans le cadre plus large de Vital Protect :
+                une méthode, une pédagogie, des repères stables et une volonté
+                de transmission cohérente selon les contextes.
+              </p>
+            </article>
+          </div>
+
+          <div class="cta-actions" style="margin-top:22px;">
+            <a href="/methode.html" class="btn btn-dark">Voir le standard</a>
+            <a href="#contact-entreprise" class="btn btn-outline">Parler de votre contexte</a>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -460,11 +569,11 @@
       <div class="container">
         <div class="section-head section-head--center">
           <span class="eyebrow">Les problèmes rencontrés</span>
-          <h2>Des situations que beaucoup d’équipes vivent déjà</h2>
+          <h2>Des réalités que beaucoup d’équipes vivent déjà</h2>
           <p>
             Accueil du public, tension relationnelle, agressivité verbale, montée d’incivilités,
             pression terrain, difficulté à garder une posture claire : ces situations fragilisent
-            le travail quotidien et augmentent le stress des équipes.
+            le travail quotidien, augmentent le stress et exposent les équipes.
           </p>
         </div>
 
@@ -473,26 +582,26 @@
             <div class="icon-dot"></div>
             <h3>Agressivité verbale et incivilités</h3>
             <p>
-              Certaines équipes subissent des tensions récurrentes sans toujours savoir
-              comment garder une posture claire ni éviter l’escalade.
+              Certaines équipes sont confrontées à des interactions tendues sans toujours disposer
+              de repères concrets pour réduire l’escalade et tenir une posture adaptée.
             </p>
           </article>
 
           <article class="problem-card">
             <div class="icon-dot"></div>
-            <h3>Stress et manque de repères</h3>
+            <h3>Stress, flou, manque de cadre</h3>
             <p>
-              Sous pression, beaucoup de professionnels manquent de cadre pratique pour
-              lire une situation, se positionner et réagir simplement.
+              Sous pression, beaucoup de professionnels manquent de structure pratique
+              pour lire une situation, choisir une réponse et garder de la maîtrise.
             </p>
           </article>
 
           <article class="problem-card">
             <div class="icon-dot"></div>
-            <h3>Besoin d’un format réaliste</h3>
+            <h3>Besoin d’une réponse crédible</h3>
             <p>
-              Les structures ne cherchent pas du folklore martial, mais une réponse utile,
-              pédagogique, crédible et adaptée au terrain.
+              Les structures ne cherchent pas un folklore spectaculaire,
+              mais une réponse utile, professionnelle, pédagogique et adaptée au terrain.
             </p>
           </article>
         </div>
@@ -506,11 +615,11 @@
     <section>
       <div class="container">
         <div class="section-head section-head--center">
-          <span class="eyebrow">Ce que la formation change</span>
-          <h2>Des bénéfices concrets pour les équipes</h2>
+          <span class="eyebrow">Ce que l’intervention change</span>
+          <h2>Des bénéfices concrets pour les équipes et la structure</h2>
           <p>
-            L’objectif n’est pas d’impressionner. L’objectif est de donner des repères
-            utilisables, cohérents et immédiatement transposables dans le quotidien professionnel.
+            L’objectif n’est pas d’impressionner. L’objectif est de donner des repères utilisables,
+            cohérents et immédiatement transposables dans le quotidien professionnel.
           </p>
         </div>
 
@@ -518,24 +627,24 @@
           <article class="benefit-card">
             <h3>Mieux lire une situation</h3>
             <p>
-              Identifier plus tôt les signaux de tension, mieux comprendre l’environnement
-              et repérer les facteurs qui peuvent faire basculer une interaction.
+              Identifier plus tôt les signaux de tension, mieux comprendre l’environnement,
+              les dynamiques d’interaction et les risques de bascule.
             </p>
           </article>
 
           <article class="benefit-card">
             <h3>Réduire l’escalade</h3>
             <p>
-              Adopter une posture, une distance et des choix de placement qui diminuent
-              les risques de montée en tension.
+              Adopter une posture, une distance, un placement et une qualité d’intervention
+              qui diminuent les risques d’aggravation.
             </p>
           </article>
 
           <article class="benefit-card">
-            <h3>Réagir avec simplicité</h3>
+            <h3>Réagir avec cohérence</h3>
             <p>
-              Donner aux équipes des réponses réalistes, accessibles et non spectaculaires,
-              compatibles avec leurs contraintes métier.
+              Donner aux équipes des réponses réalistes, accessibles et compatibles
+              avec leurs contraintes métier et leur environnement de travail.
             </p>
           </article>
         </div>
@@ -549,36 +658,68 @@
     <section>
       <div class="container split-panel">
         <div class="soft-card info-panel">
-          <span class="eyebrow">Pour quels métiers ?</span>
-          <h3>Des contextes professionnels exposés à la tension</h3>
+          <span class="eyebrow">Pour quels contextes ?</span>
+          <h3>Des environnements où la posture et la prévention comptent réellement</h3>
           <p>
-            L’offre entreprises Vital Protect peut être adaptée à plusieurs environnements
-            confrontés à de la pression relationnelle, des incivilités ou des interactions sensibles.
+            L’offre entreprises Vital Protect s’adresse aux structures confrontées
+            à des environnements relationnels sensibles, à des tensions fréquentes
+            ou à des publics exposés.
           </p>
 
           <div class="bullet-list">
-            <div class="bullet-item"><strong>Accueil du public :</strong> guichets, réception, hall, secrétariat, permanences.</div>
-            <div class="bullet-item"><strong>Encadrement & terrain :</strong> managers, responsables, référents opérationnels, équipes mobiles.</div>
-            <div class="bullet-item"><strong>Secteurs exposés :</strong> santé, social, collectivités, retail, transport, sécurité privée, services.</div>
-            <div class="bullet-item"><strong>Structures sensibles :</strong> établissements confrontés à la tension, à l’agressivité ou à l’imprévu.</div>
+            <div class="bullet-item"><strong>Accueil du public :</strong> guichets, halls, secrétariats, permanences, services usagers.</div>
+            <div class="bullet-item"><strong>Encadrement & terrain :</strong> managers, responsables, référents, équipes mobiles, agents de proximité.</div>
+            <div class="bullet-item"><strong>Secteurs exposés :</strong> santé, social, collectivités, retail, transport, services, sécurité privée.</div>
+            <div class="bullet-item"><strong>Structures sensibles :</strong> établissements confrontés à l’incivilité, à la pression ou à l’imprévu.</div>
           </div>
         </div>
 
         <div class="soft-card info-panel">
-          <span class="eyebrow">Comment se déroule l’intervention ?</span>
-          <h3>Un format cadré, professionnel et adaptable</h3>
+          <span class="eyebrow">Comment l’offre se construit</span>
+          <h3>Une intervention cadrée, professionnelle et adaptable</h3>
           <p>
             Chaque intervention commence par un échange de cadrage,
-            puis s’adapte au contexte réel de votre structure,
-            au niveau d’exposition des équipes et à vos objectifs.
+            puis s’adapte à votre contexte, au niveau d’exposition réel des équipes
+            et à vos objectifs opérationnels.
           </p>
 
           <div class="bullet-list">
             <div class="bullet-item"><strong>Analyse du besoin :</strong> public concerné, situations vécues, objectifs, contraintes.</div>
-            <div class="bullet-item"><strong>Construction du format :</strong> sensibilisation, atelier pratique, module ciblé, intervention sur mesure.</div>
+            <div class="bullet-item"><strong>Construction du format :</strong> sensibilisation, atelier, module ciblé, format sur mesure.</div>
             <div class="bullet-item"><strong>Animation :</strong> déroulé progressif, pédagogie claire, mise en pratique encadrée.</div>
-            <div class="bullet-item"><strong>Suite possible :</strong> prolongement, autre public, approfondissement ou second module.</div>
+            <div class="bullet-item"><strong>Suite possible :</strong> prolongement, second niveau, autre public ou approfondissement ciblé.</div>
           </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow">Autorité & sérieux</span>
+          <h2>Ce qui doit être clair pour une structure qui nous mandate</h2>
+          <p>
+            Une structure ne cherche pas seulement “une animation”.
+            Elle cherche un cadre sérieux, une lisibilité de méthode
+            et une capacité réelle à intervenir avec cohérence.
+          </p>
+        </div>
+
+        <div class="authority-grid">
+          <article class="authority-card">
+            <h3>Une logique de méthode</h3>
+            <p>L’intervention s’inscrit dans un standard plus large, avec des repères, une progression et une cohérence de fond.</p>
+          </article>
+
+          <article class="authority-card">
+            <h3>Une logique de transmission</h3>
+            <p>La qualité ne repose pas seulement sur l’orateur, mais sur le cadre pédagogique, la clarté du contenu et la stabilité des repères transmis.</p>
+          </article>
+
+          <article class="authority-card">
+            <h3>Une logique de crédibilité</h3>
+            <p>Pour une entreprise, savoir qui intervient, dans quel cadre et avec quelle cohérence fait partie intégrante de la confiance accordée.</p>
+          </article>
         </div>
       </div>
     </section>
@@ -587,9 +728,10 @@
       <div class="container">
         <div class="section-head section-head--center">
           <span class="eyebrow">Formats possibles</span>
-          <h2>Intra, inter, sensibilisation ou sur mesure</h2>
+          <h2>Sensibilisation, atelier pratique ou intervention sur mesure</h2>
           <p>
-            Le format dépend de votre public, de votre niveau d’exposition et de votre objectif opérationnel.
+            Le format dépend de votre public, de votre niveau d’exposition
+            et de votre objectif opérationnel.
           </p>
         </div>
 
@@ -608,22 +750,22 @@
             <h3>Atelier pratique</h3>
             <p>
               Format plus appliqué pour travailler la posture, la distance,
-              les repères utiles et les réponses simples.
+              les repères utiles et les réponses simples dans un cadre maîtrisé.
             </p>
           </article>
 
           <article class="format-card">
             <div class="icon-dot"></div>
-            <h3>Parcours sur mesure</h3>
+            <h3>Intervention sur mesure</h3>
             <p>
-              Intervention construite selon vos équipes, vos contraintes terrain,
-              votre secteur et vos situations réelles.
+              Construction adaptée selon vos équipes, votre contexte métier,
+              vos contraintes et les situations réellement rencontrées.
             </p>
           </article>
         </div>
 
         <div class="timeline-cta" style="justify-content:center;">
-          <a href="#contact-entreprise" class="btn btn-dark">Demander un devis sous 24/48h</a>
+          <a href="#contact-entreprise" class="btn btn-dark">Demander un devis</a>
         </div>
       </div>
     </section>
@@ -632,16 +774,16 @@
       <div class="container">
         <div class="section-head section-head--center">
           <span class="eyebrow">Exemples de secteurs</span>
-          <h2>Des environnements où la posture et la prévention comptent vraiment</h2>
+          <h2>Des contextes où la qualité de posture fait la différence</h2>
           <p>
-            Voici quelques contextes dans lesquels l’approche Vital Protect peut être pertinente.
+            Voici quelques environnements dans lesquels l’approche Vital Protect peut être pertinente.
           </p>
         </div>
 
         <div class="sector-grid">
           <article class="sector-card">
             <h3>Collectivités</h3>
-            <p>Accueil, permanence, relation usager, environnement sensible.</p>
+            <p>Accueil, permanences, relation usager, environnement sensible.</p>
           </article>
 
           <article class="sector-card">
@@ -651,12 +793,12 @@
 
           <article class="sector-card">
             <h3>Retail & commerce</h3>
-            <p>Incivilités, conflits client, exposition au public.</p>
+            <p>Incivilités, tensions client, exposition au public.</p>
           </article>
 
           <article class="sector-card">
             <h3>Transport & mobilité</h3>
-            <p>Interaction terrain, pression temporelle, imprévu.</p>
+            <p>Interaction terrain, imprévu, pression temporelle et espace contraint.</p>
           </article>
         </div>
       </div>
@@ -682,13 +824,13 @@
           <article class="process-card">
             <div class="process-step">2</div>
             <h3>Cadrage</h3>
-            <p>Nous proposons un format réaliste : durée, public, niveau, angle pédagogique.</p>
+            <p>Nous proposons un format réaliste : durée, public, angle pédagogique et niveau de travail.</p>
           </article>
 
           <article class="process-card">
             <div class="process-step">3</div>
             <h3>Intervention</h3>
-            <p>La session est animée dans un cadre clair, progressif et adapté à votre terrain.</p>
+            <p>La session est animée dans un cadre clair, progressif et adapté au terrain réel.</p>
           </article>
 
           <article class="process-card">
@@ -708,9 +850,10 @@
       <div class="container">
         <div class="section-head section-head--center">
           <span class="eyebrow">Retours d’expérience</span>
-          <h2>Des témoignages à remplacer ensuite par vos vrais retours clients</h2>
+          <h2>Une structure prévue pour accueillir ensuite de vrais retours clients</h2>
           <p>
-            Pour l’instant, garde cette structure. Dès que tu as 2 ou 3 vrais avis, on remplace immédiatement.
+            Garde cette base pour l’instant. Dès que tu as 2 ou 3 vrais témoignages,
+            on les remplace immédiatement.
           </p>
         </div>
 
@@ -734,7 +877,8 @@
           <article class="testimonial-card">
             <h3>Responsable de structure</h3>
             <p>
-              “L’approche est lisible, professionnelle et adaptable. C’est exactement ce que nous voulions.”
+              “L’approche est lisible, professionnelle et adaptable.
+              C’est exactement ce que nous voulions.”
             </p>
           </article>
         </div>
@@ -752,13 +896,13 @@
           <h3>Demandez un échange ou un devis</h3>
           <p>
             Décrivez votre structure, votre besoin, votre public concerné et votre contexte.
-            Nous pourrons ensuite vous orienter vers le bon format.
+            Nous pourrons ensuite vous orienter vers le format le plus pertinent.
           </p>
 
           <div class="contact-proof-list">
-            <div class="contact-proof"><strong>Réponse attendue :</strong> devis ou retour sous 24/48h ouvrées.</div>
-            <div class="contact-proof"><strong>Formats possibles :</strong> intra, sensibilisation, atelier pratique, sur mesure.</div>
-            <div class="contact-proof"><strong>Objectif :</strong> proposer un format réaliste, clair et adapté à votre terrain.</div>
+            <div class="contact-proof"><strong>Réponse attendue :</strong> premier retour ou devis sous 24/48h ouvrées.</div>
+            <div class="contact-proof"><strong>Formats possibles :</strong> sensibilisation, atelier pratique, intervention sur mesure.</div>
+            <div class="contact-proof"><strong>Objectif :</strong> proposer un format crédible, clair et adapté à votre terrain.</div>
           </div>
         </div>
 
@@ -855,10 +999,10 @@
           </article>
 
           <article class="faq-card">
-            <h3>Combien de temps faut-il pour recevoir un devis ?</h3>
+            <h3>Pourquoi vous parler plutôt que choisir un intervenant isolé ?</h3>
             <p>
-              L’objectif est de revenir vers vous sous 24 à 48 heures ouvrées
-              avec une première réponse ou une demande de précision.
+              Parce que la lisibilité du cadre, la cohérence de méthode et la qualité
+              de transmission comptent autant que l’intervention elle-même.
             </p>
           </article>
         </div>
@@ -873,7 +1017,7 @@
     <section>
       <div class="container">
         <div class="cta-panel">
-          <h2>Construisons une intervention adaptée à votre structure</h2>
+          <h2>Construisons une réponse adaptée à votre structure</h2>
           <p>
             Vital Protect accompagne les équipes et structures qui souhaitent renforcer
             la prévention, la posture et la gestion des tensions dans un cadre sérieux,
@@ -882,7 +1026,7 @@
 
           <div class="cta-actions">
             <a href="#contact-entreprise" class="btn btn-dark">Demander un devis</a>
-            <a href="/methode.html" class="btn btn-outline">Découvrir la méthode</a>
+            <a href="/methode.html" class="btn btn-outline">Découvrir le standard</a>
             <a href="/index.html#stages" class="btn btn-outline">Voir les stages</a>
           </div>
         </div>
@@ -895,17 +1039,22 @@
       <div class="site-footer__brand">
         <strong>VITAL PROTECT</strong>
         <p>
-          Une méthode structurée de sécurité personnelle fondée sur la prévention, l’évitement,
-          la réaction réaliste, la pédagogie progressive et la certification des formateurs.
+          Un standard structuré de sécurité personnelle fondé sur la prévention,
+          l’évitement, la réaction réaliste, la pédagogie progressive
+          et la cohérence de transmission.
         </p>
       </div>
 
       <div class="site-footer__links">
-        <a href="/methode.html">La méthode</a>
+        <a href="/index.html">Accueil</a>
+        <a href="/methode.html">Le standard</a>
         <a href="/entreprises.html">Entreprises</a>
         <a href="/devenir-formateur.html">Devenir formateur</a>
         <a href="/faq.html">FAQ</a>
         <a href="/contact.html">Contact</a>
+        <a href="/mentions-legales.html">Mentions légales</a>
+        <a href="/politique-confidentialite.html">Confidentialité</a>
+        <a href="/cgv.html">CGV</a>
       </div>
     </div>
   </footer>
@@ -945,8 +1094,8 @@
             "Content-Type": "application/json"
           },
           body: JSON.stringify({
-            firstName: payload.firstName,
-            lastName: payload.lastName,
+            first_name: payload.firstName,
+            last_name: payload.lastName,
             email: payload.email,
             phone: payload.phone,
             subject: `[ENTREPRISE] ${payload.subject}`,
