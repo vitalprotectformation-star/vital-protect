@@ -605,7 +605,7 @@
             <strong>Le vrai sujet : qui transmet, quoi, dans quel cadre ?</strong>
             <span>
               Vital Protect veut rendre cette réponse claire. Un formateur n’est pas
-              simplement “quelqu’un qui anime”. Il intervient dans un périmètre défini,
+              simplement quelqu’un qui anime. Il intervient dans un périmètre défini,
               sur des contenus identifiés, avec une exigence de cohérence.
             </span>
           </div>
@@ -631,7 +631,7 @@
             <div class="icon-dot"></div>
             <h3>Un périmètre défini</h3>
             <p>
-              Le formateur Vital Protect n’est pas validé “sur tout”.
+              Le formateur Vital Protect n’est pas validé sur tout.
               Il est certifié sur des modules, avec un champ de transmission clair.
             </p>
           </article>
@@ -726,7 +726,7 @@
           <span class="eyebrow">Ce qu’on ne certifie pas</span>
           <h3>Pas un statut vague, pas une liberté totale d’interprétation</h3>
           <p>
-            La certification Vital Protect ne consiste pas à valider quelqu’un “dans l’absolu”.
+            La certification Vital Protect ne consiste pas à valider quelqu’un dans l’absolu.
             Elle ne donne pas un blanc-seing général. Elle reconnaît la capacité à transmettre
             des contenus déterminés dans un cadre déterminé.
           </p>
@@ -789,7 +789,7 @@
       <div class="container">
         <div class="section-head section-head--center">
           <span class="eyebrow">Affiliation & réseau</span>
-          <h2>Faire partie du réseau, ce n’est pas juste “être listé”</h2>
+          <h2>Faire partie du réseau, ce n’est pas juste être listé</h2>
           <p>
             L’affiliation Vital Protect sert à maintenir un cadre actif, vivant et contrôlé.
             Elle soutient la cohérence du réseau, la mise à jour du standard et la lisibilité
@@ -809,7 +809,7 @@
           <article class="network-card">
             <h3>Un maintien de cohérence</h3>
             <p>
-              L’affiliation ne sert pas seulement à “payer une place”.
+              L’affiliation ne sert pas seulement à payer une place.
               Elle participe à la continuité du cadre, du suivi et du standard.
             </p>
           </article>
@@ -921,7 +921,9 @@
           </p>
         </div>
 
-        <div id="sessionsContainer" class="sessions-grid"></div>
+        <div id="sessionsContainer" class="sessions-grid">
+          <div class="empty-state">Chargement des sessions…</div>
+        </div>
 
         <div class="timeline-cta">
           <a href="#formulaire" class="btn btn-dark">Réserver ma place</a>
@@ -948,6 +950,8 @@
           </div>
 
           <form id="trainerForm">
+            <input type="hidden" id="sessionId" value="" />
+
             <div class="form-grid">
               <div class="form-field">
                 <label for="firstName">Prénom</label>
@@ -978,9 +982,6 @@
                 <label for="trainingType">Module</label>
                 <select id="trainingType" required>
                   <option value="">Choisir un module</option>
-                  <option>Self Défense Essentielle</option>
-                  <option>Self Défense Essentielle Niveau 2</option>
-                  <option>Self Défense en entreprise</option>
                 </select>
               </div>
 
@@ -1019,7 +1020,7 @@
           </article>
 
           <article class="faq-card">
-            <h3>Suis-je certifié “globalement” après la formation ?</h3>
+            <h3>Suis-je certifié globalement après la formation ?</h3>
             <p>
               Non. La certification est liée à des modules précis, avec un périmètre de transmission défini.
             </p>
@@ -1102,15 +1103,27 @@
     );
 
     const params = new URLSearchParams(window.location.search);
-    let selectedSessionId = params.get("session_id") || "";
-    let selectedTrainingType = params.get("training_type") || "";
 
-    const form = document.getElementById("trainerForm");
+    const sessionsContainer = document.getElementById("sessionsContainer");
+    const trainerForm = document.getElementById("trainerForm");
     const trainingTypeSelect = document.getElementById("trainingType");
     const selectedSessionBox = document.getElementById("selectedSessionBox");
     const selectedSessionValue = document.getElementById("selectedSessionValue");
-    const sessionsContainer = document.getElementById("sessionsContainer");
     const checkoutFeedback = document.getElementById("checkoutFeedback");
+    const sessionIdInput = document.getElementById("sessionId");
+
+    let availableSessions = [];
+    let selectedSessionId = params.get("session_id") || "";
+    let selectedTrainingType = params.get("training_type") || "";
+
+    function escapeHtml(value) {
+      return String(value || "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#39;");
+    }
 
     function formatDate(dateString) {
       if (!dateString) return "Date non disponible";
@@ -1127,49 +1140,82 @@
       return `${Number(price || 0).toFixed(0)} €`;
     }
 
-    function escapeHtml(value) {
-      return String(value || "")
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#39;");
+    function getAvailabilityClass(remainingPlaces) {
+      return Number(remainingPlaces || 0) <= 3 ? "warning" : "success";
     }
 
-    function updateSelectedSessionBox(label) {
-      if (!label) {
+    function getSessionLabel(session) {
+      return `${session.title || session.module_name || "Session formateur"} — ${session.city || "Ville"} — ${formatDate(session.start_date)}`;
+    }
+
+    function updateSelectedSessionBox() {
+      const session = availableSessions.find(item => item.id === selectedSessionId);
+
+      if (!session) {
         selectedSessionBox.classList.remove("active");
         selectedSessionValue.textContent = "—";
         return;
       }
 
       selectedSessionBox.classList.add("active");
-      selectedSessionValue.textContent = label;
+      selectedSessionValue.textContent = getSessionLabel(session);
+    }
+
+    function updateUrlState() {
+      const url = new URL(window.location.href);
+
+      if (selectedSessionId) {
+        url.searchParams.set("session_id", selectedSessionId);
+      } else {
+        url.searchParams.delete("session_id");
+      }
+
+      if (selectedTrainingType) {
+        url.searchParams.set("training_type", selectedTrainingType);
+      } else {
+        url.searchParams.delete("training_type");
+      }
+
+      window.history.replaceState({}, "", url);
+    }
+
+    function populateTrainingTypeOptions() {
+      const uniqueModules = [...new Set(
+        availableSessions
+          .map(session => String(session.module_name || "").trim())
+          .filter(Boolean)
+      )].sort((a, b) => a.localeCompare(b, "fr"));
+
+      trainingTypeSelect.innerHTML = `
+        <option value="">Choisir un module</option>
+        ${uniqueModules.map(module => `<option value="${escapeHtml(module)}">${escapeHtml(module)}</option>`).join("")}
+      `;
+
+      if (selectedTrainingType && uniqueModules.includes(selectedTrainingType)) {
+        trainingTypeSelect.value = selectedTrainingType;
+      }
     }
 
     function selectSession(session) {
       selectedSessionId = session.id || "";
-      selectedTrainingType = session.module_name || session.training_type || "";
+      selectedTrainingType = String(session.module_name || "").trim();
+
+      sessionIdInput.value = selectedSessionId;
 
       if (selectedTrainingType) {
         trainingTypeSelect.value = selectedTrainingType;
       }
 
-      const label = `${session.title || "Session formateur"} — ${session.city || "Ville"} — ${formatDate(session.end_date)}`;
-      updateSelectedSessionBox(label);
-
-      const newUrl = new URL(window.location.href);
-      newUrl.searchParams.set("session_id", selectedSessionId);
-      newUrl.searchParams.set("training_type", selectedTrainingType);
-      window.history.replaceState({}, "", newUrl);
+      updateSelectedSessionBox();
+      updateUrlState();
 
       document.getElementById("formulaire").scrollIntoView({ behavior: "smooth" });
     }
 
     function renderCheckoutFeedback() {
-      const checkoutStatus = params.get("checkout");
+      const checkout = params.get("checkout");
 
-      if (checkoutStatus === "success") {
+      if (checkout === "success") {
         checkoutFeedback.innerHTML = `
           <div class="alert alert-success">
             Votre demande de réservation a bien été enregistrée.
@@ -1179,7 +1225,7 @@
         return;
       }
 
-      if (checkoutStatus === "cancel") {
+      if (checkout === "cancel") {
         checkoutFeedback.innerHTML = `
           <div class="alert alert-warning">
             Le paiement n’a pas été finalisé. Votre réservation n’a pas été enregistrée.
@@ -1191,29 +1237,8 @@
       checkoutFeedback.innerHTML = "";
     }
 
-    function getAvailabilityClass(remainingPlaces) {
-      return Number(remainingPlaces || 0) <= 3 ? "warning" : "success";
-    }
-
-    async function loadSessions() {
-      const { data, error } = await supabase
-        .from("trainer_sessions")
-        .select("*")
-        .eq("status", "open")
-        .gt("remaining_places", 0)
-        .order("start_date", { ascending: true });
-
-      if (error) {
-        console.error(error);
-        sessionsContainer.innerHTML = `
-          <div class="empty-state">
-            Impossible de charger les sessions.
-          </div>
-        `;
-        return;
-      }
-
-      if (!data || !data.length) {
+    function renderSessions() {
+      if (!availableSessions.length) {
         sessionsContainer.innerHTML = `
           <div class="empty-state">
             Aucune session disponible pour le moment.
@@ -1222,11 +1247,11 @@
         return;
       }
 
-      sessionsContainer.innerHTML = data.map(session => `
+      sessionsContainer.innerHTML = availableSessions.map(session => `
         <article class="session-card">
           <div class="session-top">
             <div>
-              <div class="session-type">${escapeHtml(session.module_name || session.training_type || "Certification")}</div>
+              <div class="session-type">${escapeHtml(session.module_name || "Certification")}</div>
               <h3 class="session-title">${escapeHtml(session.title || "Session formateur")}</h3>
             </div>
             <div class="session-price">${formatPrice(session.launch_price || session.standard_price || 0)}</div>
@@ -1256,7 +1281,7 @@
 
               <div class="meta-item">
                 <span class="meta-label">Durée</span>
-                <span class="meta-value">${session.duration_days || "—"} jours</span>
+                <span class="meta-value">${escapeHtml(session.duration_days || "—")} jours</span>
               </div>
 
               <div class="meta-item">
@@ -1266,7 +1291,7 @@
 
               <div class="meta-item">
                 <span class="meta-label">Places restantes</span>
-                <span class="meta-value">${session.remaining_places || 0}</span>
+                <span class="meta-value">${escapeHtml(session.remaining_places || 0)}</span>
               </div>
             </div>
 
@@ -1279,7 +1304,7 @@
             <button
               class="btn btn-dark"
               type="button"
-              data-session-id="${session.id}"
+              data-session-id="${escapeHtml(session.id)}"
             >
               Réserver cette session
             </button>
@@ -1289,91 +1314,170 @@
 
       document.querySelectorAll("[data-session-id]").forEach(button => {
         button.addEventListener("click", () => {
-          const session = data.find(item => item.id === button.dataset.sessionId);
+          const session = availableSessions.find(item => item.id === button.dataset.sessionId);
           if (session) {
             selectSession(session);
           }
         });
       });
+    }
+
+    async function loadSessions() {
+      const { data, error } = await supabase
+        .from("trainer_sessions")
+        .select("*")
+        .eq("status", "open")
+        .gt("remaining_places", 0)
+        .order("start_date", { ascending: true });
+
+      if (error) {
+        console.error("Erreur chargement sessions:", error);
+        sessionsContainer.innerHTML = `
+          <div class="empty-state">
+            Impossible de charger les sessions pour le moment.
+          </div>
+        `;
+        return;
+      }
+
+      availableSessions = data || [];
+
+      populateTrainingTypeOptions();
+      renderSessions();
 
       if (selectedSessionId) {
-        const preselected = data.find(item => item.id === selectedSessionId);
-        if (preselected) {
-          selectSession(preselected);
+        const session = availableSessions.find(item => item.id === selectedSessionId);
+        if (session) {
+          selectSession(session);
         }
       } else if (selectedTrainingType) {
-        trainingTypeSelect.value = selectedTrainingType;
-        updateSelectedSessionBox(selectedTrainingType);
+        const firstMatchingSession = availableSessions.find(
+          item => String(item.module_name || "").trim() === selectedTrainingType
+        );
+        if (firstMatchingSession) {
+          selectSession(firstMatchingSession);
+        }
       }
     }
 
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
+    async function createCheckout(payload) {
+      const response = await fetch("/api/create-trainer-checkout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload)
+      });
 
-      if (!selectedSessionId) {
-        checkoutFeedback.innerHTML = `
-          <div class="alert alert-error">
-            Merci de sélectionner une session avant de continuer.
-          </div>
-        `;
-        document.getElementById("sessions").scrollIntoView({ behavior: "smooth" });
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || "Erreur lors de la création du paiement.");
+      }
+
+      return response.json();
+    }
+
+    trainingTypeSelect.addEventListener("change", () => {
+      selectedTrainingType = trainingTypeSelect.value.trim();
+
+      if (!selectedTrainingType) {
+        selectedSessionId = "";
+        sessionIdInput.value = "";
+        updateSelectedSessionBox();
+        updateUrlState();
         return;
       }
 
-      const data = {
-        first_name: document.getElementById("firstName").value.trim(),
-        last_name: document.getElementById("lastName").value.trim(),
-        email: document.getElementById("email").value.trim(),
-        phone: document.getElementById("phone").value.trim(),
-        city: document.getElementById("city").value.trim(),
-        training_type: document.getElementById("trainingType").value.trim(),
-        message: document.getElementById("message").value.trim(),
-        session_id: selectedSessionId
-      };
+      const matchingSession = availableSessions.find(
+        session => String(session.module_name || "").trim() === selectedTrainingType
+      );
 
-      if (!data.training_type) {
-        checkoutFeedback.innerHTML = `
-          <div class="alert alert-error">
-            Merci de choisir un module.
-          </div>
-        `;
-        return;
+      if (matchingSession) {
+        selectedSessionId = matchingSession.id;
+        sessionIdInput.value = matchingSession.id;
+      } else {
+        selectedSessionId = "";
+        sessionIdInput.value = "";
       }
 
-      try {
-        const res = await fetch("/api/create-trainer-checkout", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify(data)
-        });
-
-        const result = await res.json();
-
-        if (result.url) {
-          window.location.href = result.url;
-        } else {
-          checkoutFeedback.innerHTML = `
-            <div class="alert alert-error">
-              ${escapeHtml(result.error || "Erreur lors de la redirection vers Stripe.")}
-            </div>
-          `;
-          console.error(result);
-        }
-      } catch (error) {
-        checkoutFeedback.innerHTML = `
-          <div class="alert alert-error">
-            Erreur réseau.
-          </div>
-        `;
-        console.error(error);
-      }
+      updateSelectedSessionBox();
+      updateUrlState();
     });
 
-    if (selectedTrainingType) {
-      trainingTypeSelect.value = selectedTrainingType;
-    }
+    trainerForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      const firstName = document.getElementById("firstName").value.trim();
+      const lastName = document.getElementById("lastName").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const phone = document.getElementById("phone").value.trim();
+      const city = document.getElementById("city").value.trim();
+      const trainingType = trainingTypeSelect.value.trim();
+      const message = document.getElementById("message").value.trim();
+
+      if (!trainingType) {
+        checkoutFeedback.innerHTML = `
+          <div class="alert alert-error">
+            Merci de sélectionner un module.
+          </div>
+        `;
+        return;
+      }
+
+      let session = availableSessions.find(item => item.id === selectedSessionId);
+
+      if (!session) {
+        session = availableSessions.find(
+          item => String(item.module_name || "").trim() === trainingType
+        );
+      }
+
+      if (!session) {
+        checkoutFeedback.innerHTML = `
+          <div class="alert alert-error">
+            Aucune session disponible ne correspond au module choisi.
+          </div>
+        `;
+        return;
+      }
+
+      const submitButton = trainerForm.querySelector('button[type="submit"]');
+      const originalButtonText = submitButton.textContent;
+
+      submitButton.disabled = true;
+      submitButton.textContent = "Redirection en cours...";
+
+      checkoutFeedback.innerHTML = "";
+
+      try {
+        const result = await createCheckout({
+          session_id: session.id,
+          first_name: firstName,
+          last_name: lastName,
+          email,
+          phone,
+          city,
+          training_type: trainingType,
+          message
+        });
+
+        if (!result?.url) {
+          throw new Error("URL de paiement absente.");
+        }
+
+        window.location.href = result.url;
+      } catch (error) {
+        console.error("Erreur checkout:", error);
+        checkoutFeedback.innerHTML = `
+          <div class="alert alert-error">
+            Impossible de lancer la réservation pour le moment.
+            Vérifiez la configuration de l’API et réessayez.
+          </div>
+        `;
+        submitButton.disabled = false;
+        submitButton.textContent = originalButtonText;
+      }
+    });
 
     renderCheckoutFeedback();
     loadSessions();
