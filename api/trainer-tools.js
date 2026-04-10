@@ -31,6 +31,11 @@ function isFutureOrToday(dateString) {
   return date >= today;
 }
 
+function parseNumber(value, fallback = 0) {
+  const n = Number(value);
+  return Number.isFinite(n) ? n : fallback;
+}
+
 async function requireTrainer(req) {
   const authHeader = req.headers.authorization || "";
   const token = authHeader.startsWith("Bearer ")
@@ -89,8 +94,68 @@ async function requireTrainer(req) {
   };
 }
 
+async function resolveTrainingModule({ moduleSlug, moduleName }) {
+  if (moduleSlug) {
+    const { data, error } = await supabase
+      .from("training_modules")
+      .select("*")
+      .eq("slug", moduleSlug)
+      .eq("is_active", true)
+      .maybeSingle();
+
+    if (error) throw error;
+    if (data) return data;
+  }
+
+  if (moduleName) {
+    const { data, error } = await supabase
+      .from("training_modules")
+      .select("*")
+      .ilike("name", moduleName)
+      .eq("is_active", true)
+      .maybeSingle();
+
+    if (error) throw error;
+    if (data) return data;
+  }
+
+  return null;
+}
+
+async function findTrainerCertifiedModule(trainerId, moduleRow) {
+  if (moduleRow?.slug) {
+    const { data, error } = await supabase
+      .from("trainer_modules")
+      .select("*")
+      .eq("trainer_id", trainerId)
+      .eq("module_slug", moduleRow.slug)
+      .maybeSingle();
+
+    if (error) throw error;
+    if (data) return data;
+  }
+
+  if (moduleRow?.name) {
+    const { data, error } = await supabase
+      .from("trainer_modules")
+      .select("*")
+      .eq("trainer_id", trainerId)
+      .eq("module_name", moduleRow.name)
+      .maybeSingle();
+
+    if (error) throw error;
+    if (data) return data;
+  }
+
+  return null;
+}
+
 async function handleCreateStage(req, res, trainer) {
-  const trainingType = sanitizeText(req.body?.training_type);
+  const moduleSlug = sanitizeText(req.body?.module_slug);
+  const moduleName =
+    sanitizeText(req.body?.module_name) ||
+    sanitizeText(req.body?.training_type);
+
   const description = sanitizeText(req.body?.description);
   const city = sanitizeText(req.body?.city);
   const department = sanitizeText(req.body?.department);
@@ -99,12 +164,17 @@ async function handleCreateStage(req, res, trainer) {
   const stageDate = sanitizeText(req.body?.stage_date);
   const startTime = sanitizeText(req.body?.start_time);
   const duration = sanitizeText(req.body?.duration);
-  const maxParticipants = Number(req.body?.max_participants || 20);
-  const remainingPlaces = Number(req.body?.remaining_places || 20);
-  const price = Number(req.body?.price || 0);
+  const maxParticipants = parseNumber(req.body?.max_participants, 20);
+  const remainingPlaces = parseNumber(req.body?.remaining_places, maxParticipants);
+  const price = parseNumber(req.body?.price, 0);
 
-  if (!trainingType) {
-    return res.status(400).json({ error: "training_type manquant" });
+  const moduleRow = await resolveTrainingModule({
+    moduleSlug,
+    moduleName
+  });
+
+  if (!moduleRow) {
+    return res.status(400).json({ error: "Module introuvable ou inactif" });
   }
 
   if (!city) {
@@ -127,7 +197,10 @@ async function handleCreateStage(req, res, trainer) {
     return res.status(400).json({ error: "price invalide" });
   }
 
-  if (normalize(trainer.affiliation_status) !== "active" || !isFutureOrToday(trainer.affiliation_end)) {
+  if (
+    normalize(trainer.affiliation_status) !== "active" ||
+    !isFutureOrToday(trainer.affiliation_end)
+  ) {
     return res.status(403).json({
       error: "Affiliation inactive ou expirée"
     });
@@ -139,16 +212,7 @@ async function handleCreateStage(req, res, trainer) {
     });
   }
 
-  const { data: trainerModule, error: moduleError } = await supabase
-    .from("trainer_modules")
-    .select("*")
-    .eq("trainer_id", trainer.id)
-    .eq("module_name", trainingType)
-    .maybeSingle();
-
-  if (moduleError) {
-    return res.status(500).json({ error: "Erreur de vérification du module" });
-  }
+  const trainerModule = await findTrainerCertifiedModule(trainer.id, moduleRow);
 
   if (!trainerModule) {
     return res.status(403).json({
@@ -174,12 +238,13 @@ async function handleCreateStage(req, res, trainer) {
     });
   }
 
-  const title = `${trainingType} — ${city} — ${stageDate}`;
+  const title = `${moduleRow.name} — ${city} — ${stageDate}`;
 
   const payload = {
     trainer_id: trainer.id,
+    module_slug: moduleRow.slug,
     title,
-    training_type: trainingType,
+    training_type: moduleRow.name,
     description,
     city,
     department,
@@ -187,7 +252,7 @@ async function handleCreateStage(req, res, trainer) {
     address,
     stage_date: stageDate,
     start_time: startTime,
-    duration,
+    duration: duration || moduleRow.default_duration || "",
     max_participants: maxParticipants,
     remaining_places: remainingPlaces,
     price,
