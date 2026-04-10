@@ -977,10 +977,7 @@
               <div class="form-field">
                 <label for="trainingType">Module</label>
                 <select id="trainingType" required>
-                  <option value="">Choisir un module</option>
-                  <option>Self Défense Essentielle</option>
-                  <option>Self Défense Essentielle Niveau 2</option>
-                  <option>Self Défense en entreprise</option>
+                  <option value="">Chargement des modules...</option>
                 </select>
               </div>
 
@@ -1112,6 +1109,8 @@
     const sessionsContainer = document.getElementById("sessionsContainer");
     const checkoutFeedback = document.getElementById("checkoutFeedback");
 
+    let moduleOptions = [];
+
     function formatDate(dateString) {
       if (!dateString) return "Date non disponible";
       const date = new Date(dateString);
@@ -1134,6 +1133,42 @@
         .replaceAll(">", "&gt;")
         .replaceAll('"', "&quot;")
         .replaceAll("'", "&#39;");
+    }
+
+    function populateTrainingTypeSelect() {
+      if (!moduleOptions.length) {
+        trainingTypeSelect.innerHTML = `<option value="">Aucun module disponible</option>`;
+        return;
+      }
+
+      trainingTypeSelect.innerHTML = `
+        <option value="">Choisir un module</option>
+        ${moduleOptions
+          .map(module => `<option value="${escapeHtml(module.name)}">${escapeHtml(module.name)}</option>`)
+          .join("")}
+      `;
+
+      if (selectedTrainingType) {
+        trainingTypeSelect.value = selectedTrainingType;
+      }
+    }
+
+    async function loadModules() {
+      const { data, error } = await supabase
+        .from("training_modules")
+        .select("*")
+        .eq("status", "active")
+        .order("sort_order", { ascending: true })
+        .order("name", { ascending: true });
+
+      if (error) {
+        console.error("Erreur chargement modules:", error);
+        trainingTypeSelect.innerHTML = `<option value="">Erreur chargement modules</option>`;
+        return;
+      }
+
+      moduleOptions = data || [];
+      populateTrainingTypeSelect();
     }
 
     function updateSelectedSessionBox(label) {
@@ -1371,12 +1406,9 @@
       }
     });
 
-    if (selectedTrainingType) {
-      trainingTypeSelect.value = selectedTrainingType;
-    }
-
     renderCheckoutFeedback();
-    loadSessions();
+    await loadModules();
+    await loadSessions();
   </script>
 </body>
 </html>
