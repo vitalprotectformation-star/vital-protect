@@ -136,7 +136,8 @@
     .sessions-grid,
     .faq-grid,
     .authority-grid,
-    .network-grid {
+    .network-grid,
+    .module-grid {
       display: grid;
       gap: 18px;
     }
@@ -145,7 +146,8 @@
     .benefit-grid,
     .authority-grid,
     .network-grid,
-    .testimonial-grid {
+    .testimonial-grid,
+    .module-grid {
       grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 
@@ -168,7 +170,8 @@
     .form-card,
     .selected-session-box,
     .authority-card,
-    .network-card {
+    .network-card,
+    .module-card {
       background: white;
       border: 1px solid rgba(13, 27, 42, 0.06);
       border-radius: var(--vp-radius-md);
@@ -182,7 +185,8 @@
     .step-card,
     .info-panel,
     .authority-card,
-    .network-card {
+    .network-card,
+    .module-card {
       padding: 24px;
     }
 
@@ -193,7 +197,8 @@
     .step-card h3,
     .info-panel h3,
     .authority-card h3,
-    .network-card h3 {
+    .network-card h3,
+    .module-card h3 {
       margin: 0 0 10px;
       color: var(--vp-navy-850);
       font-size: 1.12rem;
@@ -206,7 +211,8 @@
     .step-card p,
     .info-panel p,
     .authority-card p,
-    .network-card p {
+    .network-card p,
+    .module-card p {
       margin: 0;
       color: var(--vp-text-soft);
       line-height: 1.75;
@@ -487,7 +493,8 @@
       .sessions-grid,
       .faq-grid,
       .authority-grid,
-      .network-grid {
+      .network-grid,
+      .module-grid {
         grid-template-columns: 1fr;
       }
 
@@ -515,7 +522,8 @@
       .info-panel,
       .form-card,
       .authority-card,
-      .network-card {
+      .network-card,
+      .module-card {
         padding: 24px;
       }
 
@@ -653,6 +661,23 @@
               et de fiabilité quel que soit l’intervenant habilité.
             </p>
           </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="modules">
+      <div class="container">
+        <div class="section-head section-head--center">
+          <span class="eyebrow">Modules ouverts</span>
+          <h2>Les modules actuellement proposés</h2>
+          <p>
+            Chaque module correspond à un périmètre précis de transmission.
+            Les contenus ci-dessous sont chargés dynamiquement depuis votre base.
+          </p>
+        </div>
+
+        <div id="modulesContainer" class="module-grid">
+          <div class="empty-state">Chargement des modules...</div>
         </div>
       </div>
     </section>
@@ -921,7 +946,9 @@
           </p>
         </div>
 
-        <div id="sessionsContainer" class="sessions-grid"></div>
+        <div id="sessionsContainer" class="sessions-grid">
+          <div class="empty-state">Chargement des sessions...</div>
+        </div>
 
         <div class="timeline-cta">
           <a href="#formulaire" class="btn btn-dark">Réserver ma place</a>
@@ -977,7 +1004,7 @@
               <div class="form-field">
                 <label for="trainingType">Module</label>
                 <select id="trainingType" required>
-                  <option value="">Chargement des modules...</option>
+                  <option value="">Choisir un module</option>
                 </select>
               </div>
 
@@ -1108,8 +1135,10 @@
     const selectedSessionValue = document.getElementById("selectedSessionValue");
     const sessionsContainer = document.getElementById("sessionsContainer");
     const checkoutFeedback = document.getElementById("checkoutFeedback");
+    const modulesContainer = document.getElementById("modulesContainer");
 
-    let moduleOptions = [];
+    let modulesData = [];
+    let sessionsData = [];
 
     function formatDate(dateString) {
       if (!dateString) return "Date non disponible";
@@ -1135,42 +1164,6 @@
         .replaceAll("'", "&#39;");
     }
 
-    function populateTrainingTypeSelect() {
-      if (!moduleOptions.length) {
-        trainingTypeSelect.innerHTML = `<option value="">Aucun module disponible</option>`;
-        return;
-      }
-
-      trainingTypeSelect.innerHTML = `
-        <option value="">Choisir un module</option>
-        ${moduleOptions
-          .map(module => `<option value="${escapeHtml(module.name)}">${escapeHtml(module.name)}</option>`)
-          .join("")}
-      `;
-
-      if (selectedTrainingType) {
-        trainingTypeSelect.value = selectedTrainingType;
-      }
-    }
-
-    async function loadModules() {
-      const { data, error } = await supabase
-        .from("training_modules")
-        .select("*")
-        .eq("status", "active")
-        .order("sort_order", { ascending: true })
-        .order("name", { ascending: true });
-
-      if (error) {
-        console.error("Erreur chargement modules:", error);
-        trainingTypeSelect.innerHTML = `<option value="">Erreur chargement modules</option>`;
-        return;
-      }
-
-      moduleOptions = data || [];
-      populateTrainingTypeSelect();
-    }
-
     function updateSelectedSessionBox(label) {
       if (!label) {
         selectedSessionBox.classList.remove("active");
@@ -1182,9 +1175,43 @@
       selectedSessionValue.textContent = label;
     }
 
+    function populateTrainingTypeSelect() {
+      const currentValue = trainingTypeSelect.value || selectedTrainingType || "";
+
+      trainingTypeSelect.innerHTML = `
+        <option value="">Choisir un module</option>
+        ${modulesData.map(module => `
+          <option value="${escapeHtml(module.name)}">${escapeHtml(module.name)}</option>
+        `).join("")}
+      `;
+
+      if (currentValue && modulesData.some(module => module.name === currentValue)) {
+        trainingTypeSelect.value = currentValue;
+      }
+    }
+
+    function renderModules() {
+      if (!modulesData.length) {
+        modulesContainer.innerHTML = `
+          <div class="empty-state">
+            Aucun module disponible pour le moment.
+          </div>
+        `;
+        return;
+      }
+
+      modulesContainer.innerHTML = modulesData.map(module => `
+        <article class="module-card">
+          <div class="icon-dot"></div>
+          <h3>${escapeHtml(module.name)}</h3>
+          <p>${escapeHtml(module.short_description || module.long_description || "Module disponible au catalogue Vital Protect.")}</p>
+        </article>
+      `).join("");
+    }
+
     function selectSession(session) {
       selectedSessionId = session.id || "";
-      selectedTrainingType = session.module_name || session.training_type || "";
+      selectedTrainingType = session.module_name || "";
 
       if (selectedTrainingType) {
         trainingTypeSelect.value = selectedTrainingType;
@@ -1230,6 +1257,30 @@
       return Number(remainingPlaces || 0) <= 3 ? "warning" : "success";
     }
 
+    async function loadModules() {
+      const { data, error } = await supabase
+        .from("training_modules")
+        .select("*")
+        .eq("status", "active")
+        .order("sort_order", { ascending: true })
+        .order("name", { ascending: true });
+
+      if (error) {
+        console.error("Erreur chargement modules:", error);
+        modulesContainer.innerHTML = `
+          <div class="empty-state">
+            Impossible de charger les modules pour le moment.
+          </div>
+        `;
+        trainingTypeSelect.innerHTML = `<option value="">Choisir un module</option>`;
+        return;
+      }
+
+      modulesData = data || [];
+      renderModules();
+      populateTrainingTypeSelect();
+    }
+
     async function loadSessions() {
       const { data, error } = await supabase
         .from("trainer_sessions")
@@ -1239,7 +1290,7 @@
         .order("start_date", { ascending: true });
 
       if (error) {
-        console.error(error);
+        console.error("Erreur chargement sessions:", error);
         sessionsContainer.innerHTML = `
           <div class="empty-state">
             Impossible de charger les sessions.
@@ -1248,7 +1299,9 @@
         return;
       }
 
-      if (!data || !data.length) {
+      sessionsData = data || [];
+
+      if (!sessionsData.length) {
         sessionsContainer.innerHTML = `
           <div class="empty-state">
             Aucune session disponible pour le moment.
@@ -1257,11 +1310,11 @@
         return;
       }
 
-      sessionsContainer.innerHTML = data.map(session => `
+      sessionsContainer.innerHTML = sessionsData.map(session => `
         <article class="session-card">
           <div class="session-top">
             <div>
-              <div class="session-type">${escapeHtml(session.module_name || session.training_type || "Certification")}</div>
+              <div class="session-type">${escapeHtml(session.module_name || "Certification")}</div>
               <h3 class="session-title">${escapeHtml(session.title || "Session formateur")}</h3>
             </div>
             <div class="session-price">${formatPrice(session.launch_price || session.standard_price || 0)}</div>
@@ -1269,8 +1322,10 @@
 
           <div class="session-body">
             <div class="session-description">
-              Intégration au cadre Vital Protect : logique de méthode, cohérence de transmission,
-              exigence pédagogique, sécurité et activation progressive dans le réseau.
+              ${escapeHtml(
+                modulesData.find(module => module.name === session.module_name)?.short_description ||
+                "Intégration au cadre Vital Protect : logique de méthode, cohérence de transmission, exigence pédagogique, sécurité et activation progressive dans le réseau."
+              )}
             </div>
 
             <div class="session-meta">
@@ -1324,7 +1379,7 @@
 
       document.querySelectorAll("[data-session-id]").forEach(button => {
         button.addEventListener("click", () => {
-          const session = data.find(item => item.id === button.dataset.sessionId);
+          const session = sessionsData.find(item => item.id === button.dataset.sessionId);
           if (session) {
             selectSession(session);
           }
@@ -1332,7 +1387,7 @@
       });
 
       if (selectedSessionId) {
-        const preselected = data.find(item => item.id === selectedSessionId);
+        const preselected = sessionsData.find(item => item.id === selectedSessionId);
         if (preselected) {
           selectSession(preselected);
         }
