@@ -14,6 +14,8 @@ export default async function handler(req, res) {
     const { data, error } = await supabase
       .from("training_modules")
       .select("*")
+      .eq("is_active", true)
+      .eq("public_visible", true)
       .eq("status", "active")
       .order("sort_order", { ascending: true })
       .order("name", { ascending: true });
