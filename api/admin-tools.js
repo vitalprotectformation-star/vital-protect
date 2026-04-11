@@ -28,6 +28,43 @@ function isValidDate(value) {
   return /^\d{4}-\d{2}-\d{2}$/.test(String(value).trim());
 }
 
+function isMissingColumnError(error, columnName) {
+  const message = String(error?.message || "").toLowerCase();
+  return message.includes(String(columnName || "").toLowerCase()) && message.includes("column");
+}
+
+async function insertWithOptionalPostalCode(table, payload) {
+  const { data, error } = await supabase
+    .from(table)
+    .insert(payload)
+    .select()
+    .single();
+
+  if (!error) {
+    return { data, error: null, usedPostalCode: Object.prototype.hasOwnProperty.call(payload, "postal_code") };
+  }
+
+  if (Object.prototype.hasOwnProperty.call(payload, "postal_code") && isMissingColumnError(error, "postal_code")) {
+    const fallbackPayload = { ...payload };
+    delete fallbackPayload.postal_code;
+
+    const fallback = await supabase
+      .from(table)
+      .insert(fallbackPayload)
+      .select()
+      .single();
+
+    return {
+      data: fallback.data,
+      error: fallback.error,
+      usedPostalCode: false,
+      postalCodeFallback: true
+    };
+  }
+
+  return { data: null, error, usedPostalCode: false };
+}
+
 function addYears(dateString, years) {
   const d = new Date(dateString);
   d.setFullYear(d.getFullYear() + years);
@@ -291,6 +328,7 @@ async function handleCreateStage(req, res) {
   const city = sanitizeText(req.body?.city);
   const department = sanitizeText(req.body?.department);
   const region = sanitizeText(req.body?.region);
+  const postalCode = sanitizeText(req.body?.postal_code);
   const address = sanitizeText(req.body?.address);
   const stageDate = sanitizeText(req.body?.stage_date);
   const startTime = sanitizeText(req.body?.start_time);
@@ -328,6 +366,7 @@ async function handleCreateStage(req, res) {
     city,
     department,
     region,
+    postal_code: postalCode,
     address,
     stage_date: stageDate,
     start_time: startTime,
@@ -338,19 +377,17 @@ async function handleCreateStage(req, res) {
     status
   };
 
-  const { data, error } = await supabase
-    .from("stages")
-    .insert(payload)
-    .select()
-    .single();
+  const insertResult = await insertWithOptionalPostalCode("stages", payload);
 
-  if (error) {
-    return res.status(500).json({ error: error.message });
+  if (insertResult.error) {
+    return res.status(500).json({ error: insertResult.error.message });
   }
 
   return res.status(200).json({
     success: true,
-    stage: data
+    stage: insertResult.data,
+    postal_code_saved: insertResult.usedPostalCode,
+    postal_code_fallback: insertResult.postalCodeFallback || false
   });
 }
 
@@ -359,6 +396,7 @@ async function handleCreateTrainerSession(req, res) {
   const title = sanitizeText(req.body?.title || moduleName);
   const city = sanitizeText(req.body?.city);
   const department = sanitizeText(req.body?.department);
+  const postalCode = sanitizeText(req.body?.postal_code);
   const address = sanitizeText(req.body?.address);
   const startDate = sanitizeText(req.body?.start_date);
   const endDate = sanitizeText(req.body?.end_date);
@@ -394,6 +432,7 @@ async function handleCreateTrainerSession(req, res) {
     title,
     city,
     department,
+    postal_code: postalCode,
     address,
     start_date: startDate,
     end_date: endDate,
@@ -405,19 +444,17 @@ async function handleCreateTrainerSession(req, res) {
     status
   };
 
-  const { data, error } = await supabase
-    .from("trainer_sessions")
-    .insert(payload)
-    .select()
-    .single();
+  const insertResult = await insertWithOptionalPostalCode("trainer_sessions", payload);
 
-  if (error) {
-    return res.status(500).json({ error: error.message });
+  if (insertResult.error) {
+    return res.status(500).json({ error: insertResult.error.message });
   }
 
   return res.status(200).json({
     success: true,
-    trainer_session: data
+    trainer_session: insertResult.data,
+    postal_code_saved: insertResult.usedPostalCode,
+    postal_code_fallback: insertResult.postalCodeFallback || false
   });
 }
 
@@ -428,13 +465,36 @@ async function handleDeleteStage(req, res) {
     return res.status(400).json({ error: "stage_id manquant" });
   }
 
-  const { error } = await supabase
+  const { data: stageRow, error: stageFetchError } = await supabase
+    .from("stages")
+    .select("id")
+    .eq("id", stageId)
+    .maybeSingle();
+
+  if (stageFetchError) {
+    return res.status(500).json({ error: stageFetchError.message });
+  }
+
+  if (!stageRow) {
+    return res.status(404).json({ error: "Stage introuvable" });
+  }
+
+  const { error: reservationsError } = await supabase
+    .from("reservations")
+    .delete()
+    .eq("stage_id", stageId);
+
+  if (reservationsError) {
+    return res.status(500).json({ error: reservationsError.message });
+  }
+
+  const { error: stageDeleteError } = await supabase
     .from("stages")
     .delete()
     .eq("id", stageId);
 
-  if (error) {
-    return res.status(500).json({ error: error.message });
+  if (stageDeleteError) {
+    return res.status(500).json({ error: stageDeleteError.message });
   }
 
   return res.status(200).json({ success: true });
