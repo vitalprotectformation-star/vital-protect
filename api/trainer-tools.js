@@ -100,7 +100,7 @@ async function resolveTrainingModule({ moduleSlug, moduleName }) {
       .from("training_modules")
       .select("*")
       .eq("slug", moduleSlug)
-      .eq("is_active", true)
+      .eq("status", "active")
       .maybeSingle();
 
     if (error) throw error;
@@ -112,7 +112,7 @@ async function resolveTrainingModule({ moduleSlug, moduleName }) {
       .from("training_modules")
       .select("*")
       .ilike("name", moduleName)
-      .eq("is_active", true)
+      .eq("status", "active")
       .maybeSingle();
 
     if (error) throw error;
@@ -123,18 +123,6 @@ async function resolveTrainingModule({ moduleSlug, moduleName }) {
 }
 
 async function findTrainerCertifiedModule(trainerId, moduleRow) {
-  if (moduleRow?.slug) {
-    const { data, error } = await supabase
-      .from("trainer_modules")
-      .select("*")
-      .eq("trainer_id", trainerId)
-      .eq("module_slug", moduleRow.slug)
-      .maybeSingle();
-
-    if (error) throw error;
-    if (data) return data;
-  }
-
   if (moduleRow?.name) {
     const { data, error } = await supabase
       .from("trainer_modules")
@@ -145,6 +133,22 @@ async function findTrainerCertifiedModule(trainerId, moduleRow) {
 
     if (error) throw error;
     if (data) return data;
+  }
+
+  if (moduleRow?.slug) {
+    try {
+      const { data, error } = await supabase
+        .from("trainer_modules")
+        .select("*")
+        .eq("trainer_id", trainerId)
+        .eq("module_slug", moduleRow.slug)
+        .maybeSingle();
+
+      if (error) throw error;
+      if (data) return data;
+    } catch (error) {
+      console.warn("module_slug indisponible dans trainer_modules, fallback module_name utilisé");
+    }
   }
 
   return null;
