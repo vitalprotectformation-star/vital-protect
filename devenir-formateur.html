@@ -382,20 +382,50 @@
 
     .offer-card {
       position: relative;
-      background: white;
-      border: 1px solid rgba(13, 27, 42, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.08);
       border-radius: 24px;
-      box-shadow: var(--vp-shadow-md);
+      box-shadow: var(--vp-shadow-lg);
       padding: 28px;
       display: flex;
       flex-direction: column;
       gap: 16px;
       overflow: hidden;
+      min-height: 430px;
+      background-color: #07101f;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      isolation: isolate;
+    }
+
+    .offer-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(180deg, rgba(3, 9, 20, 0.46) 0%, rgba(3, 9, 20, 0.40) 30%, rgba(3, 9, 20, 0.72) 68%, rgba(3, 9, 20, 0.88) 100%);
+      z-index: -1;
+    }
+
+    .offer-card > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    .offer-card--one {
+      background-image: url('1module.png');
+    }
+
+    .offer-card--two {
+      background-image: url('2modules.png');
+    }
+
+    .offer-card--full {
+      background-image: url('packcomplet.png');
     }
 
     .offer-card--featured {
-      border-color: rgba(190, 149, 66, 0.42);
-      box-shadow: var(--vp-shadow-lg);
+      border-color: rgba(190, 149, 66, 0.45);
       transform: translateY(-4px);
     }
 
@@ -414,6 +444,7 @@
       font-weight: 800;
       letter-spacing: 0.04em;
       text-transform: uppercase;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18);
     }
 
     .offer-label {
@@ -422,22 +453,24 @@
       width: fit-content;
       padding: 8px 12px;
       border-radius: 999px;
-      background: var(--vp-blue-soft);
-      color: var(--vp-navy-700);
+      background: rgba(255, 255, 255, 0.12);
+      color: white;
       font-weight: 700;
       font-size: 0.84rem;
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.14);
     }
 
     .offer-card h3 {
       margin: 0;
-      color: var(--vp-navy-850);
-      font-size: 1.45rem;
+      color: white;
+      font-size: 1.55rem;
       line-height: 1.15;
     }
 
     .offer-card p {
       margin: 0;
-      color: var(--vp-text-soft);
+      color: rgba(255, 255, 255, 0.88);
       line-height: 1.72;
     }
 
@@ -445,7 +478,7 @@
       display: flex;
       align-items: baseline;
       gap: 10px;
-      color: var(--vp-navy-850);
+      color: white;
     }
 
     .offer-price strong {
@@ -454,7 +487,7 @@
     }
 
     .offer-price span {
-      color: var(--vp-text-soft);
+      color: rgba(255, 255, 255, 0.78);
       font-weight: 700;
     }
 
@@ -467,7 +500,7 @@
     }
 
     .offer-list li {
-      background: var(--vp-blue-soft-2);
+      background: rgba(255, 255, 255, 0.10);
       border: 1px solid rgba(13, 27, 42, 0.05);
       border-radius: 14px;
       padding: 12px 14px;
@@ -816,7 +849,7 @@
         </div>
 
         <div class="offer-grid">
-          <article class="offer-card">
+          <article class="offer-card offer-card--one">
             <span class="offer-label">Démarrage</span>
             <h3>1 module</h3>
             <p>La formule la plus simple pour entrer dans le réseau, tester le cadre et lancer votre première spécialité certifiée.</p>
@@ -830,11 +863,11 @@
               <li>Entrée progressive dans le standard Vital Protect</li>
             </ul>
             <div class="timeline-cta" style="justify-content:flex-start; margin-top:auto;">
-              <a href="#catalogue-modules" class="btn btn-outline">Choisir 1 module</a>
+              <a href="#catalogue-modules" class="btn btn-light">Choisir 1 module</a>
             </div>
           </article>
 
-          <article class="offer-card offer-card--featured">
+          <article class="offer-card offer-card--two offer-card--featured">
             <span class="offer-badge">Populaire</span>
             <span class="offer-label">Accélération</span>
             <h3>2 modules</h3>
@@ -849,11 +882,11 @@
               <li>Positionnement plus solide dès le lancement</li>
             </ul>
             <div class="timeline-cta" style="justify-content:flex-start; margin-top:auto;">
-              <a href="#catalogue-modules" class="btn btn-dark">Découvrir le pack 2 modules</a>
+              <a href="#catalogue-modules" class="btn btn-light">Découvrir le pack 2 modules</a>
             </div>
           </article>
 
-          <article class="offer-card">
+          <article class="offer-card offer-card--full">
             <span class="offer-label">Premium</span>
             <h3>Pack complet</h3>
             <p>Pour les profils qui veulent une offre complète, une vraie profondeur de catalogue et un positionnement formateur premium.</p>
@@ -867,7 +900,7 @@
               <li>Parcours pensé pour construire une activité durable</li>
             </ul>
             <div class="timeline-cta" style="justify-content:flex-start; margin-top:auto;">
-              <a href="#catalogue-modules" class="btn btn-outline">Voir le pack complet</a>
+              <a href="#catalogue-modules" class="btn btn-light">Voir le pack complet</a>
             </div>
           </article>
         </div>
