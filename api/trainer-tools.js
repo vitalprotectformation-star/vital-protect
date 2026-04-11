@@ -36,6 +36,43 @@ function parseNumber(value, fallback = 0) {
   return Number.isFinite(n) ? n : fallback;
 }
 
+function isMissingColumnError(error, columnName) {
+  const message = String(error?.message || "").toLowerCase();
+  return message.includes(String(columnName || "").toLowerCase()) && message.includes("column");
+}
+
+async function insertWithOptionalPostalCode(table, payload) {
+  const { data, error } = await supabase
+    .from(table)
+    .insert(payload)
+    .select()
+    .single();
+
+  if (!error) {
+    return { data, error: null, usedPostalCode: Object.prototype.hasOwnProperty.call(payload, "postal_code") };
+  }
+
+  if (Object.prototype.hasOwnProperty.call(payload, "postal_code") && isMissingColumnError(error, "postal_code")) {
+    const fallbackPayload = { ...payload };
+    delete fallbackPayload.postal_code;
+
+    const fallback = await supabase
+      .from(table)
+      .insert(fallbackPayload)
+      .select()
+      .single();
+
+    return {
+      data: fallback.data,
+      error: fallback.error,
+      usedPostalCode: false,
+      postalCodeFallback: true
+    };
+  }
+
+  return { data: null, error, usedPostalCode: false };
+}
+
 async function requireTrainer(req) {
   const authHeader = req.headers.authorization || "";
   const token = authHeader.startsWith("Bearer ")
@@ -100,7 +137,7 @@ async function resolveTrainingModule({ moduleSlug, moduleName }) {
       .from("training_modules")
       .select("*")
       .eq("slug", moduleSlug)
-      .or("and(is_active.eq.true,status.eq.active),and(is_active.eq.true),and(status.eq.active)")
+      .eq("is_active", true)
       .maybeSingle();
 
     if (error) throw error;
@@ -112,7 +149,7 @@ async function resolveTrainingModule({ moduleSlug, moduleName }) {
       .from("training_modules")
       .select("*")
       .ilike("name", moduleName)
-      .or("and(is_active.eq.true,status.eq.active),and(is_active.eq.true),and(status.eq.active)")
+      .eq("is_active", true)
       .maybeSingle();
 
     if (error) throw error;
@@ -160,6 +197,7 @@ async function handleCreateStage(req, res, trainer) {
   const city = sanitizeText(req.body?.city);
   const department = sanitizeText(req.body?.department);
   const region = sanitizeText(req.body?.region);
+  const postalCode = sanitizeText(req.body?.postal_code);
   const address = sanitizeText(req.body?.address);
   const stageDate = sanitizeText(req.body?.stage_date);
   const startTime = sanitizeText(req.body?.start_time);
@@ -249,6 +287,7 @@ async function handleCreateStage(req, res, trainer) {
     city,
     department,
     region,
+    postal_code: postalCode,
     address,
     stage_date: stageDate,
     start_time: startTime,
@@ -259,19 +298,17 @@ async function handleCreateStage(req, res, trainer) {
     status: "published"
   };
 
-  const { data, error } = await supabase
-    .from("stages")
-    .insert(payload)
-    .select()
-    .single();
+  const insertResult = await insertWithOptionalPostalCode("stages", payload);
 
-  if (error) {
-    return res.status(500).json({ error: error.message });
+  if (insertResult.error) {
+    return res.status(500).json({ error: insertResult.error.message });
   }
 
   return res.status(200).json({
     success: true,
-    stage: data
+    stage: insertResult.data,
+    postal_code_saved: insertResult.usedPostalCode,
+    postal_code_fallback: insertResult.postalCodeFallback || false
   });
 }
 
