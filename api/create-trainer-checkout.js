@@ -32,7 +32,10 @@ export default async function handler(req, res) {
       email,
       phone,
       city,
+      postal_code,
+      selected_module,
       training_type,
+      experience,
       message,
       session_id
     } = req.body || {};
@@ -42,7 +45,9 @@ export default async function handler(req, res) {
     const cleanEmail = normalizeEmail(email);
     const cleanPhone = sanitizeText(phone);
     const cleanCity = sanitizeText(city);
-    const cleanTrainingType = sanitizeText(training_type);
+    const cleanPostalCode = sanitizeText(postal_code);
+    const cleanSelectedModule = sanitizeText(selected_module || training_type);
+    const cleanExperience = sanitizeText(experience);
     const cleanMessage = sanitizeText(message);
     const cleanSessionId = sanitizeText(session_id);
 
@@ -66,11 +71,7 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: "Téléphone manquant" });
     }
 
-    if (!cleanCity) {
-      return res.status(400).json({ error: "Ville manquante" });
-    }
-
-    if (!cleanTrainingType) {
+    if (!cleanSelectedModule) {
       return res.status(400).json({ error: "Module manquant" });
     }
 
@@ -105,13 +106,15 @@ export default async function handler(req, res) {
     }
 
     const sessionModuleName = sanitizeText(
-      trainerSession.module_name || trainerSession.training_type || trainerSession.title
+      trainerSession.module_name ||
+      trainerSession.training_type ||
+      trainerSession.title
     );
 
     if (
       sessionModuleName &&
-      cleanTrainingType &&
-      sessionModuleName.toLowerCase() !== cleanTrainingType.toLowerCase()
+      cleanSelectedModule &&
+      sessionModuleName.toLowerCase() !== cleanSelectedModule.toLowerCase()
     ) {
       return res.status(400).json({
         error: "Le module sélectionné ne correspond pas à la session choisie"
@@ -131,7 +134,7 @@ export default async function handler(req, res) {
       req.headers.origin ||
       "https://www.vital-protect.fr";
 
-    const session = await stripe.checkout.sessions.create({
+    const checkoutSession = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
       mode: "payment",
       customer_email: cleanEmail,
@@ -162,12 +165,15 @@ export default async function handler(req, res) {
       metadata: {
         type: "trainer",
         session_id: cleanSessionId,
-        training_type: sessionModuleName || cleanTrainingType,
+        training_type: sessionModuleName || cleanSelectedModule,
+        selected_module: cleanSelectedModule,
         first_name: cleanFirstName,
         last_name: cleanLastName,
         email: cleanEmail,
         phone: cleanPhone,
         city: cleanCity,
+        postal_code: cleanPostalCode,
+        experience: cleanExperience,
         message: cleanMessage
       },
 
@@ -175,7 +181,7 @@ export default async function handler(req, res) {
       cancel_url: `${origin}/trainer-cancel.html?session_id=${encodeURIComponent(cleanSessionId)}`
     });
 
-    return res.status(200).json({ url: session.url });
+    return res.status(200).json({ url: checkoutSession.url });
   } catch (err) {
     console.error("Create trainer checkout error:", err);
     return res.status(500).json({ error: "Erreur Stripe checkout formateur" });
