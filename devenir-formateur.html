@@ -171,9 +171,7 @@
     .selected-session-box,
     .authority-card,
     .network-card,
-    .module-card,
-    .selected-module-box,
-    .journey-hint {
+    .module-card {
       background: white;
       border: 1px solid rgba(13, 27, 42, 0.06);
       border-radius: var(--vp-radius-md);
@@ -284,11 +282,6 @@
     .session-card:hover {
       transform: translateY(-3px);
       box-shadow: var(--vp-shadow-lg);
-    }
-
-    .session-card.is-selected {
-      border: 2px solid var(--vp-gold);
-      box-shadow: 0 0 0 4px rgba(205, 160, 74, 0.10);
     }
 
     .session-top {
@@ -420,8 +413,7 @@
       line-height: 1.7;
     }
 
-    .selected-session-box,
-    .selected-module-box {
+    .selected-session-box {
       display: none;
       margin-bottom: 18px;
       background: var(--vp-blue-soft-2);
@@ -429,13 +421,11 @@
       padding: 14px 16px;
     }
 
-    .selected-session-box.active,
-    .selected-module-box.active {
+    .selected-session-box.active {
       display: block;
     }
 
-    .selected-session-label,
-    .selected-module-label {
+    .selected-session-label {
       display: block;
       font-size: 0.9rem;
       color: var(--vp-text-soft);
@@ -443,30 +433,10 @@
       margin-bottom: 6px;
     }
 
-    .selected-session-value,
-    .selected-module-value {
+    .selected-session-value {
       font-weight: 800;
       color: var(--vp-navy-850);
       line-height: 1.5;
-    }
-
-    .journey-hint {
-      padding: 18px 20px;
-      margin-top: 18px;
-      background: var(--vp-blue-soft-2);
-    }
-
-    .journey-hint strong {
-      display: block;
-      color: var(--vp-navy-850);
-      margin-bottom: 6px;
-      font-size: 1rem;
-    }
-
-    .journey-hint p {
-      margin: 0;
-      color: var(--vp-text-soft);
-      line-height: 1.7;
     }
 
     .alert {
@@ -511,44 +481,6 @@
       flex-wrap: wrap;
       gap: 12px;
       justify-content: center;
-    }
-
-    .module-card {
-      transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
-    }
-
-    .module-card.is-clickable {
-      cursor: pointer;
-    }
-
-    .module-card.is-clickable:hover {
-      transform: translateY(-3px);
-      box-shadow: var(--vp-shadow-lg);
-    }
-
-    .module-card.is-selected {
-      border: 2px solid var(--vp-gold);
-      box-shadow: 0 0 0 4px rgba(205, 160, 74, 0.10);
-    }
-
-    .module-card__actions {
-      margin-top: 18px;
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-
-    .locked-input {
-      background: #f7f8fa;
-      color: var(--vp-navy-850);
-      font-weight: 700;
-    }
-
-    .locked-help {
-      margin-top: 8px;
-      color: var(--vp-text-soft);
-      font-size: 0.92rem;
-      line-height: 1.6;
     }
 
     @media (max-width: 1180px) {
@@ -665,8 +597,8 @@
           </div>
 
           <div class="trainer-hero__actions">
-            <a href="#modules" class="btn btn-primary">Choisir mon module</a>
-            <a href="#sessions" class="btn btn-secondary">Voir les sessions disponibles</a>
+            <a href="#modules" class="btn btn-primary">Voir les modules</a>
+            <a href="#formulaire" class="btn btn-secondary">Réserver ma place</a>
           </div>
         </div>
 
@@ -736,26 +668,15 @@
     <section id="modules">
       <div class="container">
         <div class="section-head section-head--center">
-          <span class="eyebrow">Étape 1</span>
-          <h2>Choisissez d’abord votre module</h2>
+          <span class="eyebrow">Modules ouverts</span>
+          <h2>Les modules actuellement proposés</h2>
           <p>
-            Commencez par sélectionner le module qui vous intéresse.
-            Les sessions affichées ensuite seront filtrées automatiquement pour ce module.
+            Choisissez d’abord un module. Ensuite, seules les sessions liées à ce module s’afficheront.
           </p>
         </div>
 
         <div id="modulesContainer" class="module-grid">
           <div class="empty-state">Chargement des modules...</div>
-        </div>
-
-        <div id="selectedModuleBox" class="selected-module-box">
-          <span class="selected-module-label">Module sélectionné</span>
-          <div id="selectedModuleValue" class="selected-module-value">—</div>
-        </div>
-
-        <div class="journey-hint">
-          <strong>Parcours conseillé</strong>
-          <p>1. Choisissez un module → 2. Sélectionnez une session disponible → 3. Complétez votre dossier.</p>
         </div>
       </div>
     </section>
@@ -801,7 +722,7 @@
         </div>
 
         <div class="timeline-cta">
-          <a href="#modules" class="btn btn-dark">Choisir un module</a>
+          <a href="#formulaire" class="btn btn-dark">Réserver une session</a>
         </div>
       </div>
     </section>
@@ -942,14 +863,14 @@
         <div class="steps-grid">
           <article class="step-card">
             <div class="step-index">1</div>
-            <h3>Choix du module</h3>
-            <p>Vous sélectionnez d’abord le module que vous souhaitez transmettre.</p>
+            <h3>Choix d’un module</h3>
+            <p>Vous commencez par choisir le module qui vous correspond.</p>
           </article>
 
           <article class="step-card">
             <div class="step-index">2</div>
             <h3>Choix d’une session</h3>
-            <p>Vous choisissez ensuite une session disponible correspondant à ce module.</p>
+            <p>Vous sélectionnez ensuite une session disponible liée à ce module précis.</p>
           </article>
 
           <article class="step-card">
@@ -972,7 +893,7 @@
         </div>
 
         <div class="timeline-cta">
-          <a href="#modules" class="btn btn-dark">Commencer le parcours</a>
+          <a href="#formulaire" class="btn btn-dark">Réserver ma place</a>
         </div>
       </div>
     </section>
@@ -1016,16 +937,16 @@
     <section id="sessions">
       <div class="container">
         <div class="section-head">
-          <span class="eyebrow">Étape 2</span>
+          <span class="eyebrow">Sessions disponibles</span>
           <h2>Choisissez une session de certification</h2>
-          <p id="sessionsIntroText">
-            Sélectionnez d’abord un module pour afficher les sessions correspondantes,
-            puis complétez votre demande de réservation.
+          <p>
+            Sélectionnez d’abord un module pour afficher les sessions correspondantes, puis complétez votre demande
+            de réservation.
           </p>
         </div>
 
         <div id="sessionsContainer" class="sessions-grid">
-          <div class="empty-state">Choisissez un module pour voir les sessions disponibles.</div>
+          <div class="empty-state">Choisissez d’abord un module ci-dessus pour voir les sessions disponibles.</div>
         </div>
 
         <div class="timeline-cta">
@@ -1040,8 +961,8 @@
           <div class="form-head">
             <h2>Compléter votre dossier</h2>
             <p>
-              Une fois votre session choisie, votre module est verrouillé automatiquement
-              pour éviter toute incohérence dans la réservation.
+              Une fois votre session choisie, votre module est verrouillé automatiquement pour éviter toute incohérence
+              dans la réservation.
             </p>
           </div>
 
@@ -1080,24 +1001,13 @@
               </div>
 
               <div class="form-field">
-                <label for="trainingTypeDisplay">Module</label>
-                <input
-                  type="text"
-                  id="trainingTypeDisplay"
-                  class="locked-input"
-                  placeholder="Choisissez d’abord un module puis une session"
-                  readonly
-                />
-                <input type="hidden" id="trainingType" />
-                <div class="locked-help">
+                <label for="trainingType">Module</label>
+                <select id="trainingType" required>
+                  <option value="">Choisissez d’abord un module puis une session</option>
+                </select>
+                <div class="form-note" style="margin-top:8px; color: var(--vp-text-soft); line-height:1.6; font-size:0.95rem;">
                   Le module se verrouille automatiquement quand vous sélectionnez une session.
                 </div>
-              </div>
-
-              <div class="form-field full">
-                <button id="changeModuleBtn" class="btn btn-outline" type="button" style="display:none;">
-                  Changer de module
-                </button>
               </div>
 
               <div class="form-field full">
@@ -1159,7 +1069,7 @@
         </div>
 
         <div class="timeline-cta">
-          <a href="#modules" class="btn btn-dark">Candidater maintenant</a>
+          <a href="#formulaire" class="btn btn-dark">Candidater maintenant</a>
           <a href="/contact.html" class="btn btn-outline">Poser une question</a>
         </div>
       </div>
@@ -1175,7 +1085,7 @@
           </p>
 
           <div class="cta-actions">
-            <a href="#modules" class="btn btn-dark">Choisir mon module</a>
+            <a href="#sessions" class="btn btn-dark">Voir les sessions</a>
             <a href="/methode.html" class="btn btn-outline">Voir le standard</a>
             <a href="/contact.html" class="btn btn-outline">Nous contacter</a>
           </div>
@@ -1221,22 +1131,16 @@
 
     let selectedSessionId = params.get("session_id") || "";
     let selectedTrainingType = params.get("training_type") || "";
+    let modulesData = [];
+    let sessionsData = [];
 
     const form = document.getElementById("trainerForm");
-    const trainingTypeInput = document.getElementById("trainingType");
-    const trainingTypeDisplay = document.getElementById("trainingTypeDisplay");
+    const trainingTypeSelect = document.getElementById("trainingType");
     const selectedSessionBox = document.getElementById("selectedSessionBox");
     const selectedSessionValue = document.getElementById("selectedSessionValue");
-    const selectedModuleBox = document.getElementById("selectedModuleBox");
-    const selectedModuleValue = document.getElementById("selectedModuleValue");
     const sessionsContainer = document.getElementById("sessionsContainer");
     const checkoutFeedback = document.getElementById("checkoutFeedback");
     const modulesContainer = document.getElementById("modulesContainer");
-    const changeModuleBtn = document.getElementById("changeModuleBtn");
-    const sessionsIntroText = document.getElementById("sessionsIntroText");
-
-    let modulesData = [];
-    let sessionsData = [];
 
     function formatDate(dateString) {
       if (!dateString) return "Date non disponible";
@@ -1262,255 +1166,8 @@
         .replaceAll("'", "&#39;");
     }
 
-    function normalizeText(value) {
-      return String(value || "").trim().toLowerCase();
-    }
-
-    function updateSelectedSessionBox(label) {
-      if (!label) {
-        selectedSessionBox.classList.remove("active");
-        selectedSessionValue.textContent = "—";
-        return;
-      }
-
-      selectedSessionBox.classList.add("active");
-      selectedSessionValue.textContent = label;
-    }
-
-    function updateSelectedModuleBox(label) {
-      if (!label) {
-        selectedModuleBox.classList.remove("active");
-        selectedModuleValue.textContent = "—";
-        return;
-      }
-
-      selectedModuleBox.classList.add("active");
-      selectedModuleValue.textContent = label;
-    }
-
-    function updateTrainingTypeField() {
-      trainingTypeInput.value = selectedTrainingType || "";
-      trainingTypeDisplay.value = selectedTrainingType || "";
-      changeModuleBtn.style.display = selectedTrainingType ? "inline-flex" : "none";
-      updateSelectedModuleBox(selectedTrainingType || "");
-    }
-
-    function updateUrlState() {
-      const newUrl = new URL(window.location.href);
-
-      if (selectedSessionId) {
-        newUrl.searchParams.set("session_id", selectedSessionId);
-      } else {
-        newUrl.searchParams.delete("session_id");
-      }
-
-      if (selectedTrainingType) {
-        newUrl.searchParams.set("training_type", selectedTrainingType);
-      } else {
-        newUrl.searchParams.delete("training_type");
-      }
-
-      newUrl.searchParams.delete("checkout");
-      window.history.replaceState({}, "", newUrl);
-    }
-
-    function getModuleByName(name) {
-      return modulesData.find(module => normalizeText(module.name) === normalizeText(name));
-    }
-
-    function selectModule(moduleName, options = {}) {
-      selectedTrainingType = moduleName || "";
-
-      if (!options.keepSession) {
-        selectedSessionId = "";
-        updateSelectedSessionBox("");
-      }
-
-      updateTrainingTypeField();
-      updateUrlState();
-      renderModules();
-      renderSessions();
-
-      if (options.scrollToSessions) {
-        document.getElementById("sessions").scrollIntoView({ behavior: "smooth" });
-      }
-    }
-
-    function clearModuleSelection() {
-      selectedTrainingType = "";
-      selectedSessionId = "";
-      updateTrainingTypeField();
-      updateSelectedSessionBox("");
-      updateUrlState();
-      renderModules();
-      renderSessions();
-      document.getElementById("modules").scrollIntoView({ behavior: "smooth" });
-    }
-
-    function renderModules() {
-      if (!modulesData.length) {
-        modulesContainer.innerHTML = `
-          <div class="empty-state">
-            Aucun module disponible pour le moment.
-          </div>
-        `;
-        return;
-      }
-
-      modulesContainer.innerHTML = modulesData.map(module => {
-        const isSelected = normalizeText(module.name) === normalizeText(selectedTrainingType);
-
-        return `
-          <article class="module-card is-clickable ${isSelected ? "is-selected" : ""}">
-            <div class="icon-dot"></div>
-            <h3>${escapeHtml(module.name)}</h3>
-            <p>${escapeHtml(module.short_description || module.long_description || "Module disponible au catalogue Vital Protect.")}</p>
-            <div class="module-card__actions">
-              <button
-                class="btn ${isSelected ? "btn-dark" : "btn-outline"}"
-                type="button"
-                data-module-name="${escapeHtml(module.name)}"
-              >
-                ${isSelected ? "Module sélectionné" : "Choisir ce module"}
-              </button>
-            </div>
-          </article>
-        `;
-      }).join("");
-
-      document.querySelectorAll("[data-module-name]").forEach(button => {
-        button.addEventListener("click", () => {
-          const moduleName = button.dataset.moduleName || "";
-          selectModule(moduleName, { keepSession: false, scrollToSessions: true });
-        });
-      });
-    }
-
     function getAvailabilityClass(remainingPlaces) {
       return Number(remainingPlaces || 0) <= 3 ? "warning" : "success";
-    }
-
-    function renderSessions() {
-      if (!selectedTrainingType) {
-        sessionsIntroText.textContent = "Sélectionnez d’abord un module pour afficher les sessions correspondantes, puis complétez votre demande de réservation.";
-        sessionsContainer.innerHTML = `
-          <div class="empty-state">
-            Choisissez un module ci-dessus pour voir les sessions disponibles.
-          </div>
-        `;
-        return;
-      }
-
-      const filteredSessions = sessionsData.filter(session =>
-        normalizeText(session.module_name) === normalizeText(selectedTrainingType)
-      );
-
-      sessionsIntroText.textContent = `Voici les sessions disponibles pour le module « ${selectedTrainingType} ».`;
-
-      if (!filteredSessions.length) {
-        sessionsContainer.innerHTML = `
-          <div class="empty-state">
-            Aucune session ouverte pour le module « ${escapeHtml(selectedTrainingType)} » pour le moment.
-          </div>
-        `;
-        return;
-      }
-
-      sessionsContainer.innerHTML = filteredSessions.map(session => {
-        const isSelected = session.id === selectedSessionId;
-        const moduleDescription =
-          getModuleByName(session.module_name)?.short_description ||
-          "Intégration au cadre Vital Protect : logique de méthode, cohérence de transmission, exigence pédagogique, sécurité et activation progressive dans le réseau.";
-
-        return `
-          <article class="session-card ${isSelected ? "is-selected" : ""}">
-            <div class="session-top">
-              <div>
-                <div class="session-type">${escapeHtml(session.module_name || "Certification")}</div>
-                <h3 class="session-title">${escapeHtml(session.title || "Session formateur")}</h3>
-              </div>
-              <div class="session-price">${formatPrice(session.launch_price || session.standard_price || 0)}</div>
-            </div>
-
-            <div class="session-body">
-              <div class="session-description">
-                ${escapeHtml(moduleDescription)}
-              </div>
-
-              <div class="session-meta">
-                <div class="meta-item">
-                  <span class="meta-label">Ville</span>
-                  <span class="meta-value">${escapeHtml(session.city || "Non précisée")}</span>
-                </div>
-
-                <div class="meta-item">
-                  <span class="meta-label">Début</span>
-                  <span class="meta-value">${formatDate(session.start_date)}</span>
-                </div>
-
-                <div class="meta-item">
-                  <span class="meta-label">Fin</span>
-                  <span class="meta-value">${formatDate(session.end_date)}</span>
-                </div>
-
-                <div class="meta-item">
-                  <span class="meta-label">Durée</span>
-                  <span class="meta-value">${session.duration_days || "—"} jours</span>
-                </div>
-
-                <div class="meta-item">
-                  <span class="meta-label">Tarif standard</span>
-                  <span class="meta-value">${formatPrice(session.standard_price || 0)}</span>
-                </div>
-
-                <div class="meta-item">
-                  <span class="meta-label">Places restantes</span>
-                  <span class="meta-value">${session.remaining_places || 0}</span>
-                </div>
-              </div>
-
-              <div class="availability ${getAvailabilityClass(session.remaining_places)}">
-                ${session.remaining_places || 0} place(s) restante(s)
-              </div>
-            </div>
-
-            <div class="session-actions">
-              <button
-                class="btn btn-dark"
-                type="button"
-                data-session-id="${session.id}"
-              >
-                ${isSelected ? "Session sélectionnée" : "Réserver cette session"}
-              </button>
-            </div>
-          </article>
-        `;
-      }).join("");
-
-      document.querySelectorAll("[data-session-id]").forEach(button => {
-        button.addEventListener("click", () => {
-          const session = sessionsData.find(item => item.id === button.dataset.sessionId);
-          if (session) {
-            selectSession(session);
-          }
-        });
-      });
-    }
-
-    function selectSession(session) {
-      selectedSessionId = session.id || "";
-      selectedTrainingType = session.module_name || "";
-
-      updateTrainingTypeField();
-
-      const label = `${session.title || "Session formateur"} — ${session.city || "Ville"} — ${formatDate(session.end_date)}`;
-      updateSelectedSessionBox(label);
-
-      updateUrlState();
-      renderModules();
-      renderSessions();
-
-      document.getElementById("formulaire").scrollIntoView({ behavior: "smooth" });
     }
 
     function renderCheckoutFeedback() {
@@ -1538,6 +1195,231 @@
       checkoutFeedback.innerHTML = "";
     }
 
+    function updateSelectedSessionBox(label) {
+      if (!label) {
+        selectedSessionBox.classList.remove("active");
+        selectedSessionValue.textContent = "—";
+        return;
+      }
+
+      selectedSessionBox.classList.add("active");
+      selectedSessionValue.textContent = label;
+    }
+
+    function populateTrainingTypeSelect() {
+      trainingTypeSelect.innerHTML = `
+        <option value="">Choisissez d’abord un module puis une session</option>
+        ${modulesData.map((module) => `
+          <option value="${escapeHtml(module.name)}">${escapeHtml(module.name)}</option>
+        `).join("")}
+      `;
+
+      if (selectedTrainingType && modulesData.some((module) => module.name === selectedTrainingType)) {
+        trainingTypeSelect.value = selectedTrainingType;
+      } else {
+        trainingTypeSelect.value = "";
+      }
+    }
+
+    function lockTrainingType(moduleName) {
+      trainingTypeSelect.innerHTML = `
+        <option value="${escapeHtml(moduleName)}">${escapeHtml(moduleName)}</option>
+      `;
+      trainingTypeSelect.value = moduleName;
+      trainingTypeSelect.disabled = true;
+    }
+
+    function unlockTrainingType() {
+      trainingTypeSelect.disabled = false;
+      populateTrainingTypeSelect();
+    }
+
+    function renderModules() {
+      if (!modulesData.length) {
+        modulesContainer.innerHTML = `
+          <div class="empty-state">
+            Aucun module disponible pour le moment.
+          </div>
+        `;
+        return;
+      }
+
+      modulesContainer.innerHTML = modulesData.map((module) => `
+        <article class="module-card">
+          <div class="icon-dot"></div>
+          <h3>${escapeHtml(module.name)}</h3>
+          <p>${escapeHtml(module.short_description || module.long_description || "Module disponible au catalogue Vital Protect.")}</p>
+
+          <div class="timeline-cta" style="justify-content:flex-start; margin-top:18px;">
+            <button
+              type="button"
+              class="btn btn-dark"
+              data-module-name="${escapeHtml(module.name)}"
+            >
+              Voir les sessions
+            </button>
+          </div>
+        </article>
+      `).join("");
+
+      document.querySelectorAll("[data-module-name]").forEach((button) => {
+        button.addEventListener("click", () => {
+          selectedTrainingType = button.dataset.moduleName || "";
+          selectedSessionId = "";
+
+          unlockTrainingType();
+          trainingTypeSelect.value = selectedTrainingType;
+          updateSelectedSessionBox("");
+
+          const newUrl = new URL(window.location.href);
+          if (selectedTrainingType) {
+            newUrl.searchParams.set("training_type", selectedTrainingType);
+          } else {
+            newUrl.searchParams.delete("training_type");
+          }
+          newUrl.searchParams.delete("session_id");
+          window.history.replaceState({}, "", newUrl);
+
+          renderSessions();
+          document.getElementById("sessions").scrollIntoView({ behavior: "smooth" });
+        });
+      });
+    }
+
+    function getFilteredSessions() {
+      if (!selectedTrainingType) return [];
+
+      return sessionsData.filter((session) => {
+        return String(session.module_name || "").trim().toLowerCase() === selectedTrainingType.trim().toLowerCase();
+      });
+    }
+
+    function selectSession(session) {
+      selectedSessionId = session.id || "";
+      selectedTrainingType = session.module_name || "";
+
+      if (selectedTrainingType) {
+        lockTrainingType(selectedTrainingType);
+      }
+
+      const label = `${session.title || "Session formateur"} — ${session.city || "Ville"} — ${formatDate(session.end_date)}`;
+      updateSelectedSessionBox(label);
+
+      const newUrl = new URL(window.location.href);
+      newUrl.searchParams.set("session_id", selectedSessionId);
+      newUrl.searchParams.set("training_type", selectedTrainingType);
+      window.history.replaceState({}, "", newUrl);
+
+      document.getElementById("formulaire").scrollIntoView({ behavior: "smooth" });
+    }
+
+    function renderSessions() {
+      if (!sessionsData.length) {
+        sessionsContainer.innerHTML = `
+          <div class="empty-state">
+            Aucune session disponible pour le moment.
+          </div>
+        `;
+        return;
+      }
+
+      if (!selectedTrainingType) {
+        sessionsContainer.innerHTML = `
+          <div class="empty-state">
+            Choisissez d’abord un module ci-dessus pour voir les sessions disponibles.
+          </div>
+        `;
+        return;
+      }
+
+      const filteredSessions = getFilteredSessions();
+
+      if (!filteredSessions.length) {
+        sessionsContainer.innerHTML = `
+          <div class="empty-state">
+            Aucune session ouverte pour le module <strong>${escapeHtml(selectedTrainingType)}</strong>.
+          </div>
+        `;
+        return;
+      }
+
+      sessionsContainer.innerHTML = filteredSessions.map((session) => `
+        <article class="session-card">
+          <div class="session-top">
+            <div>
+              <div class="session-type">${escapeHtml(session.module_name || "Certification")}</div>
+              <h3 class="session-title">${escapeHtml(session.title || "Session formateur")}</h3>
+            </div>
+            <div class="session-price">${formatPrice(session.launch_price || session.standard_price || 0)}</div>
+          </div>
+
+          <div class="session-body">
+            <div class="session-description">
+              ${escapeHtml(
+                modulesData.find((module) => module.name === session.module_name)?.short_description ||
+                "Intégration au cadre Vital Protect : logique de méthode, cohérence de transmission, exigence pédagogique, sécurité et activation progressive dans le réseau."
+              )}
+            </div>
+
+            <div class="session-meta">
+              <div class="meta-item">
+                <span class="meta-label">Ville</span>
+                <span class="meta-value">${escapeHtml(session.city || "Non précisée")}</span>
+              </div>
+
+              <div class="meta-item">
+                <span class="meta-label">Début</span>
+                <span class="meta-value">${formatDate(session.start_date)}</span>
+              </div>
+
+              <div class="meta-item">
+                <span class="meta-label">Fin</span>
+                <span class="meta-value">${formatDate(session.end_date)}</span>
+              </div>
+
+              <div class="meta-item">
+                <span class="meta-label">Durée</span>
+                <span class="meta-value">${session.duration_days || "—"} jours</span>
+              </div>
+
+              <div class="meta-item">
+                <span class="meta-label">Tarif standard</span>
+                <span class="meta-value">${formatPrice(session.standard_price || 0)}</span>
+              </div>
+
+              <div class="meta-item">
+                <span class="meta-label">Places restantes</span>
+                <span class="meta-value">${session.remaining_places || 0}</span>
+              </div>
+            </div>
+
+            <div class="availability ${getAvailabilityClass(session.remaining_places)}">
+              ${session.remaining_places || 0} place(s) restante(s)
+            </div>
+          </div>
+
+          <div class="session-actions">
+            <button
+              class="btn btn-dark"
+              type="button"
+              data-session-id="${escapeHtml(session.id)}"
+            >
+              Choisir cette session
+            </button>
+          </div>
+        </article>
+      `).join("");
+
+      document.querySelectorAll("[data-session-id]").forEach((button) => {
+        button.addEventListener("click", () => {
+          const session = filteredSessions.find((item) => item.id === button.dataset.sessionId);
+          if (session) {
+            selectSession(session);
+          }
+        });
+      });
+    }
+
     async function loadModules() {
       const { data, error } = await supabase
         .from("training_modules")
@@ -1553,12 +1435,13 @@
             Impossible de charger les modules pour le moment.
           </div>
         `;
+        trainingTypeSelect.innerHTML = `<option value="">Choisissez d’abord un module puis une session</option>`;
         return;
       }
 
       modulesData = data || [];
       renderModules();
-      updateTrainingTypeField();
+      populateTrainingTypeSelect();
     }
 
     async function loadSessions() {
@@ -1582,23 +1465,33 @@
       sessionsData = data || [];
 
       if (selectedSessionId) {
-        const preselected = sessionsData.find(item => item.id === selectedSessionId);
+        const preselected = sessionsData.find((item) => item.id === selectedSessionId);
         if (preselected) {
-          selectedTrainingType = preselected.module_name || selectedTrainingType;
           selectSession(preselected);
           return;
         }
       }
 
-      if (selectedTrainingType) {
-        updateTrainingTypeField();
-      }
-
       renderSessions();
     }
 
-    changeModuleBtn.addEventListener("click", () => {
-      clearModuleSelection();
+    trainingTypeSelect.addEventListener("change", () => {
+      if (trainingTypeSelect.disabled) return;
+
+      selectedTrainingType = trainingTypeSelect.value.trim();
+      selectedSessionId = "";
+      updateSelectedSessionBox("");
+
+      const newUrl = new URL(window.location.href);
+      if (selectedTrainingType) {
+        newUrl.searchParams.set("training_type", selectedTrainingType);
+      } else {
+        newUrl.searchParams.delete("training_type");
+      }
+      newUrl.searchParams.delete("session_id");
+      window.history.replaceState({}, "", newUrl);
+
+      renderSessions();
     });
 
     form.addEventListener("submit", async (e) => {
@@ -1607,7 +1500,7 @@
       if (!selectedTrainingType) {
         checkoutFeedback.innerHTML = `
           <div class="alert alert-error">
-            Merci de choisir un module avant de continuer.
+            Merci de choisir d’abord un module.
           </div>
         `;
         document.getElementById("modules").scrollIntoView({ behavior: "smooth" });
@@ -1630,10 +1523,19 @@
         email: document.getElementById("email").value.trim(),
         phone: document.getElementById("phone").value.trim(),
         city: document.getElementById("city").value.trim(),
-        training_type: trainingTypeInput.value.trim(),
+        training_type: trainingTypeSelect.value.trim(),
         message: document.getElementById("message").value.trim(),
         session_id: selectedSessionId
       };
+
+      if (!data.training_type) {
+        checkoutFeedback.innerHTML = `
+          <div class="alert alert-error">
+            Merci de choisir un module.
+          </div>
+        `;
+        return;
+      }
 
       try {
         const res = await fetch("/api/create-trainer-checkout", {
