@@ -373,6 +373,145 @@
       color: var(--vp-warning);
     }
 
+    .offer-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+      margin: 26px 0 22px;
+    }
+
+    .offer-card {
+      position: relative;
+      background: white;
+      border: 1px solid rgba(13, 27, 42, 0.08);
+      border-radius: 24px;
+      box-shadow: var(--vp-shadow-md);
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      overflow: hidden;
+    }
+
+    .offer-card--featured {
+      border-color: rgba(190, 149, 66, 0.42);
+      box-shadow: var(--vp-shadow-lg);
+      transform: translateY(-4px);
+    }
+
+    .offer-badge {
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: var(--vp-gold);
+      color: var(--vp-navy-900);
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .offer-label {
+      display: inline-flex;
+      align-items: center;
+      width: fit-content;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: var(--vp-blue-soft);
+      color: var(--vp-navy-700);
+      font-weight: 700;
+      font-size: 0.84rem;
+    }
+
+    .offer-card h3 {
+      margin: 0;
+      color: var(--vp-navy-850);
+      font-size: 1.45rem;
+      line-height: 1.15;
+    }
+
+    .offer-card p {
+      margin: 0;
+      color: var(--vp-text-soft);
+      line-height: 1.72;
+    }
+
+    .offer-price {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      color: var(--vp-navy-850);
+    }
+
+    .offer-price strong {
+      font-size: clamp(2rem, 4vw, 3rem);
+      line-height: 1;
+    }
+
+    .offer-price span {
+      color: var(--vp-text-soft);
+      font-weight: 700;
+    }
+
+    .offer-list {
+      display: grid;
+      gap: 10px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .offer-list li {
+      background: var(--vp-blue-soft-2);
+      border: 1px solid rgba(13, 27, 42, 0.05);
+      border-radius: 14px;
+      padding: 12px 14px;
+      color: var(--vp-text);
+      line-height: 1.6;
+      font-weight: 600;
+    }
+
+    .module-catalog-head {
+      margin-top: 26px;
+      text-align: center;
+    }
+
+    .module-catalog-head h3 {
+      margin: 0 0 8px;
+      color: var(--vp-navy-850);
+      font-size: 1.45rem;
+    }
+
+    .module-catalog-head p {
+      margin: 0 auto;
+      max-width: 70ch;
+      color: var(--vp-text-soft);
+      line-height: 1.7;
+    }
+
+    .module-card__meta {
+      margin-top: 14px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .module-chip {
+      display: inline-flex;
+      align-items: center;
+      padding: 8px 10px;
+      border-radius: 999px;
+      background: var(--vp-blue-soft);
+      color: var(--vp-navy-700);
+      font-size: 0.82rem;
+      font-weight: 700;
+    }
+
     .session-actions {
       border-top: 1px solid rgba(13, 27, 42, 0.06);
       padding: 18px 22px 22px;
@@ -668,14 +807,80 @@
     <section id="modules">
       <div class="container">
         <div class="section-head section-head--center">
-          <span class="eyebrow">Modules ouverts</span>
-          <h2>Les modules actuellement proposés</h2>
+          <span class="eyebrow">Formules formateur</span>
+          <h2>Choisissez votre rythme d’entrée dans le parcours</h2>
           <p>
-            Choisissez d’abord un module. Ensuite, seules les sessions liées à ce module s’afficheront.
+            La page doit vendre d’abord une formule claire, puis vous laisser choisir les modules et sessions adaptés.
+            Vous pouvez démarrer avec 1 module, accélérer avec 2 modules, ou viser directement le pack complet.
           </p>
         </div>
 
-        <div id="modulesContainer" class="module-grid">
+        <div class="offer-grid">
+          <article class="offer-card">
+            <span class="offer-label">Démarrage</span>
+            <h3>1 module</h3>
+            <p>La formule la plus simple pour entrer dans le réseau, tester le cadre et lancer votre première spécialité certifiée.</p>
+            <div class="offer-price">
+              <strong>1 module</strong>
+              <span>à choisir au catalogue</span>
+            </div>
+            <ul class="offer-list">
+              <li>1 spécialité formateur à sélectionner</li>
+              <li>1 session certifiante liée au module choisi</li>
+              <li>Entrée progressive dans le standard Vital Protect</li>
+            </ul>
+            <div class="timeline-cta" style="justify-content:flex-start; margin-top:auto;">
+              <a href="#catalogue-modules" class="btn btn-outline">Choisir 1 module</a>
+            </div>
+          </article>
+
+          <article class="offer-card offer-card--featured">
+            <span class="offer-badge">Populaire</span>
+            <span class="offer-label">Accélération</span>
+            <h3>2 modules</h3>
+            <p>Le bon compromis pour monter plus vite en compétences, proposer davantage et rentabiliser plus rapidement votre parcours.</p>
+            <div class="offer-price">
+              <strong>2 modules</strong>
+              <span>parcours conseillé</span>
+            </div>
+            <ul class="offer-list">
+              <li>2 spécialisations formateur dans le même parcours</li>
+              <li>Plus de polyvalence commerciale et pédagogique</li>
+              <li>Positionnement plus solide dès le lancement</li>
+            </ul>
+            <div class="timeline-cta" style="justify-content:flex-start; margin-top:auto;">
+              <a href="#catalogue-modules" class="btn btn-dark">Découvrir le pack 2 modules</a>
+            </div>
+          </article>
+
+          <article class="offer-card">
+            <span class="offer-label">Premium</span>
+            <h3>Pack complet</h3>
+            <p>Pour les profils qui veulent une offre complète, une vraie profondeur de catalogue et un positionnement formateur premium.</p>
+            <div class="offer-price">
+              <strong>Pack complet</strong>
+              <span>vision long terme</span>
+            </div>
+            <ul class="offer-list">
+              <li>Accès à tout le catalogue formateur disponible</li>
+              <li>Meilleure lisibilité commerciale sur votre offre</li>
+              <li>Parcours pensé pour construire une activité durable</li>
+            </ul>
+            <div class="timeline-cta" style="justify-content:flex-start; margin-top:auto;">
+              <a href="#catalogue-modules" class="btn btn-outline">Voir le pack complet</a>
+            </div>
+          </article>
+        </div>
+
+        <div id="catalogue-modules" class="module-catalog-head">
+          <h3>Catalogue des modules ouverts</h3>
+          <p>
+            Une fois votre formule choisie, sélectionnez le ou les modules qui vous intéressent.
+            Ensuite, seules les sessions liées à ce module s’afficheront plus bas.
+          </p>
+        </div>
+
+        <div id="modulesContainer" class="module-grid" style="margin-top:24px;">
           <div class="empty-state">Chargement des modules...</div>
         </div>
       </div>
@@ -1244,23 +1449,32 @@
         return;
       }
 
-      modulesContainer.innerHTML = modulesData.map((module) => `
-        <article class="module-card">
-          <div class="icon-dot"></div>
-          <h3>${escapeHtml(module.name)}</h3>
-          <p>${escapeHtml(module.short_description || module.long_description || "Module disponible au catalogue Vital Protect.")}</p>
+      modulesContainer.innerHTML = modulesData.map((module) => {
+        const chips = [module.category, module.level_label, module.audience]
+          .filter(Boolean)
+          .map((value) => `<span class="module-chip">${escapeHtml(value)}</span>`)
+          .join("");
 
-          <div class="timeline-cta" style="justify-content:flex-start; margin-top:18px;">
-            <button
-              type="button"
-              class="btn btn-dark"
-              data-module-name="${escapeHtml(module.name)}"
-            >
-              Voir les sessions
-            </button>
-          </div>
-        </article>
-      `).join("");
+        return `
+          <article class="module-card">
+            <div class="icon-dot"></div>
+            <h3>${escapeHtml(module.name)}</h3>
+            <p>${escapeHtml(module.short_description || module.long_description || "Module disponible au catalogue Vital Protect.")}</p>
+
+            ${chips ? `<div class="module-card__meta">${chips}</div>` : ""}
+
+            <div class="timeline-cta" style="justify-content:flex-start; margin-top:18px;">
+              <button
+                type="button"
+                class="btn btn-dark"
+                data-module-name="${escapeHtml(module.name)}"
+              >
+                Voir les sessions
+              </button>
+            </div>
+          </article>
+        `;
+      }).join("");
 
       document.querySelectorAll("[data-module-name]").forEach((button) => {
         button.addEventListener("click", () => {
