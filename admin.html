@@ -477,7 +477,7 @@
         <button class="nav-btn" data-tab="candidats">Candidats</button>
         <button class="nav-btn" data-tab="archives">Archives candidats</button>
         <button class="nav-btn" data-tab="formateurs">Formateurs</button>
-        <button class="nav-btn" data-tab="modules">Modules certifiés</button>
+        <button class="nav-btn" data-tab="modules">Modules & certifications</button>
         <button class="nav-btn" data-tab="stages">Stages</button>
         <button class="nav-btn" data-tab="formations">Formations formateur</button>
         <button class="nav-btn" data-tab="finances">Pilotage financier</button>
@@ -712,11 +712,72 @@
         <div class="card">
           <div class="card-header">
             <div>
-              <h2>Gestion des modules certifiés</h2>
-              <p>Ajout manuel, prolongation et correction de statut.</p>
+              <h2>Catalogue des modules et certifications formateur</h2>
+              <p>Créez un module une seule fois, puis réutilisez-le dans les sessions, stages et certifications.</p>
             </div>
           </div>
           <div class="card-body">
+            <div class="card" style="margin-top: 0; box-shadow: none; border-radius: 18px;">
+              <div class="card-header">
+                <div>
+                  <h2>Catalogue des modules</h2>
+                  <p>Ajoutez ici un nouveau module, par exemple <strong>Formateur Kids</strong>. Il sera ensuite disponible dans tout l’admin.</p>
+                </div>
+              </div>
+              <div class="card-body">
+                <form id="moduleCatalogForm">
+                  <input id="moduleCatalogIdInput" type="hidden" />
+                  <div class="filters filters-4">
+                    <div class="field">
+                      <label>Nom du module</label>
+                      <input id="moduleCatalogNameInput" type="text" placeholder="Ex. Formateur Kids" required />
+                    </div>
+                    <div class="field">
+                      <label>Slug</label>
+                      <input id="moduleCatalogSlugInput" type="text" placeholder="ex. formateur-kids" />
+                    </div>
+                    <div class="field">
+                      <label>Statut</label>
+                      <select id="moduleCatalogStatusInput" required>
+                        <option value="active">active</option>
+                        <option value="inactive">inactive</option>
+                      </select>
+                    </div>
+                    <div class="field">
+                      <label>Ordre d’affichage</label>
+                      <input id="moduleCatalogSortOrderInput" type="number" min="0" step="1" value="0" />
+                    </div>
+                  </div>
+
+                  <div class="filters filters-3">
+                    <div class="field">
+                      <label>Description courte</label>
+                      <textarea id="moduleCatalogShortDescriptionInput" placeholder="Résumé court visible dans les listes."></textarea>
+                    </div>
+                    <div class="field">
+                      <label>Description longue</label>
+                      <textarea id="moduleCatalogLongDescriptionInput" placeholder="Présentation détaillée du module."></textarea>
+                    </div>
+                    <div class="field">
+                      <label>Objectifs / public</label>
+                      <textarea id="moduleCatalogObjectivesInput" placeholder="Public visé, objectifs, cadre, etc."></textarea>
+                    </div>
+                  </div>
+
+                  <div class="actions-row">
+                    <button class="btn btn-primary" type="submit">Enregistrer le module</button>
+                    <button class="btn btn-secondary" type="button" id="moduleCatalogResetBtn">Réinitialiser</button>
+                  </div>
+                </form>
+
+                <div id="moduleCatalogFormStatus" class="inline-status"></div>
+
+                <div class="table-wrap" id="moduleCatalogWrap" style="margin-top: 24px;">
+                  <div class="loading">Chargement du catalogue des modules...</div>
+                </div>
+              </div>
+            </div>
+
             <form id="trainerModuleForm">
               <div class="filters filters-4">
                 <div class="field">
@@ -1081,11 +1142,6 @@
     const SUPABASE_KEY = "sb_publishable_VlTpYjzJ3DKpFA1Un_EFHQ_FW-mYK4U";
     const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    const MODULE_OPTIONS = [
-      "Self Défense Essentielle",
-      "Self Défense Essentielle Niveau 2",
-      "Self Défense en entreprise"
-    ];
 
     let reservationsData = [];
     let stagesData = [];
@@ -1094,6 +1150,7 @@
     let trainersData = [];
     let trainerModulesData = [];
     let trainerSessionsData = [];
+    let trainingModulesCatalogData = [];
 
     const reservationsWrap = document.getElementById("reservationsWrap");
     const stagesWrap = document.getElementById("stagesWrap");
@@ -1131,13 +1188,40 @@
     const trainerModuleExpiresAtInput = document.getElementById("trainerModuleExpiresAtInput");
     const trainerModuleFormStatus = document.getElementById("trainerModuleFormStatus");
 
-    function populateModuleSelect(selectId) {
+    const moduleCatalogWrap = document.getElementById("moduleCatalogWrap");
+    const moduleCatalogFormStatus = document.getElementById("moduleCatalogFormStatus");
+    const moduleCatalogIdInput = document.getElementById("moduleCatalogIdInput");
+    const moduleCatalogNameInput = document.getElementById("moduleCatalogNameInput");
+    const moduleCatalogSlugInput = document.getElementById("moduleCatalogSlugInput");
+    const moduleCatalogStatusInput = document.getElementById("moduleCatalogStatusInput");
+    const moduleCatalogSortOrderInput = document.getElementById("moduleCatalogSortOrderInput");
+    const moduleCatalogShortDescriptionInput = document.getElementById("moduleCatalogShortDescriptionInput");
+    const moduleCatalogLongDescriptionInput = document.getElementById("moduleCatalogLongDescriptionInput");
+    const moduleCatalogObjectivesInput = document.getElementById("moduleCatalogObjectivesInput");
+    const moduleCatalogResetBtn = document.getElementById("moduleCatalogResetBtn");
+
+    function getSortedModuleCatalog(options = {}) {
+      const { activeOnly = false } = options;
+      return trainingModulesCatalogData
+        .filter((module) => !activeOnly || normalize(module.status) === "active")
+        .slice()
+        .sort((a, b) => {
+          const orderA = Number(a.sort_order || 0);
+          const orderB = Number(b.sort_order || 0);
+          if (orderA !== orderB) return orderA - orderB;
+          return normalize(a.name).localeCompare(normalize(b.name));
+        });
+    }
+
+    function populateModuleSelect(selectId, options = {}) {
       const select = document.getElementById(selectId);
       if (!select) return;
 
+      const modules = getSortedModuleCatalog(options);
+
       select.innerHTML = `
         <option value="">Choisir un module</option>
-        ${MODULE_OPTIONS.map(module => `<option value="${module}">${module}</option>`).join("")}
+        ${modules.map((module) => `<option value="${module.name}">${module.name}</option>`).join("")}
       `;
     }
 
@@ -1161,9 +1245,76 @@
     }
 
     function populateTrainerModuleModuleSelect() {
+      const modules = getSortedModuleCatalog();
       trainerModuleNameInput.innerHTML = `
         <option value="">Choisir un module</option>
-        ${MODULE_OPTIONS.map(module => `<option value="${module}">${module}</option>`).join("")}
+        ${modules.map((module) => `<option value="${module.name}">${module.name}</option>`).join("")}
+      `;
+    }
+
+    function resetModuleCatalogForm() {
+      document.getElementById("moduleCatalogForm").reset();
+      moduleCatalogIdInput.value = "";
+      moduleCatalogStatusInput.value = "active";
+      moduleCatalogSortOrderInput.value = "0";
+    }
+
+    function showModuleCatalogFormStatus(message, isError = false) {
+      moduleCatalogFormStatus.classList.add("show");
+      moduleCatalogFormStatus.textContent = message;
+      moduleCatalogFormStatus.style.color = isError ? "#c62828" : "#0f7d46";
+      moduleCatalogFormStatus.style.borderColor = isError ? "#f2c7c7" : "#cdeedb";
+      moduleCatalogFormStatus.style.background = isError ? "#fff1f1" : "#eaf8f0";
+    }
+
+    function fillModuleCatalogForm(moduleRow) {
+      moduleCatalogIdInput.value = moduleRow.id || "";
+      moduleCatalogNameInput.value = moduleRow.name || "";
+      moduleCatalogSlugInput.value = moduleRow.slug || "";
+      moduleCatalogStatusInput.value = moduleRow.status || "active";
+      moduleCatalogSortOrderInput.value = String(moduleRow.sort_order || 0);
+      moduleCatalogShortDescriptionInput.value = moduleRow.short_description || "";
+      moduleCatalogLongDescriptionInput.value = moduleRow.long_description || "";
+      moduleCatalogObjectivesInput.value = [moduleRow.audience || "", moduleRow.objectives || ""].filter(Boolean).join("\n\n");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function renderTrainingModulesCatalog(rows) {
+      if (!rows.length) {
+        moduleCatalogWrap.innerHTML = `<div class="empty">Aucun module enregistré pour le moment.</div>`;
+        return;
+      }
+
+      moduleCatalogWrap.innerHTML = `
+        <table>
+          <thead>
+            <tr>
+              <th>Module</th>
+              <th>Slug</th>
+              <th>Ordre</th>
+              <th>Statut</th>
+              <th>Description</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rows.map((row) => `
+              <tr>
+                <td><strong>${row.name || "—"}</strong></td>
+                <td>${row.slug || "—"}</td>
+                <td>${row.sort_order ?? 0}</td>
+                <td><span class="badge ${normalize(row.status) === "active" ? "badge-success" : "badge-warning"}">${row.status || "—"}</span></td>
+                <td>${row.short_description || row.long_description || "—"}</td>
+                <td>
+                  <div class="actions-row">
+                    <button class="btn btn-secondary" onclick="window.editTrainingModule('${row.id}')">Modifier</button>
+                    <button class="btn btn-danger" onclick="window.deleteTrainingModule('${row.id}')">Supprimer</button>
+                  </div>
+                </td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
       `;
     }
 
@@ -1177,9 +1328,6 @@
       trainerModuleExpiresAtInput.value = expiryText;
     }
 
-    populateModuleSelect("stageModuleInput");
-    populateModuleSelect("trainerSessionModuleInput");
-    populateTrainerModuleModuleSelect();
     setDefaultTrainerModuleDates();
 
     function setCreateMode(mode) {
@@ -2140,6 +2288,26 @@
       updateFinance();
     }
 
+    async function loadTrainingModulesCatalog() {
+      const { data, error } = await supabase
+        .from("training_modules")
+        .select("*")
+        .order("sort_order", { ascending: true })
+        .order("name", { ascending: true });
+
+      if (error) {
+        console.error(error);
+        moduleCatalogWrap.innerHTML = `<div class="error">Impossible de charger le catalogue des modules.</div>`;
+        return;
+      }
+
+      trainingModulesCatalogData = data || [];
+      renderTrainingModulesCatalog(trainingModulesCatalogData);
+      populateModuleSelect("stageModuleInput");
+      populateModuleSelect("trainerSessionModuleInput");
+      populateTrainerModuleModuleSelect();
+    }
+
     async function loadTrainerModules() {
       const { data, error } = await supabase
         .from("trainer_modules")
@@ -2455,6 +2623,91 @@ VITAL PROTECT`
       }
     });
 
+    window.editTrainingModule = (moduleId) => {
+      const moduleRow = trainingModulesCatalogData.find((item) => item.id === moduleId);
+      if (!moduleRow) return;
+      fillModuleCatalogForm(moduleRow);
+    };
+
+    window.deleteTrainingModule = async (moduleId) => {
+      const moduleRow = trainingModulesCatalogData.find((item) => item.id === moduleId);
+      const confirmed = window.confirm(`Supprimer le module "${moduleRow?.name || "sélectionné"}" ?`);
+      if (!confirmed) return;
+
+      try {
+        const headers = await getAuthHeaders();
+        const res = await fetch("/api/admin-tools", {
+          method: "POST",
+          headers,
+          body: JSON.stringify({
+            action: "delete_module",
+            module_id: moduleId
+          })
+        });
+
+        const result = await parseApiResponse(res);
+
+        if (!result.success) {
+          showModuleCatalogFormStatus(result.error || "Erreur lors de la suppression du module.", true);
+          return;
+        }
+
+        showModuleCatalogFormStatus("Module supprimé avec succès.");
+        resetModuleCatalogForm();
+        await loadTrainingModulesCatalog();
+      } catch (error) {
+        console.error(error);
+        showModuleCatalogFormStatus(error.message || "Erreur lors de la suppression du module.", true);
+      }
+    };
+
+    moduleCatalogResetBtn.addEventListener("click", () => {
+      resetModuleCatalogForm();
+      showModuleCatalogFormStatus("Formulaire réinitialisé.");
+    });
+
+    document.getElementById("moduleCatalogForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      try {
+        const headers = await getAuthHeaders();
+        const moduleId = moduleCatalogIdInput.value.trim();
+
+        const payload = {
+          action: moduleId ? "update_module" : "create_module",
+          module_id: moduleId,
+          name: moduleCatalogNameInput.value.trim(),
+          slug: moduleCatalogSlugInput.value.trim(),
+          status: moduleCatalogStatusInput.value,
+          sort_order: Number(moduleCatalogSortOrderInput.value || 0),
+          short_description: moduleCatalogShortDescriptionInput.value.trim(),
+          long_description: moduleCatalogLongDescriptionInput.value.trim(),
+          objectives: moduleCatalogObjectivesInput.value.trim(),
+          audience: ""
+        };
+
+        const res = await fetch("/api/admin-tools", {
+          method: "POST",
+          headers,
+          body: JSON.stringify(payload)
+        });
+
+        const result = await parseApiResponse(res);
+
+        if (!result.success) {
+          showModuleCatalogFormStatus(result.error || "Erreur lors de l’enregistrement du module.", true);
+          return;
+        }
+
+        showModuleCatalogFormStatus(moduleId ? "Module mis à jour avec succès." : "Module créé avec succès.");
+        resetModuleCatalogForm();
+        await loadTrainingModulesCatalog();
+      } catch (error) {
+        console.error(error);
+        showModuleCatalogFormStatus(error.message || "Erreur lors de l’enregistrement du module.", true);
+      }
+    });
+
     document.getElementById("candidateSearch").addEventListener("input", applyCandidateFilters);
     document.getElementById("candidateValidationFilter").addEventListener("change", applyCandidateFilters);
     document.getElementById("candidateResultFilter").addEventListener("change", applyCandidateFilters);
@@ -2604,6 +2857,7 @@ VITAL PROTECT`
     const adminUser = await requireAdmin();
 
     if (adminUser) {
+      await loadTrainingModulesCatalog();
       await loadReservations();
       await loadStages();
       await loadTrainerRegistrations();
