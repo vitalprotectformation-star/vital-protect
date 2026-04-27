@@ -1,0 +1,9 @@
+Correction réalisée :
+- Reprise depuis le ZIP original.
+- Remplacement réel du header sur les pages publiques.
+- Menu premium identique sur toutes les pages publiques.
+- CSS du menu injecté directement dans chaque page pour éviter un affichage brut si un fichier CSS n’est pas chargé.
+- Logo contraint à 48x48px pour éviter l’image géante.
+- Menu desktop en une seule ligne.
+- Version mobile avec bouton burger.
+- Ajout de la page reseau.html.
