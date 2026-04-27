@@ -4,194 +4,686 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Le réseau Vital Protect — Formateurs certifiés, audités et recyclés</title>
-  <meta name="description" content="Découvrez le réseau Vital Protect : des formateurs certifiés par module, audités pendant leur formation, recyclés et maintenus à jour selon un standard commun." />
-
+  <meta name="description" content="Vital Protect est un standard de sécurité personnelle transmis par un réseau de formateurs certifiés, audités pendant leur formation et régulièrement recyclés." />
   <link rel="stylesheet" href="/styles/tokens.css" />
   <link rel="stylesheet" href="/styles/base.css" />
   <link rel="stylesheet" href="/styles/components.css" />
-  <link rel="stylesheet" href="/styles/premium-nav.css" />
-  <link rel="stylesheet" href="/styles/modern-ui.css" />
+  <style id="vp-premium-nav-css">
+
+/* === Vital Protect premium unified navigation === */
+:root{
+  --vp-nav-blue:#0b2a52;
+  --vp-nav-blue-2:#123e73;
+  --vp-nav-ink:#07111f;
+  --vp-nav-muted:#64748b;
+  --vp-nav-line:rgba(15,23,42,.10);
+  --vp-nav-surface:rgba(255,255,255,.88);
+  --vp-nav-white:#fff;
+  --vp-nav-gold:#c4a46b;
+  --vp-nav-shadow:0 18px 50px rgba(7,17,31,.14);
+}
+.vp-premium-header,
+.vp-premium-header *{box-sizing:border-box}
+.vp-premium-header{
+  position:sticky;
+  top:0;
+  z-index:9999;
+  width:100%;
+  padding:14px 18px;
+  background:linear-gradient(180deg,rgba(248,250,252,.94),rgba(248,250,252,.78));
+  backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);
+  border-bottom:1px solid rgba(255,255,255,.65);
+}
+.vp-nav-wrap{
+  width:min(1240px,100%);
+  margin:0 auto;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  min-height:64px;
+  white-space:nowrap;
+}
+.vp-home-btn{
+  width:52px;
+  height:52px;
+  flex:0 0 52px;
+  display:grid;
+  place-items:center;
+  border-radius:18px;
+  background:var(--vp-nav-white);
+  border:1px solid var(--vp-nav-line);
+  box-shadow:0 12px 30px rgba(7,17,31,.08);
+  color:var(--vp-nav-blue);
+  text-decoration:none;
+  transition:transform .22s ease,box-shadow .22s ease,background .22s ease;
+}
+.vp-home-btn:hover{transform:translateY(-2px);box-shadow:0 18px 42px rgba(7,17,31,.14);background:#f8fafc}
+.vp-home-btn svg{width:22px;height:22px;display:block}
+.vp-brand-pill{
+  min-width:260px;
+  max-width:330px;
+  height:64px;
+  flex:0 0 auto;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:8px 18px 8px 10px;
+  border-radius:24px;
+  background:linear-gradient(135deg,#ffffff 0%,#eef5fc 100%);
+  border:1px solid rgba(15,23,42,.09);
+  box-shadow:var(--vp-nav-shadow);
+  color:var(--vp-nav-ink);
+  text-decoration:none;
+  overflow:hidden;
+}
+.vp-logo-img{
+  width:48px!important;
+  height:48px!important;
+  min-width:48px!important;
+  max-width:48px!important;
+  object-fit:contain!important;
+  display:block!important;
+  border-radius:16px;
+  padding:4px;
+  background:#fff;
+  box-shadow:inset 0 0 0 1px rgba(15,23,42,.06);
+}
+.vp-brand-copy{min-width:0;line-height:1.05}
+.vp-brand-title{
+  display:block;
+  font-family:Inter,Manrope,Arial,sans-serif;
+  font-weight:900;
+  letter-spacing:.04em;
+  font-size:1rem;
+  color:var(--vp-nav-blue);
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.vp-brand-subtitle{
+  display:block;
+  margin-top:5px;
+  font-size:.76rem;
+  font-weight:700;
+  color:var(--vp-nav-muted);
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.vp-menu-shell{
+  flex:1 1 auto;
+  min-width:0;
+  height:64px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  padding:8px;
+  border-radius:24px;
+  background:var(--vp-nav-surface);
+  border:1px solid rgba(15,23,42,.09);
+  box-shadow:0 18px 45px rgba(7,17,31,.10);
+}
+.vp-dropdown{position:relative;flex:0 0 auto}
+.vp-drop-toggle,
+.vp-menu-link{
+  height:46px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  border:0;
+  border-radius:16px;
+  padding:0 16px;
+  background:transparent;
+  color:var(--vp-nav-ink);
+  font:800 .94rem/1 Inter,Manrope,Arial,sans-serif;
+  text-decoration:none;
+  cursor:pointer;
+  white-space:nowrap;
+  transition:background .2s ease,color .2s ease,transform .2s ease;
+}
+.vp-drop-toggle:hover,
+.vp-menu-link:hover,
+.vp-dropdown.is-current>.vp-drop-toggle,
+.vp-menu-link[aria-current="page"]{
+  background:#eef5fc;
+  color:var(--vp-nav-blue);
+}
+.vp-chevron{
+  width:9px;
+  height:9px;
+  border-right:2px solid currentColor;
+  border-bottom:2px solid currentColor;
+  transform:rotate(45deg) translateY(-2px);
+  transition:transform .2s ease;
+}
+.vp-dropdown.is-open .vp-chevron,
+.vp-dropdown:hover .vp-chevron{transform:rotate(225deg) translateY(-1px)}
+.vp-dropdown-panel{
+  position:absolute;
+  top:calc(100% + 14px);
+  left:50%;
+  min-width:310px;
+  padding:10px;
+  border-radius:24px;
+  background:rgba(255,255,255,.96);
+  border:1px solid rgba(15,23,42,.10);
+  box-shadow:0 26px 70px rgba(7,17,31,.20);
+  transform:translateX(-50%) translateY(8px);
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+  transition:opacity .18s ease,transform .18s ease,visibility .18s ease;
+}
+.vp-dropdown-panel:before{
+  content:"";
+  position:absolute;
+  left:0;right:0;
+  top:-16px;
+  height:16px;
+}
+.vp-dropdown:hover .vp-dropdown-panel,
+.vp-dropdown:focus-within .vp-dropdown-panel,
+.vp-dropdown.is-open .vp-dropdown-panel{
+  opacity:1;
+  visibility:visible;
+  pointer-events:auto;
+  transform:translateX(-50%) translateY(0);
+}
+.vp-dropdown-item{
+  display:grid;
+  grid-template-columns:38px minmax(0,1fr);
+  gap:12px;
+  align-items:center;
+  min-height:68px;
+  padding:12px;
+  border-radius:18px;
+  color:var(--vp-nav-ink);
+  text-decoration:none;
+  transition:background .18s ease,transform .18s ease;
+  white-space:nowrap;
+}
+.vp-dropdown-item:hover,
+.vp-dropdown-item[aria-current="page"]{
+  background:#f1f6fb;
+  transform:translateX(2px);
+}
+.vp-item-num{
+  width:38px;
+  height:38px;
+  border-radius:14px;
+  display:grid;
+  place-items:center;
+  color:#fff;
+  font-weight:900;
+  font-size:.82rem;
+  background:linear-gradient(135deg,var(--vp-nav-blue),var(--vp-nav-blue-2));
+  box-shadow:0 12px 24px rgba(11,42,82,.18);
+}
+.vp-item-copy{min-width:0}
+.vp-item-title{
+  display:block;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  font-weight:900;
+  color:var(--vp-nav-ink);
+  font-size:.95rem;
+}
+.vp-item-desc{
+  display:block;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  margin-top:4px;
+  color:var(--vp-nav-muted);
+  font-size:.78rem;
+  font-weight:650;
+}
+.vp-nav-cta{
+  height:64px;
+  flex:0 0 auto;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:0 24px;
+  border-radius:24px;
+  background:linear-gradient(135deg,var(--vp-nav-blue),var(--vp-nav-blue-2));
+  color:#fff!important;
+  text-decoration:none;
+  font:900 .95rem/1 Inter,Manrope,Arial,sans-serif;
+  box-shadow:0 18px 42px rgba(11,42,82,.25);
+  border:1px solid rgba(255,255,255,.20);
+  transition:transform .2s ease,box-shadow .2s ease,filter .2s ease;
+  white-space:nowrap;
+}
+.vp-nav-cta:hover{transform:translateY(-2px);box-shadow:0 24px 56px rgba(11,42,82,.32);filter:saturate(1.1)}
+.vp-mobile-toggle{
+  display:none;
+  width:52px;
+  height:52px;
+  flex:0 0 52px;
+  border:1px solid var(--vp-nav-line);
+  border-radius:18px;
+  background:#fff;
+  color:var(--vp-nav-blue);
+  box-shadow:0 12px 30px rgba(7,17,31,.08);
+  cursor:pointer;
+}
+.vp-burger{
+  width:20px;
+  height:14px;
+  display:inline-grid;
+  gap:4px;
+}
+.vp-burger span{
+  display:block;
+  height:2px;
+  border-radius:99px;
+  background:currentColor;
+}
+@media (max-width:1120px){
+  .vp-premium-header{padding:10px 14px}
+  .vp-nav-wrap{min-height:58px}
+  .vp-brand-pill{min-width:220px;height:58px}
+  .vp-menu-shell{height:58px;gap:4px}
+  .vp-drop-toggle,.vp-menu-link{height:42px;padding:0 12px;font-size:.88rem}
+  .vp-nav-cta{height:58px;padding:0 18px;font-size:.88rem}
+}
+@media (max-width:960px){
+  .vp-nav-wrap{display:grid;grid-template-columns:52px minmax(0,1fr) 52px;gap:10px}
+  .vp-brand-pill{min-width:0;max-width:none;width:100%;height:58px}
+  .vp-brand-subtitle{display:none}
+  .vp-menu-shell{
+    position:fixed;
+    left:14px;
+    right:14px;
+    top:82px;
+    z-index:10000;
+    height:auto;
+    display:none;
+    flex-direction:column;
+    align-items:stretch;
+    gap:8px;
+    padding:12px;
+    border-radius:26px;
+    background:rgba(255,255,255,.98);
+    box-shadow:0 28px 80px rgba(7,17,31,.22);
+  }
+  .vp-premium-header.is-open .vp-menu-shell{display:flex}
+  .vp-mobile-toggle{display:grid;place-items:center}
+  .vp-dropdown{width:100%}
+  .vp-drop-toggle,.vp-menu-link{
+    width:100%;
+    justify-content:space-between;
+    height:48px;
+    padding:0 14px;
+  }
+  .vp-dropdown-panel{
+    position:static;
+    min-width:0;
+    width:100%;
+    margin:4px 0 8px;
+    padding:8px;
+    border-radius:20px;
+    background:#f8fafc;
+    box-shadow:none;
+    transform:none!important;
+    display:none;
+    opacity:1;
+    visibility:visible;
+    pointer-events:auto;
+  }
+  .vp-dropdown-panel:before{display:none}
+  .vp-dropdown:hover .vp-dropdown-panel,
+  .vp-dropdown:focus-within .vp-dropdown-panel{display:none}
+  .vp-dropdown.is-open .vp-dropdown-panel{display:block}
+  .vp-nav-cta{
+    width:100%;
+    height:50px;
+    border-radius:18px;
+  }
+}
+@media (max-width:520px){
+  .vp-premium-header{padding:8px}
+  .vp-nav-wrap{grid-template-columns:46px minmax(0,1fr) 46px;gap:8px}
+  .vp-home-btn,.vp-mobile-toggle{width:46px;height:46px;flex-basis:46px;border-radius:16px}
+  .vp-brand-pill{height:50px;border-radius:18px;padding:6px 10px 6px 7px}
+  .vp-logo-img{width:38px!important;height:38px!important;min-width:38px!important;max-width:38px!important;border-radius:13px}
+  .vp-brand-title{font-size:.86rem}
+  .vp-menu-shell{top:66px;left:8px;right:8px}
+  .vp-dropdown-item{min-height:60px;grid-template-columns:34px minmax(0,1fr)}
+  .vp-item-num{width:34px;height:34px;border-radius:12px}
+  .vp-item-desc{font-size:.74rem}
+}
+
+  </style>
+  <style>
+    .network-hero {
+      background:
+        radial-gradient(circle at top right, rgba(196, 164, 107, .18), transparent 30%),
+        linear-gradient(135deg, #07111f, #0d1b2a 52%, #17314f);
+      color: white;
+      overflow: hidden;
+    }
+    .network-hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.08fr) minmax(320px, .92fr);
+      gap: 28px;
+      align-items: stretch;
+    }
+    .network-title {
+      max-width: 850px;
+      margin: 16px 0;
+      font-size: clamp(2.6rem, 5vw, 4.8rem);
+      line-height: .98;
+      color: white;
+    }
+    .network-lead {
+      max-width: 72ch;
+      margin: 0;
+      color: rgba(255,255,255,.78);
+      font-size: 1.12rem;
+    }
+    .network-panel {
+      padding: 30px;
+      border-radius: 32px;
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.12);
+      box-shadow: 0 28px 80px rgba(0,0,0,.25);
+      backdrop-filter: blur(10px);
+    }
+    .network-proof-list {
+      display: grid;
+      gap: 14px;
+      margin-top: 24px;
+    }
+    .network-proof {
+      display: grid;
+      grid-template-columns: 42px 1fr;
+      gap: 14px;
+      align-items: start;
+      padding: 16px;
+      border-radius: 18px;
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.10);
+    }
+    .network-proof span:first-child {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      border-radius: 14px;
+      background: white;
+      color: #0d1b2a;
+      font-weight: 900;
+    }
+    .network-proof strong { display: block; color: white; }
+    .network-proof small { display: block; color: rgba(255,255,255,.70); margin-top: 3px; line-height: 1.5; }
+    .network-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+    }
+    .network-step {
+      padding: 26px;
+      border-radius: 28px;
+      background: rgba(255,255,255,.9);
+      border: 1px solid rgba(13,27,42,.1);
+      box-shadow: 0 18px 50px rgba(7,17,31,.1);
+    }
+    .network-step .num {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      margin-bottom: 18px;
+      border-radius: 14px;
+      background: #0d1b2a;
+      color: white;
+      font-weight: 900;
+    }
+    .network-step p { color: var(--vp-text-soft); margin-bottom: 0; }
+    .network-band {
+      background: #0d1b2a;
+      color: white;
+    }
+    .network-band h2 { color: white; }
+    .network-band p { color: rgba(255,255,255,.72); }
+    .network-band .network-step {
+      background: rgba(255,255,255,.07);
+      border-color: rgba(255,255,255,.12);
+      box-shadow: none;
+    }
+    .network-band .network-step .num {
+      background: white;
+      color: #0d1b2a;
+    }
+    .network-cta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 28px;
+    }
+    @media (max-width: 900px) {
+      .network-hero-grid, .network-grid { grid-template-columns: 1fr; }
+    }
+  </style>
 </head>
 <body>
-  <header class="vp-nav" data-vp-nav>
-    <div class="vp-nav__wrap">
-      <a href="/index.html" class="vp-nav__home" aria-label="Accueil Vital Protect">
-        <span aria-hidden="true">⌂</span>
-      </a>
+<header class="vp-premium-header">
+  <div class="vp-nav-wrap" aria-label="Navigation principale Vital Protect">
+    <a class="vp-home-btn" href="/index.html" aria-label="Accueil Vital Protect">
+      <svg viewBox="0 0 24 24" aria-hidden="true" fill="none">
+        <path d="M3.5 10.8 12 4l8.5 6.8v8.1a1.6 1.6 0 0 1-1.6 1.6h-4.2v-5.8H9.3v5.8H5.1a1.6 1.6 0 0 1-1.6-1.6v-8.1Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+      </svg>
+    </a>
 
-      <a href="/index.html" class="vp-nav__brand" aria-label="Vital Protect — accueil">
-        <img src="/logo.png" alt="Vital Protect" />
-        <span>
-          <strong>Vital Protect</strong>
-          <small>Standard sécurité personnelle</small>
-        </span>
-      </a>
+    <a class="vp-brand-pill" href="/index.html" aria-label="Vital Protect">
+      <img class="vp-logo-img" src="/logo.png" alt="Vital Protect" />
+      <span class="vp-brand-copy">
+        <span class="vp-brand-title">VITAL PROTECT</span>
+        <span class="vp-brand-subtitle">Standard sécurité personnelle</span>
+      </span>
+    </a>
 
-      <button class="vp-nav__burger" type="button" aria-label="Ouvrir le menu" aria-expanded="false" data-vp-menu-toggle>
-        <span></span><span></span><span></span>
-      </button>
-
-      <nav class="vp-nav__menu" aria-label="Navigation principale" data-vp-menu>
-        <div class="vp-nav__item vp-nav__dropdown">
-          <button class="vp-nav__link is-active" type="button" aria-expanded="false">
-            Le standard <span aria-hidden="true">⌄</span>
-          </button>
-          <div class="vp-nav__panel">
-            <a href="/methode.html" class="vp-nav__panel-card">
-              <em>01</em><span><strong>La méthode</strong><small>Prévention, distance, réaction réaliste.</small></span>
-            </a>
-            <a href="/reseau.html" class="vp-nav__panel-card">
-              <em>02</em><span><strong>Le réseau</strong><small>Formateurs certifiés, audités, recyclés.</small></span>
-            </a>
-            <a href="/faq.html" class="vp-nav__panel-card">
-              <em>03</em><span><strong>FAQ</strong><small>Réponses avant réservation.</small></span>
-            </a>
-          </div>
+    <nav class="vp-menu-shell" aria-label="Menu principal">
+      <div class="vp-dropdown is-current">
+        <button class="vp-drop-toggle" type="button" aria-expanded="false">
+          Le standard <span class="vp-chevron" aria-hidden="true"></span>
+        </button>
+        <div class="vp-dropdown-panel">
+          <a class="vp-dropdown-item" href="/methode.html">
+            <span class="vp-item-num">01</span>
+            <span class="vp-item-copy">
+              <span class="vp-item-title">La méthode</span>
+              <span class="vp-item-desc">Prévention, distance, réaction réaliste.</span>
+            </span>
+          </a>
+          <a class="vp-dropdown-item" href="/reseau.html" aria-current="page">
+            <span class="vp-item-num">02</span>
+            <span class="vp-item-copy">
+              <span class="vp-item-title">Le réseau</span>
+              <span class="vp-item-desc">Formateurs certifiés, audités, recyclés.</span>
+            </span>
+          </a>
+          <a class="vp-dropdown-item" href="/faq.html">
+            <span class="vp-item-num">03</span>
+            <span class="vp-item-copy">
+              <span class="vp-item-title">FAQ</span>
+              <span class="vp-item-desc">Réponses avant réservation.</span>
+            </span>
+          </a>
         </div>
+      </div>
 
-        <div class="vp-nav__item vp-nav__dropdown">
-          <button class="vp-nav__link" type="button" aria-expanded="false">
-            Nos offres <span aria-hidden="true">⌄</span>
-          </button>
-          <div class="vp-nav__panel">
-            <a href="/stage.html" class="vp-nav__panel-card">
-              <em>01</em><span><strong>Stages grand public</strong><small>Trouver une session près de chez soi.</small></span>
-            </a>
-            <a href="/entreprises.html" class="vp-nav__panel-card">
-              <em>02</em><span><strong>Entreprises</strong><small>Prévention, tensions, équipes exposées.</small></span>
-            </a>
-            <a href="/contact.html" class="vp-nav__panel-card">
-              <em>03</em><span><strong>Contact</strong><small>Demande, devis ou question.</small></span>
-            </a>
-          </div>
+      <div class="vp-dropdown">
+        <button class="vp-drop-toggle" type="button" aria-expanded="false">
+          Nos offres <span class="vp-chevron" aria-hidden="true"></span>
+        </button>
+        <div class="vp-dropdown-panel">
+          <a class="vp-dropdown-item" href="/stage.html">
+            <span class="vp-item-num">01</span>
+            <span class="vp-item-copy">
+              <span class="vp-item-title">Stages grand public</span>
+              <span class="vp-item-desc">Trouver une session près de chez soi.</span>
+            </span>
+          </a>
+          <a class="vp-dropdown-item" href="/entreprises.html">
+            <span class="vp-item-num">02</span>
+            <span class="vp-item-copy">
+              <span class="vp-item-title">Entreprises</span>
+              <span class="vp-item-desc">Prévention, tensions, équipes exposées.</span>
+            </span>
+          </a>
+          <a class="vp-dropdown-item" href="/contact.html">
+            <span class="vp-item-num">03</span>
+            <span class="vp-item-copy">
+              <span class="vp-item-title">Contact</span>
+              <span class="vp-item-desc">Demande, devis ou question.</span>
+            </span>
+          </a>
         </div>
+      </div>
 
-        <div class="vp-nav__item vp-nav__dropdown">
-          <button class="vp-nav__link" type="button" aria-expanded="false">
-            Formateurs <span aria-hidden="true">⌄</span>
-          </button>
-          <div class="vp-nav__panel vp-nav__panel--right">
-            <a href="/devenir-formateur.html" class="vp-nav__panel-card">
-              <em>01</em><span><strong>Devenir formateur</strong><small>Certification, audit, marketplace.</small></span>
-            </a>
-            <a href="/formateur-login.html" class="vp-nav__panel-card">
-              <em>02</em><span><strong>Espace formateur</strong><small>Connexion et suivi des sessions.</small></span>
-            </a>
-          </div>
+      <div class="vp-dropdown">
+        <button class="vp-drop-toggle" type="button" aria-expanded="false">
+          Formateurs <span class="vp-chevron" aria-hidden="true"></span>
+        </button>
+        <div class="vp-dropdown-panel">
+          <a class="vp-dropdown-item" href="/devenir-formateur.html">
+            <span class="vp-item-num">01</span>
+            <span class="vp-item-copy">
+              <span class="vp-item-title">Devenir formateur</span>
+              <span class="vp-item-desc">Certification, audit, marketplace.</span>
+            </span>
+          </a>
+          <a class="vp-dropdown-item" href="/formateur-login.html">
+            <span class="vp-item-num">02</span>
+            <span class="vp-item-copy">
+              <span class="vp-item-title">Espace formateur</span>
+              <span class="vp-item-desc">Connexion et suivi des sessions.</span>
+            </span>
+          </a>
         </div>
+      </div>
 
-        <a href="/stage.html" class="vp-nav__cta">Trouver un stage</a>
-      </nav>
+      <a class="vp-nav-cta" href="/stage.html">Trouver un stage</a>
+    </nav>
+
+    <button class="vp-mobile-toggle" type="button" aria-label="Ouvrir le menu" aria-expanded="false">
+      <span class="vp-burger" aria-hidden="true"><span></span><span></span><span></span></span>
+    </button>
+  </div>
+</header>
+<main>
+  <section class="network-hero">
+    <div class="container network-hero-grid">
+      <div class="glass-panel" style="padding:36px;">
+        <span class="eyebrow eyebrow--invert">Réseau Vital Protect</span>
+        <h1 class="network-title">Certifié. Audité. Recyclé.</h1>
+        <p class="network-lead">
+          Vital Protect ne repose pas sur une addition de formateurs indépendants. Le réseau s’appuie sur un standard commun, une certification par module et un processus qualité continu.
+        </p>
+        <div class="network-cta">
+          <a class="btn btn-primary" href="/stage.html">Trouver un stage</a>
+          <a class="btn btn-secondary" href="/devenir-formateur.html">Devenir formateur</a>
+        </div>
+      </div>
+      <aside class="network-panel">
+        <h2 style="color:white;margin:0;font-size:clamp(1.8rem,3vw,2.5rem);">Un réseau encadré, pas un annuaire.</h2>
+        <div class="network-proof-list">
+          <div class="network-proof"><span>01</span><div><strong>Standard commun</strong><small>Objectifs, progression, vocabulaire, sécurité et limites de transmission.</small></div></div>
+          <div class="network-proof"><span>02</span><div><strong>Certification par module</strong><small>Chaque formateur intervient uniquement sur le périmètre validé.</small></div></div>
+          <div class="network-proof"><span>03</span><div><strong>Maintien à jour</strong><small>Recyclage, retours terrain et évolution du référentiel.</small></div></div>
+        </div>
+      </aside>
     </div>
-  </header>
+  </section>
 
-  <main>
-    <section class="hero-shell vp-network-hero">
-      <div class="container hero-grid">
-        <div class="glass-panel hero-home__copy">
-          <div class="eyebrow eyebrow--invert">Réseau certifié • Audit • Recyclage • Marketplace encadrée</div>
-          <h1 class="hero-home__title">Certifié. Audité. Recyclé.</h1>
-          <p class="hero-home__lead">
-            Vital Protect ne repose pas sur une addition de formateurs indépendants. Le réseau s’appuie sur un standard commun, une certification par module et un processus qualité continu.
-          </p>
-          <div class="hero-home__proofs">
-            <div class="hero-home__proof">Certification par module</div>
-            <div class="hero-home__proof">Audit pendant la formation</div>
-            <div class="hero-home__proof">Recyclage régulier</div>
-            <div class="hero-home__proof">Mises à jour réseau</div>
-          </div>
-          <div class="hero-home__actions">
-            <a href="/stage.html" class="btn btn-primary">Trouver un stage</a>
-            <a href="/devenir-formateur.html" class="btn btn-secondary">Devenir formateur</a>
-          </div>
-        </div>
-        <div class="hero-home__media vp-hero-media-card" role="img" aria-label="Formateur Vital Protect encadrant un groupe"></div>
+  <section>
+    <div class="container">
+      <div class="section-head section-head--center">
+        <span class="eyebrow">Processus qualité</span>
+        <h2>Des formateurs suivis dès leur formation.</h2>
+        <p>La certification Vital Protect valide la compréhension du standard, la posture pédagogique, la sécurité d’animation et la capacité à transmettre sans dénaturer la méthode.</p>
       </div>
-    </section>
-
-    <section>
-      <div class="container">
-        <div class="section-heading">
-          <div class="eyebrow">Le réseau Vital Protect</div>
-          <h2>Un standard avant tout.</h2>
-          <p>
-            Le participant ne réserve pas un cours quelconque. Il réserve un stage inscrit dans le standard Vital Protect, animé par un formateur certifié et rattaché à un module défini.
-          </p>
-        </div>
-        <div class="card-grid-3">
-          <article class="info-card"><div class="icon-dot"></div><h3>Une méthode commune</h3><p>Objectifs, progression, vocabulaire, limites de transmission et règles de sécurité sont partagés.</p></article>
-          <article class="info-card"><div class="icon-dot"></div><h3>Un cadre contrôlé</h3><p>Les formateurs respectent un périmètre précis, validé par module, sans transmettre leur propre version.</p></article>
-          <article class="info-card"><div class="icon-dot"></div><h3>Une expérience cohérente</h3><p>Quel que soit le lieu, la transmission reste claire, sérieuse, sécurisée et fidèle au standard.</p></article>
-        </div>
+      <div class="network-grid">
+        <article class="network-step"><div class="num">01</div><h3>Formation au référentiel</h3><p>Le futur formateur apprend les contenus, les objectifs des modules, la progression et les limites d’intervention.</p></article>
+        <article class="network-step"><div class="num">02</div><h3>Audit pendant le parcours</h3><p>Sa posture, sa pédagogie, sa gestion du groupe et le respect des règles de sécurité sont observés.</p></article>
+        <article class="network-step"><div class="num">03</div><h3>Certification par module</h3><p>Le formateur est autorisé uniquement sur les modules correspondant à son niveau validé.</p></article>
       </div>
-    </section>
-
-    <section class="vp-process-section">
-      <div class="container split-grid">
-        <div>
-          <div class="section-heading align-left">
-            <div class="eyebrow">Processus qualité</div>
-            <h2>Des formateurs suivis dès leur parcours de certification.</h2>
-            <p>
-              La certification Vital Protect ne repose pas uniquement sur la présence à une formation. Le futur formateur est observé, corrigé et évalué sur sa capacité à transmettre le standard sans le dénaturer.
-            </p>
-          </div>
-        </div>
-        <div class="vp-modern-timeline">
-          <article><span>01</span><strong>Formation au référentiel</strong><p>Apprentissage du contenu, des modules, de la progression et des limites de transmission.</p></article>
-          <article><span>02</span><strong>Audit pendant le parcours</strong><p>Posture, pédagogie, gestion du groupe, sécurité d’animation et fidélité au standard.</p></article>
-          <article><span>03</span><strong>Certification par module</strong><p>Autorisation d’animer uniquement les modules correspondant au périmètre validé.</p></article>
-          <article><span>04</span><strong>Marketplace encadrée</strong><p>Publication des stages dans le cadre Vital Protect, avec module, durée et règles communes.</p></article>
-          <article><span>05</span><strong>Recyclage et mise à jour</strong><p>Maintien du niveau, intégration des retours terrain et évolution continue du standard.</p></article>
-        </div>
-      </div>
-    </section>
-
-    <section>
-      <div class="container">
-        <div class="section-heading">
-          <div class="eyebrow">Marketplace</div>
-          <h2>Une plateforme de stages, pas un annuaire.</h2>
-          <p>
-            Vital Protect met en avant les stages, les modules et le standard. Le formateur apparaît au bon endroit : sur la session concernée, comme garantie de certification.
-          </p>
-        </div>
-        <div class="vp-visual-card-grid">
-          <a class="vp-visual-card" href="/stage.html" style="--vp-card-img: url('/groupe-dehors-briefing-securite.png')"><span class="vp-card-num">A</span><div><strong>Participants</strong><p>Choisir une date, un lieu et un format dans un cadre standardisé.</p><em>Voir les stages</em></div></a>
-          <a class="vp-visual-card" href="/entreprises.html" style="--vp-card-img: url('/entreprise-banniere-vital-protect.png')"><span class="vp-card-num">B</span><div><strong>Entreprises</strong><p>Demander une intervention adaptée à un contexte professionnel exposé.</p><em>Demander un devis</em></div></a>
-          <a class="vp-visual-card" href="/devenir-formateur.html" style="--vp-card-img: url('/formateur-devant-public-assis-salle.png')"><span class="vp-card-num">C</span><div><strong>Formateurs</strong><p>Rejoindre une marque commune, une méthode et une plateforme encadrée.</p><em>Candidater</em></div></a>
-        </div>
-      </div>
-    </section>
-
-    <section>
-      <div class="container">
-        <div class="cta-panel">
-          <h2>Accédez au standard Vital Protect.</h2>
-          <p>Réservez un stage près de chez vous ou découvrez le parcours pour intégrer le réseau comme formateur certifié.</p>
-          <div class="cta-actions">
-            <a href="/stage.html" class="btn btn-dark">Trouver un stage</a>
-            <a href="/devenir-formateur.html" class="btn btn-outline">Devenir formateur</a>
-          </div>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <footer class="site-footer">
-    <div class="container site-footer__grid">
-      <div>
-        <div class="site-footer__brand">Vital Protect</div>
-        <p>Standard de sécurité personnelle transmis par un réseau certifié.</p>
-      </div>
-      <nav class="site-footer__links">
-        <a href="/mentions-legales.html">Mentions légales</a>
-        <a href="/politique-confidentialite.html">Confidentialité</a>
-        <a href="/cgv.html">CGV</a>
-        <a href="/contact.html">Contact</a>
-      </nav>
     </div>
-  </footer>
-  <script src="/premium-nav.js" defer></script>
+  </section>
+
+  <section class="network-band">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow eyebrow--invert">Marketplace encadrée</span>
+        <h2>On ne choisit pas un formateur au hasard. On réserve un stage Vital Protect.</h2>
+        <p>Chaque session publiée est rattachée à un module, une durée, un objectif pédagogique, un cadre de transmission et un formateur certifié.</p>
+      </div>
+      <div class="network-grid">
+        <article class="network-step"><div class="num">A</div><h3>Participants</h3><p>Ils choisissent une date, un lieu et un format. Vital Protect garantit le cadre et la cohérence.</p></article>
+        <article class="network-step"><div class="num">B</div><h3>Entreprises</h3><p>Les organisations demandent une intervention adaptée à leur contexte et à leurs équipes.</p></article>
+        <article class="network-step"><div class="num">C</div><h3>Formateurs</h3><p>Les formateurs certifiés accèdent à un cadre commun et à une plateforme de publication.</p></article>
+      </div>
+    </div>
+  </section>
+</main>
+<script id="vp-premium-nav-js">
+
+(function(){
+  const headers = document.querySelectorAll('.vp-premium-header');
+  headers.forEach((header) => {
+    const mobileToggle = header.querySelector('.vp-mobile-toggle');
+    const dropdowns = header.querySelectorAll('.vp-dropdown');
+    if (mobileToggle) {
+      mobileToggle.addEventListener('click', function(event){
+        event.stopPropagation();
+        const open = header.classList.toggle('is-open');
+        mobileToggle.setAttribute('aria-expanded', String(open));
+      });
+    }
+    dropdowns.forEach((dropdown) => {
+      const button = dropdown.querySelector('.vp-drop-toggle');
+      if (!button) return;
+      button.addEventListener('click', function(event){
+        event.stopPropagation();
+        dropdowns.forEach((other) => {
+          if (other !== dropdown) {
+            other.classList.remove('is-open');
+            const otherButton = other.querySelector('.vp-drop-toggle');
+            if (otherButton) otherButton.setAttribute('aria-expanded', 'false');
+          }
+        });
+        const open = dropdown.classList.toggle('is-open');
+        button.setAttribute('aria-expanded', String(open));
+      });
+    });
+  });
+  document.addEventListener('click', function(event){
+    document.querySelectorAll('.vp-premium-header.is-open').forEach((header) => {
+      if (!header.contains(event.target)) {
+        header.classList.remove('is-open');
+        const toggle = header.querySelector('.vp-mobile-toggle');
+        if (toggle) toggle.setAttribute('aria-expanded', 'false');
+      }
+    });
+    document.querySelectorAll('.vp-dropdown.is-open').forEach((dropdown) => {
+      if (!dropdown.contains(event.target)) {
+        dropdown.classList.remove('is-open');
+        const button = dropdown.querySelector('.vp-drop-toggle');
+        if (button) button.setAttribute('aria-expanded', 'false');
+      }
+    });
+  });
+  document.addEventListener('keydown', function(event){
+    if (event.key !== 'Escape') return;
+    document.querySelectorAll('.vp-premium-header.is-open').forEach((header) => header.classList.remove('is-open'));
+    document.querySelectorAll('.vp-dropdown.is-open').forEach((dropdown) => dropdown.classList.remove('is-open'));
+    document.querySelectorAll('.vp-drop-toggle,.vp-mobile-toggle').forEach((button) => button.setAttribute('aria-expanded','false'));
+  });
+})();
+
+</script>
 </body>
 </html>

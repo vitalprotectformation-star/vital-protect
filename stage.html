@@ -349,81 +349,463 @@
       }
     }
   </style>
-  <link rel="stylesheet" href="/styles/premium-nav.css" />
-  <link rel="stylesheet" href="/styles/modern-ui.css" />
+
+  <style id="vp-premium-nav-css">
+
+/* === Vital Protect premium unified navigation === */
+:root{
+  --vp-nav-blue:#0b2a52;
+  --vp-nav-blue-2:#123e73;
+  --vp-nav-ink:#07111f;
+  --vp-nav-muted:#64748b;
+  --vp-nav-line:rgba(15,23,42,.10);
+  --vp-nav-surface:rgba(255,255,255,.88);
+  --vp-nav-white:#fff;
+  --vp-nav-gold:#c4a46b;
+  --vp-nav-shadow:0 18px 50px rgba(7,17,31,.14);
+}
+.vp-premium-header,
+.vp-premium-header *{box-sizing:border-box}
+.vp-premium-header{
+  position:sticky;
+  top:0;
+  z-index:9999;
+  width:100%;
+  padding:14px 18px;
+  background:linear-gradient(180deg,rgba(248,250,252,.94),rgba(248,250,252,.78));
+  backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);
+  border-bottom:1px solid rgba(255,255,255,.65);
+}
+.vp-nav-wrap{
+  width:min(1240px,100%);
+  margin:0 auto;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  min-height:64px;
+  white-space:nowrap;
+}
+.vp-home-btn{
+  width:52px;
+  height:52px;
+  flex:0 0 52px;
+  display:grid;
+  place-items:center;
+  border-radius:18px;
+  background:var(--vp-nav-white);
+  border:1px solid var(--vp-nav-line);
+  box-shadow:0 12px 30px rgba(7,17,31,.08);
+  color:var(--vp-nav-blue);
+  text-decoration:none;
+  transition:transform .22s ease,box-shadow .22s ease,background .22s ease;
+}
+.vp-home-btn:hover{transform:translateY(-2px);box-shadow:0 18px 42px rgba(7,17,31,.14);background:#f8fafc}
+.vp-home-btn svg{width:22px;height:22px;display:block}
+.vp-brand-pill{
+  min-width:260px;
+  max-width:330px;
+  height:64px;
+  flex:0 0 auto;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:8px 18px 8px 10px;
+  border-radius:24px;
+  background:linear-gradient(135deg,#ffffff 0%,#eef5fc 100%);
+  border:1px solid rgba(15,23,42,.09);
+  box-shadow:var(--vp-nav-shadow);
+  color:var(--vp-nav-ink);
+  text-decoration:none;
+  overflow:hidden;
+}
+.vp-logo-img{
+  width:48px!important;
+  height:48px!important;
+  min-width:48px!important;
+  max-width:48px!important;
+  object-fit:contain!important;
+  display:block!important;
+  border-radius:16px;
+  padding:4px;
+  background:#fff;
+  box-shadow:inset 0 0 0 1px rgba(15,23,42,.06);
+}
+.vp-brand-copy{min-width:0;line-height:1.05}
+.vp-brand-title{
+  display:block;
+  font-family:Inter,Manrope,Arial,sans-serif;
+  font-weight:900;
+  letter-spacing:.04em;
+  font-size:1rem;
+  color:var(--vp-nav-blue);
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.vp-brand-subtitle{
+  display:block;
+  margin-top:5px;
+  font-size:.76rem;
+  font-weight:700;
+  color:var(--vp-nav-muted);
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.vp-menu-shell{
+  flex:1 1 auto;
+  min-width:0;
+  height:64px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  padding:8px;
+  border-radius:24px;
+  background:var(--vp-nav-surface);
+  border:1px solid rgba(15,23,42,.09);
+  box-shadow:0 18px 45px rgba(7,17,31,.10);
+}
+.vp-dropdown{position:relative;flex:0 0 auto}
+.vp-drop-toggle,
+.vp-menu-link{
+  height:46px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  border:0;
+  border-radius:16px;
+  padding:0 16px;
+  background:transparent;
+  color:var(--vp-nav-ink);
+  font:800 .94rem/1 Inter,Manrope,Arial,sans-serif;
+  text-decoration:none;
+  cursor:pointer;
+  white-space:nowrap;
+  transition:background .2s ease,color .2s ease,transform .2s ease;
+}
+.vp-drop-toggle:hover,
+.vp-menu-link:hover,
+.vp-dropdown.is-current>.vp-drop-toggle,
+.vp-menu-link[aria-current="page"]{
+  background:#eef5fc;
+  color:var(--vp-nav-blue);
+}
+.vp-chevron{
+  width:9px;
+  height:9px;
+  border-right:2px solid currentColor;
+  border-bottom:2px solid currentColor;
+  transform:rotate(45deg) translateY(-2px);
+  transition:transform .2s ease;
+}
+.vp-dropdown.is-open .vp-chevron,
+.vp-dropdown:hover .vp-chevron{transform:rotate(225deg) translateY(-1px)}
+.vp-dropdown-panel{
+  position:absolute;
+  top:calc(100% + 14px);
+  left:50%;
+  min-width:310px;
+  padding:10px;
+  border-radius:24px;
+  background:rgba(255,255,255,.96);
+  border:1px solid rgba(15,23,42,.10);
+  box-shadow:0 26px 70px rgba(7,17,31,.20);
+  transform:translateX(-50%) translateY(8px);
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+  transition:opacity .18s ease,transform .18s ease,visibility .18s ease;
+}
+.vp-dropdown-panel:before{
+  content:"";
+  position:absolute;
+  left:0;right:0;
+  top:-16px;
+  height:16px;
+}
+.vp-dropdown:hover .vp-dropdown-panel,
+.vp-dropdown:focus-within .vp-dropdown-panel,
+.vp-dropdown.is-open .vp-dropdown-panel{
+  opacity:1;
+  visibility:visible;
+  pointer-events:auto;
+  transform:translateX(-50%) translateY(0);
+}
+.vp-dropdown-item{
+  display:grid;
+  grid-template-columns:38px minmax(0,1fr);
+  gap:12px;
+  align-items:center;
+  min-height:68px;
+  padding:12px;
+  border-radius:18px;
+  color:var(--vp-nav-ink);
+  text-decoration:none;
+  transition:background .18s ease,transform .18s ease;
+  white-space:nowrap;
+}
+.vp-dropdown-item:hover,
+.vp-dropdown-item[aria-current="page"]{
+  background:#f1f6fb;
+  transform:translateX(2px);
+}
+.vp-item-num{
+  width:38px;
+  height:38px;
+  border-radius:14px;
+  display:grid;
+  place-items:center;
+  color:#fff;
+  font-weight:900;
+  font-size:.82rem;
+  background:linear-gradient(135deg,var(--vp-nav-blue),var(--vp-nav-blue-2));
+  box-shadow:0 12px 24px rgba(11,42,82,.18);
+}
+.vp-item-copy{min-width:0}
+.vp-item-title{
+  display:block;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  font-weight:900;
+  color:var(--vp-nav-ink);
+  font-size:.95rem;
+}
+.vp-item-desc{
+  display:block;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  margin-top:4px;
+  color:var(--vp-nav-muted);
+  font-size:.78rem;
+  font-weight:650;
+}
+.vp-nav-cta{
+  height:64px;
+  flex:0 0 auto;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:0 24px;
+  border-radius:24px;
+  background:linear-gradient(135deg,var(--vp-nav-blue),var(--vp-nav-blue-2));
+  color:#fff!important;
+  text-decoration:none;
+  font:900 .95rem/1 Inter,Manrope,Arial,sans-serif;
+  box-shadow:0 18px 42px rgba(11,42,82,.25);
+  border:1px solid rgba(255,255,255,.20);
+  transition:transform .2s ease,box-shadow .2s ease,filter .2s ease;
+  white-space:nowrap;
+}
+.vp-nav-cta:hover{transform:translateY(-2px);box-shadow:0 24px 56px rgba(11,42,82,.32);filter:saturate(1.1)}
+.vp-mobile-toggle{
+  display:none;
+  width:52px;
+  height:52px;
+  flex:0 0 52px;
+  border:1px solid var(--vp-nav-line);
+  border-radius:18px;
+  background:#fff;
+  color:var(--vp-nav-blue);
+  box-shadow:0 12px 30px rgba(7,17,31,.08);
+  cursor:pointer;
+}
+.vp-burger{
+  width:20px;
+  height:14px;
+  display:inline-grid;
+  gap:4px;
+}
+.vp-burger span{
+  display:block;
+  height:2px;
+  border-radius:99px;
+  background:currentColor;
+}
+@media (max-width:1120px){
+  .vp-premium-header{padding:10px 14px}
+  .vp-nav-wrap{min-height:58px}
+  .vp-brand-pill{min-width:220px;height:58px}
+  .vp-menu-shell{height:58px;gap:4px}
+  .vp-drop-toggle,.vp-menu-link{height:42px;padding:0 12px;font-size:.88rem}
+  .vp-nav-cta{height:58px;padding:0 18px;font-size:.88rem}
+}
+@media (max-width:960px){
+  .vp-nav-wrap{display:grid;grid-template-columns:52px minmax(0,1fr) 52px;gap:10px}
+  .vp-brand-pill{min-width:0;max-width:none;width:100%;height:58px}
+  .vp-brand-subtitle{display:none}
+  .vp-menu-shell{
+    position:fixed;
+    left:14px;
+    right:14px;
+    top:82px;
+    z-index:10000;
+    height:auto;
+    display:none;
+    flex-direction:column;
+    align-items:stretch;
+    gap:8px;
+    padding:12px;
+    border-radius:26px;
+    background:rgba(255,255,255,.98);
+    box-shadow:0 28px 80px rgba(7,17,31,.22);
+  }
+  .vp-premium-header.is-open .vp-menu-shell{display:flex}
+  .vp-mobile-toggle{display:grid;place-items:center}
+  .vp-dropdown{width:100%}
+  .vp-drop-toggle,.vp-menu-link{
+    width:100%;
+    justify-content:space-between;
+    height:48px;
+    padding:0 14px;
+  }
+  .vp-dropdown-panel{
+    position:static;
+    min-width:0;
+    width:100%;
+    margin:4px 0 8px;
+    padding:8px;
+    border-radius:20px;
+    background:#f8fafc;
+    box-shadow:none;
+    transform:none!important;
+    display:none;
+    opacity:1;
+    visibility:visible;
+    pointer-events:auto;
+  }
+  .vp-dropdown-panel:before{display:none}
+  .vp-dropdown:hover .vp-dropdown-panel,
+  .vp-dropdown:focus-within .vp-dropdown-panel{display:none}
+  .vp-dropdown.is-open .vp-dropdown-panel{display:block}
+  .vp-nav-cta{
+    width:100%;
+    height:50px;
+    border-radius:18px;
+  }
+}
+@media (max-width:520px){
+  .vp-premium-header{padding:8px}
+  .vp-nav-wrap{grid-template-columns:46px minmax(0,1fr) 46px;gap:8px}
+  .vp-home-btn,.vp-mobile-toggle{width:46px;height:46px;flex-basis:46px;border-radius:16px}
+  .vp-brand-pill{height:50px;border-radius:18px;padding:6px 10px 6px 7px}
+  .vp-logo-img{width:38px!important;height:38px!important;min-width:38px!important;max-width:38px!important;border-radius:13px}
+  .vp-brand-title{font-size:.86rem}
+  .vp-menu-shell{top:66px;left:8px;right:8px}
+  .vp-dropdown-item{min-height:60px;grid-template-columns:34px minmax(0,1fr)}
+  .vp-item-num{width:34px;height:34px;border-radius:12px}
+  .vp-item-desc{font-size:.74rem}
+}
+
+  </style>
 </head>
 <body>
-  <header class="vp-nav" data-vp-nav>
-    <div class="vp-nav__wrap">
-      <a href="/index.html" class="vp-nav__home" aria-label="Accueil Vital Protect">
-        <span aria-hidden="true">⌂</span>
-      </a>
 
-      <a href="/index.html" class="vp-nav__brand" aria-label="Vital Protect — accueil">
-        <img src="/logo.png" alt="Vital Protect" />
-        <span>
-          <strong>Vital Protect</strong>
-          <small>Standard sécurité personnelle</small>
-        </span>
-      </a>
+  <header class="vp-premium-header">
+  <div class="vp-nav-wrap" aria-label="Navigation principale Vital Protect">
+    <a class="vp-home-btn" href="/index.html" aria-label="Accueil Vital Protect">
+      <svg viewBox="0 0 24 24" aria-hidden="true" fill="none">
+        <path d="M3.5 10.8 12 4l8.5 6.8v8.1a1.6 1.6 0 0 1-1.6 1.6h-4.2v-5.8H9.3v5.8H5.1a1.6 1.6 0 0 1-1.6-1.6v-8.1Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+      </svg>
+    </a>
 
-      <button class="vp-nav__burger" type="button" aria-label="Ouvrir le menu" aria-expanded="false" data-vp-menu-toggle>
-        <span></span><span></span><span></span>
-      </button>
+    <a class="vp-brand-pill" href="/index.html" aria-label="Vital Protect">
+      <img class="vp-logo-img" src="/logo.png" alt="Vital Protect" />
+      <span class="vp-brand-copy">
+        <span class="vp-brand-title">VITAL PROTECT</span>
+        <span class="vp-brand-subtitle">Standard sécurité personnelle</span>
+      </span>
+    </a>
 
-      <nav class="vp-nav__menu" aria-label="Navigation principale" data-vp-menu>
-        <div class="vp-nav__item vp-nav__dropdown">
-          <button class="vp-nav__link" type="button" aria-expanded="false">
-            Le standard <span aria-hidden="true">⌄</span>
-          </button>
-          <div class="vp-nav__panel">
-            <a href="/methode.html" class="vp-nav__panel-card">
-              <em>01</em><span><strong>La méthode</strong><small>Prévention, distance, réaction réaliste.</small></span>
-            </a>
-            <a href="/reseau.html" class="vp-nav__panel-card">
-              <em>02</em><span><strong>Le réseau</strong><small>Formateurs certifiés, audités, recyclés.</small></span>
-            </a>
-            <a href="/faq.html" class="vp-nav__panel-card">
-              <em>03</em><span><strong>FAQ</strong><small>Réponses avant réservation.</small></span>
-            </a>
-          </div>
+    <nav class="vp-menu-shell" aria-label="Menu principal">
+      <div class="vp-dropdown">
+        <button class="vp-drop-toggle" type="button" aria-expanded="false">
+          Le standard <span class="vp-chevron" aria-hidden="true"></span>
+        </button>
+        <div class="vp-dropdown-panel">
+          <a class="vp-dropdown-item" href="/methode.html">
+            <span class="vp-item-num">01</span>
+            <span class="vp-item-copy">
+              <span class="vp-item-title">La méthode</span>
+              <span class="vp-item-desc">Prévention, distance, réaction réaliste.</span>
+            </span>
+          </a>
+          <a class="vp-dropdown-item" href="/reseau.html">
+            <span class="vp-item-num">02</span>
+            <span class="vp-item-copy">
+              <span class="vp-item-title">Le réseau</span>
+              <span class="vp-item-desc">Formateurs certifiés, audités, recyclés.</span>
+            </span>
+          </a>
+          <a class="vp-dropdown-item" href="/faq.html">
+            <span class="vp-item-num">03</span>
+            <span class="vp-item-copy">
+              <span class="vp-item-title">FAQ</span>
+              <span class="vp-item-desc">Réponses avant réservation.</span>
+            </span>
+          </a>
         </div>
+      </div>
 
-        <div class="vp-nav__item vp-nav__dropdown">
-          <button class="vp-nav__link is-active" type="button" aria-expanded="false">
-            Nos offres <span aria-hidden="true">⌄</span>
-          </button>
-          <div class="vp-nav__panel">
-            <a href="/stage.html" class="vp-nav__panel-card">
-              <em>01</em><span><strong>Stages grand public</strong><small>Trouver une session près de chez soi.</small></span>
-            </a>
-            <a href="/entreprises.html" class="vp-nav__panel-card">
-              <em>02</em><span><strong>Entreprises</strong><small>Prévention, tensions, équipes exposées.</small></span>
-            </a>
-            <a href="/contact.html" class="vp-nav__panel-card">
-              <em>03</em><span><strong>Contact</strong><small>Demande, devis ou question.</small></span>
-            </a>
-          </div>
+      <div class="vp-dropdown is-current">
+        <button class="vp-drop-toggle" type="button" aria-expanded="false">
+          Nos offres <span class="vp-chevron" aria-hidden="true"></span>
+        </button>
+        <div class="vp-dropdown-panel">
+          <a class="vp-dropdown-item" href="/stage.html" aria-current="page">
+            <span class="vp-item-num">01</span>
+            <span class="vp-item-copy">
+              <span class="vp-item-title">Stages grand public</span>
+              <span class="vp-item-desc">Trouver une session près de chez soi.</span>
+            </span>
+          </a>
+          <a class="vp-dropdown-item" href="/entreprises.html">
+            <span class="vp-item-num">02</span>
+            <span class="vp-item-copy">
+              <span class="vp-item-title">Entreprises</span>
+              <span class="vp-item-desc">Prévention, tensions, équipes exposées.</span>
+            </span>
+          </a>
+          <a class="vp-dropdown-item" href="/contact.html">
+            <span class="vp-item-num">03</span>
+            <span class="vp-item-copy">
+              <span class="vp-item-title">Contact</span>
+              <span class="vp-item-desc">Demande, devis ou question.</span>
+            </span>
+          </a>
         </div>
+      </div>
 
-        <div class="vp-nav__item vp-nav__dropdown">
-          <button class="vp-nav__link" type="button" aria-expanded="false">
-            Formateurs <span aria-hidden="true">⌄</span>
-          </button>
-          <div class="vp-nav__panel vp-nav__panel--right">
-            <a href="/devenir-formateur.html" class="vp-nav__panel-card">
-              <em>01</em><span><strong>Devenir formateur</strong><small>Certification, audit, marketplace.</small></span>
-            </a>
-            <a href="/formateur-login.html" class="vp-nav__panel-card">
-              <em>02</em><span><strong>Espace formateur</strong><small>Connexion et suivi des sessions.</small></span>
-            </a>
-          </div>
+      <div class="vp-dropdown">
+        <button class="vp-drop-toggle" type="button" aria-expanded="false">
+          Formateurs <span class="vp-chevron" aria-hidden="true"></span>
+        </button>
+        <div class="vp-dropdown-panel">
+          <a class="vp-dropdown-item" href="/devenir-formateur.html">
+            <span class="vp-item-num">01</span>
+            <span class="vp-item-copy">
+              <span class="vp-item-title">Devenir formateur</span>
+              <span class="vp-item-desc">Certification, audit, marketplace.</span>
+            </span>
+          </a>
+          <a class="vp-dropdown-item" href="/formateur-login.html">
+            <span class="vp-item-num">02</span>
+            <span class="vp-item-copy">
+              <span class="vp-item-title">Espace formateur</span>
+              <span class="vp-item-desc">Connexion et suivi des sessions.</span>
+            </span>
+          </a>
         </div>
+      </div>
 
-        <a href="/stage.html" class="vp-nav__cta">Trouver un stage</a>
-      </nav>
-    </div>
-  </header>
+      <a class="vp-nav-cta" href="/stage.html">Trouver un stage</a>
+    </nav>
+
+    <button class="vp-mobile-toggle" type="button" aria-label="Ouvrir le menu" aria-expanded="false">
+      <span class="vp-burger" aria-hidden="true"><span></span><span></span><span></span></span>
+    </button>
+  </div>
+</header>
 
   <main>
     <section class="hero-shell stage-hero">
@@ -919,6 +1301,62 @@
     loadStage();
   </script>
 
-  <script src="/premium-nav.js" defer></script>
+
+  <script id="vp-premium-nav-js">
+
+(function(){
+  const headers = document.querySelectorAll('.vp-premium-header');
+  headers.forEach((header) => {
+    const mobileToggle = header.querySelector('.vp-mobile-toggle');
+    const dropdowns = header.querySelectorAll('.vp-dropdown');
+    if (mobileToggle) {
+      mobileToggle.addEventListener('click', function(event){
+        event.stopPropagation();
+        const open = header.classList.toggle('is-open');
+        mobileToggle.setAttribute('aria-expanded', String(open));
+      });
+    }
+    dropdowns.forEach((dropdown) => {
+      const button = dropdown.querySelector('.vp-drop-toggle');
+      if (!button) return;
+      button.addEventListener('click', function(event){
+        event.stopPropagation();
+        dropdowns.forEach((other) => {
+          if (other !== dropdown) {
+            other.classList.remove('is-open');
+            const otherButton = other.querySelector('.vp-drop-toggle');
+            if (otherButton) otherButton.setAttribute('aria-expanded', 'false');
+          }
+        });
+        const open = dropdown.classList.toggle('is-open');
+        button.setAttribute('aria-expanded', String(open));
+      });
+    });
+  });
+  document.addEventListener('click', function(event){
+    document.querySelectorAll('.vp-premium-header.is-open').forEach((header) => {
+      if (!header.contains(event.target)) {
+        header.classList.remove('is-open');
+        const toggle = header.querySelector('.vp-mobile-toggle');
+        if (toggle) toggle.setAttribute('aria-expanded', 'false');
+      }
+    });
+    document.querySelectorAll('.vp-dropdown.is-open').forEach((dropdown) => {
+      if (!dropdown.contains(event.target)) {
+        dropdown.classList.remove('is-open');
+        const button = dropdown.querySelector('.vp-drop-toggle');
+        if (button) button.setAttribute('aria-expanded', 'false');
+      }
+    });
+  });
+  document.addEventListener('keydown', function(event){
+    if (event.key !== 'Escape') return;
+    document.querySelectorAll('.vp-premium-header.is-open').forEach((header) => header.classList.remove('is-open'));
+    document.querySelectorAll('.vp-dropdown.is-open').forEach((dropdown) => dropdown.classList.remove('is-open'));
+    document.querySelectorAll('.vp-drop-toggle,.vp-mobile-toggle').forEach((button) => button.setAttribute('aria-expanded','false'));
+  });
+})();
+
+  </script>
 </body>
 </html>
