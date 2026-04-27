@@ -1,0 +1,401 @@
+/* === Vital Protect — refined card system ===
+   Objectif : moderniser les encarts sans transformer toutes les sections en “cartes cliché”.
+   Effets subtils : accent line, glow au pointeur, élévation douce et meilleure respiration. */
+
+:root {
+  --vp-card-radius: 24px;
+  --vp-card-border: rgba(13, 27, 42, 0.085);
+  --vp-card-border-hover: rgba(37, 70, 103, 0.24);
+  --vp-card-shadow: 0 14px 34px rgba(7, 17, 31, 0.055);
+  --vp-card-shadow-hover: 0 22px 56px rgba(7, 17, 31, 0.12);
+  --vp-card-accent: linear-gradient(90deg, #0d1b2a, #244a73 54%, #c4a46b);
+}
+
+/* On cible les cartes éditoriales, pas les formulaires ni les blocs fonctionnels sensibles. */
+.pillar-card,
+.standard-card,
+.timeline-card,
+.governance-card,
+.difference-card,
+.authority-card,
+.proof-card,
+.audience-card,
+.positioning-card,
+.problem-card,
+.benefit-card,
+.format-card,
+.sector-card,
+.process-card,
+.profile-card,
+.network-card,
+.step-card,
+.info-card,
+.faq-card,
+.module-card,
+.offer-card,
+.testimonial-card,
+.faq-mini-card {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border-radius: var(--vp-card-radius) !important;
+  border: 1px solid var(--vp-card-border) !important;
+  background:
+    radial-gradient(circle at var(--mx, 50%) var(--my, 0%), rgba(36, 74, 115, 0.12), transparent 34%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(248, 251, 255, 0.91)) !important;
+  box-shadow: var(--vp-card-shadow) !important;
+  transform: translateY(0);
+  transition:
+    transform 260ms cubic-bezier(.2,.8,.2,1),
+    border-color 260ms ease,
+    box-shadow 260ms ease,
+    background 260ms ease;
+}
+
+.pillar-card::before,
+.standard-card::before,
+.timeline-card::before,
+.governance-card::before,
+.difference-card::before,
+.authority-card::before,
+.proof-card::before,
+.audience-card::before,
+.positioning-card::before,
+.problem-card::before,
+.benefit-card::before,
+.format-card::before,
+.sector-card::before,
+.process-card::before,
+.profile-card::before,
+.network-card::before,
+.step-card::before,
+.info-card::before,
+.faq-card::before,
+.module-card::before,
+.offer-card::before,
+.testimonial-card::before,
+.faq-mini-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  opacity: 0;
+  background:
+    radial-gradient(circle at var(--mx, 50%) var(--my, 30%), rgba(196, 164, 107, 0.18), transparent 28%),
+    linear-gradient(135deg, rgba(13, 27, 42, 0.045), transparent 45%);
+  transition: opacity 260ms ease;
+}
+
+.pillar-card::after,
+.standard-card::after,
+.timeline-card::after,
+.governance-card::after,
+.difference-card::after,
+.authority-card::after,
+.proof-card::after,
+.audience-card::after,
+.positioning-card::after,
+.problem-card::after,
+.benefit-card::after,
+.format-card::after,
+.sector-card::after,
+.process-card::after,
+.profile-card::after,
+.network-card::after,
+.step-card::after,
+.info-card::after,
+.faq-card::after,
+.module-card::after,
+.offer-card::after,
+.testimonial-card::after,
+.faq-mini-card::after {
+  content: "";
+  position: absolute;
+  left: 22px;
+  right: 22px;
+  top: 0;
+  height: 3px;
+  border-radius: 0 0 99px 99px;
+  background: var(--vp-card-accent);
+  transform: scaleX(0.18);
+  transform-origin: left center;
+  opacity: 0.36;
+  transition: transform 260ms ease, opacity 260ms ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .pillar-card:hover,
+  .standard-card:hover,
+  .timeline-card:hover,
+  .governance-card:hover,
+  .difference-card:hover,
+  .authority-card:hover,
+  .proof-card:hover,
+  .audience-card:hover,
+  .positioning-card:hover,
+  .problem-card:hover,
+  .benefit-card:hover,
+  .format-card:hover,
+  .sector-card:hover,
+  .process-card:hover,
+  .profile-card:hover,
+  .network-card:hover,
+  .step-card:hover,
+  .info-card:hover,
+  .faq-card:hover,
+  .module-card:hover,
+  .offer-card:hover,
+  .testimonial-card:hover,
+  .faq-mini-card:hover {
+    transform: translateY(-6px);
+    border-color: var(--vp-card-border-hover) !important;
+    box-shadow: var(--vp-card-shadow-hover) !important;
+  }
+
+  .pillar-card:hover::before,
+  .standard-card:hover::before,
+  .timeline-card:hover::before,
+  .governance-card:hover::before,
+  .difference-card:hover::before,
+  .authority-card:hover::before,
+  .proof-card:hover::before,
+  .audience-card:hover::before,
+  .positioning-card:hover::before,
+  .problem-card:hover::before,
+  .benefit-card:hover::before,
+  .format-card:hover::before,
+  .sector-card:hover::before,
+  .process-card:hover::before,
+  .profile-card:hover::before,
+  .network-card:hover::before,
+  .step-card:hover::before,
+  .info-card:hover::before,
+  .faq-card:hover::before,
+  .module-card:hover::before,
+  .offer-card:hover::before,
+  .testimonial-card:hover::before,
+  .faq-mini-card:hover::before {
+    opacity: 1;
+  }
+
+  .pillar-card:hover::after,
+  .standard-card:hover::after,
+  .timeline-card:hover::after,
+  .governance-card:hover::after,
+  .difference-card:hover::after,
+  .authority-card:hover::after,
+  .proof-card:hover::after,
+  .audience-card:hover::after,
+  .positioning-card:hover::after,
+  .problem-card:hover::after,
+  .benefit-card:hover::after,
+  .format-card:hover::after,
+  .sector-card:hover::after,
+  .process-card:hover::after,
+  .profile-card:hover::after,
+  .network-card:hover::after,
+  .step-card:hover::after,
+  .info-card:hover::after,
+  .faq-card:hover::after,
+  .module-card:hover::after,
+  .offer-card:hover::after,
+  .testimonial-card:hover::after,
+  .faq-mini-card:hover::after {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+}
+
+/* Les gros panneaux restent plus sobres : moins d’effet “carte partout”. */
+.soft-card,
+.surface-panel,
+.glass-panel,
+.cta-panel,
+.map-card,
+.map-sidebar,
+.booking-card,
+.stage-summary-card,
+.form-card,
+.legal-card {
+  border-radius: 28px !important;
+  border-color: rgba(13, 27, 42, 0.075) !important;
+  box-shadow: 0 18px 44px rgba(7, 17, 31, 0.07) !important;
+}
+
+/* Grilles moins rigides : le contenu respire mieux et évite l’effet “rangée de boîtes”. */
+.card-grid-3,
+.authority-grid,
+.governance-grid,
+.difference-grid,
+.standard-grid,
+.profile-grid,
+.network-grid,
+.benefit-grid,
+.format-grid,
+.process-grid,
+.sector-grid,
+.faq-grid {
+  gap: clamp(16px, 2.2vw, 24px) !important;
+}
+
+.pillars-grid {
+  gap: clamp(14px, 1.8vw, 22px) !important;
+}
+
+.pillar-card {
+  min-height: 250px;
+}
+
+.pillar-number,
+.card-number,
+.timeline-step,
+.vp-item-num {
+  box-shadow: 0 10px 24px rgba(13, 27, 42, 0.14);
+}
+
+.pillar-number {
+  background: linear-gradient(135deg, var(--vp-navy-850), var(--vp-navy-600)) !important;
+}
+
+/* Listes internes : plus premium, moins encarts bleus répétitifs. */
+.bullet-list {
+  gap: 10px !important;
+}
+
+.bullet-item,
+.meta-item,
+.selected-stage-box,
+.map-path {
+  position: relative;
+  border-radius: 16px !important;
+  background: rgba(237, 244, 251, 0.72) !important;
+  border: 1px solid rgba(13, 27, 42, 0.07) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.7);
+}
+
+.bullet-item::before {
+  content: "";
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  margin-right: 9px;
+  border-radius: 99px;
+  vertical-align: 1px;
+  background: var(--vp-gold);
+}
+
+/* Cartes de session : plus produit / marketplace. */
+.stage-card {
+  border-radius: 28px !important;
+  border: 1px solid rgba(13, 27, 42, 0.08) !important;
+  box-shadow: 0 18px 44px rgba(7, 17, 31, 0.07) !important;
+  background: linear-gradient(180deg, #fff, #f9fbfe) !important;
+}
+
+.stage-card:hover {
+  transform: translateY(-5px) !important;
+  box-shadow: 0 26px 64px rgba(7, 17, 31, 0.14) !important;
+}
+
+.stage-actions {
+  background: rgba(248, 251, 255, 0.78);
+}
+
+/* Les FAQ deviennent visuellement plus calmes. */
+.faq-card h3,
+.info-card h3,
+.standard-card h3,
+.pillar-card h3 {
+  letter-spacing: -0.025em;
+}
+
+.faq-card p,
+.info-card p,
+.standard-card p,
+.pillar-card p {
+  color: #4e5a6a !important;
+}
+
+/* Responsive : on évite qu’une grille entière tombe en 1 colonne trop tôt. */
+@media (min-width: 761px) and (max-width: 1180px) {
+  .pillars-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .card-grid-3,
+  .standard-grid,
+  .authority-grid,
+  .governance-grid,
+  .difference-grid,
+  .faq-grid,
+  .profile-grid,
+  .network-grid,
+  .benefit-grid,
+  .format-grid,
+  .process-grid,
+  .sector-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 760px) {
+  .pillar-card,
+  .standard-card,
+  .timeline-card,
+  .governance-card,
+  .difference-card,
+  .authority-card,
+  .proof-card,
+  .audience-card,
+  .positioning-card,
+  .problem-card,
+  .benefit-card,
+  .format-card,
+  .sector-card,
+  .process-card,
+  .profile-card,
+  .network-card,
+  .step-card,
+  .info-card,
+  .faq-card,
+  .module-card,
+  .offer-card,
+  .testimonial-card,
+  .faq-mini-card {
+    border-radius: 20px !important;
+    transform: none !important;
+  }
+
+  .pillar-card {
+    min-height: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pillar-card,
+  .standard-card,
+  .timeline-card,
+  .governance-card,
+  .difference-card,
+  .authority-card,
+  .proof-card,
+  .audience-card,
+  .positioning-card,
+  .problem-card,
+  .benefit-card,
+  .format-card,
+  .sector-card,
+  .process-card,
+  .profile-card,
+  .network-card,
+  .step-card,
+  .info-card,
+  .faq-card,
+  .module-card,
+  .offer-card,
+  .testimonial-card,
+  .faq-mini-card,
+  .stage-card {
+    transition: none !important;
+  }
+}
