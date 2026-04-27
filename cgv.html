@@ -259,28 +259,78 @@
       }
     }
   </style>
+  <link rel="stylesheet" href="/styles/premium-nav.css" />
+  <link rel="stylesheet" href="/styles/modern-ui.css" />
 </head>
 <body>
-
-  <header>
-    <div class="container header-inner">
-      <a href="/index.html" class="brand">
-        <img src="/logo.png" alt="Vital Protect" />
-        <div>
-          <div class="brand-text">VITAL PROTECT</div>
-          <div class="brand-sub">Méthode de sécurité personnelle</div>
-        </div>
+  <header class="vp-nav" data-vp-nav>
+    <div class="vp-nav__wrap">
+      <a href="/index.html" class="vp-nav__home" aria-label="Accueil Vital Protect">
+        <span aria-hidden="true">⌂</span>
       </a>
 
-      <nav class="nav-links">
-        <a href="/index.html">Accueil</a>
-        <a href="/methode.html">La méthode</a>
-        <a href="/index.html#stages">Nos stages</a>
-        <a href="/entreprises.html">Entreprises</a>
-        <a href="/devenir-formateur.html">Devenir formateur</a>
-        <a href="/faq.html">FAQ</a>
-        <a href="/contact.html">Contact</a>
-        <a href="/formateur-login.html" class="nav-cta">Espace formateur</a>
+      <a href="/index.html" class="vp-nav__brand" aria-label="Vital Protect — accueil">
+        <img src="/logo.png" alt="Vital Protect" />
+        <span>
+          <strong>Vital Protect</strong>
+          <small>Standard sécurité personnelle</small>
+        </span>
+      </a>
+
+      <button class="vp-nav__burger" type="button" aria-label="Ouvrir le menu" aria-expanded="false" data-vp-menu-toggle>
+        <span></span><span></span><span></span>
+      </button>
+
+      <nav class="vp-nav__menu" aria-label="Navigation principale" data-vp-menu>
+        <div class="vp-nav__item vp-nav__dropdown">
+          <button class="vp-nav__link" type="button" aria-expanded="false">
+            Le standard <span aria-hidden="true">⌄</span>
+          </button>
+          <div class="vp-nav__panel">
+            <a href="/methode.html" class="vp-nav__panel-card">
+              <em>01</em><span><strong>La méthode</strong><small>Prévention, distance, réaction réaliste.</small></span>
+            </a>
+            <a href="/reseau.html" class="vp-nav__panel-card">
+              <em>02</em><span><strong>Le réseau</strong><small>Formateurs certifiés, audités, recyclés.</small></span>
+            </a>
+            <a href="/faq.html" class="vp-nav__panel-card">
+              <em>03</em><span><strong>FAQ</strong><small>Réponses avant réservation.</small></span>
+            </a>
+          </div>
+        </div>
+
+        <div class="vp-nav__item vp-nav__dropdown">
+          <button class="vp-nav__link" type="button" aria-expanded="false">
+            Nos offres <span aria-hidden="true">⌄</span>
+          </button>
+          <div class="vp-nav__panel">
+            <a href="/stage.html" class="vp-nav__panel-card">
+              <em>01</em><span><strong>Stages grand public</strong><small>Trouver une session près de chez soi.</small></span>
+            </a>
+            <a href="/entreprises.html" class="vp-nav__panel-card">
+              <em>02</em><span><strong>Entreprises</strong><small>Prévention, tensions, équipes exposées.</small></span>
+            </a>
+            <a href="/contact.html" class="vp-nav__panel-card">
+              <em>03</em><span><strong>Contact</strong><small>Demande, devis ou question.</small></span>
+            </a>
+          </div>
+        </div>
+
+        <div class="vp-nav__item vp-nav__dropdown">
+          <button class="vp-nav__link" type="button" aria-expanded="false">
+            Formateurs <span aria-hidden="true">⌄</span>
+          </button>
+          <div class="vp-nav__panel vp-nav__panel--right">
+            <a href="/devenir-formateur.html" class="vp-nav__panel-card">
+              <em>01</em><span><strong>Devenir formateur</strong><small>Certification, audit, marketplace.</small></span>
+            </a>
+            <a href="/formateur-login.html" class="vp-nav__panel-card">
+              <em>02</em><span><strong>Espace formateur</strong><small>Connexion et suivi des sessions.</small></span>
+            </a>
+          </div>
+        </div>
+
+        <a href="/stage.html" class="vp-nav__cta">Trouver un stage</a>
       </nav>
     </div>
   </header>
@@ -577,5 +627,6 @@
     </div>
   </footer>
 
+  <script src="/premium-nav.js" defer></script>
 </body>
 </html>
