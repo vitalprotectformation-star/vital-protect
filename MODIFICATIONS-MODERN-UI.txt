@@ -1,0 +1,26 @@
+Modifications appliquées :
+
+- Barre de menu premium identique sur les pages publiques et légales.
+- Menu desktop en une seule ligne avec bouton accueil, logo, dropdowns et CTA unique.
+- Version mobile avec burger et dropdowns cliquables.
+- Ajout de styles inspirés de patterns FreeFrontend : card hover, image cards, accordions modernes, timeline, micro-interactions.
+- Ajout de la page reseau.html : formateurs certifiés, audités, recyclés, marketplace encadrée.
+- Ajout d’une section de cards visuelles sur la page d’accueil.
+
+Fichiers ajoutés :
+- styles/premium-nav.css
+- styles/modern-ui.css
+- premium-nav.js
+- reseau.html
+
+Fichiers mis à jour :
+- index.html
+- methode.html
+- stage.html
+- entreprises.html
+- devenir-formateur.html
+- faq.html
+- contact.html
+- mentions-legales.html
+- politique-confidentialite.html
+- cgv.html
