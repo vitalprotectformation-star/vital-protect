@@ -1,337 +1,114 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mentions légales — Vital Protect</title>
-
-  <link rel="stylesheet" href="/styles/tokens.css" />
-  <link rel="stylesheet" href="/styles/base.css" />
-  <link rel="stylesheet" href="/styles/components.css" />
-
-  <style>
-    .legal-hero {
-      padding: 72px 0 44px;
-    }
-
-    .legal-hero__card {
-      padding: 34px;
-    }
-
-    .legal-hero__title {
-      margin: 16px 0 14px;
-      font-size: clamp(2.2rem, 4vw, 3.6rem);
-      line-height: 1.02;
-      color: white;
-      max-width: 12ch;
-    }
-
-    .legal-hero__lead {
-      margin: 0;
-      max-width: 68ch;
-      color: var(--vp-text-invert-soft);
-      line-height: 1.82;
-      font-size: 1.03rem;
-    }
-
-    .legal-layout {
-      display: grid;
-      grid-template-columns: 0.92fr 1.08fr;
-      gap: 20px;
-      align-items: start;
-    }
-
-    .legal-side,
-    .legal-main,
-    .legal-box {
-      background: rgba(255,255,255,0.92);
-      border: 1px solid var(--vp-border);
-      border-radius: var(--vp-radius-md);
-      box-shadow: var(--vp-shadow-md);
-    }
-
-    .legal-side,
-    .legal-main {
-      padding: 26px;
-    }
-
-    .legal-side {
-      position: sticky;
-      top: 110px;
-    }
-
-    .legal-side h2,
-    .legal-main h2,
-    .legal-box h3 {
-      margin-top: 0;
-      color: var(--vp-navy-850);
-    }
-
-    .legal-side p,
-    .legal-main p,
-    .legal-main li,
-    .legal-box p {
-      color: var(--vp-text-soft);
-      line-height: 1.8;
-    }
-
-    .legal-nav {
-      display: grid;
-      gap: 10px;
-      margin-top: 18px;
-    }
-
-    .legal-nav a {
-      display: block;
-      text-decoration: none;
-      color: var(--vp-navy-850);
-      font-weight: 700;
-      padding: 10px 12px;
-      border-radius: 12px;
-      background: var(--vp-blue-soft-2);
-      border: 1px solid rgba(13, 27, 42, 0.05);
-    }
-
-    .legal-nav a:hover {
-      background: var(--vp-blue-soft);
-    }
-
-    .legal-section + .legal-section {
-      margin-top: 28px;
-      padding-top: 28px;
-      border-top: 1px solid rgba(13, 27, 42, 0.08);
-    }
-
-    .legal-section h2 {
-      margin-bottom: 10px;
-      font-size: 1.4rem;
-    }
-
-    .legal-list {
-      margin: 14px 0 0;
-      padding-left: 18px;
-    }
-
-    .legal-highlight {
-      margin-top: 18px;
-      padding: 16px;
-      border-radius: 16px;
-      background: var(--vp-blue-soft-2);
-      border: 1px solid rgba(13, 27, 42, 0.06);
-    }
-
-    .legal-highlight strong {
-      color: var(--vp-navy-850);
-    }
-
-    .legal-box {
-      margin-top: 20px;
-      padding: 22px;
-    }
-
-    .legal-box p {
-      margin: 0;
-    }
-
-    @media (max-width: 1100px) {
-      .legal-layout {
-        grid-template-columns: 1fr;
-      }
-
-      .legal-side {
-        position: static;
-      }
-    }
-
-    @media (max-width: 760px) {
-      .legal-hero {
-        padding: 54px 0 36px;
-      }
-
-      .legal-hero__card,
-      .legal-side,
-      .legal-main,
-      .legal-box {
-        padding: 22px;
-      }
-    }
-  </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Mentions légales | Vital Protect</title>
+  <meta name="description" content="Mentions légales de Vital Protect à finaliser avec les informations juridiques officielles." />
+  <meta name="robots" content="index, follow" />
+  <meta property="og:title" content="Mentions légales | Vital Protect" />
+  <meta property="og:description" content="Mentions légales de Vital Protect à finaliser avec les informations juridiques officielles." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://www.vital-protect.fr/mentions-legales.html" />
+  <meta name="theme-color" content="#0f172a" />
+  <link rel="stylesheet" href="assets/css/styles.css" />
+  
 </head>
 <body>
+  <a class="skip-link" href="#contenu">Aller au contenu</a>
+  
+<header class="site-header vp-premium-header">
+  <div class="container vp-nav-wrap" aria-label="Navigation principale">
+    <a class="vp-home" href="index.html" aria-label="Accueil Vital Protect" data-page="index.html">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M4 11.2 12 4l8 7.2v8.3a.5.5 0 0 1-.5.5h-5.2v-5.4H9.7V20H4.5a.5.5 0 0 1-.5-.5v-8.3Z" fill="currentColor"/>
+      </svg>
+    </a>
 
-  <header class="site-header">
-    <div class="container site-header__inner">
-      <a href="/index.html" class="site-brand">
-        <img src="/logo.png" alt="Vital Protect" />
-        <div class="site-brand__text">
-          <div class="site-brand__title">VITAL PROTECT</div>
-          <div class="site-brand__subtitle">Méthode de sécurité personnelle</div>
-        </div>
-      </a>
+    <a class="vp-brand" href="index.html" aria-label="Retour à l’accueil Vital Protect">
+      <span class="vp-brand-mark">VP</span>
+      <span class="vp-brand-text">
+        <strong>Vital Protect</strong>
+        <small>Standard sécurité personnelle</small>
+      </span>
+    </a>
 
-      <nav class="site-nav">
-        <a href="/index.html">Accueil</a>
-        <a href="/methode.html">La méthode</a>
-        <a href="/index.html#stages">Nos stages</a>
-        <a href="/entreprises.html">Entreprises</a>
-        <a href="/contact.html">Contact</a>
-        <a href="/devenir-formateur.html">Devenir formateur</a>
-        <a href="/formateur-login.html" class="nav-cta">Espace formateur</a>
-      </nav>
-    </div>
-  </header>
+    <button class="mobile-toggle" type="button" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="main-menu">☰</button>
 
-  <main>
-    <section class="hero-shell legal-hero">
-      <div class="container">
-        <div class="glass-panel legal-hero__card">
-          <div class="eyebrow eyebrow--invert">Informations légales</div>
-          <h1 class="legal-hero__title">Mentions légales</h1>
-          <p class="legal-hero__lead">
-            Cette page présente les informations légales relatives au site Vital Protect,
-            à son éditeur, à son hébergement et aux conditions générales de publication.
-          </p>
-        </div>
-      </div>
-    </section>
-
-    <section>
-      <div class="container legal-layout">
-        <aside class="legal-side">
-          <h2>Sommaire</h2>
-          <p>
-            Retrouvez ici les principales informations d’identification de l’éditeur du site
-            ainsi que les informations relatives à l’hébergement et à la propriété intellectuelle.
-          </p>
-
-          <nav class="legal-nav">
-            <a href="#editeur">Éditeur du site</a>
-            <a href="#publication">Responsable de publication</a>
-            <a href="#hebergeur">Hébergeur</a>
-            <a href="#propriete">Propriété intellectuelle</a>
-            <a href="#responsabilite">Responsabilité</a>
-            <a href="#contact">Contact</a>
-          </nav>
-
-          <div class="legal-box">
-            <h3>À vérifier avant mise en ligne</h3>
-            <p>
-              Pense bien à remplacer tous les champs entre crochets par tes informations réelles.
-            </p>
-          </div>
-        </aside>
-
-        <div class="legal-main">
-          <section class="legal-section" id="editeur">
-            <h2>1. Éditeur du site</h2>
-            <p>Le présent site est édité par :</p>
-
-            <ul class="legal-list">
-              <li><strong>Nom / dénomination :</strong> [À REMPLACER]</li>
-              <li><strong>Nom commercial :</strong> Vital Protect</li>
-              <li><strong>Forme juridique :</strong> [À REMPLACER]</li>
-              <li><strong>Capital social :</strong> [À REMPLACER si applicable]</li>
-              <li><strong>Siège social :</strong> [À REMPLACER]</li>
-              <li><strong>SIREN / SIRET :</strong> [À REMPLACER]</li>
-              <li><strong>Numéro TVA intracommunautaire :</strong> [À REMPLACER si applicable]</li>
-              <li><strong>Email :</strong> [À REMPLACER]</li>
-              <li><strong>Téléphone :</strong> [À REMPLACER si souhaité]</li>
-            </ul>
-
-            <div class="legal-highlight">
-              <strong>Important :</strong> si tu exerces en entreprise individuelle ou micro-entreprise,
-              il faut afficher ton identité légale réelle.
-            </div>
-          </section>
-
-          <section class="legal-section" id="publication">
-            <h2>2. Responsable de la publication</h2>
-            <p>
-              Le responsable de la publication du site est :
-              <strong>[Nom / prénom à remplacer]</strong>,
-              en qualité de <strong>[fonction à remplacer]</strong>.
-            </p>
-          </section>
-
-          <section class="legal-section" id="hebergeur">
-            <h2>3. Hébergeur</h2>
-            <p>Le site est hébergé par :</p>
-
-            <ul class="legal-list">
-              <li><strong>Hébergeur :</strong> Vercel Inc.</li>
-              <li><strong>Adresse :</strong> 440 N Barranca Ave #4133, Covina, CA 91723, États-Unis</li>
-              <li><strong>Site web :</strong> vercel.com</li>
-            </ul>
-
-            <p>
-              Le site peut également utiliser des services techniques tiers pour certaines fonctionnalités,
-              notamment l’envoi d’emails, le paiement sécurisé ou l’hébergement de données applicatives.
-            </p>
-          </section>
-
-          <section class="legal-section" id="propriete">
-            <h2>4. Propriété intellectuelle</h2>
-            <p>
-              L’ensemble des contenus présents sur le site Vital Protect, notamment les textes,
-              visuels, éléments graphiques, logos, marque, structure éditoriale, documents,
-              supports pédagogiques, contenus de formation et éléments distinctifs,
-              sont protégés par le droit de la propriété intellectuelle.
-            </p>
-
-            <p>
-              Toute reproduction, représentation, diffusion, adaptation, modification,
-              extraction ou exploitation, totale ou partielle, sans autorisation écrite préalable,
-              est interdite.
-            </p>
-          </section>
-
-          <section class="legal-section" id="responsabilite">
-            <h2>5. Responsabilité</h2>
-            <p>
-              L’éditeur du site s’efforce de fournir des informations aussi claires,
-              exactes et à jour que possible. Toutefois, il ne saurait garantir l’exactitude,
-              l’exhaustivité ou l’actualité permanente de l’ensemble des contenus publiés.
-            </p>
-
-            <p>
-              L’utilisateur reconnaît utiliser le site sous sa responsabilité exclusive.
-              L’éditeur ne pourra être tenu responsable de tout dommage direct ou indirect
-              résultant de l’accès au site, de son utilisation, ou de l’impossibilité de l’utiliser.
-            </p>
-          </section>
-
-          <section class="legal-section" id="contact">
-            <h2>6. Contact</h2>
-            <p>
-              Pour toute question concernant le site ou son contenu, vous pouvez écrire à :
-              <strong>[adresse email à remplacer]</strong>.
-            </p>
-          </section>
+    <nav id="main-menu" class="nav-links vp-nav-menu">
+      <div class="nav-group">
+        <button class="nav-dropdown-toggle" type="button" aria-expanded="false">
+          <span>Le standard</span><span class="nav-caret" aria-hidden="true">⌄</span>
+        </button>
+        <div class="nav-dropdown">
+          <a href="methode.html" data-page="methode.html">
+            <span class="drop-arrow">→</span>
+            <span><strong>La méthode</strong><small>Le référentiel et la logique Vital Protect</small></span>
+          </a>
+          <a href="reseau.html" data-page="reseau.html">
+            <span class="drop-arrow">→</span>
+            <span><strong>Le réseau</strong><small>Formateurs certifiés, audités et recyclés</small></span>
+          </a>
+          <a href="faq.html" data-page="faq.html">
+            <span class="drop-arrow">→</span>
+            <span><strong>FAQ</strong><small>Les réponses avant de réserver</small></span>
+          </a>
         </div>
       </div>
-    </section>
+
+      <div class="nav-group">
+        <button class="nav-dropdown-toggle" type="button" aria-expanded="false">
+          <span>Nos offres</span><span class="nav-caret" aria-hidden="true">⌄</span>
+        </button>
+        <div class="nav-dropdown nav-dropdown-wide">
+          <a href="stages.html" data-page="stages.html">
+            <span class="drop-arrow">→</span>
+            <span><strong>Stages grand public</strong><small>Trouver une date, un lieu et un module</small></span>
+          </a>
+          <a href="entreprises.html" data-page="entreprises.html">
+            <span class="drop-arrow">→</span>
+            <span><strong>Entreprises</strong><small>Former les équipes exposées aux tensions</small></span>
+          </a>
+          <a href="contact.html" data-page="contact.html">
+            <span class="drop-arrow">→</span>
+            <span><strong>Contact</strong><small>Demander une information ou un échange</small></span>
+          </a>
+        </div>
+      </div>
+
+      <a class="nav-simple" href="devenir-formateur.html" data-page="devenir-formateur.html">Devenir formateur</a>
+      <a class="nav-cta nav-cta-mobile" href="stages.html" data-page="stages.html">Trouver un stage</a>
+    </nav>
+
+    <a class="nav-cta vp-stage-cta" href="stages.html" data-page="stages.html">
+      <span>Réserver</span>
+      <strong>Trouver un stage</strong>
+    </a>
+  </div>
+</header>
+
+  <main id="contenu">
+
+    <section class="hero"><div class="container"><span class="eyebrow">Informations légales</span><h1>Mentions légales</h1><p class="lead">Page modèle à finaliser avec les informations juridiques réelles de Vital Protect avant publication.</p></div></section>
+    <section><div class="container legal-content"><p class="notice"><strong>Important :</strong> remplacez les champs entre crochets par les informations officielles avant mise en ligne.</p><h2>Éditeur du site</h2><p>Vital Protect — [forme juridique] — [adresse du siège] — [SIRET] — [TVA intracommunautaire si applicable].</p><h2>Responsable de publication</h2><p>[Nom du responsable] — [email de contact].</p><h2>Hébergement</h2><p>[Nom de l’hébergeur] — [adresse] — [site web].</p><h2>Données personnelles</h2><p>Les données collectées via les formulaires sont utilisées pour répondre aux demandes, gérer les inscriptions et assurer le suivi des stages. Les durées de conservation, bases légales et modalités d’exercice des droits doivent être précisées dans la politique de confidentialité.</p><h2>Contact</h2><p>Pour toute demande : <a href="contact.html">utiliser la page contact</a>.</p></div></section>
+
   </main>
-
-  <footer class="site-footer">
-    <div class="container site-footer__grid">
-      <div class="site-footer__brand">
-        <strong>VITAL PROTECT</strong>
-        <p>
-          Une méthode structurée de sécurité personnelle fondée sur la prévention, l’évitement,
-          la réaction réaliste, la pédagogie progressive et la certification des formateurs.
-        </p>
-      </div>
-
-      <div class="site-footer__links">
-        <a href="/methode.html">La méthode</a>
-        <a href="/entreprises.html">Entreprises</a>
-        <a href="/devenir-formateur.html">Devenir formateur</a>
-        <a href="/faq.html">FAQ</a>
-        <a href="/contact.html">Contact</a>
-        <a href="/mentions-legales.html">Mentions légales</a>
-      </div>
+  
+<footer class="site-footer">
+  <div class="container footer-grid">
+    <div>
+      <strong>Vital Protect</strong><br />
+      Standard de sécurité personnelle transmis par un réseau certifié.
     </div>
-  </footer>
+    <nav class="footer-links" aria-label="Liens secondaires">
+      <a href="contact.html">Contact</a>
+      <a href="mentions-legales.html">Mentions légales</a>
+      <a href="politique-confidentialite.html">Confidentialité</a>
+      <a href="cgv.html">CGV</a>
+    </nav>
+  </div>
+</footer>
 
+  <script src="assets/js/main.js"></script>
 </body>
 </html>
