@@ -349,90 +349,56 @@
       }
     }
   </style>
+  <link rel="stylesheet" href="/styles/lusion-level.css" />
 </head>
-<body>
+<body class="vpl-inner-page">
+  <canvas class="vpl-canvas" aria-hidden="true"></canvas>
+  <div class="vpl-noise" aria-hidden="true"></div>
 
-  <header class="site-header">
-    <div class="container site-header__inner">
-      <a href="/index.html" class="site-brand">
+  <header class="vpl-nav">
+      <a href="/index.html" class="vpl-brand" aria-label="Accueil Vital Protect">
         <img src="/logo.png" alt="Vital Protect" />
-        <div class="site-brand__text">
-          <div class="site-brand__title">VITAL PROTECT</div>
-          <div class="site-brand__subtitle">Méthode de sécurité personnelle</div>
+        <div>
+          <b>VITAL PROTECT</b>
+          <span>Standard sécurité personnelle</span>
         </div>
       </a>
 
-      <nav class="site-nav">
-        <a href="/index.html">Accueil</a>
-        <a href="/methode.html">La méthode</a>
-        <a href="/index.html#stages" class="active">Nos stages</a>
-        <a href="/entreprises.html">Entreprises</a>
-        <a href="/devenir-formateur.html">Devenir formateur</a>
-        <a href="/contact.html">Contact</a>
-        <a href="/formateur-login.html" class="nav-cta">Espace formateur</a>
+      <nav class="vpl-menu" aria-label="Navigation principale">
+        <a href="/index.html" data-page="index">Accueil</a>
+        <a href="/methode.html" data-page="methode">Standard</a>
+        <a href="/stage.html" data-page="stage" class="active">Stages</a>
+        <a href="/entreprises.html" data-page="entreprises">Entreprises</a>
+        <a href="/devenir-formateur.html" data-page="devenir-formateur">Formateurs</a>
+        <a href="/faq.html" data-page="faq">FAQ</a>
+        <a href="/contact.html" data-page="contact">Contact</a>
+        <a href="/formateur-login.html" class="vpl-nav-ghost">Espace</a>
       </nav>
-    </div>
-  </header>
+
+      <a href="/stage.html" class="vpl-nav-cta">Trouver un stage</a>
+    </header>
 
   <main>
-    <section class="hero-shell stage-hero">
-      <div class="container stage-hero__grid">
-        <div class="glass-panel stage-hero__copy">
-          <div class="eyebrow eyebrow--invert" id="heroType">Stage Vital Protect</div>
-          <h1 class="stage-hero__title" id="heroTitle">Chargement du stage…</h1>
-          <p class="stage-hero__desc" id="heroDescription">
-            Chargement des informations du stage.
-          </p>
-
-          <div class="stage-hero__proofs">
-            <div class="stage-hero__proof">Méthode structurée</div>
-            <div class="stage-hero__proof">Pédagogie progressive</div>
-            <div class="stage-hero__proof">Cadre sécurisé</div>
-            <div class="stage-hero__proof">Réservation en ligne</div>
+    <section class="vpl-inner-hero">
+        <div class="vpl-container vpl-inner-hero-grid">
+          <div>
+            <div class="vpl-eyebrow" id="heroType">Stage Vital Protect</div>
+            <h1 class="vpl-inner-title"><span id="heroTitle">Réserver un stage Vital Protect.</span></h1>
+            <p class="vpl-inner-lead" id="heroDescription">Consultez les informations pratiques, vérifiez le cadre de sécurité et réservez une session animée par un formateur certifié.</p>
+            <div class="vpl-actions">
+              <a class="vpl-button vpl-button-primary" href="/stage.html">Trouver un stage</a>
+              <a class="vpl-button vpl-button-secondary" href="/contact.html">Nous contacter</a>
+            </div>
           </div>
-
-          <div class="stage-hero__actions">
-            <a href="#reservation" class="btn btn-primary">Réserver ce stage</a>
-            <a href="/index.html#stages" class="btn btn-secondary">Retour aux stages</a>
+          <div class="vpl-inner-visual">
+            <img src="/groupe-dehors-briefing-securite.png" alt="Stage rattaché au standard" />
+            <div class="vpl-inner-stat">
+              <strong>Stage rattaché au standard</strong>
+              <span>Date, lieu, durée, type, formateur et conditions sont affichés clairement.</span>
+            </div>
           </div>
         </div>
-
-        <aside class="surface-panel stage-hero__side">
-          <h2>Informations essentielles</h2>
-          <p>
-            Retrouvez ici les objectifs du stage, son cadre pédagogique, son déroulé
-            et les informations pratiques avant réservation.
-          </p>
-
-          <div class="meta-grid">
-            <div class="meta-item">
-              <span class="meta-label">Ville</span>
-              <span class="meta-value" id="metaCity">—</span>
-            </div>
-            <div class="meta-item">
-              <span class="meta-label">Date</span>
-              <span class="meta-value" id="metaDate">—</span>
-            </div>
-            <div class="meta-item">
-              <span class="meta-label">Prix</span>
-              <span class="meta-value" id="metaPrice">—</span>
-            </div>
-            <div class="meta-item">
-              <span class="meta-label">Places restantes</span>
-              <span class="meta-value" id="metaPlaces">—</span>
-            </div>
-            <div class="meta-item">
-              <span class="meta-label">Région</span>
-              <span class="meta-value" id="metaRegion">—</span>
-            </div>
-            <div class="meta-item">
-              <span class="meta-label">Département</span>
-              <span class="meta-value" id="metaDepartment">—</span>
-            </div>
-          </div>
-        </aside>
-      </div>
-    </section>
+      </section>
 
     <section>
       <div class="container split-panel">
@@ -868,5 +834,6 @@
     loadStage();
   </script>
 
+  <script src="/lusion-level.js"></script>
 </body>
 </html>
