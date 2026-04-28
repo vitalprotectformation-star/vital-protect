@@ -38,8 +38,8 @@ document.documentElement.classList.add('js');
     ctx.clearRect(0, 0, width, height);
 
     const gradient = ctx.createRadialGradient(width * mouse.x, height * mouse.y, 0, width * mouse.x, height * mouse.y, Math.max(width, height) * .55);
-    gradient.addColorStop(0, 'rgba(18,214,189,.17)');
-    gradient.addColorStop(.45, 'rgba(215,255,96,.055)');
+    gradient.addColorStop(0, 'rgba(47,111,159,.15)');
+    gradient.addColorStop(.45, 'rgba(255,255,255,.04)');
     gradient.addColorStop(1, 'rgba(0,0,0,0)');
     ctx.fillStyle = gradient;
     ctx.fillRect(0, 0, width, height);
@@ -54,7 +54,7 @@ document.documentElement.classList.add('js');
 
       ctx.beginPath();
       ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-      ctx.fillStyle = `hsla(${160 + Math.sin((t / 1800) + p.h) * 28}, 92%, 70%, ${p.a})`;
+      ctx.fillStyle = `hsla(${212 + Math.sin((t / 1800) + p.h) * 8}, 55%, 74%, ${p.a})`;
       ctx.fill();
     }
 
@@ -66,7 +66,7 @@ document.documentElement.classList.add('js');
         const dy = a.y - b.y;
         const dist = Math.sqrt(dx * dx + dy * dy);
         if (dist < 115) {
-          ctx.strokeStyle = `rgba(215,255,96,${(1 - dist / 115) * .11})`;
+          ctx.strokeStyle = `rgba(216,230,243,${(1 - dist / 115) * .10})`;
           ctx.lineWidth = 1;
           ctx.beginPath();
           ctx.moveTo(a.x, a.y);
