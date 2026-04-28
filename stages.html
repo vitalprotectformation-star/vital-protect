@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="/styles/tokens.css" />
+  <link rel="stylesheet" href="/styles/base.css" />
+  <link rel="stylesheet" href="/styles/components.css" />
+  <title>Stages Vital Protect — Trouver une session près de chez vous</title>
+  <meta name="description" content="Trouvez et réservez un stage Vital Protect : sessions par ville, département, date, type de module et formateur certifié." />
+  <link rel="stylesheet" href="/styles/vp-modern.css" />
+  <script src="/vp-site.js" defer></script>
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "Organization", "name": "Vital Protect", "url": "https://www.vital-protect.fr/", "logo": "https://www.vital-protect.fr/logo.png", "contactPoint": {"@type": "ContactPoint", "contactType": "customer support", "email": "contact@vital-protect.fr", "availableLanguage": "fr"}}</script>
+</head>
+<body>
+
+  <header class="site-header vp-header" data-vp-header>
+  <div class="container site-header__inner vp-nav-wrap">
+    <a href="/index.html" class="vp-home" aria-label="Accueil Vital Protect">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11.2 12 4l9 7.2v8.3a1 1 0 0 1-1 1h-5.4v-5.8H9.4v5.8H4a1 1 0 0 1-1-1v-8.3Z" fill="currentColor"/></svg>
+    </a>
+    <a href="/index.html" class="site-brand vp-brand" aria-label="Vital Protect">
+      <img src="/logo.png" alt="Logo Vital Protect" />
+      <div class="site-brand__text">
+        <div class="site-brand__title">Vital Protect</div>
+        <div class="site-brand__subtitle">Standard sécurité personnelle</div>
+      </div>
+    </a>
+    <button class="vp-menu-toggle" type="button" aria-controls="vp-main-nav" aria-expanded="false"><span>Menu</span><i aria-hidden="true"></i></button>
+    <nav id="vp-main-nav" class="site-nav vp-main-nav" aria-label="Navigation principale">
+      <div class="vp-nav-group">
+        <button class="vp-nav-link vp-nav-toggle" type="button" aria-expanded="false">Le standard <span aria-hidden="true">⌄</span></button>
+        <div class="vp-dropdown" role="menu">
+          <a href="/methode.html"><span>01</span><strong>La méthode</strong><small>Prévention, distance, réaction réaliste.</small></a>
+          <a href="/reseau.html"><span>02</span><strong>Le réseau</strong><small>Formateurs certifiés, audités, recyclés.</small></a>
+          <a href="/qui-sommes-nous.html"><span>03</span><strong>Qui sommes-nous ?</strong><small>Mission, limites et garanties.</small></a>
+          <a href="/faq.html"><span>04</span><strong>FAQ</strong><small>Réponses avant inscription.</small></a>
+        </div>
+      </div>
+      <div class="vp-nav-group">
+        <button class="vp-nav-link vp-nav-toggle" type="button" aria-expanded="false">Nos offres <span aria-hidden="true">⌄</span></button>
+        <div class="vp-dropdown" role="menu">
+          <a href="/stages.html"><span>01</span><strong>Stages grand public</strong><small>Voir les prochaines dates.</small></a>
+          <a href="/entreprises.html"><span>02</span><strong>Entreprises</strong><small>Prévention des tensions.</small></a>
+          <a href="/contact.html"><span>03</span><strong>Contact</strong><small>Question, devis ou demande de ville.</small></a>
+        </div>
+      </div>
+      <div class="vp-nav-group">
+        <button class="vp-nav-link vp-nav-toggle" type="button" aria-expanded="false">Formateurs <span aria-hidden="true">⌄</span></button>
+        <div class="vp-dropdown" role="menu">
+          <a href="/devenir-formateur.html"><span>01</span><strong>Devenir formateur</strong><small>Certification, audit, marketplace.</small></a>
+          <a href="/formateur-login.html"><span>02</span><strong>Espace formateur</strong><small>Connexion et suivi des sessions.</small></a>
+        </div>
+      </div>
+      <a href="/stages.html" class="nav-cta vp-nav-cta">Trouver un stage</a>
+    </nav>
+  </div>
+</header>
+
+  <main>
+    <section class="hero-shell">
+      <div class="container hero-grid">
+        <div class="glass-panel" style="padding:36px;">
+          <div class="eyebrow eyebrow--invert">Marketplace Vital Protect</div>
+          <h1 style="font-size:clamp(2.4rem,5vw,4.7rem);line-height:.98;margin:18px 0;">Trouvez un stage Vital Protect près de chez vous.</h1>
+          <p style="color:var(--vp-text-invert-soft);max-width:72ch;">Toutes les sessions affichées sont rattachées au référentiel Vital Protect : module, durée, objectifs, cadre de sécurité et formateur certifié.</p>
+        </div>
+        <div class="surface-panel" style="padding:32px;"><span class="eyebrow">Réservation</span><h2>Choisissez une date, un lieu, un format.</h2><p>Si aucune session n’est disponible dans votre zone, vous pouvez demander une ville ou être alerté des prochaines dates.</p><div class="cta-actions"><a class="btn btn-dark" href="/contact.html">Demander une ville</a></div></div>
+      </div>
+    </section>
+    <section id="stages"><div class="container"><div class="section-head"><span class="eyebrow">Prochaines dates</span><h2>Sessions disponibles</h2><p id="stagesSubtitle">Filtrez les stages par ville, département ou type de module.</p></div><div class="stage-filter-bar"><input id="filterCity" type="search" placeholder="Ville"/><input id="filterDepartment" type="search" placeholder="Département"/><select id="filterType"><option value="">Tous les types</option></select><button id="resetFilters" class="btn btn-outline" type="button">Réinitialiser</button></div><div id="stagesContainer" class="stages-grid"></div></div></section>
+    <script type="module">
+      import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+      const supabase = createClient("https://zsraqxzneghkzaozzuci.supabase.co", "sb_publishable_VlTpYjzJ3DKpFA1Un_EFHQ_FW-mYK4U");
+      const container = document.getElementById("stagesContainer");
+      const filterCity = document.getElementById("filterCity");
+      const filterDepartment = document.getElementById("filterDepartment");
+      const filterType = document.getElementById("filterType");
+      const resetFilters = document.getElementById("resetFilters");
+      let allStages = [];
+      const escapeHtml = (v) => String(v || "").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#39;");
+      const formatPrice = (p) => `${Number(p || 0).toFixed(0)} €`;
+      const formatDate = (d) => { if(!d) return "Date non disponible"; const date = new Date(d); return Number.isNaN(date.getTime()) ? "Date non disponible" : date.toLocaleDateString("fr-FR", { day:"2-digit", month:"long", year:"numeric" }); };
+      function renderTypes(){ const types=[...new Set(allStages.map(s=>s.training_type).filter(Boolean))].sort(); filterType.innerHTML='<option value="">Tous les types</option>'+types.map(t=>`<option value="${escapeHtml(t)}">${escapeHtml(t)}</option>`).join(''); }
+      function filtered(){ const c=filterCity.value.trim().toLowerCase(); const d=filterDepartment.value.trim().toLowerCase(); const t=filterType.value; return allStages.filter(s => (!c || String(s.city||'').toLowerCase().includes(c)) && (!d || String(s.department||'').toLowerCase().includes(d)) && (!t || s.training_type===t)); }
+      function render(){ const data=filtered(); if(!data.length){ container.innerHTML=`<div class="empty-state"><strong>Aucun stage disponible pour ces critères.</strong><br>Vous pouvez élargir votre recherche, demander une ville ou être alerté des prochaines dates.<div class="empty-state__actions"><a class="btn btn-dark" href="/contact.html">Demander une ville</a><a class="btn btn-outline" href="/contact.html">Être alerté</a></div></div>`; return; } container.innerHTML=data.map(stage=>`<article class="stage-card"><div class="stage-top"><div><div class="stage-badge">${escapeHtml(stage.training_type || 'Stage Vital Protect')}</div><h3 class="stage-title">${escapeHtml(stage.title || 'Stage de sécurité personnelle')}</h3></div><div class="stage-price">${formatPrice(stage.price)}</div></div><div class="stage-body"><div class="stage-description">${escapeHtml(stage.description || 'Formation encadrée fondée sur le référentiel Vital Protect.')}</div><div class="stage-meta"><div class="meta-item"><span class="meta-label">Ville</span><span class="meta-value">${escapeHtml(stage.city || 'Zone à confirmer')}</span></div><div class="meta-item"><span class="meta-label">Date</span><span class="meta-value">${formatDate(stage.stage_date)}</span></div><div class="meta-item"><span class="meta-label">Département</span><span class="meta-value">${escapeHtml(stage.department || '—')}</span></div><div class="meta-item"><span class="meta-label">Formateur</span><span class="meta-value">${escapeHtml(stage.trainer_name || stage.trainer_full_name || 'Formateur certifié Vital Protect')}</span></div></div><div class="availability success">${stage.remaining_places ?? 0} place(s) restante(s)</div></div><div class="stage-actions"><div class="stage-action-text">Voir le cadre, le lieu, les horaires et les modalités.</div><a class="btn btn-dark" href="/stage.html?id=${encodeURIComponent(stage.id)}">Voir le détail</a></div></article>`).join(''); }
+      async function load(){ container.innerHTML='<div class="empty-state">Chargement des prochaines sessions…</div>'; const {data,error}=await supabase.from('stages').select('*').eq('status','published').order('stage_date',{ascending:true}); if(error){container.innerHTML='<div class="empty-state">Impossible de charger les stages. <div class="empty-state__actions"><a class="btn btn-dark" href="/contact.html">Nous contacter</a></div></div>'; return;} allStages=data||[]; renderTypes(); render(); }
+      [filterCity, filterDepartment, filterType].forEach(el=>el.addEventListener('input', render)); resetFilters.addEventListener('click',()=>{filterCity.value='';filterDepartment.value='';filterType.value='';render();}); load();
+    </script>
+
+  </main>
+
+  <footer class="site-footer vp-footer">
+  <div class="container site-footer__grid">
+    <div class="site-footer__brand">
+      <strong>VITAL PROTECT</strong>
+      <p>Standard de sécurité personnelle fondé sur la prévention, la pédagogie progressive, un réseau de formateurs certifiés et une marketplace de stages.</p>
+    </div>
+    <div class="site-footer__links">
+      <a href="/methode.html">La méthode</a>
+      <a href="/reseau.html">Le réseau</a>
+      <a href="/stages.html">Stages</a>
+      <a href="/entreprises.html">Entreprises</a>
+      <a href="/devenir-formateur.html">Devenir formateur</a>
+      <a href="/qui-sommes-nous.html">Qui sommes-nous ?</a>
+      <a href="/contact.html">Contact</a>
+      <a href="/mentions-legales.html">Mentions légales</a>
+      <a href="/politique-confidentialite.html">Confidentialité</a>
+      <a href="/cgv.html">CGV</a>
+    </div>
+  </div>
+</footer>
+</body>
+</html>
