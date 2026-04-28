@@ -1,0 +1,6 @@
+V5 — Ajouts premium motion design
+
+- Ajout d'un ruban/liseré SVG fixe qui se déroule au scroll.
+- Ajout d'une mosaïque en nid d'abeille qui se construit au scroll sur la page d'accueil.
+- Renforcement des gradients, halos lumineux et nuances bleu/blanc/gris.
+- Ajout d'un kinetic strip sur la page Devenir formateur.
