@@ -1,0 +1,33 @@
+V4 — Effets immersifs appliqués aux pages internes.
+
+Correction demandée :
+- Les effets de la page d’accueil sont maintenant repris sur les autres pages publiques.
+
+Ajouts par page :
+- Canvas animé et bruit visuel sur toutes les pages publiques.
+- Navigation immersive commune.
+- Hero immersif commun.
+- Marquee animée sur les pages internes.
+- Cards interactives avec glow et reveal au scroll.
+- Sections dark/light alternées.
+- Image cards immersives sur Méthode, Entreprises, Devenir formateur.
+- Sections sticky/steps sur Méthode, Devenir formateur et Stage.
+- CTA grand format sur Contact.
+- Palette corrigée : bleu marine, blanc, noir, gris. Pas de vert.
+
+Pages couvertes :
+- index.html
+- methode.html
+- stage.html
+- entreprises.html
+- devenir-formateur.html
+- faq.html
+- contact.html
+- mentions-legales.html
+- politique-confidentialite.html
+- cgv.html
+
+Fichiers modifiés :
+- styles/lusion-level.css
+- pages HTML publiques
+- lusion-level.js déjà utilisé pour les animations.

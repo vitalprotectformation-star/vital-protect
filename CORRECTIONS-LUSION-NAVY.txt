@@ -24,3 +24,8 @@ Fichiers principalement modifiés :
 - lusion-level.js
 - index.html
 - pages publiques HTML
+
+Correctif complémentaire :
+- suppression des derniers accents verts restants dans le hero et les animations ;
+- réduction du visuel hero de droite ;
+- sécurisation du gros titre pour éviter toute coupe de "Réagir" et "Transmettre".
