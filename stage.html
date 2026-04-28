@@ -349,62 +349,60 @@
       }
     }
   </style>
-  <link rel="stylesheet" href="/styles/vp-modern.css" />
-  <script src="/vp-site.js" defer></script>
+
+<style id="vp-stable-menu-css">
+/* Navigation Vital Protect - stable, identique sur toutes les pages */
+.site-header{position:sticky!important;top:0!important;z-index:9999!important;background:rgba(7,17,31,.92)!important;backdrop-filter:blur(18px)!important;-webkit-backdrop-filter:blur(18px)!important;border-bottom:1px solid rgba(255,255,255,.10)!important;box-shadow:0 14px 40px rgba(7,17,31,.14)!important;}
+.site-header .container{width:min(1180px,calc(100% - 32px))!important;margin-inline:auto!important;}
+.site-header__inner{min-height:78px!important;display:flex!important;align-items:center!important;justify-content:space-between!important;gap:18px!important;}
+.site-brand{display:flex!important;align-items:center!important;gap:12px!important;text-decoration:none!important;color:#fff!important;min-width:210px!important;flex:0 0 auto!important;}
+.site-brand img{height:54px!important;width:54px!important;max-width:54px!important;object-fit:contain!important;display:block!important;flex:0 0 54px!important;border-radius:14px!important;}
+.site-brand__text{display:block!important;min-width:0!important;}
+.site-brand__title{font-family:Arial,Helvetica,sans-serif!important;font-size:1rem!important;line-height:1!important;font-weight:900!important;letter-spacing:.04em!important;color:#fff!important;white-space:nowrap!important;}
+.site-brand__subtitle{margin-top:4px!important;font-family:Arial,Helvetica,sans-serif!important;font-size:.76rem!important;line-height:1.15!important;color:rgba(255,255,255,.66)!important;white-space:nowrap!important;}
+.site-nav{display:flex!important;align-items:center!important;justify-content:flex-end!important;gap:6px!important;flex-wrap:nowrap!important;white-space:nowrap!important;min-width:0!important;}
+.site-nav a{display:inline-flex!important;align-items:center!important;justify-content:center!important;height:40px!important;padding:0 10px!important;border-radius:999px!important;color:rgba(255,255,255,.88)!important;text-decoration:none!important;font-family:Arial,Helvetica,sans-serif!important;font-size:.88rem!important;font-weight:800!important;line-height:1!important;transition:background .18s ease,color .18s ease,transform .18s ease!important;}
+.site-nav a:hover,.site-nav a.active{background:rgba(255,255,255,.12)!important;color:#fff!important;transform:translateY(-1px)!important;}
+.site-nav .nav-cta{margin-left:4px!important;background:#fff!important;color:#07111f!important;box-shadow:0 10px 24px rgba(255,255,255,.12)!important;}
+.site-nav .nav-cta:hover{background:#eaf2fb!important;color:#07111f!important;}
+@media (max-width:1120px){.site-header__inner{align-items:flex-start!important;flex-direction:column!important;padding:14px 0!important;gap:12px!important}.site-brand{min-width:0!important}.site-nav{width:100%!important;justify-content:flex-start!important;overflow-x:auto!important;padding-bottom:4px!important;scrollbar-width:none!important}.site-nav::-webkit-scrollbar{display:none!important}.site-nav a{flex:0 0 auto!important}}
+@media (max-width:560px){.site-brand img{height:46px!important;width:46px!important;max-width:46px!important;flex-basis:46px!important}.site-brand__title{font-size:.94rem!important}.site-brand__subtitle{font-size:.70rem!important}.site-nav a{height:38px!important;font-size:.82rem!important;padding:0 9px!important}}
+</style>
 </head>
 <body>
 
-  <header class="site-header vp-header" data-vp-header>
-  <div class="container site-header__inner vp-nav-wrap">
-    <a href="/index.html" class="vp-home" aria-label="Accueil Vital Protect">
-      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11.2 12 4l9 7.2v8.3a1 1 0 0 1-1 1h-5.4v-5.8H9.4v5.8H4a1 1 0 0 1-1-1v-8.3Z" fill="currentColor"/></svg>
-    </a>
-    <a href="/index.html" class="site-brand vp-brand" aria-label="Vital Protect">
-      <img src="/logo.png" alt="Logo Vital Protect" />
-      <div class="site-brand__text">
-        <div class="site-brand__title">Vital Protect</div>
-        <div class="site-brand__subtitle">Standard sécurité personnelle</div>
-      </div>
-    </a>
-    <button class="vp-menu-toggle" type="button" aria-controls="vp-main-nav" aria-expanded="false"><span>Menu</span><i aria-hidden="true"></i></button>
-    <nav id="vp-main-nav" class="site-nav vp-main-nav" aria-label="Navigation principale">
-      <div class="vp-nav-group">
-        <button class="vp-nav-link vp-nav-toggle" type="button" aria-expanded="false">Le standard <span aria-hidden="true">⌄</span></button>
-        <div class="vp-dropdown" role="menu">
-          <a href="/methode.html"><span>01</span><strong>La méthode</strong><small>Prévention, distance, réaction réaliste.</small></a>
-          <a href="/reseau.html"><span>02</span><strong>Le réseau</strong><small>Formateurs certifiés, audités, recyclés.</small></a>
-          <a href="/qui-sommes-nous.html"><span>03</span><strong>Qui sommes-nous ?</strong><small>Mission, limites et garanties.</small></a>
-          <a href="/faq.html"><span>04</span><strong>FAQ</strong><small>Réponses avant inscription.</small></a>
+    <header class="site-header">
+    <div class="container site-header__inner">
+      <a href="/index.html" class="site-brand" aria-label="Accueil Vital Protect">
+        <img src="/logo.png" alt="Vital Protect" />
+        <div class="site-brand__text">
+          <div class="site-brand__title">VITAL PROTECT</div>
+          <div class="site-brand__subtitle">Standard sécurité personnelle</div>
         </div>
-      </div>
-      <div class="vp-nav-group">
-        <button class="vp-nav-link vp-nav-toggle" type="button" aria-expanded="false">Nos offres <span aria-hidden="true">⌄</span></button>
-        <div class="vp-dropdown" role="menu">
-          <a href="/stages.html"><span>01</span><strong>Stages grand public</strong><small>Voir les prochaines dates.</small></a>
-          <a href="/entreprises.html"><span>02</span><strong>Entreprises</strong><small>Prévention des tensions.</small></a>
-          <a href="/contact.html"><span>03</span><strong>Contact</strong><small>Question, devis ou demande de ville.</small></a>
-        </div>
-      </div>
-      <div class="vp-nav-group">
-        <button class="vp-nav-link vp-nav-toggle" type="button" aria-expanded="false">Formateurs <span aria-hidden="true">⌄</span></button>
-        <div class="vp-dropdown" role="menu">
-          <a href="/devenir-formateur.html"><span>01</span><strong>Devenir formateur</strong><small>Certification, audit, marketplace.</small></a>
-          <a href="/formateur-login.html"><span>02</span><strong>Espace formateur</strong><small>Connexion et suivi des sessions.</small></a>
-        </div>
-      </div>
-      <a href="/stages.html" class="nav-cta vp-nav-cta">Trouver un stage</a>
-    </nav>
-  </div>
-</header>
+      </a>
+
+      <nav class="site-nav" aria-label="Navigation principale">
+        <a href="/index.html">Accueil</a>
+        <a href="/methode.html">Le standard</a>
+        <a href="/index.html#stages" class="active">Stages</a>
+        <a href="/entreprises.html">Entreprises</a>
+        <a href="/devenir-formateur.html">Formateurs</a>
+        <a href="/faq.html">FAQ</a>
+        <a href="/contact.html">Contact</a>
+        <a href="/formateur-login.html">Espace</a>
+        <a href="/index.html#stages" class="nav-cta">Trouver un stage</a>
+      </nav>
+    </div>
+  </header>
 
   <main>
     <section class="hero-shell stage-hero">
       <div class="container stage-hero__grid">
         <div class="glass-panel stage-hero__copy">
           <div class="eyebrow eyebrow--invert" id="heroType">Stage Vital Protect</div>
-          <h1 class="stage-hero__title" id="heroTitle">Stage Vital Protect</h1>
+          <h1 class="stage-hero__title" id="heroTitle">Chargement du stage…</h1>
           <p class="stage-hero__desc" id="heroDescription">
-            Les informations de cette session s’affichent automatiquement. Si le chargement échoue, vous pourrez nous contacter pour être orienté vers une prochaine date.
+            Chargement des informations du stage.
           </p>
 
           <div class="stage-hero__proofs">
@@ -412,12 +410,11 @@
             <div class="stage-hero__proof">Pédagogie progressive</div>
             <div class="stage-hero__proof">Cadre sécurisé</div>
             <div class="stage-hero__proof">Réservation en ligne</div>
-            <div class="stage-hero__proof" id="trainerProof">Formateur certifié</div>
           </div>
 
           <div class="stage-hero__actions">
             <a href="#reservation" class="btn btn-primary">Réserver ce stage</a>
-            <a href="/stages.html" class="btn btn-secondary">Retour aux stages</a>
+            <a href="/index.html#stages" class="btn btn-secondary">Retour aux stages</a>
           </div>
         </div>
 
@@ -452,10 +449,6 @@
             <div class="meta-item">
               <span class="meta-label">Département</span>
               <span class="meta-value" id="metaDepartment">—</span>
-            </div>
-            <div class="meta-item">
-              <span class="meta-label">Formateur</span>
-              <span class="meta-value" id="metaTrainer">Formateur certifié Vital Protect</span>
             </div>
           </div>
         </aside>
@@ -541,8 +534,6 @@
             <div class="bullet-item"><strong>Consignes claires</strong> à chaque étape.</div>
             <div class="bullet-item"><strong>Montée en intensité maîtrisée</strong> selon le niveau du groupe.</div>
             <div class="bullet-item"><strong>Exercices adaptés</strong> à l’objectif pédagogique réel.</div>
-            <div class="bullet-item"><strong>Comportement :</strong> tout comportement dangereux, agressif ou contraire aux consignes peut entraîner une exclusion.</div>
-            <div class="bullet-item"><strong>Aptitude :</strong> signalez toute blessure, contre-indication ou limite physique avant le début du stage.</div>
           </div>
         </div>
 
@@ -556,10 +547,6 @@
             <div class="bullet-item"><strong>Durée :</strong> <span id="practicalDuration">—</span></div>
             <div class="bullet-item"><strong>Type :</strong> <span id="practicalType">—</span></div>
             <div class="bullet-item"><strong>Niveau :</strong> <span id="practicalLevel">Accessible à tous</span></div>
-            <div class="bullet-item"><strong>Tenue :</strong> vêtements confortables, chaussures propres ou adaptées au lieu.</div>
-            <div class="bullet-item"><strong>Matériel :</strong> aucun matériel personnel requis sauf indication contraire.</div>
-            <div class="bullet-item"><strong>Âge minimum :</strong> à vérifier sur la fiche ou la convocation.</div>
-            <div class="bullet-item"><strong>Accessibilité :</strong> contactez-nous avant inscription si vous avez un besoin particulier.</div>
           </div>
         </div>
       </div>
@@ -581,7 +568,7 @@
 
             <div class="selected-stage-box">
               <span class="selected-stage-label">Stage sélectionné</span>
-              <div class="selected-stage-value" id="selectedStageValue">Session en cours de chargement</div>
+              <div class="selected-stage-value" id="selectedStageValue">Chargement…</div>
             </div>
 
             <div class="booking-total" id="bookingTotal">Total : —</div>
@@ -598,27 +585,27 @@
             <form id="bookingForm">
               <div class="form-grid">
                 <div class="form-field">
-                  <label for="firstName">Prénom <span class="required-mark">*</span></label>
+                  <label for="firstName">Prénom</label>
                   <input id="firstName" type="text" required />
                 </div>
 
                 <div class="form-field">
-                  <label for="lastName">Nom <span class="required-mark">*</span></label>
+                  <label for="lastName">Nom</label>
                   <input id="lastName" type="text" required />
                 </div>
 
                 <div class="form-field">
-                  <label for="email">Email <span class="required-mark">*</span></label>
+                  <label for="email">Email</label>
                   <input id="email" type="email" required />
                 </div>
 
                 <div class="form-field">
-                  <label for="phone">Téléphone <span class="required-mark">*</span></label>
+                  <label for="phone">Téléphone</label>
                   <input id="phone" type="tel" required />
                 </div>
 
                 <div class="form-field">
-                  <label for="places">Nombre de places <span class="required-mark">*</span></label>
+                  <label for="places">Nombre de places</label>
                   <input id="places" type="number" min="1" value="1" required />
                 </div>
 
@@ -633,8 +620,6 @@
                 </div>
               </div>
 
-              <label class="checkbox-field"><input id="acceptCgv" type="checkbox" required /> <span>J’accepte les <a href="/cgv.html" target="_blank" rel="noopener">CGV</a> et la politique d’annulation du stage.</span></label>
-              <p class="rgpd-note">Les informations collectées servent à gérer votre réservation et la confirmation de votre stage. Voir la <a href="/politique-confidentialite.html">politique de confidentialité</a>.</p>
               <button class="btn btn-dark" type="submit">Procéder au paiement</button>
             </form>
           </div>
@@ -686,7 +671,7 @@
           </p>
 
           <div class="cta-actions">
-            <a href="/stages.html" class="btn btn-dark">Voir tous les stages</a>
+            <a href="/index.html#stages" class="btn btn-dark">Voir tous les stages</a>
             <a href="/methode.html" class="btn btn-outline">Découvrir la méthode</a>
           </div>
         </div>
@@ -694,26 +679,25 @@
     </section>
   </main>
 
-  <footer class="site-footer vp-footer">
-  <div class="container site-footer__grid">
-    <div class="site-footer__brand">
-      <strong>VITAL PROTECT</strong>
-      <p>Standard de sécurité personnelle fondé sur la prévention, la pédagogie progressive, un réseau de formateurs certifiés et une marketplace de stages.</p>
+  <footer class="site-footer">
+    <div class="container site-footer__grid">
+      <div class="site-footer__brand">
+        <strong>VITAL PROTECT</strong>
+        <p>
+          Une méthode structurée de sécurité personnelle fondée sur la prévention, l’évitement,
+          la réaction réaliste, la pédagogie progressive et la certification des formateurs.
+        </p>
+      </div>
+
+      <div class="site-footer__links">
+        <a href="/methode.html">La méthode</a>
+        <a href="/entreprises.html">Entreprises</a>
+        <a href="/devenir-formateur.html">Devenir formateur</a>
+        <a href="/faq.html">FAQ</a>
+        <a href="/contact.html">Contact</a>
+      </div>
     </div>
-    <div class="site-footer__links">
-      <a href="/methode.html">La méthode</a>
-      <a href="/reseau.html">Le réseau</a>
-      <a href="/stages.html">Stages</a>
-      <a href="/entreprises.html">Entreprises</a>
-      <a href="/devenir-formateur.html">Devenir formateur</a>
-      <a href="/qui-sommes-nous.html">Qui sommes-nous ?</a>
-      <a href="/contact.html">Contact</a>
-      <a href="/mentions-legales.html">Mentions légales</a>
-      <a href="/politique-confidentialite.html">Confidentialité</a>
-      <a href="/cgv.html">CGV</a>
-    </div>
-  </div>
-</footer>
+  </footer>
 
   <script type="module">
     import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
@@ -736,8 +720,6 @@
     const metaPlaces = document.getElementById("metaPlaces");
     const metaRegion = document.getElementById("metaRegion");
     const metaDepartment = document.getElementById("metaDepartment");
-    const metaTrainer = document.getElementById("metaTrainer");
-    const trainerProof = document.getElementById("trainerProof");
 
     const practicalAddress = document.getElementById("practicalAddress");
     const practicalTime = document.getElementById("practicalTime");
@@ -803,11 +785,8 @@
       metaPlaces.textContent = `${stage.remaining_places ?? 0}`;
       metaRegion.textContent = stage.region || "—";
       metaDepartment.textContent = stage.department || "—";
-      const trainerName = stage.trainer_name || stage.trainer_full_name || [stage.trainer_first_name, stage.trainer_last_name].filter(Boolean).join(" ") || "Formateur certifié Vital Protect";
-      metaTrainer.textContent = trainerName;
-      trainerProof.textContent = trainerName;
 
-      practicalAddress.textContent = stage.address || "Adresse communiquée après inscription ou zone à confirmer";
+      practicalAddress.textContent = stage.address || "Non précisée";
       practicalTime.textContent = stage.start_time || "À confirmer";
       practicalDuration.textContent = stage.duration || "À confirmer";
       practicalType.textContent = stage.training_type || "Stage";
@@ -829,11 +808,8 @@
 
     async function loadStage() {
       if (!stageId) {
-        heroTitle.textContent = "Aucun stage sélectionné";
-        heroDescription.textContent = "Consultez la liste des prochaines sessions ou contactez-nous pour être orienté vers une date disponible.";
-        selectedStageValue.textContent = "Aucune session sélectionnée";
-        bookingTotal.textContent = "Total : non disponible";
-        bookingForm.querySelector("button[type=submit]").disabled = true;
+        heroTitle.textContent = "Stage introuvable";
+        heroDescription.textContent = "Aucun identifiant de stage n’a été fourni dans l’URL.";
         return;
       }
 
@@ -846,11 +822,8 @@
 
       if (error || !data) {
         console.error("Erreur chargement stage:", error);
-        heroTitle.textContent = "Stage non disponible";
-        heroDescription.textContent = "Cette session n’est plus disponible ou n’est pas encore publiée. Consultez la liste des prochaines dates.";
-        selectedStageValue.textContent = "Session non disponible";
-        bookingTotal.textContent = "Total : non disponible";
-        bookingForm.querySelector("button[type=submit]").disabled = true;
+        heroTitle.textContent = "Stage introuvable";
+        heroDescription.textContent = "Impossible de charger les informations de ce stage.";
         return;
       }
 
@@ -872,8 +845,8 @@
       const phone = document.getElementById("phone").value.trim();
       const places = Math.max(1, Number(document.getElementById("places").value || 1));
 
-      if (!firstName || !lastName || !email || !phone || !document.getElementById("acceptCgv").checked) {
-        showBookingStatus("Merci de remplir tous les champs obligatoires et d’accepter les CGV.", "error");
+      if (!firstName || !lastName || !email || !phone) {
+        showBookingStatus("Merci de remplir tous les champs obligatoires.", "error");
         return;
       }
 
