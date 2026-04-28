@@ -156,48 +156,30 @@
       }
     }
   </style>
-
-<style id="vp-stable-menu-css">
-/* Navigation Vital Protect - stable, identique sur toutes les pages */
-.site-header{position:sticky!important;top:0!important;z-index:9999!important;background:rgba(7,17,31,.92)!important;backdrop-filter:blur(18px)!important;-webkit-backdrop-filter:blur(18px)!important;border-bottom:1px solid rgba(255,255,255,.10)!important;box-shadow:0 14px 40px rgba(7,17,31,.14)!important;}
-.site-header .container{width:min(1180px,calc(100% - 32px))!important;margin-inline:auto!important;}
-.site-header__inner{min-height:78px!important;display:flex!important;align-items:center!important;justify-content:space-between!important;gap:18px!important;}
-.site-brand{display:flex!important;align-items:center!important;gap:12px!important;text-decoration:none!important;color:#fff!important;min-width:210px!important;flex:0 0 auto!important;}
-.site-brand img{height:54px!important;width:54px!important;max-width:54px!important;object-fit:contain!important;display:block!important;flex:0 0 54px!important;border-radius:14px!important;}
-.site-brand__text{display:block!important;min-width:0!important;}
-.site-brand__title{font-family:Arial,Helvetica,sans-serif!important;font-size:1rem!important;line-height:1!important;font-weight:900!important;letter-spacing:.04em!important;color:#fff!important;white-space:nowrap!important;}
-.site-brand__subtitle{margin-top:4px!important;font-family:Arial,Helvetica,sans-serif!important;font-size:.76rem!important;line-height:1.15!important;color:rgba(255,255,255,.66)!important;white-space:nowrap!important;}
-.site-nav{display:flex!important;align-items:center!important;justify-content:flex-end!important;gap:6px!important;flex-wrap:nowrap!important;white-space:nowrap!important;min-width:0!important;}
-.site-nav a{display:inline-flex!important;align-items:center!important;justify-content:center!important;height:40px!important;padding:0 10px!important;border-radius:999px!important;color:rgba(255,255,255,.88)!important;text-decoration:none!important;font-family:Arial,Helvetica,sans-serif!important;font-size:.88rem!important;font-weight:800!important;line-height:1!important;transition:background .18s ease,color .18s ease,transform .18s ease!important;}
-.site-nav a:hover,.site-nav a.active{background:rgba(255,255,255,.12)!important;color:#fff!important;transform:translateY(-1px)!important;}
-.site-nav .nav-cta{margin-left:4px!important;background:#fff!important;color:#07111f!important;box-shadow:0 10px 24px rgba(255,255,255,.12)!important;}
-.site-nav .nav-cta:hover{background:#eaf2fb!important;color:#07111f!important;}
-@media (max-width:1120px){.site-header__inner{align-items:flex-start!important;flex-direction:column!important;padding:14px 0!important;gap:12px!important}.site-brand{min-width:0!important}.site-nav{width:100%!important;justify-content:flex-start!important;overflow-x:auto!important;padding-bottom:4px!important;scrollbar-width:none!important}.site-nav::-webkit-scrollbar{display:none!important}.site-nav a{flex:0 0 auto!important}}
-@media (max-width:560px){.site-brand img{height:46px!important;width:46px!important;max-width:46px!important;flex-basis:46px!important}.site-brand__title{font-size:.94rem!important}.site-brand__subtitle{font-size:.70rem!important}.site-nav a{height:38px!important;font-size:.82rem!important;padding:0 9px!important}}
-</style>
+  <link rel="stylesheet" href="/styles/premium-modern.css" />
 </head>
 <body>
 
-    <header class="site-header">
+    <header class="site-header site-header--premium">
     <div class="container site-header__inner">
-      <a href="/index.html" class="site-brand" aria-label="Accueil Vital Protect">
+      <a href="/index.html" class="site-brand">
         <img src="/logo.png" alt="Vital Protect" />
         <div class="site-brand__text">
           <div class="site-brand__title">VITAL PROTECT</div>
-          <div class="site-brand__subtitle">Standard sécurité personnelle</div>
+          <div class="site-brand__subtitle">Standard de sécurité personnelle</div>
         </div>
       </a>
 
       <nav class="site-nav" aria-label="Navigation principale">
         <a href="/index.html">Accueil</a>
-        <a href="/methode.html">Le standard</a>
-        <a href="/index.html#stages">Stages</a>
+        <a href="/methode.html">Standard</a>
+        <a href="/stage.html">Stages</a>
         <a href="/entreprises.html">Entreprises</a>
         <a href="/devenir-formateur.html">Formateurs</a>
         <a href="/faq.html">FAQ</a>
         <a href="/contact.html">Contact</a>
-        <a href="/formateur-login.html">Espace</a>
-        <a href="/index.html#stages" class="nav-cta">Trouver un stage</a>
+        <a href="/formateur-login.html" class="nav-ghost">Espace</a>
+        <a href="/stage.html" class="nav-cta">Trouver un stage</a>
       </nav>
     </div>
   </header>
@@ -354,5 +336,6 @@
     </div>
   </footer>
 
+  <script src="/premium-motion.js"></script>
 </body>
 </html>
