@@ -1,0 +1,1183 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Entreprises — Prévention des tensions, posture professionnelle et sécurité relationnelle | Vital Protect</title>
+  <meta
+    name="description"
+    content="Vital Protect propose aux entreprises et structures exposées une approche structurée de prévention des tensions, posture professionnelle, gestion de l’escalade et sécurité relationnelle."
+  />
+
+  <link rel="stylesheet" href="/styles/tokens.css" />
+  <link rel="stylesheet" href="/styles/base.css" />
+  <link rel="stylesheet" href="/styles/components.css" />
+
+  <style>
+    .enterprise-hero {
+      padding: 72px 0 54px;
+    }
+
+    .enterprise-hero__grid {
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 24px;
+      align-items: stretch;
+    }
+
+    .enterprise-hero__copy {
+      padding: 36px;
+    }
+
+    .enterprise-hero__title {
+      margin: 16px 0;
+      font-size: clamp(2.4rem, 5vw, 4.4rem);
+      line-height: 0.97;
+      color: white;
+      max-width: 10ch;
+    }
+
+    .enterprise-hero__lead {
+      margin: 0;
+      max-width: 62ch;
+      color: var(--vp-text-invert-soft);
+      font-size: 1.04rem;
+      line-height: 1.85;
+    }
+
+    .enterprise-hero__proofs {
+      margin-top: 22px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .enterprise-hero__proof {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 13px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.10);
+      color: rgba(255,255,255,0.88);
+      font-size: 0.92rem;
+      font-weight: 700;
+    }
+
+    .enterprise-hero__proof::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--vp-gold);
+      display: inline-block;
+    }
+
+    .enterprise-hero__actions {
+      margin-top: 26px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .enterprise-hero__media {
+      position: relative;
+      overflow: hidden;
+      min-height: 700px;
+      padding: 0;
+      border-radius: var(--vp-radius-lg);
+    }
+
+    .enterprise-hero__media img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      display: block;
+    }
+
+    .enterprise-hero__overlay {
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(to top, rgba(7,17,31,0.42) 0%, rgba(7,17,31,0.10) 40%, rgba(7,17,31,0.02) 100%);
+    }
+
+    .enterprise-hero__note {
+      position: absolute;
+      left: 22px;
+      right: 22px;
+      bottom: 22px;
+      z-index: 2;
+      background: rgba(255,255,255,0.94);
+      border: 1px solid rgba(13, 27, 42, 0.08);
+      border-radius: 22px;
+      padding: 18px 20px;
+      box-shadow: var(--vp-shadow-lg);
+    }
+
+    .enterprise-hero__note strong {
+      display: block;
+      color: var(--vp-navy-850);
+      font-size: 1.06rem;
+      margin-bottom: 8px;
+    }
+
+    .enterprise-hero__note span {
+      color: var(--vp-text-soft);
+      line-height: 1.7;
+      font-size: 0.98rem;
+    }
+
+    .positioning-section {
+      padding-top: 0;
+      margin-top: -8px;
+    }
+
+    .positioning-panel {
+      padding: 34px;
+    }
+
+    .positioning-panel h2 {
+      margin: 0 0 12px;
+      color: var(--vp-navy-850);
+      font-size: clamp(1.9rem, 3vw, 2.5rem);
+      line-height: 1.08;
+    }
+
+    .positioning-panel p {
+      margin: 0;
+      color: var(--vp-text-soft);
+      line-height: 1.8;
+      max-width: 880px;
+    }
+
+    .positioning-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin-top: 20px;
+    }
+
+    .positioning-card {
+      background: rgba(255,255,255,0.94);
+      border: 1px solid rgba(13, 27, 42, 0.06);
+      border-radius: 20px;
+      box-shadow: var(--vp-shadow-md);
+      padding: 22px;
+    }
+
+    .positioning-card h3 {
+      margin: 0 0 10px;
+      color: var(--vp-navy-850);
+      font-size: 1.12rem;
+    }
+
+    .positioning-card p {
+      margin: 0;
+      color: var(--vp-text-soft);
+      line-height: 1.75;
+    }
+
+    .problem-grid,
+    .benefit-grid,
+    .format-grid,
+    .sector-grid,
+    .testimonial-grid,
+    .faq-grid,
+    .authority-grid {
+      display: grid;
+      gap: 18px;
+    }
+
+    .problem-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .benefit-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .format-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .sector-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .testimonial-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .faq-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .authority-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .problem-card,
+    .benefit-card,
+    .format-card,
+    .sector-card,
+    .testimonial-card,
+    .faq-card,
+    .process-card,
+    .contact-panel,
+    .info-panel,
+    .authority-card {
+      background: white;
+      border: 1px solid rgba(13, 27, 42, 0.06);
+      border-radius: var(--vp-radius-md);
+      box-shadow: var(--vp-shadow-md);
+      padding: 24px;
+    }
+
+    .problem-card h3,
+    .benefit-card h3,
+    .format-card h3,
+    .sector-card h3,
+    .testimonial-card h3,
+    .faq-card h3,
+    .process-card h3,
+    .contact-panel h3,
+    .info-panel h3,
+    .authority-card h3 {
+      margin: 0 0 10px;
+      color: var(--vp-navy-850);
+      font-size: 1.12rem;
+    }
+
+    .problem-card p,
+    .benefit-card p,
+    .format-card p,
+    .sector-card p,
+    .testimonial-card p,
+    .faq-card p,
+    .process-card p,
+    .contact-panel p,
+    .info-panel p,
+    .authority-card p {
+      margin: 0;
+      color: var(--vp-text-soft);
+      line-height: 1.75;
+    }
+
+    .icon-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 999px;
+      background: var(--vp-gold);
+      margin-bottom: 14px;
+    }
+
+    .split-panel {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      align-items: start;
+    }
+
+    .bullet-list {
+      margin: 18px 0 0;
+      display: grid;
+      gap: 12px;
+    }
+
+    .bullet-item {
+      background: var(--vp-blue-soft-2);
+      border: 1px solid rgba(13, 27, 42, 0.06);
+      border-radius: 16px;
+      padding: 15px 16px;
+      line-height: 1.68;
+      color: var(--vp-text);
+    }
+
+    .bullet-item strong {
+      color: var(--vp-navy-850);
+    }
+
+    .process-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 18px;
+      margin-top: 24px;
+    }
+
+    .process-step {
+      display: inline-flex;
+      width: 42px;
+      height: 42px;
+      border-radius: 999px;
+      align-items: center;
+      justify-content: center;
+      background: var(--vp-blue-soft);
+      color: var(--vp-navy-700);
+      font-weight: 800;
+      margin-bottom: 14px;
+    }
+
+    .contact-layout {
+      display: grid;
+      grid-template-columns: 0.95fr 1.05fr;
+      gap: 20px;
+      align-items: start;
+    }
+
+    .contact-proof-list {
+      margin-top: 18px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .contact-proof {
+      padding: 14px 16px;
+      border-radius: 16px;
+      background: var(--vp-blue-soft-2);
+      border: 1px solid rgba(13, 27, 42, 0.06);
+      color: var(--vp-text);
+      line-height: 1.65;
+    }
+
+    .contact-proof strong {
+      color: var(--vp-navy-850);
+    }
+
+    .contact-form {
+      margin-top: 18px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .form-field.full {
+      grid-column: 1 / -1;
+    }
+
+    .form-status {
+      margin-top: 14px;
+      padding: 14px 16px;
+      border-radius: 14px;
+      line-height: 1.6;
+      display: none;
+    }
+
+    .form-status.show {
+      display: block;
+    }
+
+    .form-status.success {
+      background: var(--vp-success-bg);
+      border: 1px solid #cdeedb;
+      color: #0f7d46;
+    }
+
+    .form-status.error {
+      background: var(--vp-danger-bg);
+      border: 1px solid #f2c7c7;
+      color: #a32020;
+    }
+
+    .timeline-cta {
+      margin-top: 22px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    @media (max-width: 1180px) {
+      .enterprise-hero__grid,
+      .positioning-grid,
+      .problem-grid,
+      .benefit-grid,
+      .format-grid,
+      .sector-grid,
+      .testimonial-grid,
+      .split-panel,
+      .process-grid,
+      .contact-layout,
+      .faq-grid,
+      .authority-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .enterprise-hero__media {
+        min-height: 520px;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .enterprise-hero {
+        padding: 54px 0 42px;
+      }
+
+      .enterprise-hero__copy,
+      .positioning-panel,
+      .problem-card,
+      .benefit-card,
+      .format-card,
+      .sector-card,
+      .testimonial-card,
+      .faq-card,
+      .process-card,
+      .contact-panel,
+      .info-panel,
+      .authority-card {
+        padding: 24px;
+      }
+
+      .enterprise-hero__actions,
+      .timeline-cta {
+        flex-direction: column;
+      }
+
+      .enterprise-hero__note {
+        position: static;
+        margin: 16px;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .btn {
+        width: 100%;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="/styles/lusion-level.css" />
+</head>
+<body class="vpl-inner-page">
+  <canvas class="vpl-canvas" aria-hidden="true"></canvas>
+  <div class="vpl-noise" aria-hidden="true"></div>
+  <div class="vpl-scroll-ribbon" aria-hidden="true">
+    <svg class="vpl-scroll-ribbon-svg" viewBox="0 0 1000 1600" preserveAspectRatio="none">
+      <defs>
+        <linearGradient id="vplRibbonGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="#ffffff" stop-opacity="0.96"></stop>
+          <stop offset="38%" stop-color="#dbe6f2" stop-opacity="0.94"></stop>
+          <stop offset="72%" stop-color="#7ca7d3" stop-opacity="0.92"></stop>
+          <stop offset="100%" stop-color="#2e5f91" stop-opacity="0.90"></stop>
+        </linearGradient>
+      </defs>
+      <path class="vpl-ribbon-base" d="M920 -80 C980 130 700 120 760 330 C820 520 990 560 860 760 C700 1010 240 930 300 1180 C360 1420 760 1350 680 1580 C640 1680 560 1710 430 1750"></path>
+      <path class="vpl-ribbon-progress" d="M920 -80 C980 130 700 120 760 330 C820 520 990 560 860 760 C700 1010 240 930 300 1180 C360 1420 760 1350 680 1580 C640 1680 560 1710 430 1750"></path>
+      <circle class="vpl-ribbon-dot" cx="920" cy="-80" r="18"></circle>
+    </svg>
+  </div>
+
+
+  <header class="vpl-nav">
+      <a href="/index.html" class="vpl-brand" aria-label="Accueil Vital Protect">
+        <img src="/logo.png" alt="Vital Protect" />
+        <div>
+          <b>VITAL PROTECT</b>
+          <span>Standard sécurité personnelle</span>
+        </div>
+      </a>
+
+      <nav class="vpl-menu" aria-label="Navigation principale">
+        <a href="/index.html" data-page="index">Accueil</a>
+        <a href="/methode.html" data-page="methode">Standard</a>
+        <a href="/stage.html" data-page="stage">Stages</a>
+        <a href="/entreprises.html" data-page="entreprises" class="active">Entreprises</a>
+        <a href="/devenir-formateur.html" data-page="devenir-formateur">Formateurs</a>
+        <a href="/faq.html" data-page="faq">FAQ</a>
+        <a href="/contact.html" data-page="contact">Contact</a>
+        <a href="/formateur-login.html" class="vpl-nav-ghost">Espace</a>
+      </nav>
+
+      <a href="/stage.html" class="vpl-nav-cta">Trouver un stage</a>
+    </header>
+
+  <main>
+    <section class="vpl-inner-hero">
+        <div class="vpl-container vpl-inner-hero-grid">
+          <div>
+            <div class="vpl-eyebrow">Entreprises</div>
+            <h1 class="vpl-inner-title">Prévenir les tensions<span>en entreprise.</span></h1>
+            <p class="vpl-inner-lead">Des formats concrets pour les équipes exposées : accueil du public, intervention terrain, incivilités, distance, posture et désescalade.</p>
+            <div class="vpl-actions">
+              <a class="vpl-button vpl-button-primary" href="/stage.html">Trouver un stage</a>
+              <a class="vpl-button vpl-button-secondary" href="/contact.html">Nous contacter</a>
+            </div>
+          </div>
+          <div class="vpl-inner-visual">
+            <img src="/entreprise-banniere-vital-protect.png" alt="Former sans dramatiser" />
+            <div class="vpl-inner-stat">
+              <strong>Former sans dramatiser</strong>
+              <span>Des contenus opérationnels pour agir avant que la situation ne s’aggrave.</span>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- V4_INTERNAL_EFFECTS_INSERTED -->
+
+      <div class="vpl-marquee" aria-hidden="true">
+        <div class="vpl-marquee-track">
+          <span>Incivilités</span><span>Accueil public</span><span>Tensions</span><span>Posture</span><span>Désescalade</span>
+        </div>
+        <div class="vpl-marquee-track">
+          <span>Incivilités</span><span>Accueil public</span><span>Tensions</span><span>Posture</span><span>Désescalade</span>
+        </div>
+      </div>
+
+      <div class="vpl-light vpl-internal-effects">
+        <section class="vpl-section">
+          <div class="vpl-container">
+            <div class="vpl-section-head">
+              <span class="vpl-section-kicker">Formats entreprise</span>
+              <h2 class="vpl-section-title">Un dispositif adapté aux équipes exposées.</h2>
+              <p class="vpl-section-copy">Les modules peuvent être calibrés selon le métier, le niveau d’exposition et les contraintes opérationnelles.</p>
+            </div>
+
+            <div class="vpl-image-grid">
+              <a class="vpl-image-card" href="/contact.html">
+                <img src="/entreprise-banniere-vital-protect.png" alt="Formation entreprise Vital Protect" />
+                <div class="vpl-showcase-note"><strong>Devis cadré</strong><span>Format, durée, public, objectifs et contraintes sont clarifiés avant intervention.</span></div>
+                <div class="vpl-image-content">
+                  <span class="vpl-tag">Entreprise</span>
+                  <h3>Former sans dramatiser.</h3>
+                  <p>Prévenir les tensions, clarifier les conduites à tenir et donner des repères simples aux équipes.</p>
+                </div>
+              </a>
+
+              <div style="display:grid;gap:22px;">
+                <a class="vpl-image-card small" href="/contact.html">
+                  <img src="/formateur-devant-public-assis-salle.png" alt="Sensibilisation Vital Protect en salle" />
+                  <div class="vpl-image-content"><span class="vpl-tag">2h à 1 journée</span><h3>Sensibilisation.</h3><p>Un format court pour partager les bons repères.</p></div>
+                </a>
+                <a class="vpl-image-card small" href="/contact.html">
+                  <img src="/groupe-dehors-briefing-securite.png" alt="Exercice terrain Vital Protect" />
+                  <div class="vpl-image-content"><span class="vpl-tag">Terrain</span><h3>Mise en pratique.</h3><p>Observer, se placer, désamorcer, sortir.</p></div>
+                </a>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="vpl-section vpl-section-dark">
+          <div class="vpl-container">
+            <div class="vpl-section-head center">
+              <span class="vpl-section-kicker">Parcours B2B</span>
+              <h2 class="vpl-section-title">De la demande au terrain.</h2>
+            </div>
+            <div class="vpl-card-grid">
+              <article class="vpl-card"><div class="vpl-card-num">01</div><h3>Cadrage</h3><p>Comprendre les situations rencontrées et les objectifs concrets de la structure.</p></article>
+              <article class="vpl-card"><div class="vpl-card-num">02</div><h3>Format</h3><p>Choisir une sensibilisation, une demi-journée, une journée ou un cycle.</p></article>
+              <article class="vpl-card"><div class="vpl-card-num">03</div><h3>Déploiement</h3><p>Intervention par un formateur habilité dans le cadre Vital Protect.</p></article>
+            </div>
+          </div>
+        </section>
+      </div>
+
+
+    <section class="positioning-section">
+      <div class="container">
+        <div class="soft-card positioning-panel">
+          <h2>Pourquoi cette offre existe</h2>
+          <p>
+            Dans beaucoup de contextes professionnels, les équipes sont confrontées
+            à des tensions, des incivilités, des comportements agressifs,
+            des interactions dégradées ou des situations relationnelles instables.
+            Pourtant, la réponse proposée sur le marché oscille souvent entre discours flou,
+            surpromesse ou approche trop martiale. Vital Protect cherche au contraire
+            à proposer un cadre lisible, professionnel et structuré.
+          </p>
+
+          <div class="positioning-grid">
+            <article class="positioning-card">
+              <h3>Une logique de prévention et de posture</h3>
+              <p>
+                L’objectif n’est pas de “former au combat”, mais d’aider les équipes
+                à mieux lire une situation, mieux se positionner, mieux désamorcer
+                et mieux réagir quand la tension monte.
+              </p>
+            </article>
+
+            <article class="positioning-card">
+              <h3>Une logique de standard et de cohérence</h3>
+              <p>
+                L’offre entreprises s’inscrit dans le cadre plus large de Vital Protect :
+                une méthode, une pédagogie, des repères stables et une volonté
+                de transmission cohérente selon les contextes.
+              </p>
+            </article>
+          </div>
+
+          <div class="cta-actions" style="margin-top:22px;">
+            <a href="/methode.html" class="btn btn-dark">Voir le standard</a>
+            <a href="#contact-entreprise" class="btn btn-outline">Parler de votre contexte</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="offre">
+      <div class="container">
+        <div class="section-head section-head--center">
+          <span class="eyebrow">Les problèmes rencontrés</span>
+          <h2>Des réalités que beaucoup d’équipes vivent déjà</h2>
+          <p>
+            Accueil du public, tension relationnelle, agressivité verbale, montée d’incivilités,
+            pression terrain, difficulté à garder une posture claire : ces situations fragilisent
+            le travail quotidien, augmentent le stress et exposent les équipes.
+          </p>
+        </div>
+
+        <div class="problem-grid">
+          <article class="problem-card">
+            <div class="icon-dot"></div>
+            <h3>Agressivité verbale et incivilités</h3>
+            <p>
+              Certaines équipes sont confrontées à des interactions tendues sans toujours disposer
+              de repères concrets pour réduire l’escalade et tenir une posture adaptée.
+            </p>
+          </article>
+
+          <article class="problem-card">
+            <div class="icon-dot"></div>
+            <h3>Stress, flou, manque de cadre</h3>
+            <p>
+              Sous pression, beaucoup de professionnels manquent de structure pratique
+              pour lire une situation, choisir une réponse et garder de la maîtrise.
+            </p>
+          </article>
+
+          <article class="problem-card">
+            <div class="icon-dot"></div>
+            <h3>Besoin d’une réponse crédible</h3>
+            <p>
+              Les structures ne cherchent pas un folklore spectaculaire,
+              mais une réponse utile, professionnelle, pédagogique et adaptée au terrain.
+            </p>
+          </article>
+        </div>
+
+        <div class="timeline-cta" style="justify-content:center;">
+          <a href="#contact-entreprise" class="btn btn-dark">Demander un échange</a>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="container">
+        <div class="section-head section-head--center">
+          <span class="eyebrow">Ce que l’intervention change</span>
+          <h2>Des bénéfices concrets pour les équipes et la structure</h2>
+          <p>
+            L’objectif n’est pas d’impressionner. L’objectif est de donner des repères utilisables,
+            cohérents et immédiatement transposables dans le quotidien professionnel.
+          </p>
+        </div>
+
+        <div class="benefit-grid">
+          <article class="benefit-card">
+            <h3>Mieux lire une situation</h3>
+            <p>
+              Identifier plus tôt les signaux de tension, mieux comprendre l’environnement,
+              les dynamiques d’interaction et les risques de bascule.
+            </p>
+          </article>
+
+          <article class="benefit-card">
+            <h3>Réduire l’escalade</h3>
+            <p>
+              Adopter une posture, une distance, un placement et une qualité d’intervention
+              qui diminuent les risques d’aggravation.
+            </p>
+          </article>
+
+          <article class="benefit-card">
+            <h3>Réagir avec cohérence</h3>
+            <p>
+              Donner aux équipes des réponses réalistes, accessibles et compatibles
+              avec leurs contraintes métier et leur environnement de travail.
+            </p>
+          </article>
+        </div>
+
+        <div class="timeline-cta" style="justify-content:center;">
+          <a href="#contact-entreprise" class="btn btn-outline">Recevoir un devis</a>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="container split-panel">
+        <div class="soft-card info-panel">
+          <span class="eyebrow">Pour quels contextes ?</span>
+          <h3>Des environnements où la posture et la prévention comptent réellement</h3>
+          <p>
+            L’offre entreprises Vital Protect s’adresse aux structures confrontées
+            à des environnements relationnels sensibles, à des tensions fréquentes
+            ou à des publics exposés.
+          </p>
+
+          <div class="bullet-list">
+            <div class="bullet-item"><strong>Accueil du public :</strong> guichets, halls, secrétariats, permanences, services usagers.</div>
+            <div class="bullet-item"><strong>Encadrement & terrain :</strong> managers, responsables, référents, équipes mobiles, agents de proximité.</div>
+            <div class="bullet-item"><strong>Secteurs exposés :</strong> santé, social, collectivités, retail, transport, services, sécurité privée.</div>
+            <div class="bullet-item"><strong>Structures sensibles :</strong> établissements confrontés à l’incivilité, à la pression ou à l’imprévu.</div>
+          </div>
+        </div>
+
+        <div class="soft-card info-panel">
+          <span class="eyebrow">Comment l’offre se construit</span>
+          <h3>Une intervention cadrée, professionnelle et adaptable</h3>
+          <p>
+            Chaque intervention commence par un échange de cadrage,
+            puis s’adapte à votre contexte, au niveau d’exposition réel des équipes
+            et à vos objectifs opérationnels.
+          </p>
+
+          <div class="bullet-list">
+            <div class="bullet-item"><strong>Analyse du besoin :</strong> public concerné, situations vécues, objectifs, contraintes.</div>
+            <div class="bullet-item"><strong>Construction du format :</strong> sensibilisation, atelier, module ciblé, format sur mesure.</div>
+            <div class="bullet-item"><strong>Animation :</strong> déroulé progressif, pédagogie claire, mise en pratique encadrée.</div>
+            <div class="bullet-item"><strong>Suite possible :</strong> prolongement, second niveau, autre public ou approfondissement ciblé.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow">Autorité & sérieux</span>
+          <h2>Ce qui doit être clair pour une structure qui nous mandate</h2>
+          <p>
+            Une structure ne cherche pas seulement “une animation”.
+            Elle cherche un cadre sérieux, une lisibilité de méthode
+            et une capacité réelle à intervenir avec cohérence.
+          </p>
+        </div>
+
+        <div class="authority-grid">
+          <article class="authority-card">
+            <h3>Une logique de méthode</h3>
+            <p>L’intervention s’inscrit dans un standard plus large, avec des repères, une progression et une cohérence de fond.</p>
+          </article>
+
+          <article class="authority-card">
+            <h3>Une logique de transmission</h3>
+            <p>La qualité ne repose pas seulement sur l’orateur, mais sur le cadre pédagogique, la clarté du contenu et la stabilité des repères transmis.</p>
+          </article>
+
+          <article class="authority-card">
+            <h3>Une logique de crédibilité</h3>
+            <p>Pour une entreprise, savoir qui intervient, dans quel cadre et avec quelle cohérence fait partie intégrante de la confiance accordée.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="container">
+        <div class="section-head section-head--center">
+          <span class="eyebrow">Formats possibles</span>
+          <h2>Sensibilisation, atelier pratique ou intervention sur mesure</h2>
+          <p>
+            Le format dépend de votre public, de votre niveau d’exposition
+            et de votre objectif opérationnel.
+          </p>
+        </div>
+
+        <div class="format-grid">
+          <article class="format-card">
+            <div class="icon-dot"></div>
+            <h3>Sensibilisation</h3>
+            <p>
+              Format court pour poser les fondamentaux :
+              prévention, lecture des situations, posture et réduction de l’escalade.
+            </p>
+          </article>
+
+          <article class="format-card">
+            <div class="icon-dot"></div>
+            <h3>Atelier pratique</h3>
+            <p>
+              Format plus appliqué pour travailler la posture, la distance,
+              les repères utiles et les réponses simples dans un cadre maîtrisé.
+            </p>
+          </article>
+
+          <article class="format-card">
+            <div class="icon-dot"></div>
+            <h3>Intervention sur mesure</h3>
+            <p>
+              Construction adaptée selon vos équipes, votre contexte métier,
+              vos contraintes et les situations réellement rencontrées.
+            </p>
+          </article>
+        </div>
+
+        <div class="timeline-cta" style="justify-content:center;">
+          <a href="#contact-entreprise" class="btn btn-dark">Demander un devis</a>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="container">
+        <div class="section-head section-head--center">
+          <span class="eyebrow">Exemples de secteurs</span>
+          <h2>Des contextes où la qualité de posture fait la différence</h2>
+          <p>
+            Voici quelques environnements dans lesquels l’approche Vital Protect peut être pertinente.
+          </p>
+        </div>
+
+        <div class="sector-grid">
+          <article class="sector-card">
+            <h3>Collectivités</h3>
+            <p>Accueil, permanences, relation usager, environnement sensible.</p>
+          </article>
+
+          <article class="sector-card">
+            <h3>Santé & médico-social</h3>
+            <p>Gestion des tensions, pression relationnelle, contextes fragiles.</p>
+          </article>
+
+          <article class="sector-card">
+            <h3>Retail & commerce</h3>
+            <p>Incivilités, tensions client, exposition au public.</p>
+          </article>
+
+          <article class="sector-card">
+            <h3>Transport & mobilité</h3>
+            <p>Interaction terrain, imprévu, pression temporelle et espace contraint.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="container">
+        <div class="section-head section-head--center">
+          <span class="eyebrow">Méthode de travail</span>
+          <h2>Un déroulé simple en 4 étapes</h2>
+          <p>
+            Pour rester lisible, réactif et professionnel.
+          </p>
+        </div>
+
+        <div class="process-grid">
+          <article class="process-card">
+            <div class="process-step">1</div>
+            <h3>Échange</h3>
+            <p>Nous clarifions votre contexte, vos équipes, vos objectifs et vos contraintes.</p>
+          </article>
+
+          <article class="process-card">
+            <div class="process-step">2</div>
+            <h3>Cadrage</h3>
+            <p>Nous proposons un format réaliste : durée, public, angle pédagogique et niveau de travail.</p>
+          </article>
+
+          <article class="process-card">
+            <div class="process-step">3</div>
+            <h3>Intervention</h3>
+            <p>La session est animée dans un cadre clair, progressif et adapté au terrain réel.</p>
+          </article>
+
+          <article class="process-card">
+            <div class="process-step">4</div>
+            <h3>Suite</h3>
+            <p>Possibilité d’approfondissement, de second module ou d’extension à d’autres équipes.</p>
+          </article>
+        </div>
+
+        <div class="timeline-cta" style="justify-content:center;">
+          <a href="#contact-entreprise" class="btn btn-outline">Parler de votre besoin</a>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="container">
+        <div class="section-head section-head--center">
+          <span class="eyebrow">Retours d’expérience</span>
+          <h2>Une structure prévue pour accueillir ensuite de vrais retours clients</h2>
+          <p>
+            Garde cette base pour l’instant. Dès que tu as 2 ou 3 vrais témoignages,
+            on les remplace immédiatement.
+          </p>
+        </div>
+
+        <div class="testimonial-grid">
+          <article class="testimonial-card">
+            <h3>Structure accueillant du public</h3>
+            <p>
+              “Nous cherchions quelque chose de sérieux, utile et non spectaculaire.
+              L’intervention a apporté des repères concrets à l’équipe.”
+            </p>
+          </article>
+
+          <article class="testimonial-card">
+            <h3>Manager d’équipe terrain</h3>
+            <p>
+              “Le contenu a aidé à mieux lire les tensions et à clarifier la posture à tenir
+              dans des interactions compliquées.”
+            </p>
+          </article>
+
+          <article class="testimonial-card">
+            <h3>Responsable de structure</h3>
+            <p>
+              “L’approche est lisible, professionnelle et adaptable.
+              C’est exactement ce que nous voulions.”
+            </p>
+          </article>
+        </div>
+
+        <div class="timeline-cta" style="justify-content:center;">
+          <a href="#contact-entreprise" class="btn btn-dark">Demander un devis</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="contact-entreprise">
+      <div class="container contact-layout">
+        <div class="contact-panel">
+          <span class="eyebrow">Prise de contact</span>
+          <h3>Demandez un échange ou un devis</h3>
+          <p>
+            Décrivez votre structure, votre besoin, votre public concerné et votre contexte.
+            Nous pourrons ensuite vous orienter vers le format le plus pertinent.
+          </p>
+
+          <div class="contact-proof-list">
+            <div class="contact-proof"><strong>Réponse attendue :</strong> premier retour ou devis sous 24/48h ouvrées.</div>
+            <div class="contact-proof"><strong>Formats possibles :</strong> sensibilisation, atelier pratique, intervention sur mesure.</div>
+            <div class="contact-proof"><strong>Objectif :</strong> proposer un format crédible, clair et adapté à votre terrain.</div>
+          </div>
+        </div>
+
+        <div class="contact-panel">
+          <form id="enterpriseContactForm" class="contact-form">
+            <div class="form-grid">
+              <div class="form-field">
+                <label for="firstName">Prénom</label>
+                <input id="firstName" type="text" required />
+              </div>
+
+              <div class="form-field">
+                <label for="lastName">Nom</label>
+                <input id="lastName" type="text" required />
+              </div>
+
+              <div class="form-field">
+                <label for="company">Structure / entreprise</label>
+                <input id="company" type="text" required />
+              </div>
+
+              <div class="form-field">
+                <label for="email">Email</label>
+                <input id="email" type="email" required />
+              </div>
+
+              <div class="form-field">
+                <label for="phone">Téléphone</label>
+                <input id="phone" type="tel" />
+              </div>
+
+              <div class="form-field">
+                <label for="city">Ville</label>
+                <input id="city" type="text" />
+              </div>
+
+              <div class="form-field full">
+                <label for="subject">Sujet</label>
+                <select id="subject" required>
+                  <option value="">Choisir un sujet</option>
+                  <option value="Demande de devis entreprise">Demande de devis entreprise</option>
+                  <option value="Demande d’échange">Demande d’échange</option>
+                  <option value="Formation sur mesure">Formation sur mesure</option>
+                  <option value="Sensibilisation équipe">Sensibilisation équipe</option>
+                </select>
+              </div>
+
+              <div class="form-field full">
+                <label for="message">Votre besoin</label>
+                <textarea id="message" required placeholder="Décrivez votre contexte, vos équipes concernées, vos objectifs et vos contraintes."></textarea>
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-dark">Envoyer la demande</button>
+            <div id="enterpriseFormStatus" class="form-status"></div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="container">
+        <div class="section-head section-head--center">
+          <span class="eyebrow">Questions fréquentes</span>
+          <h2>Quelques réponses utiles avant de nous contacter</h2>
+          <p>
+            Les réponses ci-dessous lèvent les objections les plus fréquentes.
+          </p>
+        </div>
+
+        <div class="faq-grid">
+          <article class="faq-card">
+            <h3>Est-ce une formation “combat” ?</h3>
+            <p>
+              Non. L’approche Vital Protect privilégie la prévention, la lecture des situations,
+              la posture, la distance et des réponses simples adaptées au réel.
+            </p>
+          </article>
+
+          <article class="faq-card">
+            <h3>Pouvez-vous adapter le contenu à notre métier ?</h3>
+            <p>
+              Oui. Le format peut être contextualisé selon votre secteur,
+              vos publics, vos contraintes et les situations que vivent vos équipes.
+            </p>
+          </article>
+
+          <article class="faq-card">
+            <h3>Pouvez-vous intervenir dans nos locaux ?</h3>
+            <p>
+              Oui, selon le format retenu. Une intervention sur site est souvent pertinente
+              pour travailler dans le contexte réel des équipes.
+            </p>
+          </article>
+
+          <article class="faq-card">
+            <h3>Pourquoi vous parler plutôt que choisir un intervenant isolé ?</h3>
+            <p>
+              Parce que la lisibilité du cadre, la cohérence de méthode et la qualité
+              de transmission comptent autant que l’intervention elle-même.
+            </p>
+          </article>
+        </div>
+
+        <div class="timeline-cta" style="justify-content:center;">
+          <a href="#contact-entreprise" class="btn btn-dark">Demander un devis</a>
+          <a href="/contact.html" class="btn btn-outline">Passer par la page contact</a>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="container">
+        <div class="cta-panel">
+          <h2>Construisons une réponse adaptée à votre structure</h2>
+          <p>
+            Vital Protect accompagne les équipes et structures qui souhaitent renforcer
+            la prévention, la posture et la gestion des tensions dans un cadre sérieux,
+            réaliste et pédagogique.
+          </p>
+
+          <div class="cta-actions">
+            <a href="#contact-entreprise" class="btn btn-dark">Demander un devis</a>
+            <a href="/methode.html" class="btn btn-outline">Découvrir le standard</a>
+            <a href="/index.html#stages" class="btn btn-outline">Voir les stages</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container site-footer__grid">
+      <div class="site-footer__brand">
+        <strong>VITAL PROTECT</strong>
+        <p>
+          Un standard structuré de sécurité personnelle fondé sur la prévention,
+          l’évitement, la réaction réaliste, la pédagogie progressive
+          et la cohérence de transmission.
+        </p>
+      </div>
+
+      <div class="site-footer__links">
+        <a href="/index.html">Accueil</a>
+        <a href="/methode.html">Le standard</a>
+        <a href="/entreprises.html">Entreprises</a>
+        <a href="/devenir-formateur.html">Devenir formateur</a>
+        <a href="/faq.html">FAQ</a>
+        <a href="/contact.html">Contact</a>
+        <a href="/mentions-legales.html">Mentions légales</a>
+        <a href="/politique-confidentialite.html">Confidentialité</a>
+        <a href="/cgv.html">CGV</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const form = document.getElementById("enterpriseContactForm");
+    const statusBox = document.getElementById("enterpriseFormStatus");
+
+    function showStatus(message, type) {
+      statusBox.className = `form-status show ${type}`;
+      statusBox.textContent = message;
+    }
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const payload = {
+        firstName: document.getElementById("firstName").value.trim(),
+        lastName: document.getElementById("lastName").value.trim(),
+        company: document.getElementById("company").value.trim(),
+        email: document.getElementById("email").value.trim(),
+        phone: document.getElementById("phone").value.trim(),
+        city: document.getElementById("city").value.trim(),
+        subject: document.getElementById("subject").value.trim(),
+        message: document.getElementById("message").value.trim()
+      };
+
+      if (!payload.firstName || !payload.lastName || !payload.company || !payload.email || !payload.subject || !payload.message) {
+        showStatus("Merci de remplir les champs obligatoires.", "error");
+        return;
+      }
+
+      try {
+        const res = await fetch("/api/contact", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            first_name: payload.firstName,
+            last_name: payload.lastName,
+            email: payload.email,
+            phone: payload.phone,
+            subject: `[ENTREPRISE] ${payload.subject}`,
+            message:
+`Structure : ${payload.company}
+Ville : ${payload.city || "Non précisée"}
+Téléphone : ${payload.phone || "Non renseigné"}
+
+Message :
+${payload.message}`
+          })
+        });
+
+        const result = await res.json();
+
+        if (!res.ok) {
+          showStatus(result.error || "Erreur lors de l’envoi du message.", "error");
+          return;
+        }
+
+        showStatus("Votre demande a bien été envoyée. Nous reviendrons vers vous rapidement.", "success");
+        form.reset();
+      } catch (error) {
+        console.error(error);
+        showStatus("Erreur réseau lors de l’envoi.", "error");
+      }
+    });
+  </script>
+  <script src="/lusion-level.js"></script>
+</body>
+</html>
