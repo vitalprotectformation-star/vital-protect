@@ -280,89 +280,56 @@
       }
     }
   </style>
+  <link rel="stylesheet" href="/styles/lusion-level.css" />
 </head>
-<body>
+<body class="vpl-inner-page">
+  <canvas class="vpl-canvas" aria-hidden="true"></canvas>
+  <div class="vpl-noise" aria-hidden="true"></div>
 
-  <header class="site-header">
-    <div class="container site-header__inner">
-      <a href="/index.html" class="site-brand">
+  <header class="vpl-nav">
+      <a href="/index.html" class="vpl-brand" aria-label="Accueil Vital Protect">
         <img src="/logo.png" alt="Vital Protect" />
-        <div class="site-brand__text">
-          <div class="site-brand__title">VITAL PROTECT</div>
-          <div class="site-brand__subtitle">Standard de sécurité personnelle</div>
+        <div>
+          <b>VITAL PROTECT</b>
+          <span>Standard sécurité personnelle</span>
         </div>
       </a>
 
-      <nav class="site-nav">
-        <a href="/index.html">Accueil</a>
-        <a href="/methode.html">Le standard</a>
-        <a href="/index.html#stages">Nos stages</a>
-        <a href="/entreprises.html">Entreprises</a>
-        <a href="/devenir-formateur.html">Devenir formateur</a>
-        <a href="/faq.html">FAQ</a>
-        <a href="/contact.html" class="active">Contact</a>
-        <a href="/formateur-login.html" class="nav-cta">Espace formateur</a>
+      <nav class="vpl-menu" aria-label="Navigation principale">
+        <a href="/index.html" data-page="index">Accueil</a>
+        <a href="/methode.html" data-page="methode">Standard</a>
+        <a href="/stage.html" data-page="stage">Stages</a>
+        <a href="/entreprises.html" data-page="entreprises">Entreprises</a>
+        <a href="/devenir-formateur.html" data-page="devenir-formateur">Formateurs</a>
+        <a href="/faq.html" data-page="faq">FAQ</a>
+        <a href="/contact.html" data-page="contact" class="active">Contact</a>
+        <a href="/formateur-login.html" class="vpl-nav-ghost">Espace</a>
       </nav>
-    </div>
-  </header>
+
+      <a href="/stage.html" class="vpl-nav-cta">Trouver un stage</a>
+    </header>
 
   <main>
-    <section class="hero-shell contact-hero">
-      <div class="container contact-hero__grid">
-        <div class="glass-panel contact-hero__copy">
-          <div class="eyebrow eyebrow--invert">Contact</div>
-          <h1 class="contact-hero__title">Entrer en relation avec Vital Protect</h1>
-          <p class="contact-hero__lead">
-            Que vous soyez un particulier, une entreprise, une structure accueillant du public,
-            un candidat formateur ou un partenaire potentiel, cette page vous permet
-            d’ouvrir un échange clair, structuré et utile avec l’équipe Vital Protect.
-          </p>
-
-          <div class="contact-hero__actions">
-            <a href="#formulaire" class="btn btn-primary">Envoyer une demande</a>
-            <a href="/faq.html" class="btn btn-secondary">Consulter la FAQ</a>
+    <section class="vpl-inner-hero">
+        <div class="vpl-container vpl-inner-hero-grid">
+          <div>
+            <div class="vpl-eyebrow">Contact</div>
+            <h1 class="vpl-inner-title">Parlons de votre<span>besoin.</span></h1>
+            <p class="vpl-inner-lead">Une question sur un stage, une demande entreprise ou un projet de formation ? Envoyez-nous les informations utiles.</p>
+            <div class="vpl-actions">
+              <a class="vpl-button vpl-button-primary" href="/stage.html">Trouver un stage</a>
+              <a class="vpl-button vpl-button-secondary" href="/contact.html">Nous contacter</a>
+            </div>
           </div>
-
-          <div class="contact-hero__proofs">
-            <div class="contact-proof">Grand public</div>
-            <div class="contact-proof">Entreprises</div>
-            <div class="contact-proof">Formateurs</div>
-            <div class="contact-proof">Réponse structurée</div>
+          <div class="vpl-inner-visual">
+            <img src="/femme-mise-a-distance-formateur-guide.png" alt="Réponse orientée action" />
+            <div class="vpl-inner-stat">
+              <strong>Réponse orientée action</strong>
+              <span>Nous vous orientons vers le bon format : stage, entreprise ou parcours formateur.</span>
+            </div>
           </div>
         </div>
-
-        <aside class="card contact-hero__side">
-          <h2>Pourquoi nous écrire ?</h2>
-          <p>
-            Pour poser une question, demander une précision sur un stage,
-            évoquer un besoin entreprise, demander un échange sur le parcours formateur
-            ou ouvrir une discussion autour d’un projet, d’un partenariat ou d’un déploiement.
-          </p>
-
-          <div class="contact-side-list">
-            <div class="contact-side-item">
-              <strong>Question sur un stage</strong>
-              <span>Informations pratiques, réservation, choix du bon format, déroulé pédagogique.</span>
-            </div>
-
-            <div class="contact-side-item">
-              <strong>Demande entreprise</strong>
-              <span>Intervention, sensibilisation, besoin métier, adaptation à un contexte professionnel.</span>
-            </div>
-
-            <div class="contact-side-item">
-              <strong>Parcours formateur</strong>
-              <span>Sessions, logique réseau, standard de transmission, certification et affiliation.</span>
-            </div>
-
-            <div class="contact-side-item">
-              <strong>Partenariat / projet</strong>
-              <span>Déploiement, structuration, échange institutionnel, collaboration potentielle.</span>
-            </div>
-          </div>
-        </aside>
-      </div>
-    </section>
+      </section>
 
     <section>
       <div class="container contact-layout">
@@ -609,5 +576,6 @@
       }
     });
   </script>
+  <script src="/lusion-level.js"></script>
 </body>
 </html>
