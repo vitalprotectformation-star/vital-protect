@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Espace formateur — VITAL PROTECT</title>
+
+  <style>
+    :root {
+      --navy: #0b2e59;
+      --navy-dark: #08203d;
+      --blue: #1f6feb;
+      --blue-soft: #eaf2ff;
+      --bg: #f4f7fb;
+      --card: #ffffff;
+      --border: #dbe4f0;
+      --text: #142033;
+      --muted: #667085;
+      --success: #0f9d58;
+      --warning: #b7791f;
+      --danger: #c62828;
+      --shadow: 0 10px 30px rgba(11, 46, 89, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .container {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+    }
+
+    header {
+      background: linear-gradient(135deg, var(--navy-dark), var(--navy));
+      color: white;
+      padding: 16px 0;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: white;
+    }
+
+    .brand img {
+      height: 162px;
+      width: auto;
+      display: block;
+    }
+
+    .brand-text {
+      font-size: 1.75rem;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      line-height: 1;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .nav-links a,
+    .nav-links button {
+      color: rgba(255,255,255,0.92);
+      text-decoration: none;
+      font-weight: 600;
+      padding: 10px 14px;
+      border-radius: 12px;
+      transition: 0.2s ease;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      font-size: 1rem;
+      font-family: inherit;
+    }
+
+    .nav-links a:hover,
+    .nav-links button:hover {
+      background: rgba(255,255,255,0.12);
+    }
+
+    main {
+      padding: 32px 0;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      padding: 28px;
+      margin-bottom: 20px;
+    }
+
+    h1, h2, h3 {
+      margin-top: 0;
+    }
+
+    p {
+      line-height: 1.6;
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .info-box {
+      background: #f8fbff;
+      border: 1px solid #e5edf7;
+      border-radius: 18px;
+      padding: 18px;
+    }
+
+    .label {
+      display: block;
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin-bottom: 6px;
+      font-weight: 700;
+    }
+
+    .value {
+      font-size: 1.05rem;
+      font-weight: 700;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+
+    .badge-success {
+      background: #eaf8f0;
+      color: var(--success);
+    }
+
+    .badge-warning {
+      background: #fff4df;
+      color: var(--warning);
+    }
+
+    .badge-danger {
+      background: #fff1f1;
+      color: var(--danger);
+    }
+
+    .btn {
+      border: none;
+      border-radius: 12px;
+      padding: 12px 16px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-primary {
+      background: var(--blue);
+      color: white;
+    }
+
+    .btn-secondary {
+      background: white;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+
+    .alert {
+      border-radius: 18px;
+      padding: 18px;
+      margin-top: 16px;
+    }
+
+    .alert-success {
+      background: #eaf8f0;
+      border: 1px solid #cdeedb;
+      color: #0f7d46;
+    }
+
+    .alert-warning {
+      background: #fff4df;
+      border: 1px solid #f0d9a7;
+      color: #8a5a00;
+    }
+
+    .alert-danger {
+      background: #fff1f1;
+      border: 1px solid #f2c7c7;
+      color: #a32020;
+    }
+
+    .blocked {
+      border: 2px solid #f0d9a7;
+      background: #fffaf2;
+    }
+
+    .debug {
+      margin-top: 18px;
+      padding: 14px;
+      border-radius: 12px;
+      background: #f8fbff;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 14px;
+      white-space: pre-wrap;
+    }
+
+    .section-title {
+      margin-bottom: 12px;
+    }
+
+    form {
+      margin-top: 16px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 14px;
+    }
+
+    .field label {
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: var(--muted);
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      border: 1px solid var(--border);
+      background: white;
+      border-radius: 12px;
+      padding: 12px;
+      font-size: 0.98rem;
+      color: var(--text);
+      font-family: inherit;
+    }
+
+    textarea {
+      min-height: 110px;
+      resize: vertical;
+    }
+
+    .form-note {
+      font-size: 0.92rem;
+      color: var(--muted);
+      margin-top: 8px;
+    }
+
+    footer {
+      margin-top: 28px;
+      background: var(--navy-dark);
+      color: rgba(255,255,255,0.88);
+      padding: 28px 0;
+    }
+
+    footer p {
+      margin: 0;
+      text-align: center;
+    }
+
+    @media (max-width: 900px) {
+      .grid,
+      .grid-3 {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .brand-text {
+        font-size: 1.2rem;
+      }
+
+      .brand img {
+        height: 132px;
+      }
+
+      .header-inner {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .nav-links {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="container header-inner">
+      <a href="/index.html" class="brand">
+        <img src="/logo.png" alt="VITAL PROTECT" />
+        <span class="brand-text">VITAL PROTECT</span>
+      </a>
+
+      <nav class="nav-links">
+        <a href="/index.html">Accueil</a>
+        <a href="/devenir-formateur.html">Devenir formateur</a>
+        <button id="headerLogoutBtn" type="button">Déconnexion</button>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <div class="container">
+      <div class="card" id="app">
+        Chargement...
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container">
+      <p>VITAL PROTECT — Espace formateur</p>
+    </div>
+  </footer>
+
+  <script type="module">
+    import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
+    const supabase = createClient(
+      "https://zsraqxzneghkzaozzuci.supabase.co",
+      "sb_publishable_VlTpYjzJ3DKpFA1Un_EFHQ_FW-mYK4U"
+    );
+
+    let certifiedModules = [];
+
+    function normalize(value) {
+      return String(value || "").trim().toLowerCase();
+    }
+
+    function formatDate(dateString) {
+      if (!dateString) return "—";
+      const date = new Date(dateString);
+      if (Number.isNaN(date.getTime())) return "—";
+      return date.toLocaleDateString("fr-FR", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric"
+      });
+    }
+
+    function isFutureOrToday(dateString) {
+      if (!dateString) return false;
+
+      const date = new Date(dateString);
+      if (Number.isNaN(date.getTime())) return false;
+
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      date.setHours(0, 0, 0, 0);
+      return date >= today;
+    }
+
+    function getAffiliationUrlStatus() {
+      const params = new URLSearchParams(window.location.search);
+      return params.get("affiliation") || "";
+    }
+
+    function buildAffiliationFeedback() {
+      const status = getAffiliationUrlStatus();
+
+      if (status === "success") {
+        return `
+          <div class="alert alert-success">
+            <h2>Paiement reçu</h2>
+            <p>Votre paiement d’affiliation a bien été enregistré.</p>
+            <p>La mise à jour de votre statut peut prendre quelques secondes. Rechargez la page si nécessaire.</p>
+          </div>
+        `;
+      }
+
+      if (status === "cancel") {
+        return `
+          <div class="alert alert-warning">
+            <h2>Paiement annulé</h2>
+            <p>Le renouvellement de votre affiliation n’a pas été finalisé.</p>
+          </div>
+        `;
+      }
+
+      return "";
+    }
+
+    async function payAffiliation(email) {
+      try {
+        const res = await fetch("/api/create-affiliation-checkout", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ email })
+        });
+
+        const data = await res.json();
+
+        if (data.url) {
+          window.location.href = data.url;
+        } else {
+          alert(data.error || "Erreur lors de la redirection vers le paiement affiliation.");
+          console.error(data);
+        }
+      } catch (error) {
+        alert("Erreur réseau.");
+        console.error(error);
+      }
+    }
+
+    async function logoutTrainer() {
+      await supabase.auth.signOut();
+      window.location.href = "/formateur-login.html";
+    }
+
+    function attachLogoutButtons() {
+      const headerLogoutBtn = document.getElementById("headerLogoutBtn");
+      if (headerLogoutBtn) {
+        headerLogoutBtn.onclick = logoutTrainer;
+      }
+
+      const logoutBtn = document.getElementById("logoutBtn");
+      if (logoutBtn) {
+        logoutBtn.onclick = logoutTrainer;
+      }
+    }
+
+    async function getTrainerAuthHeaders() {
+      let {
+        data: { session }
+      } = await supabase.auth.getSession();
+
+      if (!session?.access_token) {
+        await new Promise(resolve => setTimeout(resolve, 500));
+        const retry = await supabase.auth.getSession();
+        session = retry.data.session;
+      }
+
+      const accessToken = session?.access_token || "";
+
+      if (!accessToken) {
+        throw new Error("Session formateur introuvable");
+      }
+
+      return {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`
+      };
+    }
+
+    async function parseApiResponse(res) {
+      const rawText = await res.text();
+      let data = null;
+
+      try {
+        data = rawText ? JSON.parse(rawText) : {};
+      } catch (error) {
+        data = { error: rawText || `Réponse non JSON (${res.status})` };
+      }
+
+      if (!res.ok) {
+        throw new Error(data?.error || `Erreur HTTP ${res.status}`);
+      }
+
+      return data;
+    }
+
+    async function loadCertifiedModules(trainer) {
+      const { data: trainerModules, error } = await supabase
+        .from("trainer_modules")
+        .select("module_name, status, expires_at")
+        .eq("trainer_id", trainer.id);
+
+      if (error) {
+        console.error("Erreur chargement trainer_modules:", error);
+        return [];
+      }
+
+      return (trainerModules || [])
+        .filter(item =>
+          normalize(item.status) === "certified" &&
+          isFutureOrToday(item.expires_at) &&
+          item.module_name
+        )
+        .map(item => item.module_name);
+    }
+
+    function buildCreateStageSection(trainer) {
+      if (!certifiedModules.length) {
+        return `
+          <div class="card">
+            <h2 class="section-title">Créer un stage</h2>
+            <div class="alert alert-warning">
+              <p>Aucun module certifié valide n’a été retrouvé pour votre profil.</p>
+              <p>Impossible de créer un stage tant qu’aucun module valide n’est disponible.</p>
+            </div>
+          </div>
+        `;
+      }
+
+      return `
+        <div class="card">
+          <h2 class="section-title">Créer un stage</h2>
+          <p class="muted">Vous pouvez publier un stage uniquement sur un module pour lequel vous êtes certifié et à jour.</p>
+
+          <form id="createStageForm">
+            <div class="field">
+              <label for="stageTrainingType">Module certifié</label>
+              <select id="stageTrainingType" required>
+                <option value="">Choisir un module</option>
+                ${certifiedModules.map(module => `<option value="${module}">${module}</option>`).join("")}
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="stageDescription">Description</label>
+              <textarea id="stageDescription" placeholder="Décrivez votre stage..."></textarea>
+            </div>
+
+            <div class="grid-3">
+              <div class="field">
+                <label for="stageCity">Ville</label>
+                <input id="stageCity" type="text" required />
+              </div>
+
+              <div class="field">
+                <label for="stageDepartment">Département</label>
+                <input id="stageDepartment" type="text" required />
+              </div>
+
+              <div class="field">
+                <label for="stageRegion">Région</label>
+                <input id="stageRegion" type="text" required />
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="stageAddress">Adresse</label>
+              <input id="stageAddress" type="text" />
+            </div>
+
+            <div class="grid-3">
+              <div class="field">
+                <label for="stageDate">Date</label>
+                <input id="stageDate" type="date" required />
+              </div>
+
+              <div class="field">
+                <label for="stageTime">Heure</label>
+                <input id="stageTime" type="text" placeholder="14:00" />
+              </div>
+
+              <div class="field">
+                <label for="stageDuration">Durée</label>
+                <input id="stageDuration" type="text" placeholder="3h" />
+              </div>
+            </div>
+
+            <div class="grid-3">
+              <div class="field">
+                <label for="stagePrice">Prix (€)</label>
+                <input id="stagePrice" type="number" min="0" required />
+              </div>
+
+              <div class="field">
+                <label for="stageMaxParticipants">Places max</label>
+                <input id="stageMaxParticipants" type="number" min="1" value="20" required />
+              </div>
+
+              <div class="field">
+                <label for="stageRemainingPlaces">Places restantes</label>
+                <input id="stageRemainingPlaces" type="number" min="1" value="20" required />
+              </div>
+            </div>
+
+            <div class="actions">
+              <button class="btn btn-primary" type="submit">Publier le stage</button>
+            </div>
+
+            <div class="form-note">
+              Le titre du stage est généré automatiquement côté serveur à partir du module, de la ville et de la date.
+            </div>
+          </form>
+
+          <div id="createStageStatus" class="debug" style="display:none;"></div>
+        </div>
+      `;
+    }
+
+    async function handleCreateStageSubmit() {
+      const form = document.getElementById("createStageForm");
+      const statusBox = document.getElementById("createStageStatus");
+
+      if (!form || !statusBox) return;
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        statusBox.style.display = "block";
+        statusBox.textContent = "Création du stage en cours...";
+
+        const trainingType = document.getElementById("stageTrainingType").value;
+        const city = document.getElementById("stageCity").value.trim();
+        const stageDate = document.getElementById("stageDate").value;
+
+        if (!certifiedModules.includes(trainingType)) {
+          statusBox.textContent = "Erreur : ce module n’est pas autorisé pour votre profil.";
+          return;
+        }
+
+        if (!stageDate) {
+          statusBox.textContent = "Erreur : veuillez choisir une date.";
+          return;
+        }
+
+        const payload = {
+          action: "create_stage",
+          training_type: trainingType,
+          description: document.getElementById("stageDescription").value.trim(),
+          city,
+          department: document.getElementById("stageDepartment").value.trim(),
+          region: document.getElementById("stageRegion").value.trim(),
+          address: document.getElementById("stageAddress").value.trim(),
+          stage_date: document.getElementById("stageDate").value,
+          start_time: document.getElementById("stageTime").value.trim(),
+          duration: document.getElementById("stageDuration").value.trim(),
+          max_participants: Number(document.getElementById("stageMaxParticipants").value || 20),
+          remaining_places: Number(document.getElementById("stageRemainingPlaces").value || 20),
+          price: Number(document.getElementById("stagePrice").value || 0)
+        };
+
+        try {
+          const headers = await getTrainerAuthHeaders();
+
+          const res = await fetch("/api/trainer-tools", {
+            method: "POST",
+            headers,
+            body: JSON.stringify(payload)
+          });
+
+          const result = await parseApiResponse(res);
+
+          if (!result.success) {
+            statusBox.textContent = result.error || "Erreur lors de la création du stage.";
+            return;
+          }
+
+          statusBox.textContent = `✅ Stage créé avec succès. Titre généré : ${result.stage?.title || "Stage publié"}`;
+          form.reset();
+        } catch (error) {
+          console.error("Erreur création stage:", error);
+          statusBox.textContent = `Erreur : ${error.message}`;
+        }
+      });
+    }
+
+    async function renderFullActiveView(trainer, sessionEmail, certValid, affiliationValid) {
+      const app = document.getElementById("app");
+      const affiliationFeedback = buildAffiliationFeedback();
+
+      app.innerHTML = `
+        <h1>Espace formateur</h1>
+        <p class="muted">Votre espace est actif. Votre certification et votre affiliation sont à jour.</p>
+
+        ${affiliationFeedback}
+
+        <div class="alert alert-success">
+          <h2>Accès actif</h2>
+          <p>Vous pouvez continuer à utiliser la plateforme normalement.</p>
+        </div>
+
+        <div class="grid" style="margin-top:18px;">
+          <div class="info-box">
+            <span class="label">Formateur</span>
+            <div class="value">${trainer.first_name || ""} ${trainer.last_name || ""}</div>
+          </div>
+          <div class="info-box">
+            <span class="label">Email</span>
+            <div class="value">${trainer.email || "—"}</div>
+          </div>
+          <div class="info-box">
+            <span class="label">Certification</span>
+            <div class="value"><span class="badge badge-success">Valide</span></div>
+          </div>
+          <div class="info-box">
+            <span class="label">Expire le</span>
+            <div class="value">${formatDate(trainer.certification_expiry)}</div>
+          </div>
+          <div class="info-box">
+            <span class="label">Affiliation</span>
+            <div class="value"><span class="badge badge-success">Active</span></div>
+          </div>
+          <div class="info-box">
+            <span class="label">Expire le</span>
+            <div class="value">${formatDate(trainer.affiliation_end)}</div>
+          </div>
+        </div>
+
+        <div class="card" style="padding:18px; margin-top:18px;">
+          <h3>Zone membre</h3>
+          <p class="muted">Cette zone peut ensuite accueillir tes contenus privés : ressources, documents, calendrier, kit formateur, etc.</p>
+          <div class="actions">
+            <a href="/" class="btn btn-secondary">Retour au site</a>
+            <button id="logoutBtn" class="btn btn-secondary" type="button">Déconnexion</button>
+          </div>
+        </div>
+
+        ${buildCreateStageSection(trainer)}
+
+        <div class="debug">Email session : ${sessionEmail}
+Email trouvé : ${trainer.email}
+ID formateur : ${trainer.id}
+Certification valide : ${certValid}
+Affiliation valide : ${affiliationValid}
+Modules certifiés valides : ${certifiedModules.join(", ") || "aucun"}</div>
+      `;
+
+      attachLogoutButtons();
+      await handleCreateStageSubmit();
+    }
+
+    async function buildTrainerView(trainer, sessionEmail) {
+      const certValid = isFutureOrToday(trainer.certification_expiry);
+      const affiliationValid =
+        isFutureOrToday(trainer.affiliation_end) &&
+        normalize(trainer.affiliation_status) === "active";
+
+      const affiliationFeedback = buildAffiliationFeedback();
+      const app = document.getElementById("app");
+
+      if (!affiliationValid) {
+        app.innerHTML = `
+          <h1>Espace formateur</h1>
+          <p class="muted">Bienvenue sur votre espace personnel VITAL PROTECT.</p>
+
+          ${affiliationFeedback}
+
+          <div class="alert alert-danger blocked">
+            <h2>Accès bloqué</h2>
+            <p>Votre affiliation n’est plus active.</p>
+            <p>Pour réactiver votre espace formateur, vous devez renouveler votre affiliation annuelle.</p>
+          </div>
+
+          <div class="card" style="padding:18px; margin-top:18px;">
+            <div class="grid">
+              <div class="info-box">
+                <span class="label">Formateur</span>
+                <div class="value">${trainer.first_name || ""} ${trainer.last_name || ""}</div>
+              </div>
+              <div class="info-box">
+                <span class="label">Email</span>
+                <div class="value">${trainer.email || "—"}</div>
+              </div>
+              <div class="info-box">
+                <span class="label">Affiliation</span>
+                <div class="value"><span class="badge badge-danger">Expirée</span></div>
+              </div>
+              <div class="info-box">
+                <span class="label">Fin d’affiliation</span>
+                <div class="value">${formatDate(trainer.affiliation_end)}</div>
+              </div>
+              <div class="info-box">
+                <span class="label">Certification</span>
+                <div class="value">
+                  <span class="badge ${certValid ? "badge-success" : "badge-danger"}">
+                    ${certValid ? "Valide" : "Expirée"}
+                  </span>
+                </div>
+              </div>
+              <div class="info-box">
+                <span class="label">Fin certification</span>
+                <div class="value">${formatDate(trainer.certification_expiry)}</div>
+              </div>
+            </div>
+
+            <div class="actions">
+              <button id="renewAffiliationBtn" class="btn btn-primary" type="button">
+                Renouveler mon affiliation
+              </button>
+              <button id="refreshBtn" class="btn btn-secondary" type="button">
+                Actualiser
+              </button>
+              <button id="logoutBtn" class="btn btn-secondary" type="button">Déconnexion</button>
+            </div>
+          </div>
+
+          <div class="debug">Email session : ${sessionEmail}
+Email trouvé : ${trainer.email}
+ID formateur : ${trainer.id}
+Certification valide : ${certValid}
+Affiliation valide : ${affiliationValid}
+Affiliation status : ${trainer.affiliation_status || "—"}
+Affiliation end : ${trainer.affiliation_end || "—"}</div>
+        `;
+
+        document
+          .getElementById("renewAffiliationBtn")
+          .addEventListener("click", () => payAffiliation(trainer.email));
+
+        document
+          .getElementById("refreshBtn")
+          .addEventListener("click", () => window.location.reload());
+
+        attachLogoutButtons();
+        return;
+      }
+
+      if (!certValid) {
+        app.innerHTML = `
+          <h1>Espace formateur</h1>
+          <p class="muted">Bienvenue sur votre espace personnel VITAL PROTECT.</p>
+
+          ${affiliationFeedback}
+
+          <div class="alert alert-warning">
+            <h2>Certification expirée</h2>
+            <p>Votre affiliation est active, mais votre certification n’est plus valide.</p>
+            <p>Vous devez suivre le parcours de renouvellement / recyclage pour retrouver un statut complet.</p>
+          </div>
+
+          <div class="grid" style="margin-top:18px;">
+            <div class="info-box">
+              <span class="label">Formateur</span>
+              <div class="value">${trainer.first_name || ""} ${trainer.last_name || ""}</div>
+            </div>
+            <div class="info-box">
+              <span class="label">Email</span>
+              <div class="value">${trainer.email || "—"}</div>
+            </div>
+            <div class="info-box">
+              <span class="label">Certification</span>
+              <div class="value"><span class="badge badge-danger">Expirée</span></div>
+            </div>
+            <div class="info-box">
+              <span class="label">Expire le</span>
+              <div class="value">${formatDate(trainer.certification_expiry)}</div>
+            </div>
+            <div class="info-box">
+              <span class="label">Affiliation</span>
+              <div class="value"><span class="badge badge-success">Active</span></div>
+            </div>
+            <div class="info-box">
+              <span class="label">Expire le</span>
+              <div class="value">${formatDate(trainer.affiliation_end)}</div>
+            </div>
+          </div>
+
+          <div class="actions">
+            <a href="/devenir-formateur.html" class="btn btn-primary">Voir les formations disponibles</a>
+            <button id="logoutBtn" class="btn btn-secondary" type="button">Déconnexion</button>
+          </div>
+
+          <div class="debug">Email session : ${sessionEmail}
+Email trouvé : ${trainer.email}
+ID formateur : ${trainer.id}
+Certification valide : ${certValid}
+Affiliation valide : ${affiliationValid}
+Certification expiry : ${trainer.certification_expiry || "—"}</div>
+        `;
+
+        attachLogoutButtons();
+        return;
+      }
+
+      await renderFullActiveView(trainer, sessionEmail, certValid, affiliationValid);
+    }
+
+    async function load() {
+      const app = document.getElementById("app");
+
+      let {
+        data: { session }
+      } = await supabase.auth.getSession();
+
+      if (!session?.user?.email) {
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        const retry = await supabase.auth.getSession();
+        session = retry.data.session;
+      }
+
+      if (!session?.user?.email) {
+        window.location.href = "/formateur-login.html";
+        return;
+      }
+
+      const sessionEmail = session.user.email.trim().toLowerCase();
+
+      const { data: trainer, error } = await supabase
+        .from("trainers")
+        .select("*")
+        .ilike("email", sessionEmail)
+        .maybeSingle();
+
+      if (error) {
+        console.error("Erreur Supabase:", error);
+        app.innerHTML = `
+          <h1>Erreur de chargement</h1>
+          <p class="muted">Impossible de charger les données du formateur.</p>
+          <div class="debug">${error.message}</div>
+        `;
+        attachLogoutButtons();
+        return;
+      }
+
+      if (!trainer) {
+        await supabase.auth.signOut();
+        app.innerHTML = `
+          <h1>Profil formateur introuvable</h1>
+          <p class="muted">Aucun profil formateur ne correspond à votre session.</p>
+          <div class="debug">Email session : ${sessionEmail}</div>
+        `;
+        attachLogoutButtons();
+        setTimeout(() => {
+          window.location.href = "/formateur-login.html";
+        }, 1500);
+        return;
+      }
+
+      certifiedModules = await loadCertifiedModules(trainer);
+      await buildTrainerView(trainer, sessionEmail);
+    }
+
+    document.getElementById("headerLogoutBtn").addEventListener("click", logoutTrainer);
+
+    load();
+  </script>
+</body>
+</html>
