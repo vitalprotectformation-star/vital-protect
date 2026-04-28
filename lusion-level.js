@@ -134,3 +134,73 @@ window.addEventListener('DOMContentLoaded', () => {
     });
   }
 });
+
+
+window.addEventListener('DOMContentLoaded', () => {
+  /* V5: ribbon progress */
+  const ribbon = document.querySelector('.vpl-scroll-ribbon');
+  if (ribbon) {
+    const progressPath = ribbon.querySelector('.vpl-ribbon-progress');
+    const dot = ribbon.querySelector('.vpl-ribbon-dot');
+    if (progressPath && dot && typeof progressPath.getTotalLength === 'function') {
+      const length = progressPath.getTotalLength();
+      progressPath.style.strokeDasharray = `${length}`;
+
+      let ticking = false;
+      const updateRibbon = () => {
+        const max = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
+        const p = Math.min(1, Math.max(0, window.scrollY / max));
+        progressPath.style.strokeDashoffset = `${(1 - p) * length}`;
+        const point = progressPath.getPointAtLength(length * p);
+        dot.setAttribute('cx', point.x.toFixed(2));
+        dot.setAttribute('cy', point.y.toFixed(2));
+        ticking = false;
+      };
+
+      updateRibbon();
+      window.addEventListener('scroll', () => {
+        if (!ticking) {
+          ticking = true;
+          requestAnimationFrame(updateRibbon);
+        }
+      }, { passive: true });
+      window.addEventListener('resize', updateRibbon);
+    }
+  }
+
+  /* V5: honeycomb build on scroll */
+  const honeyGrids = [...document.querySelectorAll('[data-honeycomb]')];
+  if (honeyGrids.length) {
+    honeyGrids.forEach((grid) => {
+      [...grid.children].forEach((cell, i) => {
+        cell.style.transitionDelay = `${Math.min(i * 70, 560)}ms`;
+      });
+    });
+
+    let honeyTick = false;
+    const updateHoney = () => {
+      const vh = window.innerHeight;
+      honeyGrids.forEach((grid) => {
+        const rect = grid.getBoundingClientRect();
+        const items = [...grid.children];
+        const start = vh * 0.92;
+        const end = -rect.height * 0.15;
+        const ratio = Math.min(1, Math.max(0, (start - rect.top) / (start - end)));
+        const visibleCount = Math.max(0, Math.ceil(ratio * items.length));
+        items.forEach((item, index) => {
+          item.classList.toggle('is-visible', index < visibleCount);
+        });
+      });
+      honeyTick = false;
+    };
+
+    updateHoney();
+    window.addEventListener('scroll', () => {
+      if (!honeyTick) {
+        honeyTick = true;
+        requestAnimationFrame(updateHoney);
+      }
+    }, { passive: true });
+    window.addEventListener('resize', updateHoney);
+  }
+});

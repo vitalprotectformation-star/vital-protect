@@ -17,6 +17,21 @@
 <body class="vpl-home">
   <canvas class="vpl-canvas" aria-hidden="true"></canvas>
   <div class="vpl-noise" aria-hidden="true"></div>
+  <div class="vpl-scroll-ribbon" aria-hidden="true">
+    <svg class="vpl-scroll-ribbon-svg" viewBox="0 0 140 1200" preserveAspectRatio="none">
+      <defs>
+        <linearGradient id="vplRibbonGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="#ffffff" stop-opacity="0.95"></stop>
+          <stop offset="45%" stop-color="#c9d6e4" stop-opacity="0.92"></stop>
+          <stop offset="100%" stop-color="#4b7fb3" stop-opacity="0.88"></stop>
+        </linearGradient>
+      </defs>
+      <path class="vpl-ribbon-base" d="M92 20 C122 140 44 212 76 338 S126 546 74 706 S30 938 88 1178"></path>
+      <path class="vpl-ribbon-progress" d="M92 20 C122 140 44 212 76 338 S126 546 74 706 S30 938 88 1178"></path>
+      <circle class="vpl-ribbon-dot" cx="92" cy="20" r="8"></circle>
+    </svg>
+  </div>
+
 
   <div class="vpl-page">
     <header class="vpl-nav">
@@ -226,6 +241,50 @@
                 <p>Les stages publiés restent rattachés au standard, au module, à la durée et au cadre pédagogique.</p>
               </div>
             </article>
+          </div>
+        </div>
+      </section>
+
+
+      <section class="vpl-section vpl-honeycomb-section">
+        <div class="vpl-container">
+          <div class="vpl-section-head center">
+            <span class="vpl-section-kicker">Le réseau se construit</span>
+            <h2 class="vpl-section-title">Une maille à la fois.</h2>
+            <p class="vpl-section-copy">
+              Vital Protect n’a pas vocation à afficher des centaines de profils en vrac.
+              Le réseau se construit cellule par cellule : certification, audit, recyclage, publication des stages et cohérence de transmission.
+            </p>
+          </div>
+
+          <div class="vpl-honeycomb-shell">
+            <div class="vpl-honeycomb-grid" data-honeycomb>
+              <article class="vpl-hex"><span>Standard</span></article>
+              <article class="vpl-hex"><span>Méthode</span></article>
+              <article class="vpl-hex"><span>Certification</span></article>
+              <article class="vpl-hex"><span>Audit</span></article>
+              <article class="vpl-hex"><span>Recyclage</span></article>
+              <article class="vpl-hex"><span>Qualité</span></article>
+              <article class="vpl-hex"><span>Pédagogie</span></article>
+              <article class="vpl-hex"><span>Marketplace</span></article>
+              <article class="vpl-hex"><span>Stages</span></article>
+              <article class="vpl-hex"><span>Réseau</span></article>
+              <article class="vpl-hex"><span>Confiance</span></article>
+              <article class="vpl-hex"><span>Transmission</span></article>
+            </div>
+
+            <aside class="vpl-honeycomb-copy">
+              <div class="vpl-sheen-card">
+                <strong>Une structure qui prend forme au scroll.</strong>
+                <p>
+                  Au lieu d’un simple ruban linéaire, cette mosaïque montre comment le modèle Vital Protect s’assemble : une méthode, une plateforme, un réseau, un contrôle qualité.
+                </p>
+                <div class="vpl-actions">
+                  <a class="vpl-button vpl-button-primary" href="/devenir-formateur.html">Découvrir le réseau</a>
+                  <a class="vpl-button vpl-button-secondary" href="/methode.html">Voir le standard</a>
+                </div>
+              </div>
+            </aside>
           </div>
         </div>
       </section>
