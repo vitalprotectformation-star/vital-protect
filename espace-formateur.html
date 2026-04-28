@@ -337,23 +337,53 @@
       }
     }
   </style>
+  <link rel="stylesheet" href="/styles/vp-modern.css" />
+  <script src="/vp-site.js" defer></script>
 </head>
 
 <body>
-  <header>
-    <div class="container header-inner">
-      <a href="/index.html" class="brand">
-        <img src="/logo.png" alt="VITAL PROTECT" />
-        <span class="brand-text">VITAL PROTECT</span>
-      </a>
-
-      <nav class="nav-links">
-        <a href="/index.html">Accueil</a>
-        <a href="/devenir-formateur.html">Devenir formateur</a>
-        <button id="headerLogoutBtn" type="button">Déconnexion</button>
-      </nav>
-    </div>
-  </header>
+  <header class="site-header vp-header" data-vp-header>
+  <div class="container site-header__inner vp-nav-wrap">
+    <a href="/index.html" class="vp-home" aria-label="Accueil Vital Protect">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11.2 12 4l9 7.2v8.3a1 1 0 0 1-1 1h-5.4v-5.8H9.4v5.8H4a1 1 0 0 1-1-1v-8.3Z" fill="currentColor"/></svg>
+    </a>
+    <a href="/index.html" class="site-brand vp-brand" aria-label="Vital Protect">
+      <img src="/logo.png" alt="Logo Vital Protect" />
+      <div class="site-brand__text">
+        <div class="site-brand__title">Vital Protect</div>
+        <div class="site-brand__subtitle">Standard sécurité personnelle</div>
+      </div>
+    </a>
+    <button class="vp-menu-toggle" type="button" aria-controls="vp-main-nav" aria-expanded="false"><span>Menu</span><i aria-hidden="true"></i></button>
+    <nav id="vp-main-nav" class="site-nav vp-main-nav" aria-label="Navigation principale">
+      <div class="vp-nav-group">
+        <button class="vp-nav-link vp-nav-toggle" type="button" aria-expanded="false">Le standard <span aria-hidden="true">⌄</span></button>
+        <div class="vp-dropdown" role="menu">
+          <a href="/methode.html"><span>01</span><strong>La méthode</strong><small>Prévention, distance, réaction réaliste.</small></a>
+          <a href="/reseau.html"><span>02</span><strong>Le réseau</strong><small>Formateurs certifiés, audités, recyclés.</small></a>
+          <a href="/qui-sommes-nous.html"><span>03</span><strong>Qui sommes-nous ?</strong><small>Mission, limites et garanties.</small></a>
+          <a href="/faq.html"><span>04</span><strong>FAQ</strong><small>Réponses avant inscription.</small></a>
+        </div>
+      </div>
+      <div class="vp-nav-group">
+        <button class="vp-nav-link vp-nav-toggle" type="button" aria-expanded="false">Nos offres <span aria-hidden="true">⌄</span></button>
+        <div class="vp-dropdown" role="menu">
+          <a href="/stages.html"><span>01</span><strong>Stages grand public</strong><small>Voir les prochaines dates.</small></a>
+          <a href="/entreprises.html"><span>02</span><strong>Entreprises</strong><small>Prévention des tensions.</small></a>
+          <a href="/contact.html"><span>03</span><strong>Contact</strong><small>Question, devis ou demande de ville.</small></a>
+        </div>
+      </div>
+      <div class="vp-nav-group">
+        <button class="vp-nav-link vp-nav-toggle" type="button" aria-expanded="false">Formateurs <span aria-hidden="true">⌄</span></button>
+        <div class="vp-dropdown" role="menu">
+          <a href="/devenir-formateur.html"><span>01</span><strong>Devenir formateur</strong><small>Certification, audit, marketplace.</small></a>
+          <a href="/formateur-login.html"><span>02</span><strong>Espace formateur</strong><small>Connexion et suivi des sessions.</small></a>
+        </div>
+      </div>
+      <a href="/stages.html" class="nav-cta vp-nav-cta">Trouver un stage</a>
+    </nav>
+  </div>
+</header>
 
   <main>
     <div class="container">
@@ -363,11 +393,26 @@
     </div>
   </main>
 
-  <footer>
-    <div class="container">
-      <p>VITAL PROTECT — Espace formateur</p>
+  <footer class="site-footer vp-footer">
+  <div class="container site-footer__grid">
+    <div class="site-footer__brand">
+      <strong>VITAL PROTECT</strong>
+      <p>Standard de sécurité personnelle fondé sur la prévention, la pédagogie progressive, un réseau de formateurs certifiés et une marketplace de stages.</p>
     </div>
-  </footer>
+    <div class="site-footer__links">
+      <a href="/methode.html">La méthode</a>
+      <a href="/reseau.html">Le réseau</a>
+      <a href="/stages.html">Stages</a>
+      <a href="/entreprises.html">Entreprises</a>
+      <a href="/devenir-formateur.html">Devenir formateur</a>
+      <a href="/qui-sommes-nous.html">Qui sommes-nous ?</a>
+      <a href="/contact.html">Contact</a>
+      <a href="/mentions-legales.html">Mentions légales</a>
+      <a href="/politique-confidentialite.html">Confidentialité</a>
+      <a href="/cgv.html">CGV</a>
+    </div>
+  </div>
+</footer>
 
   <script type="module">
     import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
