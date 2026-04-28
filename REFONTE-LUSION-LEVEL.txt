@@ -1,0 +1,32 @@
+Direction immersive type Lusion appliquée à l'accueil.
+
+Objectif :
+- passer d'un site statique à une expérience premium avec mouvement, canvas, profondeur, sections immersives, cards interactives et boutons plus forts.
+
+Fichiers créés :
+- styles/lusion-level.css
+- lusion-level.js
+- REFONTE-LUSION-LEVEL.txt
+
+Fichier fortement modifié :
+- index.html
+
+Ce qui a changé visiblement :
+- Hero 100vh entièrement refait
+- Canvas animé en arrière-plan
+- Navigation premium fixe
+- Grandes typographies à la Lusion
+- Sphère/forme morphing animée
+- Photos mises en scène en 3D
+- Cards flottantes
+- Marquee animée
+- Cards interactives avec glow souris
+- Sections sombre/clair alternées
+- Grille immersive avec images
+- Section qualité réseau en sticky scroll
+- CTA final grand format
+
+Important :
+- Ce n'est pas une copie de Lusion.
+- Aucun asset Dribbble/Lusion/Uiverse n'a été repris.
+- Les fichiers API/admin ne sont pas modifiés.
