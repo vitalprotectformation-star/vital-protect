@@ -2627,3 +2627,189 @@ input, textarea, select, button, label, form {
 .vpl-noise {
   z-index: 0 !important;
 }
+
+
+/* =========================================================
+   V15 — Correctif réel du stacking : ruban derrière les contenus
+   ========================================================= */
+
+/*
+  Le bug venait du fait que les parents (.vpl-page, .vpl-section, etc.)
+  créaient une couche complète sous le ruban. Même avec z-index élevé,
+  les enfants ne pouvaient pas passer devant.
+
+  Nouvelle logique :
+  - les grands parents ne créent plus de couche z-index fermée ;
+  - le ruban reste en fixed z-index 4 ;
+  - les contenus importants passent au-dessus en z-index 20 ;
+  - les fonds de section restent en flux normal, donc derrière le ruban.
+*/
+
+.vpl-page,
+.vpl-inner-page,
+.vpl-hero,
+.vpl-inner-hero,
+.vpl-light,
+.vpl-section,
+.vpl-section-dark,
+.vpl-final,
+.vpl-marquee,
+.vpl-kinetic-strip,
+main,
+footer {
+  position: relative !important;
+  z-index: auto !important;
+  isolation: auto !important;
+}
+
+/* Le ruban est entre les fonds et les contenus */
+.vpl-scroll-ribbon {
+  z-index: 4 !important;
+  pointer-events: none !important;
+}
+
+/* La navbar reste tout au-dessus */
+.vpl-nav {
+  z-index: 100 !important;
+}
+
+/* Tous les blocs de contenu repassent réellement au-dessus du ruban */
+.vpl-container,
+.vpl-hero-grid,
+.vpl-hero-grid > *,
+.vpl-inner-hero-grid,
+.vpl-inner-hero-grid > *,
+.vpl-visual,
+.vpl-visual > *,
+.vpl-inner-visual,
+.vpl-inner-visual > *,
+.vpl-section-head,
+.vpl-section-head > *,
+.vpl-card-grid,
+.vpl-card-grid > *,
+.vpl-image-grid,
+.vpl-image-grid > *,
+.vpl-steps,
+.vpl-steps > *,
+.vpl-step-list,
+.vpl-step-list > *,
+.vpl-final-box,
+.vpl-final-box > *,
+.vpl-honeycomb-shell,
+.vpl-honeycomb-shell > *,
+.vpl-honeycomb-grid,
+.vpl-honeycomb-grid > *,
+.vpl-honeycomb-copy,
+.vpl-sheen-card,
+.vpl-sheen-card > *,
+.vpl-showcase-note,
+.vpl-showcase-note > *,
+.vpl-card,
+.vpl-card > *,
+.vpl-image-card,
+.vpl-image-card > *,
+.vpl-image-content,
+.vpl-image-content > *,
+.vpl-float-panel,
+.vpl-float-panel > *,
+.vpl-inner-stat,
+.vpl-inner-stat > *,
+.vpl-actions,
+.vpl-actions > *,
+.vpl-step,
+.vpl-step > *,
+.vpl-modern-tile,
+.vpl-modern-tile > *,
+.vpl-proof-row,
+.vpl-proof-row > *,
+.vpl-form-card,
+.vpl-contact-card,
+form,
+form > *,
+input,
+textarea,
+select,
+button,
+label {
+  position: relative !important;
+  z-index: 20 !important;
+}
+
+/* Textes, médias, boutons, liens : premier plan absolu */
+.vpl-page h1,
+.vpl-page h2,
+.vpl-page h3,
+.vpl-page h4,
+.vpl-page p,
+.vpl-page li,
+.vpl-page a,
+.vpl-page span,
+.vpl-page strong,
+.vpl-page em,
+.vpl-page small,
+.vpl-page img,
+.vpl-page picture,
+.vpl-page video,
+.vpl-inner-page h1,
+.vpl-inner-page h2,
+.vpl-inner-page h3,
+.vpl-inner-page h4,
+.vpl-inner-page p,
+.vpl-inner-page li,
+.vpl-inner-page a,
+.vpl-inner-page span,
+.vpl-inner-page strong,
+.vpl-inner-page em,
+.vpl-inner-page small,
+.vpl-inner-page img,
+.vpl-inner-page picture,
+.vpl-inner-page video {
+  position: relative !important;
+  z-index: 22 !important;
+}
+
+/* Les pseudo-éléments décoratifs restent derrière */
+.vpl-page::before,
+.vpl-page::after,
+.vpl-inner-page::before,
+.vpl-inner-page::after,
+.vpl-hero::before,
+.vpl-hero::after,
+.vpl-inner-hero::before,
+.vpl-inner-hero::after,
+.vpl-section::before,
+.vpl-section::after,
+.vpl-section-dark::before,
+.vpl-section-dark::after,
+.vpl-final::before,
+.vpl-final::after {
+  z-index: 0 !important;
+  pointer-events: none !important;
+}
+
+/* Le canvas et le noise restent tout au fond */
+.vpl-canvas,
+.vpl-noise {
+  z-index: 0 !important;
+}
+
+/* Important : éviter qu’une carte crée un effet de découpe au-dessus du ruban */
+.vpl-card::before,
+.vpl-card::after,
+.vpl-image-card::before,
+.vpl-image-card::after,
+.vpl-final-box::before,
+.vpl-final-box::after,
+.vpl-sheen-card::before,
+.vpl-sheen-card::after {
+  z-index: 0 !important;
+}
+
+/* Mais le contenu interne des cartes reste devant */
+.vpl-card > *,
+.vpl-image-card > *,
+.vpl-final-box > *,
+.vpl-sheen-card > * {
+  position: relative !important;
+  z-index: 23 !important;
+}
