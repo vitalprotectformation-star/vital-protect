@@ -2083,3 +2083,148 @@ footer {
     display: none !important;
   }
 }
+
+/* =========================================================
+   V8 — Fix vidéo : navbar toujours en haut + contrastes
+   ========================================================= */
+
+/* La navbar reste toujours visible en haut, même en zoom / tablette. */
+.vpl-nav {
+  position: fixed !important;
+  top: 18px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  width: min(1240px, calc(100% - 32px)) !important;
+  margin: 0 !important;
+  z-index: 100 !important;
+}
+
+/* Le ruban commence bien sous la navbar fixe. */
+.vpl-scroll-ribbon {
+  top: 108px !important;
+  height: calc(100vh - 108px) !important;
+  z-index: 1 !important;
+}
+
+/* Les contenus commencent sous la navbar, pas avant. */
+.vpl-hero,
+.vpl-inner-hero {
+  padding-top: 150px !important;
+}
+
+/* Contraste fort sur les sections sombres. */
+.vpl-section-dark,
+.vpl-section-dark .vpl-section-head,
+.vpl-section-dark .vpl-section-title,
+.vpl-section-dark h1,
+.vpl-section-dark h2,
+.vpl-section-dark h3,
+.vpl-section-dark strong,
+.vpl-final,
+.vpl-final h1,
+.vpl-final h2,
+.vpl-final h3,
+.vpl-final strong {
+  color: #ffffff !important;
+}
+
+.vpl-section-dark .vpl-section-copy,
+.vpl-section-dark p,
+.vpl-section-dark .vpl-step p,
+.vpl-final p {
+  color: rgba(255,255,255,.72) !important;
+}
+
+/* Les cards claires dans une section sombre gardent un texte foncé. */
+.vpl-section-dark .vpl-card,
+.vpl-section-dark .vpl-sheen-card {
+  color: #07111f !important;
+}
+
+.vpl-section-dark .vpl-card h3,
+.vpl-section-dark .vpl-card strong,
+.vpl-section-dark .vpl-sheen-card h3,
+.vpl-section-dark .vpl-sheen-card strong {
+  color: #07111f !important;
+}
+
+.vpl-section-dark .vpl-card p,
+.vpl-section-dark .vpl-sheen-card p {
+  color: #566578 !important;
+}
+
+/* Les steps sombres restent lisibles. */
+.vpl-section-dark .vpl-step {
+  color: #ffffff !important;
+  background: rgba(255,255,255,.075) !important;
+  border-color: rgba(255,255,255,.15) !important;
+}
+
+.vpl-section-dark .vpl-step h3 {
+  color: #ffffff !important;
+}
+
+.vpl-section-dark .vpl-step p {
+  color: rgba(255,255,255,.70) !important;
+}
+
+/* Clarté sur fonds blancs/clairs. */
+.vpl-light,
+.vpl-honeycomb-section,
+.vpl-light h1,
+.vpl-light h2,
+.vpl-light h3,
+.vpl-light strong,
+.vpl-honeycomb-section h1,
+.vpl-honeycomb-section h2,
+.vpl-honeycomb-section h3,
+.vpl-honeycomb-section strong {
+  color: #07111f !important;
+}
+
+.vpl-light p,
+.vpl-honeycomb-section p,
+.vpl-light .vpl-section-copy,
+.vpl-honeycomb-section .vpl-section-copy {
+  color: #566578 !important;
+}
+
+@media (max-width: 1080px) {
+  .vpl-nav {
+    position: fixed !important;
+    top: 10px !important;
+    left: 12px !important;
+    right: 12px !important;
+    width: auto !important;
+    transform: none !important;
+    grid-template-columns: 1fr !important;
+    border-radius: 28px !important;
+    max-height: 138px !important;
+    overflow: hidden !important;
+  }
+
+  .vpl-menu {
+    justify-content: flex-start !important;
+  }
+
+  .vpl-hero,
+  .vpl-inner-hero {
+    padding-top: 188px !important;
+  }
+
+  .vpl-scroll-ribbon {
+    top: 166px !important;
+    height: calc(100vh - 166px) !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .vpl-nav {
+    max-height: 150px !important;
+  }
+
+  .vpl-hero,
+  .vpl-inner-hero {
+    padding-top: 190px !important;
+  }
+}
