@@ -144,8 +144,8 @@ window.addEventListener('DOMContentLoaded', () => {
     const dot = ribbon.querySelector('.vpl-ribbon-dot');
     if (progressPath && dot && typeof progressPath.getTotalLength === 'function') {
       const length = progressPath.getTotalLength();
-      progressPath.style.strokeDasharray = `${length}`;
-      progressPath.style.strokeDashoffset = `${length}`;
+      progressPath.style.setProperty('stroke-dasharray', `${length}`, 'important');
+      progressPath.style.setProperty('stroke-dashoffset', `${length}`, 'important');
 
       const updateRibbonTop = () => {
         const nav = document.querySelector('.vpl-nav');
@@ -159,7 +159,7 @@ window.addEventListener('DOMContentLoaded', () => {
         updateRibbonTop();
         const max = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
         const p = Math.min(1, Math.max(0, window.scrollY / max));
-        progressPath.style.strokeDashoffset = `${(1 - p) * length}`;
+        progressPath.style.setProperty('stroke-dashoffset', `${(1 - p) * length}`, 'important');
         ribbon.classList.toggle('is-drawing', p > 0.012);
         const point = progressPath.getPointAtLength(length * p);
         dot.setAttribute('cx', point.x.toFixed(2));
