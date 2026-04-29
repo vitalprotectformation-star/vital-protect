@@ -2277,3 +2277,60 @@ body.vpl-inner-page .vpl-scroll-ribbon {
     padding-top: 214px !important;
   }
 }
+
+
+/* =========================================================
+   V10 — Ruban dessiné au scroll, sans chemin visible au départ
+   ========================================================= */
+
+/* Le ruban ne doit jamais occuper d'espace dans la page */
+.vpl-scroll-ribbon {
+  position: fixed !important;
+  top: var(--vpl-ribbon-top, 0px) !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100vw !important;
+  height: calc(100vh - var(--vpl-ribbon-top, 0px)) !important;
+  z-index: 1 !important;
+  pointer-events: none !important;
+  overflow: hidden !important;
+  opacity: .92 !important;
+  transform: translateZ(0);
+}
+
+/* La navbar reste devant */
+.vpl-nav {
+  z-index: 90 !important;
+}
+
+/* On supprime le tracé fantôme : le chemin ne doit pas être visible avant création */
+.vpl-ribbon-base {
+  opacity: 0 !important;
+  stroke: transparent !important;
+}
+
+/* Grâce à pathLength="1" dans le HTML, le ruban est entièrement masqué avant JS/scroll */
+.vpl-ribbon-progress {
+  stroke-dasharray: 1 !important;
+  stroke-dashoffset: 1 !important;
+  opacity: 1 !important;
+  transition: stroke-dashoffset .08s linear;
+}
+
+/* Le point lumineux est caché tout en haut, puis apparaît quand le tracé commence */
+.vpl-ribbon-dot {
+  opacity: 0;
+  transform-origin: center;
+  transition: opacity .18s ease;
+}
+
+.vpl-scroll-ribbon.is-drawing .vpl-ribbon-dot {
+  opacity: .95;
+}
+
+@media (max-width: 640px) {
+  .vpl-scroll-ribbon {
+    display: none !important;
+  }
+}
