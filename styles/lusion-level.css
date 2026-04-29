@@ -2334,3 +2334,77 @@ body.vpl-inner-page .vpl-scroll-ribbon {
     display: none !important;
   }
 }
+
+
+/* =========================================================
+   V11 — Ruban bleu qui laisse une trace au scroll
+   ========================================================= */
+
+/* Le ruban reste derrière le contenu et commence sous la navbar */
+.vpl-scroll-ribbon {
+  position: fixed !important;
+  top: var(--vpl-ribbon-top, 0px) !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100vw !important;
+  height: calc(100vh - var(--vpl-ribbon-top, 0px)) !important;
+  z-index: 1 !important;
+  pointer-events: none !important;
+  overflow: hidden !important;
+  opacity: .96 !important;
+  mix-blend-mode: normal !important;
+}
+
+/* Aucun chemin gris/transparent visible avant le dessin */
+.vpl-ribbon-base {
+  opacity: 0 !important;
+  stroke: transparent !important;
+}
+
+/* Le vrai ruban : bleu, épais, lumineux, dessiné par JS */
+.vpl-ribbon-progress {
+  opacity: 1 !important;
+  stroke: #2f7fca !important;
+  stroke-width: 48 !important;
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
+  filter:
+    drop-shadow(0 0 10px rgba(47,127,202,.45))
+    drop-shadow(0 0 24px rgba(47,127,202,.26))
+    drop-shadow(0 0 42px rgba(255,255,255,.16)) !important;
+  transition: stroke-dashoffset .06s linear !important;
+}
+
+/* Couche lumineuse secondaire, créée via le même path si disponible */
+.vpl-scroll-ribbon.is-drawing .vpl-ribbon-progress {
+  stroke: url(#vplRibbonGradient) !important;
+}
+
+/* Le pointeur devient bleu et accompagne le dessin */
+.vpl-ribbon-dot {
+  opacity: 0 !important;
+  fill: #2f7fca !important;
+  r: 19;
+  filter:
+    drop-shadow(0 0 10px rgba(47,127,202,.70))
+    drop-shadow(0 0 24px rgba(47,127,202,.42))
+    drop-shadow(0 0 36px rgba(255,255,255,.20)) !important;
+  transition: opacity .18s ease !important;
+}
+
+.vpl-scroll-ribbon.is-drawing .vpl-ribbon-dot {
+  opacity: 1 !important;
+}
+
+@media (max-width: 1024px) {
+  .vpl-ribbon-progress {
+    stroke-width: 34 !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .vpl-scroll-ribbon {
+    display: none !important;
+  }
+}
