@@ -2453,3 +2453,67 @@ body.vpl-inner-page .vpl-scroll-ribbon {
 .vpl-scroll-ribbon.is-drawing .vpl-ribbon-dot {
   opacity: 1 !important;
 }
+
+
+/* =========================================================
+   V13 — Ruban visible aussi sur la page d'accueil
+   ========================================================= */
+
+/*
+  Sur l'accueil, le fond .vpl-page masquait le ruban.
+  Le ruban est maintenant au-dessus des fonds, mais sous la navbar et sous les contenus importants.
+*/
+.vpl-scroll-ribbon {
+  z-index: 4 !important;
+}
+
+/* La navbar reste toujours au-dessus */
+.vpl-nav {
+  z-index: 90 !important;
+}
+
+/* Les contenus éditoriaux passent au-dessus du ruban */
+.vpl-hero-grid,
+.vpl-hero > .vpl-container,
+.vpl-inner-hero-grid,
+.vpl-section-head,
+.vpl-card-grid,
+.vpl-image-grid,
+.vpl-steps,
+.vpl-final-box,
+.vpl-honeycomb-shell,
+.vpl-marquee,
+.vpl-footer,
+.vpl-kinetic-strip,
+.vpl-light > *,
+.vpl-section > .vpl-container,
+.vpl-section-dark > .vpl-container,
+.vpl-final > .vpl-container {
+  position: relative;
+  z-index: 6;
+}
+
+/* Sur l'accueil, le ruban doit traverser le hero et les sections sans être masqué */
+body.vpl-home .vpl-scroll-ribbon {
+  z-index: 4 !important;
+  opacity: .92 !important;
+}
+
+/* Les grands fonds gardent leur rôle visuel sans recouvrir le ruban */
+body.vpl-home .vpl-page {
+  isolation: auto !important;
+}
+
+body.vpl-home .vpl-hero,
+body.vpl-home .vpl-light,
+body.vpl-home .vpl-section,
+body.vpl-home .vpl-section-dark,
+body.vpl-home .vpl-final {
+  position: relative;
+}
+
+/* Le canvas reste derrière tout */
+.vpl-canvas,
+.vpl-noise {
+  z-index: 0 !important;
+}
