@@ -2517,3 +2517,113 @@ body.vpl-home .vpl-final {
 .vpl-noise {
   z-index: 0 !important;
 }
+
+
+/* =========================================================
+   V14 — Ruban derrière les éléments, devant les fonds
+   ========================================================= */
+
+/*
+  Objectif :
+  - le ruban reste au-dessus des fonds / arrière-plans de section
+  - mais TOUS les contenus (textes, images, cards, boutons, formulaires) passent devant
+*/
+
+.vpl-scroll-ribbon {
+  z-index: 4 !important;
+}
+
+.vpl-nav {
+  z-index: 90 !important;
+}
+
+/* Les wrappers de section restent sous le ruban */
+.vpl-page,
+.vpl-inner-page,
+.vpl-hero,
+.vpl-inner-hero,
+.vpl-light,
+.vpl-section,
+.vpl-section-dark,
+.vpl-final,
+.vpl-marquee,
+.vpl-kinetic-strip,
+footer,
+main {
+  position: relative;
+  z-index: 2;
+}
+
+/* Les contenus passent devant le ruban */
+.vpl-container,
+.vpl-container > *,
+.vpl-hero-grid,
+.vpl-hero-grid > *,
+.vpl-inner-hero-grid,
+.vpl-inner-hero-grid > *,
+.vpl-section-head,
+.vpl-section-head > *,
+.vpl-card-grid,
+.vpl-card-grid > *,
+.vpl-image-grid,
+.vpl-image-grid > *,
+.vpl-steps,
+.vpl-steps > *,
+.vpl-step-list,
+.vpl-step-list > *,
+.vpl-final-box,
+.vpl-final-box > *,
+.vpl-honeycomb-shell,
+.vpl-honeycomb-shell > *,
+.vpl-sheen-card,
+.vpl-sheen-card > *,
+.vpl-showcase-note,
+.vpl-showcase-note > *,
+.vpl-form-card,
+.vpl-form-card > *,
+.vpl-contact-card,
+.vpl-contact-card > *,
+.vpl-card,
+.vpl-card > *,
+.vpl-image-card,
+.vpl-image-card > *,
+.vpl-float-panel,
+.vpl-float-panel > *,
+.vpl-inner-stat,
+.vpl-inner-stat > *,
+.vpl-actions,
+.vpl-actions > * {
+  position: relative;
+  z-index: 8 !important;
+}
+
+/* Les médias et textes sont explicitement au premier plan */
+.vpl-page h1, .vpl-page h2, .vpl-page h3, .vpl-page h4,
+.vpl-page p, .vpl-page li, .vpl-page a, .vpl-page span, .vpl-page strong,
+.vpl-page img, .vpl-page picture, .vpl-page video, .vpl-page svg,
+.vpl-inner-page h1, .vpl-inner-page h2, .vpl-inner-page h3, .vpl-inner-page h4,
+.vpl-inner-page p, .vpl-inner-page li, .vpl-inner-page a, .vpl-inner-page span, .vpl-inner-page strong,
+.vpl-inner-page img, .vpl-inner-page picture, .vpl-inner-page video, .vpl-inner-page svg,
+input, textarea, select, button, label, form {
+  position: relative;
+  z-index: 9;
+}
+
+/* Les pseudo-fonds décoratifs restent derrière */
+.vpl-page::before,
+.vpl-page::after,
+.vpl-inner-page::before,
+.vpl-inner-page::after,
+.vpl-hero::before,
+.vpl-inner-hero::before,
+.vpl-inner-hero::after,
+.vpl-section-dark::before,
+.vpl-final::before {
+  z-index: 1 !important;
+  pointer-events: none;
+}
+
+.vpl-canvas,
+.vpl-noise {
+  z-index: 0 !important;
+}
