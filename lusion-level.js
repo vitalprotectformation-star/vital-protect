@@ -143,9 +143,16 @@ window.addEventListener('DOMContentLoaded', () => {
     const progressPath = ribbon.querySelector('.vpl-ribbon-progress');
     const dot = ribbon.querySelector('.vpl-ribbon-dot');
     if (progressPath && dot && typeof progressPath.getTotalLength === 'function') {
-      const length = progressPath.getTotalLength();
-      progressPath.style.setProperty('stroke-dasharray', `${length}`, 'important');
-      progressPath.style.setProperty('stroke-dashoffset', `${length}`, 'important');
+      /*
+       * V12 true draw fix:
+       * All SVG paths use pathLength="1" in the HTML.
+       * Therefore dasharray/dashoffset MUST be normalized from 1 to 0.
+       * getTotalLength() is used only to position the moving dot along the geometry.
+       */
+      const geometryLength = progressPath.getTotalLength();
+
+      progressPath.style.setProperty('stroke-dasharray', '1', 'important');
+      progressPath.style.setProperty('stroke-dashoffset', '1', 'important');
 
       const updateRibbonTop = () => {
         const nav = document.querySelector('.vpl-nav');
@@ -157,11 +164,18 @@ window.addEventListener('DOMContentLoaded', () => {
       let ticking = false;
       const updateRibbon = () => {
         updateRibbonTop();
+
         const max = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
         const p = Math.min(1, Math.max(0, window.scrollY / max));
-        progressPath.style.setProperty('stroke-dashoffset', `${(1 - p) * length}`, 'important');
-        ribbon.classList.toggle('is-drawing', p > 0.012);
-        const point = progressPath.getPointAtLength(length * p);
+
+        // This is the actual drawing effect: 1 = hidden, 0 = fully drawn.
+        const dashOffset = 1 - p;
+        progressPath.style.setProperty('stroke-dasharray', '1', 'important');
+        progressPath.style.setProperty('stroke-dashoffset', `${dashOffset}`, 'important');
+
+        ribbon.classList.toggle('is-drawing', p > 0.003);
+
+        const point = progressPath.getPointAtLength(geometryLength * p);
         dot.setAttribute('cx', point.x.toFixed(2));
         dot.setAttribute('cy', point.y.toFixed(2));
         ticking = false;
