@@ -2408,3 +2408,48 @@ body.vpl-inner-page .vpl-scroll-ribbon {
     display: none !important;
   }
 }
+
+
+/* =========================================================
+   V12 — Vrai dessin progressif du ruban au scroll
+   ========================================================= */
+
+/* Le chemin de base reste invisible : pas de tracé déjà affiché */
+.vpl-ribbon-base {
+  opacity: 0 !important;
+  stroke: transparent !important;
+}
+
+/*
+  Important : les paths SVG ont pathLength="1".
+  Le ruban est donc masqué avec dashoffset: 1 et révélé vers 0 par JS.
+*/
+.vpl-ribbon-progress {
+  stroke-dasharray: 1 !important;
+  stroke-dashoffset: 1 !important;
+  opacity: 1 !important;
+  stroke: #2f7fca !important;
+  stroke-width: 48 !important;
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
+  transition: stroke-dashoffset .04s linear !important;
+  filter:
+    drop-shadow(0 0 10px rgba(47,127,202,.50))
+    drop-shadow(0 0 26px rgba(47,127,202,.30))
+    drop-shadow(0 0 44px rgba(255,255,255,.16)) !important;
+}
+
+.vpl-scroll-ribbon.is-drawing .vpl-ribbon-progress {
+  stroke: url(#vplRibbonGradient) !important;
+}
+
+/* Le pointeur ne s'affiche qu'une fois que le dessin commence */
+.vpl-ribbon-dot {
+  opacity: 0 !important;
+  fill: #2f7fca !important;
+  transition: opacity .16s ease !important;
+}
+
+.vpl-scroll-ribbon.is-drawing .vpl-ribbon-dot {
+  opacity: 1 !important;
+}
