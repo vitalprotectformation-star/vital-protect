@@ -2228,3 +2228,52 @@ footer {
     padding-top: 190px !important;
   }
 }
+
+
+/* =========================================================
+   V9 — Suppression de l'espace après la navbar
+   ========================================================= */
+
+/* Les pages internes remontent sous la navbar : le hero commence immédiatement après le menu. */
+body.vpl-inner-page main {
+  margin-top: -128px !important;
+}
+
+body.vpl-inner-page .vpl-inner-hero {
+  padding-top: 206px !important;
+}
+
+/* Le ruban reste sous la navbar, sans pousser le contenu. */
+body.vpl-inner-page .vpl-scroll-ribbon {
+  top: 108px !important;
+  height: calc(100vh - 108px) !important;
+}
+
+/* Sécurité : aucun élément décoratif ne doit créer d'espace de layout. */
+.vpl-scroll-ribbon,
+.vpl-canvas,
+.vpl-noise {
+  display: block !important;
+  position: fixed !important;
+  margin: 0 !important;
+}
+
+@media (max-width: 1080px) {
+  body.vpl-inner-page main {
+    margin-top: -154px !important;
+  }
+
+  body.vpl-inner-page .vpl-inner-hero {
+    padding-top: 242px !important;
+  }
+}
+
+@media (max-width: 640px) {
+  body.vpl-inner-page main {
+    margin-top: -112px !important;
+  }
+
+  body.vpl-inner-page .vpl-inner-hero {
+    padding-top: 214px !important;
+  }
+}
