@@ -676,3 +676,142 @@ window.addEventListener('DOMContentLoaded', () => {
     }
   });
 });
+
+
+window.addEventListener('DOMContentLoaded', () => {
+  const intro = document.getElementById('vpIntro');
+  if (!intro) return;
+
+  const FIRST_START_DELAY = 900;
+  const FIRST_DRAW_DURATION = 2200;
+  const PAUSE_AFTER_FIRST = 850;
+  const SECOND_DRAW_DURATION = 2600;
+  const SECOND_START_DELAY = FIRST_START_DELAY + FIRST_DRAW_DURATION + PAUSE_AFTER_FIRST;
+  const CUT_DELAY = SECOND_START_DELAY + SECOND_DRAW_DURATION + 260;
+  const OPEN_DELAY = CUT_DELAY + 480;
+  const HIDE_DELAY = OPEN_DELAY + 1650;
+
+  let timers = [];
+  let activeAnimation = null;
+
+  const wait = (fn, delay) => {
+    const timer = window.setTimeout(fn, delay);
+    timers.push(timer);
+  };
+
+  const clearTimers = () => {
+    timers.forEach(window.clearTimeout);
+    timers = [];
+  };
+
+  const setupLine = () => {
+    const line = document.getElementById('vpEcgLine');
+    const tracer = document.getElementById('vpTracer');
+
+    if (!line) return null;
+
+    const length = line.getTotalLength();
+
+    line.style.strokeDasharray = length;
+    line.style.strokeDashoffset = length;
+    line.classList.remove('is-active', 'is-fading', 'is-power');
+
+    if (tracer) {
+      tracer.classList.remove('is-active');
+      tracer.style.left = '0px';
+      tracer.style.top = '50%';
+    }
+
+    return { line, tracer, length };
+  };
+
+  const drawLine = (duration, options = {}) => {
+    const data = setupLine();
+    if (!data) return;
+
+    const { line, tracer, length } = data;
+    const zone = document.querySelector('.vp-ecg-zone');
+
+    const zoneWidth = zone ? zone.getBoundingClientRect().width : window.innerWidth;
+    const zoneHeight = zone ? zone.getBoundingClientRect().height : 230;
+
+    line.classList.add('is-active');
+
+    if (options.power) {
+      line.classList.add('is-power');
+    }
+
+    if (tracer) {
+      tracer.classList.add('is-active');
+    }
+
+    const start = performance.now();
+
+    const frame = (now) => {
+      const progress = Math.min((now - start) / duration, 1);
+      const eased = progress;
+
+      line.style.strokeDashoffset = length * (1 - eased);
+
+      if (tracer) {
+        const point = line.getPointAtLength(length * eased);
+        tracer.style.left = `${(point.x / 1920) * zoneWidth}px`;
+        tracer.style.top = `${(point.y / 230) * zoneHeight}px`;
+      }
+
+      if (progress < 1) {
+        activeAnimation = requestAnimationFrame(frame);
+      } else {
+        line.style.strokeDashoffset = 0;
+        if (tracer) tracer.classList.remove('is-active');
+
+        if (options.fadeAfter) {
+          wait(() => {
+            line.classList.add('is-fading');
+          }, options.fadeAfter);
+        }
+      }
+    };
+
+    if (activeAnimation) cancelAnimationFrame(activeAnimation);
+    activeAnimation = requestAnimationFrame(frame);
+  };
+
+  const startIntro = () => {
+    clearTimers();
+
+    if (activeAnimation) {
+      cancelAnimationFrame(activeAnimation);
+      activeAnimation = null;
+    }
+
+    intro.classList.remove('vp-cutting', 'vp-open', 'vp-hidden');
+    document.body.classList.add('vp-intro-playing');
+
+    setupLine();
+
+    wait(() => {
+      drawLine(FIRST_DRAW_DURATION, { fadeAfter: 420 });
+    }, FIRST_START_DELAY);
+
+    wait(() => {
+      drawLine(SECOND_DRAW_DURATION, { power: true });
+    }, SECOND_START_DELAY);
+
+    wait(() => {
+      intro.classList.add('vp-cutting');
+    }, CUT_DELAY);
+
+    wait(() => {
+      intro.classList.add('vp-open');
+    }, OPEN_DELAY);
+
+    wait(() => {
+      intro.classList.add('vp-hidden');
+      document.body.classList.remove('vp-intro-playing');
+    }, HIDE_DELAY);
+  };
+
+  window.addEventListener('resize', setupLine);
+  startIntro();
+});
