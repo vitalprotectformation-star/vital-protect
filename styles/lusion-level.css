@@ -2813,3 +2813,343 @@ label {
   position: relative !important;
   z-index: 23 !important;
 }
+
+
+/* =========================================================
+   Card cinema effect — sticky horizontal cards, inspired by provided video
+   ========================================================= */
+
+.vpl-card-cinema {
+  position: relative;
+  height: 260vh;
+  margin: 0;
+  padding: 0;
+  color: #07111f;
+  background:
+    radial-gradient(circle at 52% 40%, rgba(255,255,255,.95), rgba(255,255,255,0) 16%),
+    radial-gradient(circle at 78% 34%, rgba(100,140,190,.16), transparent 24%),
+    radial-gradient(circle at 22% 66%, rgba(255,255,255,.75), transparent 28%),
+    linear-gradient(180deg, #f4f7fb 0%, #eaf1f8 100%);
+  overflow: clip;
+  isolation: isolate;
+}
+
+.vpl-card-cinema::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(7,17,31,.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(7,17,31,.045) 1px, transparent 1px);
+  background-size: 54px 54px;
+  mask-image: radial-gradient(circle at 50% 45%, black, transparent 72%);
+  opacity: .52;
+}
+
+.vpl-card-cinema-sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  min-height: 720px;
+  display: grid;
+  align-items: center;
+  overflow: hidden;
+}
+
+.vpl-card-cinema-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.vpl-card-cinema-orb {
+  position: absolute;
+  left: 44%;
+  top: 33%;
+  width: 26rem;
+  height: 26rem;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,255,255,.95) 0%, rgba(225,236,247,.34) 38%, rgba(225,236,247,0) 70%);
+  filter: blur(14px);
+  animation: vplCinemaFloat 9s ease-in-out infinite;
+}
+
+.vpl-card-cinema-orb--two {
+  left: auto;
+  right: -7rem;
+  top: 12%;
+  width: 20rem;
+  height: 20rem;
+  background: radial-gradient(circle, rgba(73,126,185,.22) 0%, rgba(73,126,185,.09) 42%, rgba(73,126,185,0) 70%);
+  animation-duration: 12s;
+  animation-direction: reverse;
+}
+
+.vpl-card-cinema-layout {
+  position: relative;
+  z-index: 2;
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: minmax(0, .96fr) minmax(420px, 1.04fr);
+  align-items: center;
+  gap: clamp(24px, 4vw, 72px);
+  padding-top: 80px;
+  padding-bottom: 54px;
+}
+
+.vpl-card-cinema-copy {
+  position: relative;
+  z-index: 6;
+  max-width: 690px;
+}
+
+.vpl-card-cinema-copy h2 {
+  margin: 18px 0 0;
+  color: #07111f;
+  font-size: clamp(3.4rem, 7.4vw, 8.2rem);
+  line-height: .9;
+  letter-spacing: -.09em;
+  font-weight: 950;
+}
+
+.vpl-card-cinema-copy p {
+  max-width: 55ch;
+  margin: 28px 0 0;
+  color: #5b687a;
+  font-size: clamp(1rem, 1.35vw, 1.18rem);
+  line-height: 1.82;
+}
+
+.vpl-card-cinema-stage {
+  position: relative;
+  z-index: 5;
+  height: 640px;
+  perspective: 1200px;
+}
+
+.vpl-card-cinema-track {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+}
+
+.vpl-floating-card {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: min(330px, 72vw);
+  min-height: 380px;
+  padding: 24px;
+  border-radius: 28px;
+  color: #07111f;
+  background:
+    linear-gradient(160deg, rgba(255,255,255,.94), rgba(236,244,252,.86)),
+    radial-gradient(circle at 22% 0%, rgba(255,255,255,.98), transparent 38%);
+  border: 1px solid rgba(255,255,255,.85);
+  box-shadow:
+    0 34px 90px rgba(7,17,31,.16),
+    inset 0 1px 0 rgba(255,255,255,.9);
+  backdrop-filter: blur(18px);
+  transform:
+    translate3d(calc(var(--x, 0px) + (var(--card-progress, 0) * var(--travel, -1200px))), calc(-50% + var(--y, 0px)), var(--z, 0px))
+    rotate(var(--r, 0deg))
+    rotateY(calc(var(--ry, 0deg) + var(--tilt-y, 0deg)))
+    rotateX(var(--tilt-x, 0deg));
+  transition: box-shadow .35s ease, border-color .35s ease;
+  overflow: hidden;
+  will-change: transform;
+}
+
+.vpl-floating-card::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  background:
+    radial-gradient(260px circle at var(--mx, 50%) var(--my, 20%), rgba(74,130,192,.20), transparent 42%),
+    linear-gradient(115deg, transparent 0 30%, rgba(255,255,255,.42) 44%, transparent 58% 100%);
+  opacity: .72;
+  pointer-events: none;
+}
+
+.vpl-floating-card::after {
+  content: "";
+  position: absolute;
+  left: 22px;
+  right: 22px;
+  bottom: 22px;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(47,127,202,.85), rgba(255,255,255,0));
+  opacity: .8;
+}
+
+.vpl-floating-card:hover {
+  border-color: rgba(47,127,202,.22);
+  box-shadow:
+    0 42px 100px rgba(7,17,31,.20),
+    0 0 0 1px rgba(47,127,202,.10),
+    inset 0 1px 0 rgba(255,255,255,.9);
+}
+
+.vpl-floating-card-top {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 52px;
+}
+
+.vpl-floating-card-top span {
+  display: inline-grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 16px;
+  color: #fff;
+  background: linear-gradient(135deg, #07111f, #17314f 70%, #2f7fca);
+  font-weight: 950;
+}
+
+.vpl-floating-card-top b {
+  color: #526174;
+  font-size: .88rem;
+  letter-spacing: -.02em;
+}
+
+.vpl-floating-card h3 {
+  position: relative;
+  z-index: 2;
+  margin: 0;
+  color: #07111f;
+  font-size: 2.05rem;
+  line-height: 1;
+  letter-spacing: -.065em;
+}
+
+.vpl-floating-card p {
+  position: relative;
+  z-index: 2;
+  margin: 16px 0 0;
+  color: #5b687a;
+  line-height: 1.7;
+}
+
+.vpl-floating-card small {
+  position: absolute;
+  z-index: 2;
+  left: 24px;
+  bottom: 28px;
+  color: #2f7fca;
+  font-weight: 900;
+  letter-spacing: -.02em;
+}
+
+.vpl-floating-card--one {
+  --x: 660px;
+  --y: -180px;
+  --z: 60px;
+  --r: -7deg;
+  --ry: -6deg;
+  --travel: -1500px;
+}
+
+.vpl-floating-card--two {
+  --x: 960px;
+  --y: -60px;
+  --z: 20px;
+  --r: 4deg;
+  --ry: -8deg;
+  --travel: -1600px;
+}
+
+.vpl-floating-card--three {
+  --x: 1250px;
+  --y: 86px;
+  --z: 90px;
+  --r: -3deg;
+  --ry: 5deg;
+  --travel: -1720px;
+}
+
+.vpl-floating-card--four {
+  --x: 1540px;
+  --y: -130px;
+  --z: 40px;
+  --r: 6deg;
+  --ry: -5deg;
+  --travel: -1780px;
+}
+
+.vpl-floating-card--five {
+  --x: 1830px;
+  --y: 42px;
+  --z: 110px;
+  --r: -5deg;
+  --ry: 7deg;
+  --travel: -1880px;
+}
+
+@keyframes vplCinemaFloat {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(28px, -22px, 0) scale(1.06); }
+}
+
+@media (max-width: 1100px) {
+  .vpl-card-cinema {
+    height: auto;
+  }
+
+  .vpl-card-cinema-sticky {
+    position: relative;
+    height: auto;
+    min-height: 0;
+    padding: 88px 0;
+  }
+
+  .vpl-card-cinema-layout {
+    grid-template-columns: 1fr;
+    min-height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+
+  .vpl-card-cinema-stage {
+    height: auto;
+    perspective: none;
+  }
+
+  .vpl-card-cinema-track {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+  }
+
+  .vpl-floating-card,
+  .vpl-floating-card--one,
+  .vpl-floating-card--two,
+  .vpl-floating-card--three,
+  .vpl-floating-card--four,
+  .vpl-floating-card--five {
+    position: relative;
+    top: auto;
+    left: auto;
+    width: 100%;
+    min-height: 310px;
+    transform: none !important;
+  }
+}
+
+@media (max-width: 700px) {
+  .vpl-card-cinema-track {
+    grid-template-columns: 1fr;
+  }
+
+  .vpl-card-cinema-copy h2 {
+    font-size: clamp(2.8rem, 15vw, 4.8rem);
+  }
+}
