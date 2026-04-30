@@ -3501,3 +3501,157 @@ label {
     height: 124px !important;
   }
 }
+
+
+/* =========================================================
+   V17 — Card cinema en déploiement éventail, toutes visibles en bas
+   ========================================================= */
+
+/*
+  Nouvelle logique :
+  - les cards ne traversent plus trop loin hors écran ;
+  - elles se déploient progressivement dès l'arrivée dans la section ;
+  - en bas de section, toutes les cards restent visibles dans la scène.
+*/
+
+.vpl-card-cinema {
+  height: 165vh !important;
+}
+
+.vpl-card-cinema-sticky {
+  min-height: 640px !important;
+  padding-top: clamp(86px, 10vh, 118px) !important;
+}
+
+.vpl-card-cinema-layout {
+  grid-template-columns: minmax(0, .86fr) minmax(520px, 1.14fr) !important;
+  gap: clamp(28px, 4vw, 60px) !important;
+}
+
+.vpl-card-cinema-stage {
+  height: 620px !important;
+  overflow: visible !important;
+}
+
+.vpl-card-cinema-track {
+  overflow: visible !important;
+}
+
+/* Le titre reste présent mais ne prend plus toute la scène */
+.vpl-card-cinema-copy h2 {
+  font-size: clamp(3rem, 5.35vw, 5.95rem) !important;
+  max-width: 10.4ch !important;
+}
+
+/* Override total de l'ancien trajet horizontal */
+.vpl-card-cinema .vpl-floating-card {
+  width: min(310px, 70vw) !important;
+  min-height: 350px !important;
+  left: 50% !important;
+  top: 50% !important;
+  opacity: var(--cinema-opacity, .18) !important;
+  transform:
+    translate3d(
+      calc(-50% + var(--cinema-x, 0px)),
+      calc(-50% + var(--cinema-y, 0px)),
+      var(--cinema-z, 0px)
+    )
+    rotate(var(--cinema-r, 0deg))
+    rotateY(var(--cinema-ry, 0deg))
+    rotateX(var(--tilt-x, 0deg))
+    scale(var(--cinema-scale, .86)) !important;
+  transition:
+    opacity .28s ease,
+    box-shadow .35s ease,
+    border-color .35s ease !important;
+}
+
+/* Positions finales en éventail : toutes visibles */
+.vpl-card-cinema .vpl-floating-card--one {
+  --final-x: -250px;
+  --final-y: -150px;
+  --final-z: 80px;
+  --final-r: -7deg;
+  --final-ry: -8deg;
+}
+
+.vpl-card-cinema .vpl-floating-card--two {
+  --final-x: -40px;
+  --final-y: -42px;
+  --final-z: 130px;
+  --final-r: 3deg;
+  --final-ry: -4deg;
+}
+
+.vpl-card-cinema .vpl-floating-card--three {
+  --final-x: 180px;
+  --final-y: 108px;
+  --final-z: 100px;
+  --final-r: -3deg;
+  --final-ry: 5deg;
+}
+
+.vpl-card-cinema .vpl-floating-card--four {
+  --final-x: 360px;
+  --final-y: -116px;
+  --final-z: 70px;
+  --final-r: 6deg;
+  --final-ry: -5deg;
+}
+
+.vpl-card-cinema .vpl-floating-card--five {
+  --final-x: 505px;
+  --final-y: 72px;
+  --final-z: 115px;
+  --final-r: -5deg;
+  --final-ry: 6deg;
+}
+
+/* Début de l'animation : stack compacte, pas hors champ */
+.vpl-card-cinema:not(.is-ready) .vpl-floating-card {
+  --cinema-x: 230px;
+  --cinema-y: 0px;
+  --cinema-z: 0px;
+  --cinema-r: 0deg;
+  --cinema-ry: 0deg;
+  --cinema-scale: .82;
+  --cinema-opacity: 0;
+}
+
+/* Effet de profondeur plus lisible */
+.vpl-card-cinema .vpl-floating-card h3 {
+  font-size: 1.82rem !important;
+}
+
+.vpl-card-cinema .vpl-floating-card-top {
+  margin-bottom: 44px !important;
+}
+
+.vpl-card-cinema .vpl-floating-card p {
+  font-size: .96rem !important;
+}
+
+/* Fin de section : on garantit que toutes les cards restent visibles */
+.vpl-card-cinema.is-complete .vpl-floating-card {
+  opacity: 1 !important;
+}
+
+/* Responsive : grille normale, aucune animation hors champ */
+@media (max-width: 1100px) {
+  .vpl-card-cinema {
+    height: auto !important;
+  }
+
+  .vpl-card-cinema .vpl-floating-card,
+  .vpl-card-cinema .vpl-floating-card--one,
+  .vpl-card-cinema .vpl-floating-card--two,
+  .vpl-card-cinema .vpl-floating-card--three,
+  .vpl-card-cinema .vpl-floating-card--four,
+  .vpl-card-cinema .vpl-floating-card--five {
+    left: auto !important;
+    top: auto !important;
+    opacity: 1 !important;
+    transform: none !important;
+    width: 100% !important;
+  }
+}
