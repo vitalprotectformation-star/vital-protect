@@ -545,3 +545,82 @@ window.addEventListener('DOMContentLoaded', () => {
     });
   }
 });
+
+
+window.addEventListener('DOMContentLoaded', () => {
+  const carousels = [...document.querySelectorAll('[data-vp-carousel]')];
+
+  carousels.forEach((carousel) => {
+    const track = carousel.querySelector('[data-carousel-track]');
+    const prev = carousel.querySelector('[data-carousel-prev]');
+    const next = carousel.querySelector('[data-carousel-next]');
+    const dots = carousel.querySelector('[data-carousel-dots]');
+    const cards = [...carousel.querySelectorAll('.vpl-carousel-card')];
+
+    if (!track || !cards.length) return;
+
+    let current = 0;
+
+    const goTo = (index) => {
+      current = Math.max(0, Math.min(cards.length - 1, index));
+      cards[current].scrollIntoView({ behavior: 'smooth', inline: 'start', block: 'nearest' });
+      updateDots();
+    };
+
+    const updateDots = () => {
+      if (!dots) return;
+      [...dots.children].forEach((dot, index) => {
+        dot.classList.toggle('is-active', index === current);
+      });
+    };
+
+    if (dots && !dots.children.length) {
+      cards.forEach((_, index) => {
+        const dot = document.createElement('button');
+        dot.type = 'button';
+        dot.className = 'vpl-carousel-dot';
+        dot.setAttribute('aria-label', `Aller à la carte ${index + 1}`);
+        dot.addEventListener('click', () => goTo(index));
+        dots.appendChild(dot);
+      });
+    }
+
+    prev?.addEventListener('click', () => goTo(current - 1));
+    next?.addEventListener('click', () => goTo(current + 1));
+
+    track.addEventListener('scroll', () => {
+      const center = track.scrollLeft + track.clientWidth / 2;
+      let closest = 0;
+      let dist = Infinity;
+
+      cards.forEach((card, index) => {
+        const cardCenter = card.offsetLeft + card.offsetWidth / 2;
+        const nextDist = Math.abs(cardCenter - center);
+        if (nextDist < dist) {
+          dist = nextDist;
+          closest = index;
+        }
+      });
+
+      current = closest;
+      updateDots();
+    }, { passive: true });
+
+    if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+      cards.forEach((card) => {
+        card.addEventListener('pointermove', (event) => {
+          const rect = card.getBoundingClientRect();
+          card.style.setProperty('--mx', `${event.clientX - rect.left}px`);
+          card.style.setProperty('--my', `${event.clientY - rect.top}px`);
+        });
+
+        card.addEventListener('pointerleave', () => {
+          card.style.removeProperty('--mx');
+          card.style.removeProperty('--my');
+        });
+      });
+    }
+
+    updateDots();
+  });
+});
