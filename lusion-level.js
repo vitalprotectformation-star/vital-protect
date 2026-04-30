@@ -228,3 +228,66 @@ window.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('resize', updateHoney);
   }
 });
+
+
+window.addEventListener('DOMContentLoaded', () => {
+  /*
+   * Card cinema effect:
+   * Sticky section + scroll progress drives cards horizontally,
+   * similar to the video reference.
+   */
+  const cinemaSections = [...document.querySelectorAll('[data-card-cinema]')];
+
+  if (cinemaSections.length) {
+    let ticking = false;
+
+    const updateCinema = () => {
+      const vh = window.innerHeight || 1;
+
+      cinemaSections.forEach((section) => {
+        const rect = section.getBoundingClientRect();
+        const scrollable = Math.max(section.offsetHeight - vh, 1);
+        const progress = Math.min(1, Math.max(0, -rect.top / scrollable));
+        section.style.setProperty('--card-progress', progress.toFixed(4));
+      });
+
+      ticking = false;
+    };
+
+    updateCinema();
+
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(updateCinema);
+      }
+    }, { passive: true });
+
+    window.addEventListener('resize', updateCinema);
+
+    if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+      cinemaSections.forEach((section) => {
+        section.querySelectorAll('.vpl-floating-card').forEach((card) => {
+          card.addEventListener('pointermove', (event) => {
+            const rect = card.getBoundingClientRect();
+            const x = event.clientX - rect.left;
+            const y = event.clientY - rect.top;
+            const rx = ((y / rect.height) - 0.5) * -7;
+            const ry = ((x / rect.width) - 0.5) * 7;
+            card.style.setProperty('--mx', `${x}px`);
+            card.style.setProperty('--my', `${y}px`);
+            card.style.setProperty('--tilt-x', `${rx}deg`);
+            card.style.setProperty('--tilt-y', `${ry}deg`);
+          });
+
+          card.addEventListener('pointerleave', () => {
+            card.style.removeProperty('--mx');
+            card.style.removeProperty('--my');
+            card.style.removeProperty('--tilt-x');
+            card.style.removeProperty('--tilt-y');
+          });
+        });
+      });
+    }
+  }
+});
