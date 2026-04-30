@@ -291,3 +291,91 @@ window.addEventListener('DOMContentLoaded', () => {
     }
   }
 });
+
+
+
+window.addEventListener('DOMContentLoaded', () => {
+  /*
+   * V16 — Correctifs de calibration :
+   * - progression card cinema recalibrée pour éviter les vides ;
+   * - ruban atténué automatiquement sur sections claires / CTA final ;
+   * - honeycomb plus progressive.
+   */
+  const cinemaSections = [...document.querySelectorAll('[data-card-cinema]')];
+  const ribbon = document.querySelector('.vpl-scroll-ribbon');
+  const honeyGrids = [...document.querySelectorAll('[data-honeycomb]')];
+
+  let tickingV16 = false;
+
+  const smoothstep = (x) => {
+    const t = Math.min(1, Math.max(0, x));
+    return t * t * (3 - 2 * t);
+  };
+
+  const updateV16 = () => {
+    const vh = window.innerHeight || 1;
+
+    cinemaSections.forEach((section) => {
+      const rect = section.getBoundingClientRect();
+      const scrollable = Math.max(section.offsetHeight - vh, 1);
+      const raw = Math.min(1, Math.max(0, -rect.top / scrollable));
+
+      // Légère courbe pour éviter un départ trop brutal et garder les cartes visibles.
+      const progress = smoothstep(raw);
+      section.style.setProperty('--card-progress', progress.toFixed(4));
+      section.classList.toggle('is-active', raw > 0.02 && raw < 0.98);
+    });
+
+    if (ribbon) {
+      const probeX = Math.min(window.innerWidth - 40, Math.max(40, window.innerWidth * 0.72));
+      const probeY = Math.min(window.innerHeight - 100, Math.max(120, window.innerHeight * 0.52));
+      const node = document.elementFromPoint(probeX, probeY);
+      const section = node ? node.closest('.vpl-final, .vpl-honeycomb-section, .vpl-light, .vpl-section-dark, .vpl-inner-hero, .vpl-hero, .vpl-card-cinema') : null;
+
+      ribbon.classList.remove('is-on-light', 'is-on-final', 'is-on-dark', 'is-on-hero');
+
+      if (section) {
+        if (section.classList.contains('vpl-final')) {
+          ribbon.classList.add('is-on-final');
+        } else if (
+          section.classList.contains('vpl-light') ||
+          section.classList.contains('vpl-honeycomb-section') ||
+          section.classList.contains('vpl-card-cinema')
+        ) {
+          ribbon.classList.add('is-on-light');
+        } else if (
+          section.classList.contains('vpl-section-dark') ||
+          section.classList.contains('vpl-inner-hero') ||
+          section.classList.contains('vpl-hero')
+        ) {
+          ribbon.classList.add('is-on-dark');
+        }
+      }
+    }
+
+    honeyGrids.forEach((grid) => {
+      const rect = grid.getBoundingClientRect();
+      const items = [...grid.children];
+      const start = vh * 0.88;
+      const end = vh * 0.20;
+      const ratio = Math.min(1, Math.max(0, (start - rect.top) / (start - end)));
+      const visibleCount = Math.ceil(smoothstep(ratio) * items.length);
+      items.forEach((item, index) => {
+        item.classList.toggle('is-visible', index < visibleCount);
+      });
+    });
+
+    tickingV16 = false;
+  };
+
+  updateV16();
+
+  window.addEventListener('scroll', () => {
+    if (!tickingV16) {
+      tickingV16 = true;
+      requestAnimationFrame(updateV16);
+    }
+  }, { passive: true });
+
+  window.addEventListener('resize', updateV16);
+});
