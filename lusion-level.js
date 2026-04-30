@@ -624,3 +624,55 @@ window.addEventListener('DOMContentLoaded', () => {
     updateDots();
   });
 });
+
+
+window.addEventListener('DOMContentLoaded', () => {
+  const sections = [...document.querySelectorAll('[data-vp-constellation]')];
+  if (!sections.length) return;
+
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        const stage = entry.target.querySelector('.vpl-constellation-stage');
+        stage?.classList.add('is-visible');
+      }
+    });
+  }, { threshold: 0.25 });
+
+  sections.forEach((section) => {
+    io.observe(section);
+    const stage = section.querySelector('.vpl-constellation-stage');
+    if (!stage) return;
+
+    if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+      stage.addEventListener('pointermove', (event) => {
+        const rect = stage.getBoundingClientRect();
+        const px = (event.clientX - rect.left) / rect.width;
+        const py = (event.clientY - rect.top) / rect.height;
+        const rx = (py - 0.5) * -5;
+        const ry = (px - 0.5) * 6;
+        const core = stage.querySelector('.vpl-constellation-core');
+        if (core) core.style.transform = `translate(-50%, -50%) rotateX(${rx}deg) rotateY(${ry}deg)`;
+        stage.querySelectorAll('.vpl-constellation-node').forEach((node, index) => {
+          const depth = (index + 1) * 2.2;
+          const nx = (px - 0.5) * depth * 7;
+          const ny = (py - 0.5) * depth * 6;
+          node.style.transform = `translate(${nx}px, ${ny}px)`;
+          const nr = node.getBoundingClientRect();
+          node.style.setProperty('--mx', `${event.clientX - nr.left}px`);
+          node.style.setProperty('--my', `${event.clientY - nr.top}px`);
+        });
+      });
+
+      stage.addEventListener('pointerleave', () => {
+        const core = stage.querySelector('.vpl-constellation-core');
+        if (core) core.style.transform = '';
+        stage.querySelectorAll('.vpl-constellation-node').forEach((node) => {
+          node.style.transform = '';
+          node.style.removeProperty('--mx');
+          node.style.removeProperty('--my');
+        });
+      });
+    }
+  });
+});
