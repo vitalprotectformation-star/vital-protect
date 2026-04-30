@@ -4047,3 +4047,222 @@ label {
     min-height: 210px;
   }
 }
+
+
+.vpl-premium-carousel {
+  position: relative;
+  overflow: hidden;
+  padding: clamp(86px, 10vw, 132px) 0;
+  color: #07111f;
+  background:
+    radial-gradient(circle at 78% 22%, rgba(47,127,202,.14), transparent 24%),
+    radial-gradient(circle at 16% 72%, rgba(255,255,255,.82), transparent 28%),
+    linear-gradient(180deg, #f5f8fc 0%, #edf3f9 100%);
+}
+
+.vpl-premium-carousel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(7,17,31,.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(7,17,31,.035) 1px, transparent 1px);
+  background-size: 58px 58px;
+  mask-image: radial-gradient(circle at 50% 50%, black, transparent 74%);
+  opacity: .52;
+}
+
+.vpl-carousel-head {
+  position: relative;
+  z-index: 8;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.vpl-carousel-head h2 {
+  margin: 14px 0 0;
+  max-width: 11ch;
+  color: #07111f;
+  font-size: clamp(2.7rem, 5.8vw, 6.3rem);
+  line-height: .92;
+  letter-spacing: -.085em;
+}
+
+.vpl-carousel-controls {
+  display: flex;
+  gap: 10px;
+  flex: 0 0 auto;
+}
+
+.vpl-carousel-btn {
+  width: 54px;
+  height: 54px;
+  border: 0;
+  border-radius: 50%;
+  color: #07111f;
+  background: linear-gradient(135deg, #ffffff, #e1ebf5);
+  box-shadow: 0 16px 40px rgba(7,17,31,.12), inset 0 1px 0 rgba(255,255,255,.92);
+  font-size: 1.2rem;
+  font-weight: 950;
+  cursor: pointer;
+}
+
+.vpl-carousel-shell {
+  position: relative;
+  z-index: 8;
+  overflow: hidden;
+  border-radius: 38px;
+}
+
+.vpl-carousel-track {
+  display: flex;
+  gap: 22px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  padding: 4px 4px 24px;
+  scrollbar-width: none;
+}
+
+.vpl-carousel-track::-webkit-scrollbar {
+  display: none;
+}
+
+.vpl-carousel-card {
+  position: relative;
+  flex: 0 0 min(840px, 82vw);
+  min-height: 330px;
+  display: grid;
+  grid-template-columns: 110px 1fr;
+  gap: clamp(22px, 4vw, 48px);
+  align-items: center;
+  padding: clamp(28px, 4vw, 46px);
+  border-radius: 36px;
+  scroll-snap-align: start;
+  color: #07111f;
+  background:
+    radial-gradient(circle at 12% 0%, rgba(255,255,255,.98), transparent 30%),
+    linear-gradient(145deg, rgba(255,255,255,.95), rgba(230,240,250,.88));
+  border: 1px solid rgba(255,255,255,.88);
+  box-shadow: 0 30px 90px rgba(7,17,31,.14), inset 0 1px 0 rgba(255,255,255,.92);
+  overflow: hidden;
+  transform: translateZ(0);
+}
+
+.vpl-carousel-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(440px circle at var(--mx, 70%) var(--my, 20%), rgba(47,127,202,.18), transparent 42%),
+    linear-gradient(115deg, transparent 0 32%, rgba(255,255,255,.42) 46%, transparent 58% 100%);
+  pointer-events: none;
+}
+
+.vpl-carousel-card::after {
+  content: "";
+  position: absolute;
+  right: -100px;
+  top: -100px;
+  width: 260px;
+  height: 260px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(47,127,202,.22), transparent 70%);
+  filter: blur(10px);
+  pointer-events: none;
+}
+
+.vpl-carousel-num {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 92px;
+  height: 92px;
+  border-radius: 28px;
+  color: #fff;
+  background: linear-gradient(135deg, #07111f, #17314f 62%, #2f7fca);
+  box-shadow: 0 24px 60px rgba(47,127,202,.22);
+  font-size: 1.45rem;
+  font-weight: 950;
+}
+
+.vpl-carousel-card > div {
+  position: relative;
+  z-index: 2;
+}
+
+.vpl-carousel-card strong {
+  display: inline-flex;
+  margin-bottom: 12px;
+  color: #2f7fca;
+  font-size: .9rem;
+  font-weight: 950;
+  letter-spacing: -.02em;
+}
+
+.vpl-carousel-card h3 {
+  margin: 0;
+  color: #07111f;
+  font-size: clamp(2.15rem, 4.2vw, 4.5rem);
+  line-height: .92;
+  letter-spacing: -.075em;
+  max-width: 10ch;
+}
+
+.vpl-carousel-card p {
+  max-width: 58ch;
+  margin: 18px 0 0;
+  color: #566578;
+  line-height: 1.75;
+  font-size: 1.04rem;
+}
+
+.vpl-carousel-dots {
+  position: relative;
+  z-index: 8;
+  display: flex;
+  gap: 8px;
+  margin-top: 18px;
+}
+
+.vpl-carousel-dot {
+  width: 34px;
+  height: 6px;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(7,17,31,.18);
+  cursor: pointer;
+}
+
+.vpl-carousel-dot.is-active {
+  width: 54px;
+  background: #2f7fca;
+}
+
+.vpl-single-card-section {
+  display: none !important;
+}
+
+@media (max-width: 760px) {
+  .vpl-carousel-head {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .vpl-carousel-card {
+    grid-template-columns: 1fr;
+    min-height: 360px;
+    flex-basis: min(92vw, 520px);
+  }
+
+  .vpl-carousel-num {
+    width: 72px;
+    height: 72px;
+    border-radius: 22px;
+  }
+}
