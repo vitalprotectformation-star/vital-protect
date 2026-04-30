@@ -470,3 +470,78 @@ window.addEventListener('DOMContentLoaded', () => {
 
   window.addEventListener('resize', updateCardsUnfold);
 });
+
+
+
+
+window.addEventListener('DOMContentLoaded', () => {
+  /*
+   * V18 — Single master card.
+   * Une seule carte se construit progressivement au scroll.
+   */
+  const sections = [...document.querySelectorAll('[data-single-card]')];
+
+  if (!sections.length) return;
+
+  const clamp = (value, min = 0, max = 1) => Math.min(max, Math.max(min, value));
+  const easeOutCubic = (x) => 1 - Math.pow(1 - clamp(x), 3);
+
+  let ticking = false;
+
+  const updateSingleCards = () => {
+    const vh = window.innerHeight || 1;
+
+    sections.forEach((section) => {
+      const rect = section.getBoundingClientRect();
+      const scrollable = Math.max(section.offsetHeight - vh, 1);
+
+      // Progression volontairement lente : l'effet reste visible.
+      const raw = clamp((-rect.top + vh * 0.04) / (scrollable * 0.92));
+      const progress = easeOutCubic(raw);
+
+      section.style.setProperty('--single-progress', progress.toFixed(4));
+
+      const progressLabel = section.querySelector('[data-master-progress]');
+      if (progressLabel) {
+        progressLabel.textContent = String(Math.round(progress * 100));
+      }
+
+      const steps = [...section.querySelectorAll('[data-master-step]')];
+      steps.forEach((step, index) => {
+        const threshold = 0.12 + index * 0.145;
+        step.classList.toggle('is-visible', progress >= threshold);
+      });
+    });
+
+    ticking = false;
+  };
+
+  updateSingleCards();
+
+  window.addEventListener('scroll', () => {
+    if (!ticking) {
+      ticking = true;
+      requestAnimationFrame(updateSingleCards);
+    }
+  }, { passive: true });
+
+  window.addEventListener('resize', updateSingleCards);
+
+  if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+    sections.forEach((section) => {
+      const card = section.querySelector('.vpl-master-card');
+      if (!card) return;
+
+      card.addEventListener('pointermove', (event) => {
+        const rect = card.getBoundingClientRect();
+        card.style.setProperty('--mx', `${event.clientX - rect.left}px`);
+        card.style.setProperty('--my', `${event.clientY - rect.top}px`);
+      });
+
+      card.addEventListener('pointerleave', () => {
+        card.style.removeProperty('--mx');
+        card.style.removeProperty('--my');
+      });
+    });
+  }
+});
