@@ -379,3 +379,94 @@ window.addEventListener('DOMContentLoaded', () => {
 
   window.addEventListener('resize', updateV16);
 });
+
+
+
+
+window.addEventListener('DOMContentLoaded', () => {
+  /*
+   * V17 — Card cinema unfold
+   * Les cards se déploient en éventail, restent visibles et ne sortent plus hors champ.
+   */
+  const sections = [...document.querySelectorAll('[data-card-cinema]')];
+
+  if (!sections.length) return;
+
+  const clamp = (value, min = 0, max = 1) => Math.min(max, Math.max(min, value));
+  const easeOutCubic = (x) => 1 - Math.pow(1 - clamp(x), 3);
+
+  let ticking = false;
+
+  const finalPositions = [
+    { x: -250, y: -150, z: 80, r: -7, ry: -8 },
+    { x: -40,  y: -42,  z: 130, r: 3,  ry: -4 },
+    { x: 180,  y: 108,  z: 100, r: -3, ry: 5 },
+    { x: 360,  y: -116, z: 70,  r: 6,  ry: -5 },
+    { x: 505,  y: 72,   z: 115, r: -5, ry: 6 }
+  ];
+
+  const updateCardsUnfold = () => {
+    const vh = window.innerHeight || 1;
+
+    sections.forEach((section) => {
+      const rect = section.getBoundingClientRect();
+      const scrollable = Math.max(section.offsetHeight - vh, 1);
+
+      /*
+        Le déploiement commence un peu avant que la section soit pleinement centrée
+        et se termine avant la fin, afin qu'en bas toutes les cards soient visibles.
+      */
+      const raw = clamp((-rect.top + vh * 0.10) / (scrollable * 0.62));
+      const globalProgress = easeOutCubic(raw);
+
+      section.style.setProperty('--card-progress', globalProgress.toFixed(4));
+      section.classList.toggle('is-ready', globalProgress > 0.015);
+      section.classList.toggle('is-complete', globalProgress > 0.92);
+
+      const cards = [...section.querySelectorAll('.vpl-floating-card')];
+
+      cards.forEach((card, index) => {
+        const final = finalPositions[index] || finalPositions[finalPositions.length - 1];
+
+        // Déploiement séquentiel mais rapide : les 5 cards sont visibles avant le bas.
+        const local = easeOutCubic((globalProgress - index * 0.085) / 0.52);
+
+        const startX = 230;
+        const startY = 0;
+        const startZ = 0;
+        const startR = 0;
+        const startRy = 0;
+
+        const x = startX + (final.x - startX) * local;
+        const y = startY + (final.y - startY) * local;
+        const z = startZ + (final.z - startZ) * local;
+        const r = startR + (final.r - startR) * local;
+        const ry = startRy + (final.ry - startRy) * local;
+        const scale = 0.82 + 0.18 * local;
+
+        const opacity = clamp((globalProgress - index * 0.055) / 0.24);
+
+        card.style.setProperty('--cinema-x', `${x.toFixed(2)}px`);
+        card.style.setProperty('--cinema-y', `${y.toFixed(2)}px`);
+        card.style.setProperty('--cinema-z', `${z.toFixed(2)}px`);
+        card.style.setProperty('--cinema-r', `${r.toFixed(2)}deg`);
+        card.style.setProperty('--cinema-ry', `${ry.toFixed(2)}deg`);
+        card.style.setProperty('--cinema-scale', scale.toFixed(3));
+        card.style.setProperty('--cinema-opacity', opacity.toFixed(3));
+      });
+    });
+
+    ticking = false;
+  };
+
+  updateCardsUnfold();
+
+  window.addEventListener('scroll', () => {
+    if (!ticking) {
+      ticking = true;
+      requestAnimationFrame(updateCardsUnfold);
+    }
+  }, { passive: true });
+
+  window.addEventListener('resize', updateCardsUnfold);
+});
