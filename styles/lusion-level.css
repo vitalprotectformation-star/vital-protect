@@ -3153,3 +3153,351 @@ label {
     font-size: clamp(2.8rem, 15vw, 4.8rem);
   }
 }
+
+/* =========================================================
+   V16 — Corrections UX motion : card cinema, ruban, nav, honeycomb, images
+   ========================================================= */
+
+/* 1/2/3 — Card cinema recalibrée : moins longue, moins vide, cards visibles */
+.vpl-card-cinema {
+  height: 178vh !important;
+  background:
+    linear-gradient(180deg, rgba(8,17,31,.02), rgba(255,255,255,0) 11%, rgba(255,255,255,0) 82%, rgba(8,17,31,.035)),
+    radial-gradient(circle at 52% 42%, rgba(255,255,255,.95), rgba(255,255,255,0) 18%),
+    radial-gradient(circle at 75% 34%, rgba(80,132,192,.14), transparent 24%),
+    radial-gradient(circle at 18% 72%, rgba(255,255,255,.76), transparent 26%),
+    linear-gradient(180deg, #f5f8fc 0%, #edf3f9 100%) !important;
+}
+
+.vpl-card-cinema-sticky {
+  min-height: 650px !important;
+  padding-top: clamp(84px, 11vh, 126px) !important;
+  align-items: start !important;
+}
+
+.vpl-card-cinema-layout {
+  min-height: calc(100vh - 80px) !important;
+  padding-top: 36px !important;
+  padding-bottom: 28px !important;
+  grid-template-columns: minmax(0, .92fr) minmax(460px, 1.08fr) !important;
+  align-items: center !important;
+}
+
+.vpl-card-cinema-copy h2 {
+  max-width: 9.8ch !important;
+  font-size: clamp(3rem, 5.8vw, 6.25rem) !important;
+  line-height: .94 !important;
+  letter-spacing: -.082em !important;
+}
+
+.vpl-card-cinema-copy p {
+  max-width: 50ch !important;
+  margin-top: 22px !important;
+}
+
+.vpl-card-cinema-stage {
+  height: 560px !important;
+}
+
+.vpl-floating-card {
+  width: min(360px, 74vw) !important;
+  min-height: 370px !important;
+}
+
+/* Cards plus proches du centre au départ + déplacement moins violent */
+.vpl-floating-card--one {
+  --x: 190px !important;
+  --y: -168px !important;
+  --z: 70px !important;
+  --r: -6deg !important;
+  --ry: -4deg !important;
+  --travel: -560px !important;
+}
+
+.vpl-floating-card--two {
+  --x: 400px !important;
+  --y: -44px !important;
+  --z: 120px !important;
+  --r: 3deg !important;
+  --ry: -6deg !important;
+  --travel: -650px !important;
+}
+
+.vpl-floating-card--three {
+  --x: 615px !important;
+  --y: 95px !important;
+  --z: 90px !important;
+  --r: -3deg !important;
+  --ry: 4deg !important;
+  --travel: -720px !important;
+}
+
+.vpl-floating-card--four {
+  --x: 830px !important;
+  --y: -118px !important;
+  --z: 50px !important;
+  --r: 5deg !important;
+  --ry: -4deg !important;
+  --travel: -790px !important;
+}
+
+.vpl-floating-card--five {
+  --x: 1030px !important;
+  --y: 36px !important;
+  --z: 105px !important;
+  --r: -4deg !important;
+  --ry: 5deg !important;
+  --travel: -855px !important;
+}
+
+/* 4/5 — Ruban moins dominant sur fonds clairs, quasi invisible sur CTA final */
+.vpl-scroll-ribbon {
+  transition: opacity .28s ease, filter .28s ease, transform .28s ease !important;
+}
+
+.vpl-scroll-ribbon.is-on-light {
+  opacity: .34 !important;
+  filter: blur(.45px) saturate(.82) !important;
+}
+
+.vpl-scroll-ribbon.is-on-final {
+  opacity: .06 !important;
+  filter: blur(1.2px) saturate(.55) !important;
+}
+
+.vpl-scroll-ribbon.is-on-dark,
+.vpl-scroll-ribbon.is-on-hero {
+  opacity: .88 !important;
+  filter: none !important;
+}
+
+/* 6 — Nid d'abeille plus dense, plus premium, avec connexions lumineuses */
+.vpl-honeycomb-section {
+  padding-top: clamp(84px, 9vw, 130px) !important;
+  padding-bottom: clamp(84px, 9vw, 130px) !important;
+  background:
+    radial-gradient(circle at 18% 24%, rgba(47,127,202,.10), transparent 24%),
+    radial-gradient(circle at 78% 16%, rgba(255,255,255,.34), transparent 20%),
+    linear-gradient(180deg, #f5f8fc 0%, #eaf1f8 100%) !important;
+}
+
+.vpl-honeycomb-shell {
+  grid-template-columns: minmax(0, 1.15fr) minmax(320px, .85fr) !important;
+  gap: clamp(28px, 4vw, 62px) !important;
+}
+
+.vpl-honeycomb-grid {
+  position: relative !important;
+  display: grid !important;
+  grid-template-columns: repeat(4, 126px) !important;
+  justify-content: center !important;
+  gap: 0 2px !important;
+  padding: 40px 10px 76px !important;
+  isolation: isolate !important;
+}
+
+.vpl-honeycomb-grid::before,
+.vpl-honeycomb-grid::after {
+  content: "" !important;
+  position: absolute !important;
+  inset: 8% 6% 4% 6% !important;
+  z-index: -1 !important;
+  pointer-events: none !important;
+  opacity: .50 !important;
+}
+
+.vpl-honeycomb-grid::before {
+  background:
+    linear-gradient(60deg, transparent 47%, rgba(47,127,202,.18) 48% 52%, transparent 53%),
+    linear-gradient(-60deg, transparent 47%, rgba(47,127,202,.14) 48% 52%, transparent 53%),
+    linear-gradient(0deg, transparent 47%, rgba(255,255,255,.42) 48% 52%, transparent 53%) !important;
+  background-size: 126px 72px !important;
+  mask-image: radial-gradient(circle at 52% 48%, black 0 58%, transparent 78%) !important;
+}
+
+.vpl-honeycomb-grid::after {
+  background: radial-gradient(circle at 50% 48%, rgba(255,255,255,.74), rgba(47,127,202,.08) 42%, transparent 72%) !important;
+  filter: blur(16px) !important;
+}
+
+.vpl-hex {
+  width: 132px !important;
+  height: 146px !important;
+  margin-top: -8px !important;
+  background:
+    radial-gradient(circle at 26% 18%, rgba(255,255,255,.95), rgba(255,255,255,0) 28%),
+    linear-gradient(145deg, rgba(255,255,255,.96), rgba(224,234,245,.88) 58%, rgba(111,157,204,.52)) !important;
+  box-shadow:
+    0 20px 48px rgba(7,17,31,.12),
+    inset 0 1px 0 rgba(255,255,255,.92) !important;
+}
+
+.vpl-hex:nth-child(2n) {
+  transform: translateY(70px) scale(.82) !important;
+}
+
+.vpl-hex.is-visible:nth-child(2n) {
+  transform: translateY(70px) scale(1) !important;
+}
+
+.vpl-hex.is-visible:nth-child(2n+1) {
+  transform: translateY(8px) scale(1) !important;
+}
+
+.vpl-hex span {
+  font-size: .95rem !important;
+}
+
+/* 7 — Transitions plus douces entre sections */
+.vpl-light > .vpl-section,
+.vpl-section,
+.vpl-section-dark,
+.vpl-final,
+.vpl-honeycomb-section {
+  position: relative !important;
+}
+
+.vpl-light > .vpl-section + .vpl-section,
+.vpl-section-dark + .vpl-honeycomb-section,
+.vpl-honeycomb-section + .vpl-final {
+  margin-top: 0 !important;
+}
+
+.vpl-section-dark::before {
+  opacity: .72 !important;
+}
+
+.vpl-light > .vpl-section::after,
+.vpl-honeycomb-section::after {
+  content: "" !important;
+  position: absolute !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: -1px !important;
+  height: 110px !important;
+  pointer-events: none !important;
+  background: linear-gradient(180deg, rgba(244,247,251,0), rgba(5,7,12,.08)) !important;
+  z-index: 1 !important;
+}
+
+.vpl-section-dark::after {
+  content: "" !important;
+  position: absolute !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: -1px !important;
+  height: 120px !important;
+  pointer-events: none !important;
+  background: linear-gradient(180deg, rgba(5,7,12,0), rgba(244,247,251,.96)) !important;
+  z-index: 1 !important;
+}
+
+/* 8 — Images moins agressives, moins coupées */
+.vpl-image-card {
+  min-height: 500px !important;
+  border-radius: 36px !important;
+}
+
+.vpl-image-card.small {
+  min-height: 240px !important;
+}
+
+.vpl-image-card img {
+  object-position: center 42% !important;
+}
+
+.vpl-image-grid > .vpl-image-card:first-child img {
+  object-position: center 34% !important;
+}
+
+.vpl-image-grid > div .vpl-image-card:first-child img {
+  object-position: center 38% !important;
+}
+
+.vpl-image-grid > div .vpl-image-card:last-child img {
+  object-position: center 28% !important;
+}
+
+/* 9 — Navbar moins dense, CTA plus lisible */
+.vpl-nav {
+  padding: 9px 10px !important;
+  gap: 10px !important;
+  background: rgba(6, 10, 18, .46) !important;
+  border-color: rgba(255,255,255,.14) !important;
+  box-shadow: 0 16px 52px rgba(0,0,0,.24), inset 0 1px 0 rgba(255,255,255,.07) !important;
+}
+
+.vpl-brand img {
+  width: 46px !important;
+  height: 46px !important;
+}
+
+.vpl-menu {
+  gap: 2px !important;
+}
+
+.vpl-menu a {
+  font-size: .9rem !important;
+  padding: 11px 12px !important;
+}
+
+.vpl-menu a[href="/faq.html"] {
+  display: none !important;
+}
+
+.vpl-nav-cta {
+  min-height: 52px !important;
+  padding: 0 22px !important;
+  font-size: .96rem !important;
+}
+
+@media (max-width: 1100px) {
+  .vpl-card-cinema {
+    height: auto !important;
+  }
+
+  .vpl-card-cinema-sticky {
+    padding: 78px 0 !important;
+  }
+
+  .vpl-card-cinema-layout {
+    grid-template-columns: 1fr !important;
+  }
+
+  .vpl-card-cinema-track {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .vpl-floating-card {
+    min-height: 300px !important;
+  }
+
+  .vpl-honeycomb-grid {
+    grid-template-columns: repeat(3, 126px) !important;
+  }
+}
+
+@media (max-width: 760px) {
+  .vpl-card-cinema-copy h2 {
+    font-size: clamp(2.65rem, 13vw, 4.4rem) !important;
+  }
+
+  .vpl-card-cinema-track {
+    grid-template-columns: 1fr !important;
+  }
+
+  .vpl-image-card,
+  .vpl-image-card.small {
+    min-height: 390px !important;
+  }
+
+  .vpl-honeycomb-grid {
+    grid-template-columns: repeat(2, 112px) !important;
+    gap: 8px !important;
+  }
+
+  .vpl-hex {
+    width: 112px !important;
+    height: 124px !important;
+  }
+}
