@@ -682,17 +682,55 @@ window.addEventListener('DOMContentLoaded', () => {
   const intro = document.getElementById('vpIntro');
   if (!intro) return;
 
+  const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduceMotion) {
+    intro.classList.add('vp-hidden');
+    document.body.classList.remove('vp-intro-playing');
+    return;
+  }
+
   const FIRST_START_DELAY = 900;
   const FIRST_DRAW_DURATION = 2200;
   const PAUSE_AFTER_FIRST = 850;
   const SECOND_DRAW_DURATION = 2600;
   const SECOND_START_DELAY = FIRST_START_DELAY + FIRST_DRAW_DURATION + PAUSE_AFTER_FIRST;
-  const CUT_DELAY = SECOND_START_DELAY + SECOND_DRAW_DURATION + 260;
-  const OPEN_DELAY = CUT_DELAY + 480;
+  const FLATLINE_DELAY = SECOND_START_DELAY + SECOND_DRAW_DURATION + 360;
+  const OPEN_DELAY = FLATLINE_DELAY + 1150;
   const HIDE_DELAY = OPEN_DELAY + 1650;
+
+  const ECG_PATH = `M 0 115
+             L 130 115
+             L 250 115
+             L 340 115
+             L 430 112
+             L 510 120
+             L 590 115
+             L 700 115
+             L 820 115
+             L 920 115
+             L 995 111
+             L 1060 124
+             L 1120 115
+             L 1185 115
+             L 1240 115
+             L 1292 115
+             L 1332 112
+             L 1370 124
+             L 1415 24
+             L 1462 206
+             L 1515 82
+             L 1580 115
+             L 1660 115
+             L 1760 115
+             L 1850 115
+             L 1920 115`;
+
+  const FLATLINE_PATH = 'M 0 115 L 1920 115';
+  const HEARTBEAT_POINTS = [0.24, 0.54, 0.76];
 
   let timers = [];
   let activeAnimation = null;
+  let beatResetTimer = null;
 
   const wait = (fn, delay) => {
     const timer = window.setTimeout(fn, delay);
@@ -704,17 +742,32 @@ window.addEventListener('DOMContentLoaded', () => {
     timers = [];
   };
 
+  const getTitles = () => document.querySelectorAll('.vp-title');
+
+  const triggerTitleBeat = () => {
+    const titles = getTitles();
+    titles.forEach((title) => title.classList.remove('is-beating'));
+    titles.forEach((title) => void title.offsetWidth);
+    titles.forEach((title) => title.classList.add('is-beating'));
+
+    window.clearTimeout(beatResetTimer);
+    beatResetTimer = window.setTimeout(() => {
+      titles.forEach((title) => title.classList.remove('is-beating'));
+    }, 170);
+  };
+
   const setupLine = () => {
     const line = document.getElementById('vpEcgLine');
     const tracer = document.getElementById('vpTracer');
 
     if (!line) return null;
 
+    line.setAttribute('d', ECG_PATH);
     const length = line.getTotalLength();
 
     line.style.strokeDasharray = length;
     line.style.strokeDashoffset = length;
-    line.classList.remove('is-active', 'is-fading', 'is-power');
+    line.classList.remove('is-active', 'is-fading', 'is-power', 'is-flatline');
 
     if (tracer) {
       tracer.classList.remove('is-active');
@@ -725,36 +778,68 @@ window.addEventListener('DOMContentLoaded', () => {
     return { line, tracer, length };
   };
 
-  const drawLine = (duration, options = {}) => {
-    const data = setupLine();
-    if (!data) return;
-
-    const { line, tracer, length } = data;
+  const getZoneMetrics = () => {
     const zone = document.querySelector('.vp-ecg-zone');
+    return {
+      zoneWidth: zone ? zone.getBoundingClientRect().width : window.innerWidth,
+      zoneHeight: zone ? zone.getBoundingClientRect().height : 230,
+    };
+  };
 
-    const zoneWidth = zone ? zone.getBoundingClientRect().width : window.innerWidth;
-    const zoneHeight = zone ? zone.getBoundingClientRect().height : 230;
-
-    line.classList.add('is-active');
-
-    if (options.power) {
-      line.classList.add('is-power');
-    }
-
-    if (tracer) {
-      tracer.classList.add('is-active');
-    }
-
+  const animateTracer = (line, tracer, length, duration, beats = []) => {
+    const { zoneWidth, zoneHeight } = getZoneMetrics();
+    let beatIndex = 0;
     const start = performance.now();
 
     const frame = (now) => {
       const progress = Math.min((now - start) / duration, 1);
-      const eased = progress;
 
-      line.style.strokeDashoffset = length * (1 - eased);
+      while (beatIndex < beats.length && progress >= beats[beatIndex]) {
+        triggerTitleBeat();
+        beatIndex += 1;
+      }
 
       if (tracer) {
-        const point = line.getPointAtLength(length * eased);
+        const point = line.getPointAtLength(length * progress);
+        tracer.style.left = `${(point.x / 1920) * zoneWidth}px`;
+        tracer.style.top = `${(point.y / 230) * zoneHeight}px`;
+      }
+
+      if (progress < 1) {
+        activeAnimation = requestAnimationFrame(frame);
+      } else {
+        if (tracer) tracer.classList.remove('is-active');
+        activeAnimation = null;
+      }
+    };
+
+    if (activeAnimation) cancelAnimationFrame(activeAnimation);
+    activeAnimation = requestAnimationFrame(frame);
+  };
+
+  const drawLine = (duration) => {
+    const data = setupLine();
+    if (!data) return;
+
+    const { line, tracer, length } = data;
+    const { zoneWidth, zoneHeight } = getZoneMetrics();
+    let beatIndex = 0;
+    const start = performance.now();
+
+    line.classList.add('is-active');
+    if (tracer) tracer.classList.add('is-active');
+
+    const frame = (now) => {
+      const progress = Math.min((now - start) / duration, 1);
+      line.style.strokeDashoffset = length * (1 - progress);
+
+      while (beatIndex < HEARTBEAT_POINTS.length && progress >= HEARTBEAT_POINTS[beatIndex]) {
+        triggerTitleBeat();
+        beatIndex += 1;
+      }
+
+      if (tracer) {
+        const point = line.getPointAtLength(length * progress);
         tracer.style.left = `${(point.x / 1920) * zoneWidth}px`;
         tracer.style.top = `${(point.y / 230) * zoneHeight}px`;
       }
@@ -764,17 +849,50 @@ window.addEventListener('DOMContentLoaded', () => {
       } else {
         line.style.strokeDashoffset = 0;
         if (tracer) tracer.classList.remove('is-active');
-
-        if (options.fadeAfter) {
-          wait(() => {
-            line.classList.add('is-fading');
-          }, options.fadeAfter);
-        }
+        activeAnimation = null;
       }
     };
 
     if (activeAnimation) cancelAnimationFrame(activeAnimation);
     activeAnimation = requestAnimationFrame(frame);
+  };
+
+  const retraceLine = (duration, options = {}) => {
+    const line = document.getElementById('vpEcgLine');
+    const tracer = document.getElementById('vpTracer');
+    if (!line) return;
+
+    const length = line.getTotalLength();
+    line.classList.add('is-active');
+
+    if (options.power) line.classList.add('is-power');
+    if (tracer) tracer.classList.add('is-active');
+
+    animateTracer(line, tracer, length, duration, HEARTBEAT_POINTS);
+
+    wait(() => {
+      line.classList.remove('is-power');
+    }, duration);
+  };
+
+  const flattenLine = () => {
+    const line = document.getElementById('vpEcgLine');
+    const tracer = document.getElementById('vpTracer');
+    if (!line) return;
+
+    if (activeAnimation) {
+      cancelAnimationFrame(activeAnimation);
+      activeAnimation = null;
+    }
+
+    line.setAttribute('d', FLATLINE_PATH);
+    const length = line.getTotalLength();
+    line.style.strokeDasharray = length;
+    line.style.strokeDashoffset = 0;
+    line.classList.remove('is-fading', 'is-power');
+    line.classList.add('is-active', 'is-flatline');
+
+    if (tracer) tracer.classList.remove('is-active');
   };
 
   const startIntro = () => {
@@ -791,16 +909,16 @@ window.addEventListener('DOMContentLoaded', () => {
     setupLine();
 
     wait(() => {
-      drawLine(FIRST_DRAW_DURATION, { fadeAfter: 420 });
+      drawLine(FIRST_DRAW_DURATION);
     }, FIRST_START_DELAY);
 
     wait(() => {
-      drawLine(SECOND_DRAW_DURATION, { power: true });
+      retraceLine(SECOND_DRAW_DURATION, { power: true });
     }, SECOND_START_DELAY);
 
     wait(() => {
-      intro.classList.add('vp-cutting');
-    }, CUT_DELAY);
+      flattenLine();
+    }, FLATLINE_DELAY);
 
     wait(() => {
       intro.classList.add('vp-open');
@@ -812,6 +930,13 @@ window.addEventListener('DOMContentLoaded', () => {
     }, HIDE_DELAY);
   };
 
-  window.addEventListener('resize', setupLine);
+  window.replayIntro = startIntro;
+
+  window.addEventListener('resize', () => {
+    const line = document.getElementById('vpEcgLine');
+    if (!line || !line.classList.contains('is-active')) return;
+    // Ne pas réinitialiser l'animation pendant un resize : on conserve l'état visuel.
+  });
+
   startIntro();
 });
