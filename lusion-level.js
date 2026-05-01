@@ -678,27 +678,19 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 
-window.addEventListener('DOMContentLoaded', () => {
-  const intro = document.getElementById('vpIntro');
-  if (!intro) return;
+    const FIRST_START_DELAY = 900;
+    const FIRST_DRAW_DURATION = 2200;
 
-  const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (reduceMotion) {
-    intro.classList.add('vp-hidden');
-    document.body.classList.remove('vp-intro-playing');
-    return;
-  }
+    const PAUSE_AFTER_FIRST = 850;
 
-  const FIRST_START_DELAY = 900;
-  const FIRST_DRAW_DURATION = 2200;
-  const PAUSE_AFTER_FIRST = 850;
-  const SECOND_DRAW_DURATION = 2600;
-  const SECOND_START_DELAY = FIRST_START_DELAY + FIRST_DRAW_DURATION + PAUSE_AFTER_FIRST;
-  const FLATLINE_DELAY = SECOND_START_DELAY + SECOND_DRAW_DURATION + 360;
-  const OPEN_DELAY = FLATLINE_DELAY + 1150;
-  const HIDE_DELAY = OPEN_DELAY + 1650;
+    const SECOND_DRAW_DURATION = 2600;
+    const SECOND_START_DELAY = FIRST_START_DELAY + FIRST_DRAW_DURATION + PAUSE_AFTER_FIRST;
 
-  const ECG_PATH = `M 0 115
+    const FLATLINE_DELAY = SECOND_START_DELAY + SECOND_DRAW_DURATION + 360;
+    const OPEN_DELAY = FLATLINE_DELAY + 1150;
+    const HIDE_DELAY = OPEN_DELAY + 1650;
+
+    const ECG_PATH = `M 0 115
              L 130 115
              L 250 115
              L 340 115
@@ -725,218 +717,233 @@ window.addEventListener('DOMContentLoaded', () => {
              L 1850 115
              L 1920 115`;
 
-  const FLATLINE_PATH = 'M 0 115 L 1920 115';
-  const HEARTBEAT_POINTS = [0.24, 0.54, 0.76];
+    const FLATLINE_PATH = "M 0 115 L 1920 115";
+    const HEARTBEAT_POINTS = [0.24, 0.54, 0.76];
 
-  let timers = [];
-  let activeAnimation = null;
-  let beatResetTimer = null;
+    let timers = [];
+    let activeAnimation = null;
+    let beatResetTimer = null;
 
-  const wait = (fn, delay) => {
-    const timer = window.setTimeout(fn, delay);
-    timers.push(timer);
-  };
+    function wait(fn, delay) {
+      const timer = setTimeout(fn, delay);
+      timers.push(timer);
+    }
 
-  const clearTimers = () => {
-    timers.forEach(window.clearTimeout);
-    timers = [];
-  };
+    function clearTimers() {
+      timers.forEach(clearTimeout);
+      timers = [];
+    }
 
-  const getTitles = () => document.querySelectorAll('.vp-title');
+    function getTitles() {
+      return document.querySelectorAll('.vp-title');
+    }
 
-  const triggerTitleBeat = () => {
-    const titles = getTitles();
-    titles.forEach((title) => title.classList.remove('is-beating'));
-    titles.forEach((title) => void title.offsetWidth);
-    titles.forEach((title) => title.classList.add('is-beating'));
-
-    window.clearTimeout(beatResetTimer);
-    beatResetTimer = window.setTimeout(() => {
+    function triggerTitleBeat() {
+      const titles = getTitles();
       titles.forEach((title) => title.classList.remove('is-beating'));
-    }, 170);
-  };
 
-  const setupLine = () => {
-    const line = document.getElementById('vpEcgLine');
-    const tracer = document.getElementById('vpTracer');
+      // force reflow pour relancer l'effet proprement
+      titles.forEach((title) => void title.offsetWidth);
+      titles.forEach((title) => title.classList.add('is-beating'));
 
-    if (!line) return null;
-
-    line.setAttribute('d', ECG_PATH);
-    const length = line.getTotalLength();
-
-    line.style.strokeDasharray = length;
-    line.style.strokeDashoffset = length;
-    line.classList.remove('is-active', 'is-fading', 'is-power', 'is-flatline');
-
-    if (tracer) {
-      tracer.classList.remove('is-active');
-      tracer.style.left = '0px';
-      tracer.style.top = '50%';
+      clearTimeout(beatResetTimer);
+      beatResetTimer = setTimeout(() => {
+        titles.forEach((title) => title.classList.remove('is-beating'));
+      }, 170);
     }
 
-    return { line, tracer, length };
-  };
+    function setupLine() {
+      const line = document.getElementById("vpEcgLine");
+      const tracer = document.getElementById("vpTracer");
 
-  const getZoneMetrics = () => {
-    const zone = document.querySelector('.vp-ecg-zone');
-    return {
-      zoneWidth: zone ? zone.getBoundingClientRect().width : window.innerWidth,
-      zoneHeight: zone ? zone.getBoundingClientRect().height : 230,
-    };
-  };
+      if (!line) return null;
 
-  const animateTracer = (line, tracer, length, duration, beats = []) => {
-    const { zoneWidth, zoneHeight } = getZoneMetrics();
-    let beatIndex = 0;
-    const start = performance.now();
+      line.setAttribute("d", ECG_PATH);
+      const length = line.getTotalLength();
 
-    const frame = (now) => {
-      const progress = Math.min((now - start) / duration, 1);
+      line.style.strokeDasharray = length;
+      line.style.strokeDashoffset = length;
+      line.classList.remove("is-active", "is-power", "is-flatline");
 
-      while (beatIndex < beats.length && progress >= beats[beatIndex]) {
-        triggerTitleBeat();
-        beatIndex += 1;
+      if (tracer) {
+        tracer.classList.remove("is-active");
+        tracer.style.left = "0px";
+        tracer.style.top = "50%";
+      }
+
+      return { line, tracer, length };
+    }
+
+    function getZoneMetrics() {
+      const zone = document.querySelector(".vp-ecg-zone");
+      return {
+        zoneWidth: zone ? zone.getBoundingClientRect().width : window.innerWidth,
+        zoneHeight: zone ? zone.getBoundingClientRect().height : 230
+      };
+    }
+
+    function animateTracer(line, tracer, length, duration, beats = []) {
+      const { zoneWidth, zoneHeight } = getZoneMetrics();
+      let beatIndex = 0;
+      const start = performance.now();
+
+      function frame(now) {
+        const progress = Math.min((now - start) / duration, 1);
+
+        while (beatIndex < beats.length && progress >= beats[beatIndex]) {
+          triggerTitleBeat();
+          beatIndex += 1;
+        }
+
+        if (tracer) {
+          const point = line.getPointAtLength(length * progress);
+          tracer.style.left = (point.x / 1920 * zoneWidth) + 'px';
+          tracer.style.top = (point.y / 230 * zoneHeight) + 'px';
+        }
+
+        if (progress < 1) {
+          activeAnimation = requestAnimationFrame(frame);
+        } else {
+          if (tracer) tracer.classList.remove('is-active');
+          activeAnimation = null;
+        }
+      }
+
+      if (activeAnimation) cancelAnimationFrame(activeAnimation);
+      activeAnimation = requestAnimationFrame(frame);
+    }
+
+    function drawLine(duration) {
+      const data = setupLine();
+      if (!data) return;
+
+      const { line, tracer, length } = data;
+      line.classList.add('is-active');
+      if (tracer) tracer.classList.add('is-active');
+
+      const { zoneWidth, zoneHeight } = getZoneMetrics();
+      let beatIndex = 0;
+      const start = performance.now();
+
+      function frame(now) {
+        const progress = Math.min((now - start) / duration, 1);
+        line.style.strokeDashoffset = length * (1 - progress);
+
+        while (beatIndex < HEARTBEAT_POINTS.length && progress >= HEARTBEAT_POINTS[beatIndex]) {
+          triggerTitleBeat();
+          beatIndex += 1;
+        }
+
+        if (tracer) {
+          const point = line.getPointAtLength(length * progress);
+          tracer.style.left = (point.x / 1920 * zoneWidth) + 'px';
+          tracer.style.top = (point.y / 230 * zoneHeight) + 'px';
+        }
+
+        if (progress < 1) {
+          activeAnimation = requestAnimationFrame(frame);
+        } else {
+          line.style.strokeDashoffset = 0;
+          if (tracer) tracer.classList.remove('is-active');
+          activeAnimation = null;
+        }
+      }
+
+      if (activeAnimation) cancelAnimationFrame(activeAnimation);
+      activeAnimation = requestAnimationFrame(frame);
+    }
+
+    function retraceLine(duration, options = {}) {
+      const line = document.getElementById('vpEcgLine');
+      const tracer = document.getElementById('vpTracer');
+      if (!line) return;
+
+      const length = line.getTotalLength();
+      line.classList.add('is-active');
+
+      if (options.power) {
+        line.classList.add('is-power');
       }
 
       if (tracer) {
-        const point = line.getPointAtLength(length * progress);
-        tracer.style.left = `${(point.x / 1920) * zoneWidth}px`;
-        tracer.style.top = `${(point.y / 230) * zoneHeight}px`;
+        tracer.classList.add('is-active');
       }
 
-      if (progress < 1) {
-        activeAnimation = requestAnimationFrame(frame);
-      } else {
-        if (tracer) tracer.classList.remove('is-active');
+      animateTracer(line, tracer, length, duration, HEARTBEAT_POINTS);
+
+      wait(() => {
+        line.classList.remove('is-power');
+      }, duration);
+    }
+
+    function flattenLine() {
+      const line = document.getElementById('vpEcgLine');
+      const tracer = document.getElementById('vpTracer');
+      if (!line) return;
+
+      if (activeAnimation) {
+        cancelAnimationFrame(activeAnimation);
         activeAnimation = null;
       }
-    };
 
-    if (activeAnimation) cancelAnimationFrame(activeAnimation);
-    activeAnimation = requestAnimationFrame(frame);
-  };
-
-  const drawLine = (duration) => {
-    const data = setupLine();
-    if (!data) return;
-
-    const { line, tracer, length } = data;
-    const { zoneWidth, zoneHeight } = getZoneMetrics();
-    let beatIndex = 0;
-    const start = performance.now();
-
-    line.classList.add('is-active');
-    if (tracer) tracer.classList.add('is-active');
-
-    const frame = (now) => {
-      const progress = Math.min((now - start) / duration, 1);
-      line.style.strokeDashoffset = length * (1 - progress);
-
-      while (beatIndex < HEARTBEAT_POINTS.length && progress >= HEARTBEAT_POINTS[beatIndex]) {
-        triggerTitleBeat();
-        beatIndex += 1;
-      }
-
-      if (tracer) {
-        const point = line.getPointAtLength(length * progress);
-        tracer.style.left = `${(point.x / 1920) * zoneWidth}px`;
-        tracer.style.top = `${(point.y / 230) * zoneHeight}px`;
-      }
-
-      if (progress < 1) {
-        activeAnimation = requestAnimationFrame(frame);
-      } else {
-        line.style.strokeDashoffset = 0;
-        if (tracer) tracer.classList.remove('is-active');
-        activeAnimation = null;
-      }
-    };
-
-    if (activeAnimation) cancelAnimationFrame(activeAnimation);
-    activeAnimation = requestAnimationFrame(frame);
-  };
-
-  const retraceLine = (duration, options = {}) => {
-    const line = document.getElementById('vpEcgLine');
-    const tracer = document.getElementById('vpTracer');
-    if (!line) return;
-
-    const length = line.getTotalLength();
-    line.classList.add('is-active');
-
-    if (options.power) line.classList.add('is-power');
-    if (tracer) tracer.classList.add('is-active');
-
-    animateTracer(line, tracer, length, duration, HEARTBEAT_POINTS);
-
-    wait(() => {
+      line.setAttribute('d', FLATLINE_PATH);
+      const length = line.getTotalLength();
+      line.style.strokeDasharray = length;
+      line.style.strokeDashoffset = 0;
       line.classList.remove('is-power');
-    }, duration);
-  };
+      line.classList.add('is-active', 'is-flatline');
 
-  const flattenLine = () => {
-    const line = document.getElementById('vpEcgLine');
-    const tracer = document.getElementById('vpTracer');
-    if (!line) return;
-
-    if (activeAnimation) {
-      cancelAnimationFrame(activeAnimation);
-      activeAnimation = null;
+      if (tracer) {
+        tracer.classList.remove('is-active');
+      }
     }
 
-    line.setAttribute('d', FLATLINE_PATH);
-    const length = line.getTotalLength();
-    line.style.strokeDasharray = length;
-    line.style.strokeDashoffset = 0;
-    line.classList.remove('is-fading', 'is-power');
-    line.classList.add('is-active', 'is-flatline');
+    function startIntro() {
+      const intro = document.getElementById('vpIntro');
+      if (!intro) return;
 
-    if (tracer) tracer.classList.remove('is-active');
-  };
+      clearTimers();
 
-  const startIntro = () => {
-    clearTimers();
+      if (activeAnimation) {
+        cancelAnimationFrame(activeAnimation);
+        activeAnimation = null;
+      }
 
-    if (activeAnimation) {
-      cancelAnimationFrame(activeAnimation);
-      activeAnimation = null;
+      intro.classList.remove('vp-open', 'vp-hidden');
+      document.body.classList.add('vp-intro-playing');
+
+      setupLine();
+
+      wait(function () {
+        drawLine(FIRST_DRAW_DURATION);
+      }, FIRST_START_DELAY);
+
+      wait(function () {
+        retraceLine(SECOND_DRAW_DURATION, { power: true });
+      }, SECOND_START_DELAY);
+
+      wait(function () {
+        flattenLine();
+      }, FLATLINE_DELAY);
+
+      wait(function () {
+        intro.classList.add('vp-open');
+      }, OPEN_DELAY);
+
+      wait(function () {
+        intro.classList.add('vp-hidden');
+        document.body.classList.remove('vp-intro-playing');
+      }, HIDE_DELAY);
     }
 
-    intro.classList.remove('vp-cutting', 'vp-open', 'vp-hidden');
-    document.body.classList.add('vp-intro-playing');
+    function replayIntro() {
+      startIntro();
+    }
 
-    setupLine();
+    window.addEventListener('resize', () => {
+      const line = document.getElementById('vpEcgLine');
+      if (!line || !line.classList.contains('is-active')) return;
+      // on ne reset pas l'animation en cours, on garde juste l'état visuel lors d'un resize
+    });
 
-    wait(() => {
-      drawLine(FIRST_DRAW_DURATION);
-    }, FIRST_START_DELAY);
-
-    wait(() => {
-      retraceLine(SECOND_DRAW_DURATION, { power: true });
-    }, SECOND_START_DELAY);
-
-    wait(() => {
-      flattenLine();
-    }, FLATLINE_DELAY);
-
-    wait(() => {
-      intro.classList.add('vp-open');
-    }, OPEN_DELAY);
-
-    wait(() => {
-      intro.classList.add('vp-hidden');
-      document.body.classList.remove('vp-intro-playing');
-    }, HIDE_DELAY);
-  };
-
-  window.replayIntro = startIntro;
-
-  window.addEventListener('resize', () => {
-    const line = document.getElementById('vpEcgLine');
-    if (!line || !line.classList.contains('is-active')) return;
-    // Ne pas réinitialiser l'animation pendant un resize : on conserve l'état visuel.
-  });
-
-  startIntro();
-});
+    document.addEventListener('DOMContentLoaded', startIntro);
