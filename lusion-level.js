@@ -947,3 +947,23 @@ window.addEventListener('DOMContentLoaded', () => {
     });
 
     document.addEventListener('DOMContentLoaded', startIntro);
+
+/* V21 — Header compact au scroll */
+(() => {
+  const root = document.documentElement;
+  let ticking = false;
+
+  const updateScrolledState = () => {
+    root.classList.toggle('vpl-scrolled', window.scrollY > 36);
+    ticking = false;
+  };
+
+  updateScrolledState();
+
+  window.addEventListener('scroll', () => {
+    if (!ticking) {
+      ticking = true;
+      requestAnimationFrame(updateScrolledState);
+    }
+  }, { passive: true });
+})();
