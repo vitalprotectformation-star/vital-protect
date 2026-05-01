@@ -5549,3 +5549,532 @@ body.vpl-home .vpl-scroll {
     font-size: .78rem !important;
   }
 }
+
+/* =========================================================
+   V21 — Correctifs audit visuel : nav compacte, sections recalées,
+   schéma sans superposition, light UI plus premium, photos éditoriales
+   ========================================================= */
+
+:root {
+  --vpl-nav-offset: 92px;
+}
+
+/* Header sticky moins massif : plus fin, moins opaque, moins haut. */
+.vpl-nav {
+  top: 10px !important;
+  width: min(1180px, calc(100% - 36px)) !important;
+  min-height: 56px !important;
+  padding: 6px 8px !important;
+  gap: 8px !important;
+  border-radius: 999px !important;
+  background: rgba(5, 10, 18, .34) !important;
+  border-color: rgba(255,255,255,.13) !important;
+  box-shadow:
+    0 14px 46px rgba(0,0,0,.22),
+    inset 0 1px 0 rgba(255,255,255,.08) !important;
+  backdrop-filter: blur(18px) saturate(1.25) !important;
+  transition:
+    top .28s ease,
+    opacity .28s ease,
+    background .28s ease,
+    box-shadow .28s ease,
+    transform .28s ease !important;
+}
+
+html.vpl-scrolled .vpl-nav {
+  top: 8px !important;
+  opacity: .94 !important;
+  background: rgba(5, 10, 18, .28) !important;
+  box-shadow:
+    0 10px 34px rgba(0,0,0,.18),
+    inset 0 1px 0 rgba(255,255,255,.07) !important;
+}
+
+.vpl-brand {
+  gap: 9px !important;
+}
+
+.vpl-brand img {
+  width: 38px !important;
+  height: 38px !important;
+  padding: 5px !important;
+  box-shadow: 0 10px 24px rgba(0,0,0,.18) !important;
+}
+
+.vpl-brand b {
+  font-size: .9rem !important;
+  letter-spacing: -.035em !important;
+}
+
+.vpl-brand span {
+  display: none !important;
+}
+
+.vpl-menu {
+  gap: 1px !important;
+}
+
+.vpl-menu a,
+.vpl-nav-ghost {
+  padding: 9px 9px !important;
+  font-size: .78rem !important;
+  color: rgba(255,255,255,.70) !important;
+}
+
+.vpl-menu a:hover,
+.vpl-menu a.active {
+  background: rgba(255,255,255,.075) !important;
+}
+
+.vpl-nav-cta {
+  min-height: 42px !important;
+  padding: 0 16px !important;
+  font-size: .83rem !important;
+  box-shadow: 0 12px 32px rgba(126,166,208,.14), inset 0 1px 0 rgba(255,255,255,.86) !important;
+}
+
+/* Le contenu a de l'air sans passer sous le header. */
+.vpl-hero,
+.vpl-inner-hero,
+.vpl-section,
+.vpl-section-dark,
+.vpl-honeycomb-section,
+.vpl-constellation-section,
+.vpl-final {
+  scroll-margin-top: var(--vpl-nav-offset) !important;
+}
+
+.vpl-hero,
+.vpl-inner-hero {
+  padding-top: clamp(104px, 12vh, 134px) !important;
+}
+
+body.vpl-home .vpl-hero {
+  padding-top: clamp(108px, 12vh, 138px) !important;
+}
+
+.vpl-section {
+  padding: clamp(76px, 8vw, 102px) 0 !important;
+}
+
+.vpl-section-head {
+  margin-bottom: 28px !important;
+}
+
+.vpl-sticky {
+  top: 92px !important;
+}
+
+/* Sections claires : fond plus net, contraste plus premium. */
+.vpl-light,
+.vpl-constellation-section,
+.vpl-honeycomb-section,
+.vpl-premium-carousel {
+  background:
+    radial-gradient(circle at 82% 14%, rgba(47,127,202,.13), transparent 22%),
+    radial-gradient(circle at 14% 72%, rgba(255,255,255,.95), transparent 28%),
+    linear-gradient(180deg, #f8fbff 0%, #edf4fb 100%) !important;
+}
+
+.vpl-light::before,
+.vpl-constellation-section::before,
+.vpl-honeycomb-section::before {
+  opacity: .32 !important;
+}
+
+.vpl-light .vpl-section-title,
+.vpl-constellation-head h2,
+.vpl-honeycomb-section .vpl-section-title {
+  color: #06101f !important;
+  text-shadow: none !important;
+}
+
+.vpl-light .vpl-section-copy,
+.vpl-constellation-head p,
+.vpl-honeycomb-section .vpl-section-copy {
+  color: #43536a !important;
+}
+
+.vpl-light .vpl-section-kicker,
+.vpl-honeycomb-section .vpl-section-kicker,
+.vpl-constellation-section .vpl-section-kicker {
+  color: #f8fbff !important;
+  background: linear-gradient(135deg, #07111f, #17395f 68%, #2f7fca) !important;
+  box-shadow: 0 14px 34px rgba(47,127,202,.16) !important;
+}
+
+.vpl-card,
+.vpl-sheen-card,
+.vpl-hex,
+.vpl-carousel-card {
+  background:
+    radial-gradient(circle at 18% 0%, rgba(255,255,255,1), transparent 34%),
+    linear-gradient(145deg, rgba(255,255,255,.98), rgba(235,243,251,.94)) !important;
+  border-color: rgba(7,17,31,.09) !important;
+  box-shadow:
+    0 24px 70px rgba(7,17,31,.10),
+    inset 0 1px 0 rgba(255,255,255,.92) !important;
+}
+
+.vpl-card-num,
+.vpl-step b,
+.vpl-hex::before {
+  color: #fff !important;
+}
+
+.vpl-light .vpl-button-secondary,
+.vpl-honeycomb-section .vpl-button-secondary,
+.vpl-constellation-section .vpl-button-secondary {
+  color: #07111f !important;
+  border-color: rgba(7,17,31,.14) !important;
+  background: rgba(255,255,255,.72) !important;
+  box-shadow: 0 12px 30px rgba(7,17,31,.08), inset 0 1px 0 rgba(255,255,255,.9) !important;
+}
+
+.vpl-tag {
+  color: #fff !important;
+  background: linear-gradient(135deg, #07111f, #2f7fca) !important;
+  box-shadow: 0 14px 34px rgba(47,127,202,.18) !important;
+}
+
+/* Schéma central : suppression du chevauchement texte/lignes/cartes. */
+.vpl-constellation-section {
+  padding: clamp(78px, 8vw, 108px) 0 !important;
+}
+
+.vpl-constellation-head {
+  margin-bottom: 26px !important;
+}
+
+.vpl-constellation-head h2 {
+  max-width: 12.5ch !important;
+  font-size: clamp(2.55rem, 5vw, 5.6rem) !important;
+  line-height: .95 !important;
+}
+
+.vpl-constellation-stage {
+  min-height: 0 !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, .86fr) minmax(340px, 1.12fr) minmax(0, .86fr) !important;
+  grid-template-areas:
+    "n1 core n2"
+    "n3 core n4"
+    "n5 n5 n5" !important;
+  gap: 18px !important;
+  padding: clamp(20px, 3vw, 32px) !important;
+  overflow: visible !important;
+  isolation: isolate !important;
+  background:
+    radial-gradient(circle at 50% 38%, rgba(47,127,202,.10), transparent 34%),
+    linear-gradient(150deg, rgba(255,255,255,.88), rgba(235,244,252,.78)) !important;
+  border-color: rgba(255,255,255,.92) !important;
+  box-shadow:
+    0 24px 80px rgba(7,17,31,.10),
+    inset 0 1px 0 rgba(255,255,255,.95) !important;
+}
+
+.vpl-constellation-links {
+  display: none !important;
+}
+
+.vpl-constellation-core,
+.vpl-constellation-node,
+.vpl-constellation-stage .node-1,
+.vpl-constellation-stage .node-2,
+.vpl-constellation-stage .node-3,
+.vpl-constellation-stage .node-4,
+.vpl-constellation-stage .node-5 {
+  position: relative !important;
+  left: auto !important;
+  right: auto !important;
+  top: auto !important;
+  bottom: auto !important;
+  width: 100% !important;
+  max-width: none !important;
+  opacity: 1 !important;
+  transform: none !important;
+  animation: none !important;
+}
+
+.vpl-constellation-core {
+  grid-area: core !important;
+  align-self: stretch !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  z-index: 4 !important;
+  padding: clamp(26px, 3vw, 36px) !important;
+  border-radius: 32px !important;
+  background:
+    radial-gradient(circle at 14% 0%, rgba(255,255,255,1), transparent 34%),
+    linear-gradient(145deg, rgba(255,255,255,.99), rgba(231,241,250,.96)) !important;
+  border: 1px solid rgba(255,255,255,.95) !important;
+  box-shadow:
+    0 30px 86px rgba(7,17,31,.14),
+    inset 0 1px 0 rgba(255,255,255,.96) !important;
+}
+
+.vpl-constellation-core h3 {
+  max-width: 11ch !important;
+  font-size: clamp(2rem, 3.35vw, 3.65rem) !important;
+  line-height: .95 !important;
+}
+
+.vpl-constellation-core p {
+  color: #43536a !important;
+  line-height: 1.64 !important;
+}
+
+.vpl-constellation-node {
+  min-height: 214px !important;
+  z-index: 3 !important;
+  padding: 20px !important;
+  border-radius: 26px !important;
+  background:
+    radial-gradient(circle at 18% 0%, rgba(255,255,255,1), transparent 30%),
+    linear-gradient(150deg, rgba(255,255,255,.97), rgba(232,242,251,.92)) !important;
+  border: 1px solid rgba(255,255,255,.95) !important;
+  box-shadow:
+    0 20px 54px rgba(7,17,31,.09),
+    inset 0 1px 0 rgba(255,255,255,.94) !important;
+}
+
+.vpl-constellation-node * {
+  position: relative !important;
+  z-index: 2 !important;
+}
+
+.vpl-constellation-node h4 {
+  font-size: clamp(1.28rem, 1.7vw, 1.62rem) !important;
+  letter-spacing: -.045em !important;
+}
+
+.vpl-constellation-node p {
+  color: #4a5b70 !important;
+  font-size: .92rem !important;
+  line-height: 1.55 !important;
+}
+
+.vpl-constellation-node-num {
+  width: 44px !important;
+  height: 44px !important;
+  margin-bottom: 14px !important;
+  border-radius: 15px !important;
+}
+
+.vpl-constellation-stage .node-1 { grid-area: n1 !important; }
+.vpl-constellation-stage .node-2 { grid-area: n2 !important; }
+.vpl-constellation-stage .node-3 { grid-area: n3 !important; }
+.vpl-constellation-stage .node-4 { grid-area: n4 !important; }
+.vpl-constellation-stage .node-5 {
+  grid-area: n5 !important;
+  min-height: 0 !important;
+  display: grid !important;
+  grid-template-columns: auto 1fr !important;
+  align-items: center !important;
+  column-gap: 18px !important;
+}
+
+.vpl-constellation-stage .node-5 .vpl-constellation-node-num {
+  margin-bottom: 0 !important;
+}
+
+.vpl-constellation-stage .node-5 strong,
+.vpl-constellation-stage .node-5 h4,
+.vpl-constellation-stage .node-5 p {
+  grid-column: 2 !important;
+}
+
+/* Photos : traitement plus éditorial et moins “image posée”. */
+.vpl-image-grid {
+  gap: clamp(16px, 2vw, 24px) !important;
+}
+
+.vpl-image-card {
+  min-height: clamp(390px, 42vw, 500px) !important;
+  border-radius: 34px !important;
+  border: 1px solid rgba(255,255,255,.32) !important;
+  box-shadow:
+    0 30px 90px rgba(7,17,31,.18),
+    inset 0 1px 0 rgba(255,255,255,.16) !important;
+}
+
+.vpl-image-card.small {
+  min-height: clamp(230px, 20vw, 270px) !important;
+}
+
+.vpl-image-card img {
+  object-position: center 38% !important;
+  filter: saturate(1.02) contrast(1.04) brightness(.90) !important;
+}
+
+.vpl-image-grid > .vpl-image-card:first-child img {
+  object-position: center 30% !important;
+}
+
+.vpl-image-grid > div .vpl-image-card:first-child img {
+  object-position: center 36% !important;
+}
+
+.vpl-image-grid > div .vpl-image-card:last-child img {
+  object-position: center 26% !important;
+}
+
+.vpl-image-content {
+  padding: clamp(22px, 3vw, 32px) !important;
+}
+
+.vpl-image-card h3 {
+  max-width: 11ch !important;
+  font-size: clamp(2rem, 3.55vw, 4.05rem) !important;
+  line-height: .92 !important;
+}
+
+.vpl-image-card.small h3 {
+  font-size: clamp(1.55rem, 2.2vw, 2.45rem) !important;
+}
+
+/* Ruban décoratif moins envahissant sur les sections blanches. */
+.vpl-scroll-ribbon.is-on-light {
+  opacity: .18 !important;
+  filter: blur(.75px) saturate(.72) !important;
+}
+
+.vpl-ribbon-progress {
+  stroke-width: 34 !important;
+}
+
+@media (max-width: 1180px) {
+  .vpl-menu a[href="/faq.html"],
+  .vpl-menu a[href="/contact.html"] {
+    display: none !important;
+  }
+}
+
+@media (max-width: 1080px) {
+  :root { --vpl-nav-offset: 82px; }
+
+  .vpl-nav {
+    top: 10px !important;
+    left: 12px !important;
+    right: 12px !important;
+    width: auto !important;
+    transform: none !important;
+    grid-template-columns: auto minmax(0, 1fr) auto !important;
+    max-height: 62px !important;
+    overflow: visible !important;
+    border-radius: 999px !important;
+    padding: 7px !important;
+  }
+
+  .vpl-menu {
+    justify-content: flex-start !important;
+    overflow-x: auto !important;
+  }
+
+  .vpl-menu a,
+  .vpl-nav-ghost {
+    padding: 8px 8px !important;
+    font-size: .76rem !important;
+  }
+
+  .vpl-nav-cta {
+    min-height: 40px !important;
+    padding-inline: 13px !important;
+  }
+
+  .vpl-hero,
+  .vpl-inner-hero,
+  body.vpl-home .vpl-hero {
+    padding-top: 92px !important;
+  }
+
+  .vpl-scroll-ribbon {
+    top: 76px !important;
+    height: calc(100vh - 76px) !important;
+  }
+
+  .vpl-constellation-stage {
+    grid-template-columns: 1fr 1fr !important;
+    grid-template-areas:
+      "core core"
+      "n1 n2"
+      "n3 n4"
+      "n5 n5" !important;
+  }
+}
+
+@media (max-width: 760px) {
+  :root { --vpl-nav-offset: 76px; }
+
+  .vpl-nav {
+    grid-template-columns: auto auto !important;
+    justify-content: space-between !important;
+    min-height: 54px !important;
+    max-height: 58px !important;
+  }
+
+  .vpl-menu {
+    display: none !important;
+  }
+
+  .vpl-brand img {
+    width: 36px !important;
+    height: 36px !important;
+  }
+
+  .vpl-brand b {
+    font-size: .82rem !important;
+  }
+
+  .vpl-nav-cta {
+    min-height: 38px !important;
+    padding: 0 12px !important;
+    font-size: .78rem !important;
+  }
+
+  .vpl-hero,
+  .vpl-inner-hero,
+  body.vpl-home .vpl-hero {
+    padding-top: 82px !important;
+  }
+
+  .vpl-section,
+  .vpl-constellation-section,
+  .vpl-honeycomb-section {
+    padding: 66px 0 !important;
+  }
+
+  .vpl-constellation-stage {
+    grid-template-columns: 1fr !important;
+    grid-template-areas:
+      "core"
+      "n1"
+      "n2"
+      "n3"
+      "n4"
+      "n5" !important;
+    padding: 16px !important;
+    border-radius: 28px !important;
+  }
+
+  .vpl-constellation-core,
+  .vpl-constellation-node {
+    border-radius: 22px !important;
+    min-height: auto !important;
+  }
+
+  .vpl-constellation-stage .node-5 {
+    grid-template-columns: 1fr !important;
+  }
+
+  .vpl-constellation-stage .node-5 strong,
+  .vpl-constellation-stage .node-5 h4,
+  .vpl-constellation-stage .node-5 p {
+    grid-column: auto !important;
+  }
+
+  .vpl-constellation-stage .node-5 .vpl-constellation-node-num {
+    margin-bottom: 14px !important;
+  }
+}
