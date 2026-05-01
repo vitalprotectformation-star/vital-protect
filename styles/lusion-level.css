@@ -4879,3 +4879,286 @@ body.vp-intro-playing {
     height: 190px;
   }
 }
+
+
+/* =========================================================
+   VITAL PROTECT — Hero visual polish v13
+   Objectif : rendre les images + bulles plus premium et cohérentes.
+   ========================================================= */
+
+.vpl-proof {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  color: rgba(248,251,255,.82) !important;
+  border-color: rgba(216,230,243,.18) !important;
+  background: rgba(216,230,243,.075) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.08) !important;
+}
+
+.vpl-proof::before {
+  content: "" !important;
+  flex: 0 0 auto !important;
+  width: 7px !important;
+  height: 7px !important;
+  margin-right: 0 !important;
+  border-radius: 999px !important;
+  background: #f8fbff !important;
+  box-shadow: 0 0 0 5px rgba(216,230,243,.10), 0 0 22px rgba(216,230,243,.28) !important;
+}
+
+.vpl-visual {
+  isolation: isolate !important;
+}
+
+.vpl-visual::before {
+  content: "" !important;
+  position: absolute !important;
+  z-index: 0 !important;
+  inset: 58px 8px 28px 36px !important;
+  border-radius: 46px !important;
+  border: 1px solid rgba(255,255,255,.13) !important;
+  background:
+    radial-gradient(circle at 22% 18%, rgba(216,230,243,.14), transparent 30%),
+    radial-gradient(circle at 84% 16%, rgba(47,111,159,.20), transparent 34%),
+    linear-gradient(135deg, rgba(255,255,255,.055), rgba(255,255,255,.018) 54%, rgba(47,111,159,.075)) !important;
+  box-shadow:
+    0 46px 120px rgba(0,0,0,.32),
+    inset 0 1px 0 rgba(255,255,255,.10) !important;
+  backdrop-filter: blur(18px) saturate(1.25) !important;
+  transform: rotate(-1.4deg) !important;
+}
+
+.vpl-orb {
+  z-index: 1 !important;
+  width: 300px !important;
+  height: 300px !important;
+  right: 8% !important;
+  top: 12px !important;
+  opacity: .76 !important;
+  filter: saturate(1.05) blur(.2px) !important;
+  background:
+    radial-gradient(circle at 30% 24%, rgba(255,255,255,.68), rgba(255,255,255,.13) 16%, transparent 32%),
+    radial-gradient(circle at 67% 69%, rgba(216,230,243,.42), transparent 18%),
+    radial-gradient(circle at 45% 48%, rgba(47,111,159,.46), transparent 56%),
+    linear-gradient(135deg, rgba(31,68,110,.92), rgba(8,24,48,.88) 64%, rgba(113,129,150,.52)) !important;
+  box-shadow:
+    0 0 96px rgba(47,111,159,.24),
+    0 40px 90px rgba(0,0,0,.34) !important;
+}
+
+.vpl-visual-card {
+  z-index: 2 !important;
+  border-color: rgba(255,255,255,.18) !important;
+  box-shadow:
+    0 32px 90px rgba(0,0,0,.34),
+    inset 0 1px 0 rgba(255,255,255,.10) !important;
+}
+
+.vpl-visual-card img {
+  filter: saturate(1.03) contrast(1.02) brightness(.95) !important;
+}
+
+.vpl-visual-card::after {
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.08), transparent 34%),
+    linear-gradient(to top, rgba(5,7,12,.42), transparent 56%) !important;
+}
+
+.vpl-visual-card-main {
+  width: min(440px, 88%) !important;
+  height: 320px !important;
+  right: 18px !important;
+  top: 86px !important;
+  bottom: auto !important;
+  border-radius: 38px !important;
+  transform: rotateY(-4deg) rotateX(2deg) rotateZ(-1.8deg) translateZ(0) !important;
+}
+
+.vpl-visual-card-small {
+  z-index: 3 !important;
+  width: min(238px, 48%) !important;
+  height: 178px !important;
+  left: 12px !important;
+  top: 306px !important;
+  border-radius: 30px !important;
+  transform: rotateY(4deg) rotateX(1deg) rotateZ(3.2deg) translateZ(0) !important;
+}
+
+.vpl-float-panel {
+  z-index: 4 !important;
+  width: 236px !important;
+  padding: 15px 16px !important;
+  border-radius: 24px !important;
+  border-color: rgba(216,230,243,.20) !important;
+  color: #f8fbff !important;
+  background:
+    linear-gradient(135deg, rgba(13,27,42,.82), rgba(8,18,32,.66)) !important;
+  box-shadow:
+    0 28px 70px rgba(0,0,0,.32),
+    inset 0 1px 0 rgba(255,255,255,.12) !important;
+  backdrop-filter: blur(18px) saturate(1.35) !important;
+}
+
+.vpl-float-panel strong {
+  font-size: .98rem !important;
+  line-height: 1.15 !important;
+  letter-spacing: -.035em !important;
+}
+
+.vpl-float-panel span {
+  color: rgba(216,230,243,.72) !important;
+  font-size: .84rem !important;
+  line-height: 1.48 !important;
+}
+
+.vpl-float-panel-a {
+  left: auto !important;
+  right: 26px !important;
+  top: 372px !important;
+  bottom: auto !important;
+}
+
+.vpl-float-panel-b {
+  left: 44px !important;
+  right: auto !important;
+  top: auto !important;
+  bottom: 18px !important;
+}
+
+@media (min-width: 1081px) {
+  .vpl-hero {
+    min-height: 100svh !important;
+    padding: 136px 0 72px !important;
+  }
+
+  .vpl-hero-grid {
+    grid-template-columns: minmax(0, 1.05fr) minmax(420px, .82fr) !important;
+    align-items: center !important;
+    gap: clamp(42px, 6vw, 92px) !important;
+  }
+
+  .vpl-visual {
+    min-height: 560px !important;
+    margin-top: 0 !important;
+  }
+}
+
+@media (max-width: 1080px) {
+  .vpl-visual {
+    width: min(640px, 100%) !important;
+    min-height: 540px !important;
+    margin: 18px auto 0 !important;
+  }
+
+  .vpl-visual::before {
+    inset: 42px 4px 22px 20px !important;
+  }
+
+  .vpl-visual-card-main {
+    width: min(430px, 84%) !important;
+    height: 310px !important;
+    right: 20px !important;
+    top: 82px !important;
+  }
+
+  .vpl-visual-card-small {
+    width: min(230px, 46%) !important;
+    height: 170px !important;
+    left: 18px !important;
+    top: 292px !important;
+  }
+
+  .vpl-float-panel-a {
+    right: 22px !important;
+    top: 356px !important;
+  }
+
+  .vpl-float-panel-b {
+    left: 40px !important;
+    bottom: 16px !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .vpl-hero {
+    padding-bottom: 54px !important;
+  }
+
+  .vpl-proof-row {
+    gap: 8px !important;
+  }
+
+  .vpl-proof {
+    padding: 8px 10px !important;
+    font-size: .82rem !important;
+  }
+
+  .vpl-visual {
+    min-height: 570px !important;
+    max-width: 460px !important;
+    margin-top: 10px !important;
+  }
+
+  .vpl-visual::before {
+    inset: 26px 0 18px 0 !important;
+    border-radius: 34px !important;
+    transform: rotate(-.8deg) !important;
+  }
+
+  .vpl-orb {
+    width: 220px !important;
+    height: 220px !important;
+    right: -18px !important;
+    top: 24px !important;
+    opacity: .68 !important;
+  }
+
+  .vpl-visual-card-main {
+    width: 92% !important;
+    height: 250px !important;
+    right: 0 !important;
+    top: 58px !important;
+    border-radius: 30px !important;
+    transform: rotateZ(-1.2deg) !important;
+  }
+
+  .vpl-visual-card-small {
+    width: 47% !important;
+    height: 146px !important;
+    left: 0 !important;
+    top: 234px !important;
+    border-radius: 24px !important;
+    transform: rotateZ(3deg) !important;
+  }
+
+  .vpl-float-panel,
+  .vpl-float-panel-a,
+  .vpl-float-panel-b {
+    width: min(252px, 68%) !important;
+    padding: 13px 14px !important;
+    border-radius: 22px !important;
+  }
+
+  .vpl-float-panel-a {
+    left: auto !important;
+    right: 0 !important;
+    top: 318px !important;
+    bottom: auto !important;
+  }
+
+  .vpl-float-panel-b {
+    left: 18px !important;
+    right: auto !important;
+    top: 432px !important;
+    bottom: auto !important;
+  }
+
+  .vpl-float-panel strong {
+    font-size: .92rem !important;
+  }
+
+  .vpl-float-panel span {
+    font-size: .78rem !important;
+  }
+}
