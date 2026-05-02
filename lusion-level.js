@@ -1033,8 +1033,9 @@ window.addEventListener('DOMContentLoaded', () => {
   const ORIGIN_KEY = 'vpl-route-transition-origin';
   const PREFETCH_ATTR = 'data-vpl-prefetched';
   const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)');
-  const TRANSITION_EXIT_MS = 880;
-  const TRANSITION_ENTER_MS = 980;
+  const TRANSITION_EXIT_MS = 1180;
+  const TRANSITION_ENTER_MS = 1180;
+  const TRANSITION_HOLD_MS = 180;
 
   const clamp = (value, min = 0, max = 1) => Math.min(max, Math.max(min, value));
   const easeInOut = (x) => {
@@ -1056,10 +1057,12 @@ window.addEventListener('DOMContentLoaded', () => {
     overlay.className = 'vpl-page-transition';
     overlay.setAttribute('aria-hidden', 'true');
     overlay.innerHTML = `
+      <div class="vpl-page-transition__solid"></div>
       <div class="vpl-page-transition__fog"></div>
       <canvas class="vpl-page-transition__canvas"></canvas>
       <div class="vpl-page-transition__beam"></div>
       <div class="vpl-page-transition__grain"></div>
+      <div class="vpl-page-transition__brand"><span>VITAL PROTECT</span></div>
     `;
     document.body.appendChild(overlay);
     return overlay;
@@ -1074,7 +1077,7 @@ window.addEventListener('DOMContentLoaded', () => {
       root.classList.remove('vpl-route-preload-transition', 'vpl-route-preload-releasing');
       root.style.removeProperty('--vpl-transition-x');
       root.style.removeProperty('--vpl-transition-y');
-    }, 260);
+    }, 680);
   };
 
   const removeOverlay = () => {
@@ -1205,7 +1208,7 @@ window.addEventListener('DOMContentLoaded', () => {
     if (mode === 'enter') {
       // Le pré-masque inline posé dans le <head> reste jusqu'à ce que le canvas JS
       // soit déjà actif. C'est cette continuité qui supprime la cassure du milieu.
-      window.requestAnimationFrame(() => window.setTimeout(releasePreloadMask, 40));
+      window.requestAnimationFrame(() => window.setTimeout(releasePreloadMask, 90));
     }
 
     const start = performance.now();
@@ -1332,7 +1335,12 @@ window.addEventListener('DOMContentLoaded', () => {
       originY,
       duration: TRANSITION_EXIT_MS,
       onDone: () => {
-        window.location.href = href;
+        // On attend que l'écran soit totalement rempli par le fond Vital Protect.
+        // Le changement de page se fait uniquement à ce moment-là, donc il n'y a
+        // plus de coupure visible au milieu de la dissolution.
+        window.setTimeout(() => {
+          window.location.href = href;
+        }, TRANSITION_HOLD_MS);
       }
     });
   };
