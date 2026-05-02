@@ -1024,48 +1024,54 @@ window.addEventListener('DOMContentLoaded', () => {
   });
 })();
 
-/* V26 — Transition inter-pages granulaire / reflet lumineux
-   VERSION RESTAURÉE : même effet que la première version validée.
-   Seule correction : préchargement + pré-masque léger pour supprimer la cassure
-   entre la sortie de l'ancienne page et l'entrée de la nouvelle. */
+/* V28 — Transition inter-pages sans l'ancien effet granulaire
+   Principe corrigé :
+   1) la page actuelle se ferme vers un écran uni Vital Protect ;
+   2) le changement de page se fait uniquement quand l'écran est déjà plein ;
+   3) la page suivante commence avec le même écran plein puis le retire proprement.
+   Pas de canvas, pas de particules : donc plus de cassure liée au changement de document. */
 (() => {
   const STORAGE_KEY = 'vpl-route-transition-next';
   const ORIGIN_KEY = 'vpl-route-transition-origin';
   const PREFETCH_ATTR = 'data-vpl-prefetched';
   const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)');
-  const TRANSITION_EXIT_MS = 1180;
-  const TRANSITION_ENTER_MS = 1180;
-  const TRANSITION_HOLD_MS = 180;
 
-  const clamp = (value, min = 0, max = 1) => Math.min(max, Math.max(min, value));
-  const easeInOut = (x) => {
-    const t = clamp(x);
-    return t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-  };
-  const easeOut = (x) => 1 - Math.pow(1 - clamp(x), 3);
+  const EXIT_TOTAL_MS = 980;
+  const ENTER_TOTAL_MS = 820;
+  const SAFE_HOLD_MS = 130;
 
   let overlay = null;
-  let activeRaf = null;
-  let activeResize = null;
   let transitionRunning = false;
   const prefetched = new Set();
+
+  const clamp = (value, min = 0, max = 1) => Math.min(max, Math.max(min, value));
 
   const createOverlay = () => {
     if (overlay) return overlay;
 
     overlay = document.createElement('div');
-    overlay.className = 'vpl-page-transition';
+    overlay.className = 'vpl-page-transition vpl-brand-gate';
     overlay.setAttribute('aria-hidden', 'true');
     overlay.innerHTML = `
-      <div class="vpl-page-transition__solid"></div>
-      <div class="vpl-page-transition__fog"></div>
-      <canvas class="vpl-page-transition__canvas"></canvas>
-      <div class="vpl-page-transition__beam"></div>
-      <div class="vpl-page-transition__grain"></div>
-      <div class="vpl-page-transition__brand"><span>VITAL PROTECT</span></div>
+      <div class="vpl-brand-gate__field"></div>
+      <div class="vpl-brand-gate__halo"></div>
+      <div class="vpl-brand-gate__ring"></div>
+      <div class="vpl-brand-gate__beam"></div>
+      <div class="vpl-brand-gate__brand"><span>VITAL PROTECT</span></div>
     `;
+
     document.body.appendChild(overlay);
     return overlay;
+  };
+
+  const removeOverlay = () => {
+    if (overlay) {
+      overlay.remove();
+      overlay = null;
+    }
+
+    document.documentElement.classList.remove('vpl-route-transitioning');
+    transitionRunning = false;
   };
 
   const releasePreloadMask = () => {
@@ -1077,25 +1083,7 @@ window.addEventListener('DOMContentLoaded', () => {
       root.classList.remove('vpl-route-preload-transition', 'vpl-route-preload-releasing');
       root.style.removeProperty('--vpl-transition-x');
       root.style.removeProperty('--vpl-transition-y');
-    }, 680);
-  };
-
-  const removeOverlay = () => {
-    if (activeRaf) {
-      cancelAnimationFrame(activeRaf);
-      activeRaf = null;
-    }
-    if (activeResize) {
-      window.removeEventListener('resize', activeResize);
-      activeResize = null;
-    }
-    if (overlay) {
-      overlay.remove();
-      overlay = null;
-    }
-    releasePreloadMask();
-    document.documentElement.classList.remove('vpl-route-transitioning');
-    transitionRunning = false;
+    }, ENTER_TOTAL_MS + 120);
   };
 
   const storeTransitionState = (originX, originY) => {
@@ -1152,124 +1140,16 @@ window.addEventListener('DOMContentLoaded', () => {
     } catch (_) {}
   };
 
-  const runParticleVeil = ({ mode, originX, originY, duration, onDone }) => {
-    const node = createOverlay();
-    const canvas = node.querySelector('.vpl-page-transition__canvas');
-    const ctx = canvas.getContext('2d', { alpha: true });
+  const setOrigin = (node, originX, originY) => {
+    const width = window.innerWidth || document.documentElement.clientWidth || 1;
+    const height = window.innerHeight || document.documentElement.clientHeight || 1;
+    const x = `${clamp(originX / width) * 100}%`;
+    const y = `${clamp(originY / height) * 100}%`;
 
-    let width = 0;
-    let height = 0;
-    let dpr = 1;
-    let particles = [];
-
-    const resize = () => {
-      width = window.innerWidth || document.documentElement.clientWidth || 1;
-      height = window.innerHeight || document.documentElement.clientHeight || 1;
-      dpr = Math.min(window.devicePixelRatio || 1, 2);
-      canvas.width = Math.floor(width * dpr);
-      canvas.height = Math.floor(height * dpr);
-      canvas.style.width = `${width}px`;
-      canvas.style.height = `${height}px`;
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-
-      const count = Math.min(3600, Math.max(1200, Math.floor((width * height) / 520)));
-      particles = Array.from({ length: count }, () => {
-        const x = Math.random() * width;
-        const y = Math.random() * height;
-        const dx = x - originX;
-        const dy = y - originY;
-        const distance = Math.sqrt(dx * dx + dy * dy) / Math.max(width, height);
-        return {
-          x,
-          y,
-          r: Math.random() * 2.6 + .45,
-          driftX: (Math.random() - .5) * 62,
-          driftY: (Math.random() - .5) * 96,
-          wave: Math.random() * .38 + distance * .22 + (y / height) * .22,
-          hue: 195 + Math.random() * 35,
-          light: 68 + Math.random() * 22,
-          delay: Math.random() * .22
-        };
-      });
-    };
-
-    activeResize = resize;
-    resize();
-    window.addEventListener('resize', resize, { passive: true });
-
-    node.style.setProperty('--vpl-transition-x', `${clamp(originX / width) * 100}%`);
-    node.style.setProperty('--vpl-transition-y', `${clamp(originY / height) * 100}%`);
-    document.documentElement.style.setProperty('--vpl-transition-x', `${clamp(originX / width) * 100}%`);
-    document.documentElement.style.setProperty('--vpl-transition-y', `${clamp(originY / height) * 100}%`);
-
-    node.classList.remove('is-exiting', 'is-entering');
-    node.classList.add('is-active', mode === 'enter' ? 'is-entering' : 'is-exiting');
-
-    if (mode === 'enter') {
-      // Le pré-masque inline posé dans le <head> reste jusqu'à ce que le canvas JS
-      // soit déjà actif. C'est cette continuité qui supprime la cassure du milieu.
-      window.requestAnimationFrame(() => window.setTimeout(releasePreloadMask, 90));
-    }
-
-    const start = performance.now();
-
-    const frame = (now) => {
-      const raw = clamp((now - start) / duration);
-      const p = easeInOut(raw);
-      const visible = mode === 'exit' ? p : 1 - p;
-      const sweep = mode === 'exit' ? easeOut(raw) : 1 - easeOut(raw);
-
-      ctx.clearRect(0, 0, width, height);
-
-      const baseAlpha = mode === 'exit' ? .78 * p : .78 * (1 - p);
-      const gradient = ctx.createRadialGradient(originX, originY, 0, originX, originY, Math.max(width, height) * .82);
-      gradient.addColorStop(0, `rgba(107, 229, 255, ${baseAlpha * .54})`);
-      gradient.addColorStop(.38, `rgba(12, 43, 78, ${baseAlpha * .76})`);
-      gradient.addColorStop(1, `rgba(2, 6, 14, ${baseAlpha})`);
-      ctx.fillStyle = gradient;
-      ctx.fillRect(0, 0, width, height);
-
-      ctx.globalCompositeOperation = 'source-over';
-      for (const particle of particles) {
-        const local = mode === 'exit'
-          ? clamp((sweep - particle.wave + particle.delay) / .34)
-          : clamp(((1 - sweep) - particle.wave + particle.delay) / .34);
-        const alpha = mode === 'exit' ? easeOut(local) : 1 - easeOut(local);
-        if (alpha <= .01) continue;
-
-        const travel = mode === 'exit' ? p : (1 - p);
-        const shimmer = Math.sin((now * .006) + particle.x * .02 + particle.y * .012) * 9;
-        const x = particle.x + particle.driftX * travel + shimmer * alpha;
-        const y = particle.y + particle.driftY * travel - 38 * travel;
-        const radius = particle.r * (1 + alpha * 1.4);
-
-        ctx.beginPath();
-        ctx.arc(x, y, radius, 0, Math.PI * 2);
-        ctx.fillStyle = `hsla(${particle.hue}, 92%, ${particle.light}%, ${alpha * .92})`;
-        ctx.fill();
-
-        if (alpha > .54) {
-          ctx.beginPath();
-          ctx.arc(x, y, radius * 2.2, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(255,255,255,${(alpha - .54) * .18})`;
-          ctx.fill();
-        }
-      }
-
-      ctx.globalCompositeOperation = 'multiply';
-      ctx.fillStyle = `rgba(2, 6, 14, ${visible * .28})`;
-      ctx.fillRect(0, 0, width, height);
-      ctx.globalCompositeOperation = 'source-over';
-
-      if (raw < 1) {
-        activeRaf = requestAnimationFrame(frame);
-      } else {
-        activeRaf = null;
-        if (typeof onDone === 'function') onDone();
-      }
-    };
-
-    activeRaf = requestAnimationFrame(frame);
+    node.style.setProperty('--vpl-transition-x', x);
+    node.style.setProperty('--vpl-transition-y', y);
+    document.documentElement.style.setProperty('--vpl-transition-x', x);
+    document.documentElement.style.setProperty('--vpl-transition-y', y);
   };
 
   const shouldSkipLink = (link, event) => {
@@ -1297,9 +1177,6 @@ window.addEventListener('DOMContentLoaded', () => {
     const lastPart = url.pathname.split('/').pop() || '';
     if (/\.[a-z0-9]+$/i.test(lastPart) && !/\.html?$/i.test(lastPart)) return true;
 
-    // L'effet est réservé aux pages publiques qui chargent ce script.
-    // Les espaces login/admin/callback gardent une navigation normale pour éviter
-    // qu'un pré-masque reste affiché sur une page sans lusion-level.js.
     const publicTransitionPages = new Set([
       '',
       'index.html',
@@ -1313,8 +1190,8 @@ window.addEventListener('DOMContentLoaded', () => {
       'mentions-legales.html',
       'politique-confidentialite.html'
     ]);
-    if (!publicTransitionPages.has(lastPart)) return true;
 
+    if (!publicTransitionPages.has(lastPart)) return true;
     return false;
   };
 
@@ -1329,20 +1206,44 @@ window.addEventListener('DOMContentLoaded', () => {
     storeTransitionState(originX, originY);
     warmPage(href);
 
-    runParticleVeil({
-      mode: 'exit',
-      originX,
-      originY,
-      duration: TRANSITION_EXIT_MS,
-      onDone: () => {
-        // On attend que l'écran soit totalement rempli par le fond Vital Protect.
-        // Le changement de page se fait uniquement à ce moment-là, donc il n'y a
-        // plus de coupure visible au milieu de la dissolution.
-        window.setTimeout(() => {
-          window.location.href = href;
-        }, TRANSITION_HOLD_MS);
-      }
+    const node = createOverlay();
+    setOrigin(node, originX, originY);
+    node.classList.remove('is-entering', 'is-leaving');
+    node.classList.add('is-active', 'is-exiting');
+
+    // Navigation uniquement quand le gate est devenu plein + logo lisible.
+    window.setTimeout(() => {
+      node.classList.add('is-solid');
+      window.setTimeout(() => {
+        window.location.href = href;
+      }, SAFE_HOLD_MS);
+    }, EXIT_TOTAL_MS);
+  };
+
+  const startEnterTransition = () => {
+    const storedOrigin = readTransitionOrigin();
+    const originX = storedOrigin?.originX ?? window.innerWidth / 2;
+    const originY = storedOrigin?.originY ?? window.innerHeight / 2;
+
+    transitionRunning = true;
+    document.documentElement.classList.add('vpl-route-transitioning');
+    clearTransitionStorage();
+
+    const node = createOverlay();
+    setOrigin(node, originX, originY);
+    node.classList.remove('is-exiting', 'is-solid');
+    node.classList.add('is-active', 'is-entering');
+
+    // On garde le masque inline jusqu'à ce que l'overlay JS soit déjà posé.
+    window.requestAnimationFrame(() => {
+      window.setTimeout(releasePreloadMask, 40);
     });
+
+    window.setTimeout(() => {
+      node.classList.add('is-leaving');
+    }, 30);
+
+    window.setTimeout(removeOverlay, ENTER_TOTAL_MS + 180);
   };
 
   const initPageTransition = () => {
@@ -1352,21 +1253,7 @@ window.addEventListener('DOMContentLoaded', () => {
     } catch (_) {}
 
     if (shouldPlayEnter && !prefersReduced.matches) {
-      const storedOrigin = readTransitionOrigin();
-      const originX = storedOrigin?.originX ?? window.innerWidth / 2;
-      const originY = storedOrigin?.originY ?? window.innerHeight / 2;
-
-      transitionRunning = true;
-      document.documentElement.classList.add('vpl-route-transitioning');
-      clearTransitionStorage();
-
-      runParticleVeil({
-        mode: 'enter',
-        originX,
-        originY,
-        duration: TRANSITION_ENTER_MS,
-        onDone: removeOverlay
-      });
+      startEnterTransition();
     } else {
       releasePreloadMask();
     }
