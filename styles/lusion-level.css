@@ -7374,3 +7374,374 @@ body.vpl-home .vpl-float-panel-a span {
     animation: none !important;
   }
 }
+
+/* =========================================================
+   V26 — Hero: effet card plus fort + texte qui ne déborde plus
+   ========================================================= */
+
+body.vpl-home .vpl-hero > .vpl-container {
+  width: min(1320px, calc(100% - 86px)) !important;
+}
+
+body.vpl-home .vpl-hero-grid {
+  grid-template-columns: minmax(0, 520px) minmax(0, 610px) !important;
+  justify-content: space-between !important;
+  gap: clamp(34px, 4vw, 58px) !important;
+  align-items: center !important;
+}
+
+body.vpl-home .vpl-hero-copy {
+  max-width: 520px !important;
+  width: 100% !important;
+  overflow: visible !important;
+}
+
+body.vpl-home .vpl-title {
+  max-width: 100% !important;
+  width: 100% !important;
+  font-size: clamp(3.95rem, 6.15vw, 6.75rem) !important;
+  line-height: .91 !important;
+  letter-spacing: -.078em !important;
+}
+
+body.vpl-home .vpl-title-line {
+  white-space: nowrap !important;
+}
+
+body.vpl-home .vpl-lead {
+  max-width: 47ch !important;
+  font-size: clamp(.96rem, .96vw, 1.06rem) !important;
+  line-height: 1.68 !important;
+}
+
+body.vpl-home .vpl-proof-row {
+  max-width: 520px !important;
+  gap: 10px !important;
+}
+
+body.vpl-home .vpl-proof {
+  min-height: 66px !important;
+  padding: 10px 12px !important;
+}
+
+body.vpl-home .vpl-proof span {
+  font-size: .82rem !important;
+}
+
+body.vpl-home .vpl-visual {
+  overflow: visible !important;
+  max-width: 610px !important;
+  padding: 15px !important;
+  grid-template-rows: minmax(285px, 330px) minmax(205px, 235px) minmax(92px, auto) !important;
+  gap: 13px !important;
+  border-color: rgba(121, 214, 255, .48) !important;
+  background:
+    radial-gradient(circle at var(--hero-x) var(--hero-y), rgba(93,231,255,.27), transparent 34%),
+    linear-gradient(135deg, rgba(7,17,31,.88), rgba(3,10,22,.94) 62%, rgba(4,22,42,.86)) !important;
+  box-shadow:
+    0 48px 150px rgba(0,0,0,.56),
+    0 0 0 1px rgba(255,255,255,.055) inset,
+    0 0 58px rgba(93,231,255,.20),
+    0 0 128px rgba(19,142,255,.14),
+    inset 0 1px 0 rgba(255,255,255,.19),
+    inset 0 -1px 0 rgba(93,231,255,.16) !important;
+  animation: vplHeroCardFloatWowIntense 4.8s ease-in-out infinite, vplCardGlowWowIntense 3.25s ease-in-out infinite !important;
+}
+
+.js body.vpl-home .vpl-hero.vpl-hero-mounted .vpl-visual {
+  animation: vplHeroCardFloatWowIntense 4.8s ease-in-out .55s infinite, vplCardGlowWowIntense 3.25s ease-in-out .4s infinite !important;
+}
+
+body.vpl-home .vpl-visual::before {
+  inset: -2px !important;
+  z-index: 9 !important;
+  padding: 2px !important;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    transparent 58deg,
+    rgba(93,231,255,.0) 70deg,
+    rgba(93,231,255,1) 104deg,
+    rgba(255,255,255,.78) 116deg,
+    transparent 144deg,
+    transparent 224deg,
+    rgba(21,146,255,.86) 252deg,
+    rgba(255,255,255,.44) 278deg,
+    transparent 314deg,
+    transparent 360deg
+  ) !important;
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0) !important;
+  -webkit-mask-composite: xor !important;
+  mask-composite: exclude !important;
+  opacity: 1 !important;
+  filter: drop-shadow(0 0 18px rgba(93,231,255,.66)) drop-shadow(0 0 38px rgba(28,151,255,.28)) !important;
+  animation: vplSpinBorderWowIntense 3.2s linear infinite !important;
+}
+
+body.vpl-home .vpl-card-aura {
+  inset: -28px -24px -30px -24px !important;
+  z-index: -3 !important;
+  background:
+    radial-gradient(circle at 50% 38%, rgba(93,231,255,.34), transparent 58%),
+    radial-gradient(circle at 92% 18%, rgba(22,145,255,.30), transparent 34%) !important;
+  filter: blur(34px) saturate(1.25) !important;
+  opacity: .86 !important;
+  animation: vplAuraPulseWowIntense 2.7s ease-in-out infinite !important;
+}
+
+body.vpl-home .vpl-orb {
+  opacity: .72 !important;
+  filter: blur(.2px) saturate(1.36) !important;
+  mix-blend-mode: screen !important;
+  animation: vplOrbitWowIntense 5.4s ease-in-out infinite !important;
+}
+
+body.vpl-home .vpl-orb-secondary {
+  opacity: .62 !important;
+  animation-delay: -1.7s !important;
+}
+
+body.vpl-home .vpl-card-sweep {
+  z-index: 11 !important;
+  inset: 0 auto 0 -8% !important;
+  width: 44% !important;
+  border-radius: inherit !important;
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,.18) 38%, rgba(255,255,255,.62) 50%, rgba(93,231,255,.35) 62%, transparent 100%) !important;
+  filter: blur(1.4px) !important;
+  mix-blend-mode: screen !important;
+  animation: vplShineSweepWowIntense 2.65s cubic-bezier(.16,1,.3,1) infinite !important;
+  clip-path: inset(0 round 38px) !important;
+}
+
+body.vpl-home .vpl-card-scan {
+  z-index: 10 !important;
+  left: 0 !important;
+  right: 0 !important;
+  height: 126px !important;
+  border-radius: inherit !important;
+  background:
+    linear-gradient(to bottom, transparent, rgba(93,231,255,.36), rgba(255,255,255,.12), transparent),
+    linear-gradient(90deg, transparent, rgba(93,231,255,.42), transparent) !important;
+  filter: blur(.2px) !important;
+  mix-blend-mode: screen !important;
+  animation: vplScanLineWowIntense 2.9s ease-in-out infinite .25s !important;
+  clip-path: inset(0 round 38px) !important;
+}
+
+body.vpl-home .vpl-visual-shine::before,
+body.vpl-home .vpl-visual-shine::after {
+  width: 8px !important;
+  height: 8px !important;
+  box-shadow: 0 0 16px #fff, 0 0 34px rgba(93,231,255,1), 0 0 84px rgba(93,231,255,.64) !important;
+  animation: vplSparkBeatWow 1.9s ease-in-out infinite !important;
+}
+
+body.vpl-home .vpl-card-particle {
+  width: 7px !important;
+  height: 7px !important;
+  background: #d7fbff !important;
+  box-shadow: 0 0 16px #fff, 0 0 30px #62dfff !important;
+  animation: vplParticleRiseWowIntense 2.15s ease-out infinite !important;
+}
+
+body.vpl-home .vpl-card-particle:nth-of-type(1) { left: 8%; top: 82%; animation-delay: .05s !important; }
+body.vpl-home .vpl-card-particle:nth-of-type(2) { left: 18%; top: 61%; animation-delay: .32s !important; }
+body.vpl-home .vpl-card-particle:nth-of-type(3) { left: 34%; top: 78%; animation-delay: .65s !important; }
+body.vpl-home .vpl-card-particle:nth-of-type(4) { left: 50%; top: 66%; animation-delay: .18s !important; }
+body.vpl-home .vpl-card-particle:nth-of-type(5) { left: 72%; top: 79%; animation-delay: .48s !important; }
+body.vpl-home .vpl-card-particle:nth-of-type(6) { left: 88%; top: 58%; animation-delay: .82s !important; }
+body.vpl-home .vpl-card-particle:nth-of-type(7) { left: 63%; top: 25%; animation-delay: 1.05s !important; }
+body.vpl-home .vpl-card-particle:nth-of-type(8) { left: 15%; top: 29%; animation-delay: 1.28s !important; }
+
+body.vpl-home .vpl-visual-card {
+  border-color: rgba(160,223,255,.40) !important;
+  box-shadow: 0 26px 78px rgba(0,0,0,.38), 0 0 32px rgba(93,231,255,.08), inset 0 1px 0 rgba(255,255,255,.18) !important;
+}
+
+body.vpl-home .vpl-visual-card-main img {
+  animation: vplVisualZoomWowIntense 5.8s ease-in-out infinite !important;
+}
+
+body.vpl-home .vpl-visual-card-small {
+  animation: vplMiniPopWowIntense 3.2s ease-in-out infinite !important;
+}
+
+body.vpl-home .vpl-float-panel {
+  border-color: rgba(151,218,255,.34) !important;
+  box-shadow: 0 26px 84px rgba(0,0,0,.34), 0 0 32px rgba(93,231,255,.09), inset 0 1px 0 rgba(255,255,255,.16) !important;
+}
+
+body.vpl-home .vpl-float-panel-a {
+  padding: 24px !important;
+}
+
+body.vpl-home .vpl-float-panel-a span {
+  font-size: .84rem !important;
+  line-height: 1.44 !important;
+}
+
+body.vpl-home .vpl-float-panel-a strong {
+  font-size: clamp(1rem, 1.12vw, 1.16rem) !important;
+}
+
+@keyframes vplHeroCardFloatWowIntense {
+  0%, 100% { --hero-float: 0px; }
+  50% { --hero-float: -24px; }
+}
+
+@keyframes vplCardGlowWowIntense {
+  0%, 100% {
+    filter: saturate(1) brightness(1);
+    box-shadow:
+      0 48px 150px rgba(0,0,0,.56),
+      0 0 0 1px rgba(255,255,255,.055) inset,
+      0 0 58px rgba(93,231,255,.20),
+      0 0 128px rgba(19,142,255,.14),
+      inset 0 1px 0 rgba(255,255,255,.19),
+      inset 0 -1px 0 rgba(93,231,255,.16);
+  }
+  50% {
+    filter: saturate(1.08) brightness(1.06);
+    box-shadow:
+      0 58px 160px rgba(0,0,0,.60),
+      0 0 0 1px rgba(255,255,255,.07) inset,
+      0 0 84px rgba(93,231,255,.34),
+      0 0 170px rgba(19,142,255,.22),
+      inset 0 1px 0 rgba(255,255,255,.24),
+      inset 0 -1px 0 rgba(93,231,255,.24);
+  }
+}
+
+@keyframes vplAuraPulseWowIntense {
+  0%, 100% { opacity: .58; transform: scale(.92); }
+  50% { opacity: 1; transform: scale(1.12); }
+}
+
+@keyframes vplSpinBorderWowIntense {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes vplShineSweepWowIntense {
+  0%, 30% { transform: translateX(-260%) rotate(18deg); opacity: 0; }
+  44% { opacity: 1; }
+  66%, 100% { transform: translateX(455%) rotate(18deg); opacity: 0; }
+}
+
+@keyframes vplScanLineWowIntense {
+  0% { transform: translateY(-150px); opacity: 0; }
+  16% { opacity: 1; }
+  64% { opacity: .82; }
+  100% { transform: translateY(720px); opacity: 0; }
+}
+
+@keyframes vplSparkBeatWow {
+  0%, 100% { transform: scale(.8); opacity: .74; }
+  50% { transform: scale(1.35); opacity: 1; }
+}
+
+@keyframes vplVisualZoomWowIntense {
+  0%, 100% { transform: scale(1); filter: saturate(1.06) contrast(1.05) brightness(.90); }
+  50% { transform: scale(1.052); filter: saturate(1.2) contrast(1.08) brightness(.98); }
+}
+
+@keyframes vplMiniPopWowIntense {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-10px) scale(1.018); }
+}
+
+@keyframes vplParticleRiseWowIntense {
+  0% { opacity: 0; transform: translateY(24px) scale(.42); }
+  14% { opacity: 1; }
+  72% { opacity: .86; }
+  100% { opacity: 0; transform: translateY(-126px) scale(1.34); }
+}
+
+@keyframes vplOrbitWowIntense {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  30% { transform: translate3d(-34px, 22px, 40px) scale(1.13); }
+  65% { transform: translate3d(28px, -24px, 20px) scale(.9); }
+}
+
+@media (min-width: 1081px) and (max-width: 1380px) {
+  body.vpl-home .vpl-hero > .vpl-container {
+    width: min(1240px, calc(100% - 88px)) !important;
+  }
+  body.vpl-home .vpl-hero-grid {
+    grid-template-columns: minmax(0, 500px) minmax(0, 590px) !important;
+    gap: 38px !important;
+  }
+  body.vpl-home .vpl-title {
+    font-size: clamp(3.85rem, 6.05vw, 5.95rem) !important;
+    letter-spacing: -.08em !important;
+  }
+  body.vpl-home .vpl-lead {
+    max-width: 45ch !important;
+  }
+  body.vpl-home .vpl-visual {
+    max-width: 590px !important;
+    grid-template-rows: minmax(260px, 305px) minmax(188px, 218px) minmax(88px, auto) !important;
+  }
+  body.vpl-home .vpl-proof-row {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    max-width: 500px !important;
+  }
+  body.vpl-home .vpl-proof {
+    min-height: 62px !important;
+    padding: 10px 9px !important;
+    gap: 8px !important;
+  }
+  body.vpl-home .vpl-proof span {
+    font-size: .75rem !important;
+  }
+}
+
+@media (min-width: 1081px) and (max-width: 1220px) {
+  body.vpl-home .vpl-hero-grid {
+    grid-template-columns: minmax(0, 465px) minmax(0, 540px) !important;
+    gap: 30px !important;
+  }
+  body.vpl-home .vpl-title {
+    font-size: clamp(3.55rem, 5.8vw, 5.35rem) !important;
+  }
+  body.vpl-home .vpl-lead {
+    max-width: 42ch !important;
+    font-size: .94rem !important;
+  }
+  body.vpl-home .vpl-actions {
+    gap: 12px !important;
+  }
+  body.vpl-home .vpl-button {
+    min-width: 205px !important;
+  }
+  body.vpl-home .vpl-visual {
+    max-width: 540px !important;
+    padding: 13px !important;
+    grid-template-rows: minmax(238px, 286px) minmax(172px, 204px) minmax(84px, auto) !important;
+  }
+}
+
+@media (max-width: 1080px) {
+  body.vpl-home .vpl-hero-copy {
+    max-width: 720px !important;
+  }
+  body.vpl-home .vpl-title {
+    font-size: clamp(3.8rem, 13vw, 6.6rem) !important;
+    max-width: 9ch !important;
+  }
+  body.vpl-home .vpl-visual {
+    overflow: hidden !important;
+  }
+}
+
+@media (max-width: 760px) {
+  body.vpl-home .vpl-title-line {
+    white-space: normal !important;
+  }
+  body.vpl-home .vpl-visual {
+    overflow: hidden !important;
+    animation: none !important;
+  }
+  body.vpl-home .vpl-card-aura {
+    display: none !important;
+  }
+}
