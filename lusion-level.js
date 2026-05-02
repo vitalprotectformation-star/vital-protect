@@ -1033,3 +1033,72 @@ window.addEventListener('DOMContentLoaded', () => {
     sessionStorage.removeItem('vpl-route-transition-origin');
   } catch (_) {}
 })();
+
+/* V29 — Transition inter-pages plus visible mais sans coupure.
+   On ajoute un voile lumineux très court AVANT la navigation, puis on laisse
+   les View Transitions natives garder la continuité entre les deux pages. */
+(() => {
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  if (reduceMotion.matches) return;
+
+  const isPlainLeftClick = (event) => (
+    event.button === 0 &&
+    !event.metaKey &&
+    !event.ctrlKey &&
+    !event.shiftKey &&
+    !event.altKey
+  );
+
+  const shouldSkipLink = (link, url) => {
+    if (!link || !url) return true;
+    if (link.target && link.target !== '_self') return true;
+    if (link.hasAttribute('download')) return true;
+    if (link.dataset.noTransition === 'true') return true;
+    if (url.origin !== window.location.origin) return true;
+    if (url.protocol !== 'http:' && url.protocol !== 'https:') return true;
+
+    const samePath = url.pathname === window.location.pathname;
+    const sameSearch = url.search === window.location.search;
+    const onlyHashChange = samePath && sameSearch && url.hash && url.hash !== window.location.hash;
+    if (onlyHashChange) return true;
+
+    return false;
+  };
+
+  const clearLeavingState = () => {
+    document.documentElement.classList.remove('vpl-route-leaving');
+    document.documentElement.style.removeProperty('--vpl-route-x');
+    document.documentElement.style.removeProperty('--vpl-route-y');
+  };
+
+  window.addEventListener('pageshow', clearLeavingState);
+
+  document.addEventListener('click', (event) => {
+    if (!isPlainLeftClick(event)) return;
+
+    const link = event.target.closest('a[href]');
+    if (!link) return;
+
+    let url;
+    try {
+      url = new URL(link.getAttribute('href'), window.location.href);
+    } catch (_) {
+      return;
+    }
+
+    if (shouldSkipLink(link, url)) return;
+
+    event.preventDefault();
+
+    const x = Number.isFinite(event.clientX) ? (event.clientX / window.innerWidth) * 100 : 50;
+    const y = Number.isFinite(event.clientY) ? (event.clientY / window.innerHeight) * 100 : 50;
+
+    document.documentElement.style.setProperty('--vpl-route-x', `${Math.max(0, Math.min(100, x)).toFixed(1)}%`);
+    document.documentElement.style.setProperty('--vpl-route-y', `${Math.max(0, Math.min(100, y)).toFixed(1)}%`);
+    document.documentElement.classList.add('vpl-route-leaving');
+
+    window.setTimeout(() => {
+      window.location.href = url.href;
+    }, 360);
+  }, { capture: true });
+})();
