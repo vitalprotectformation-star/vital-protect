@@ -5,6 +5,12 @@ document.documentElement.classList.add('js');
   const canvas = document.querySelector('.vpl-canvas');
   if (!canvas) return;
 
+  const mobileOrReducedMotion = window.matchMedia('(max-width: 900px), (prefers-reduced-motion: reduce)').matches;
+  if (mobileOrReducedMotion) {
+    canvas.remove();
+    return;
+  }
+
   const ctx = canvas.getContext('2d', { alpha: true });
   let width = 0;
   let height = 0;
