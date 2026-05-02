@@ -1023,3 +1023,255 @@ window.addEventListener('DOMContentLoaded', () => {
     reset();
   });
 })();
+
+/* V26 — Transition inter-pages granulaire / reflet lumineux */
+(() => {
+  const STORAGE_KEY = 'vpl-route-transition-next';
+  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const TRANSITION_EXIT_MS = 880;
+  const TRANSITION_ENTER_MS = 980;
+
+  const clamp = (value, min = 0, max = 1) => Math.min(max, Math.max(min, value));
+  const easeInOut = (x) => {
+    const t = clamp(x);
+    return t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  };
+  const easeOut = (x) => 1 - Math.pow(1 - clamp(x), 3);
+
+  let overlay = null;
+  let activeRaf = null;
+  let activeResize = null;
+  let transitionRunning = false;
+
+  const createOverlay = () => {
+    if (overlay) return overlay;
+
+    overlay = document.createElement('div');
+    overlay.className = 'vpl-page-transition';
+    overlay.setAttribute('aria-hidden', 'true');
+    overlay.innerHTML = `
+      <div class="vpl-page-transition__fog"></div>
+      <canvas class="vpl-page-transition__canvas"></canvas>
+      <div class="vpl-page-transition__beam"></div>
+      <div class="vpl-page-transition__grain"></div>
+    `;
+    document.body.appendChild(overlay);
+    return overlay;
+  };
+
+  const removeOverlay = () => {
+    if (activeRaf) {
+      cancelAnimationFrame(activeRaf);
+      activeRaf = null;
+    }
+    if (activeResize) {
+      window.removeEventListener('resize', activeResize);
+      activeResize = null;
+    }
+    if (overlay) {
+      overlay.remove();
+      overlay = null;
+    }
+    document.documentElement.classList.remove('vpl-route-transitioning');
+    transitionRunning = false;
+  };
+
+  const runParticleVeil = ({ mode, originX, originY, duration, onDone }) => {
+    const node = createOverlay();
+    const canvas = node.querySelector('.vpl-page-transition__canvas');
+    const fog = node.querySelector('.vpl-page-transition__fog');
+    const ctx = canvas.getContext('2d', { alpha: true });
+
+    let width = 0;
+    let height = 0;
+    let dpr = 1;
+    let particles = [];
+
+    const resize = () => {
+      width = window.innerWidth || document.documentElement.clientWidth || 1;
+      height = window.innerHeight || document.documentElement.clientHeight || 1;
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = Math.floor(width * dpr);
+      canvas.height = Math.floor(height * dpr);
+      canvas.style.width = `${width}px`;
+      canvas.style.height = `${height}px`;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      const count = Math.min(3600, Math.max(1200, Math.floor((width * height) / 520)));
+      particles = Array.from({ length: count }, () => {
+        const x = Math.random() * width;
+        const y = Math.random() * height;
+        const dx = x - originX;
+        const dy = y - originY;
+        const distance = Math.sqrt(dx * dx + dy * dy) / Math.max(width, height);
+        return {
+          x,
+          y,
+          r: Math.random() * 2.6 + .45,
+          driftX: (Math.random() - .5) * 62,
+          driftY: (Math.random() - .5) * 96,
+          wave: Math.random() * .38 + distance * .22 + (y / height) * .22,
+          hue: 195 + Math.random() * 35,
+          light: 68 + Math.random() * 22,
+          delay: Math.random() * .22
+        };
+      });
+    };
+
+    activeResize = resize;
+    resize();
+    window.addEventListener('resize', resize, { passive: true });
+
+    node.style.setProperty('--vpl-transition-x', `${clamp(originX / width) * 100}%`);
+    node.style.setProperty('--vpl-transition-y', `${clamp(originY / height) * 100}%`);
+    node.classList.remove('is-exiting', 'is-entering');
+    node.classList.add('is-active', mode === 'enter' ? 'is-entering' : 'is-exiting');
+
+    const start = performance.now();
+
+    const frame = (now) => {
+      const raw = clamp((now - start) / duration);
+      const p = easeInOut(raw);
+      const visible = mode === 'exit' ? p : 1 - p;
+      const sweep = mode === 'exit' ? easeOut(raw) : 1 - easeOut(raw);
+
+      ctx.clearRect(0, 0, width, height);
+
+      const baseAlpha = mode === 'exit' ? .78 * p : .78 * (1 - p);
+      const gradient = ctx.createRadialGradient(originX, originY, 0, originX, originY, Math.max(width, height) * .82);
+      gradient.addColorStop(0, `rgba(107, 229, 255, ${baseAlpha * .54})`);
+      gradient.addColorStop(.38, `rgba(12, 43, 78, ${baseAlpha * .76})`);
+      gradient.addColorStop(1, `rgba(2, 6, 14, ${baseAlpha})`);
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, width, height);
+
+      // Rideau granulaire : l'effet progresse avec une légère vague verticale,
+      // comme la désintégration visible dans la vidéo de référence.
+      ctx.globalCompositeOperation = 'source-over';
+      for (const particle of particles) {
+        const local = mode === 'exit'
+          ? clamp((sweep - particle.wave + particle.delay) / .34)
+          : clamp(((1 - sweep) - particle.wave + particle.delay) / .34);
+        const alpha = mode === 'exit' ? easeOut(local) : 1 - easeOut(local);
+        if (alpha <= .01) continue;
+
+        const travel = mode === 'exit' ? p : (1 - p);
+        const shimmer = Math.sin((now * .006) + particle.x * .02 + particle.y * .012) * 9;
+        const x = particle.x + particle.driftX * travel + shimmer * alpha;
+        const y = particle.y + particle.driftY * travel - 38 * travel;
+        const radius = particle.r * (1 + alpha * 1.4);
+
+        ctx.beginPath();
+        ctx.arc(x, y, radius, 0, Math.PI * 2);
+        ctx.fillStyle = `hsla(${particle.hue}, 92%, ${particle.light}%, ${alpha * .92})`;
+        ctx.fill();
+
+        if (alpha > .54) {
+          ctx.beginPath();
+          ctx.arc(x, y, radius * 2.2, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(255,255,255,${(alpha - .54) * .18})`;
+          ctx.fill();
+        }
+      }
+
+      // Micro brouillard sombre pour que le changement de page soit réellement masqué.
+      ctx.globalCompositeOperation = 'multiply';
+      ctx.fillStyle = `rgba(2, 6, 14, ${visible * .28})`;
+      ctx.fillRect(0, 0, width, height);
+      ctx.globalCompositeOperation = 'source-over';
+
+      if (raw < 1) {
+        activeRaf = requestAnimationFrame(frame);
+      } else {
+        activeRaf = null;
+        if (typeof onDone === 'function') onDone();
+      }
+    };
+
+    activeRaf = requestAnimationFrame(frame);
+  };
+
+  const shouldSkipLink = (link, event) => {
+    if (!link || transitionRunning || prefersReduced.matches) return true;
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return true;
+    if (link.target && link.target !== '_self') return true;
+    if (link.hasAttribute('download')) return true;
+    if (link.dataset.noTransition === 'true') return true;
+
+    const href = link.getAttribute('href') || '';
+    if (!href || href.startsWith('#') || href.startsWith('mailto:') || href.startsWith('tel:') || href.startsWith('javascript:')) return true;
+
+    let url;
+    try {
+      url = new URL(link.href, window.location.href);
+    } catch (_) {
+      return true;
+    }
+
+    if (url.origin !== window.location.origin) return true;
+
+    const samePath = url.pathname === window.location.pathname && url.search === window.location.search;
+    if (samePath && url.hash) return true;
+
+    // On réserve l'effet aux pages HTML / routes propres, pas aux assets.
+    const lastPart = url.pathname.split('/').pop() || '';
+    if (/\.[a-z0-9]+$/i.test(lastPart) && !/\.html?$/i.test(lastPart)) return true;
+
+    return false;
+  };
+
+  const startExitTransition = (href, eventTarget) => {
+    transitionRunning = true;
+    document.documentElement.classList.add('vpl-route-transitioning');
+
+    const rect = eventTarget?.getBoundingClientRect?.();
+    const originX = rect ? rect.left + rect.width / 2 : window.innerWidth / 2;
+    const originY = rect ? rect.top + rect.height / 2 : window.innerHeight / 2;
+
+    try {
+      sessionStorage.setItem(STORAGE_KEY, '1');
+    } catch (_) {}
+
+    runParticleVeil({
+      mode: 'exit',
+      originX,
+      originY,
+      duration: TRANSITION_EXIT_MS,
+      onDone: () => {
+        window.location.href = href;
+      }
+    });
+  };
+
+  window.addEventListener('pageshow', (event) => {
+    if (event.persisted) removeOverlay();
+  });
+
+  window.addEventListener('DOMContentLoaded', () => {
+    let shouldPlayEnter = false;
+    try {
+      shouldPlayEnter = sessionStorage.getItem(STORAGE_KEY) === '1';
+      sessionStorage.removeItem(STORAGE_KEY);
+    } catch (_) {}
+
+    if (shouldPlayEnter && !prefersReduced.matches) {
+      transitionRunning = true;
+      document.documentElement.classList.add('vpl-route-transitioning');
+      runParticleVeil({
+        mode: 'enter',
+        originX: window.innerWidth / 2,
+        originY: window.innerHeight / 2,
+        duration: TRANSITION_ENTER_MS,
+        onDone: removeOverlay
+      });
+    }
+
+    document.addEventListener('click', (event) => {
+      const link = event.target.closest?.('a[href]');
+      if (shouldSkipLink(link, event)) return;
+
+      event.preventDefault();
+      startExitTransition(link.href, link);
+    }, true);
+  });
+})();
