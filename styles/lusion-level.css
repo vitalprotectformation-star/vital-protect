@@ -7919,267 +7919,201 @@ body.vpl-home .vpl-float-panel-b::after { animation-delay: .9s !important; }
 
 
 /* =========================================================
-   V28 — Transition pages fluide, sans coupure dure
-   Utilise les View Transitions natives : le navigateur garde
-   l'ancienne page en snapshot jusqu'à l'arrivée de la suivante.
-   On retire le gros voile/canvas opaque qui créait l'effet "cut".
+   V26 — Transition de page façon dissolution / particules
+   Effet original restauré + raccord sans cassure entre pages.
    ========================================================= */
-@supports (view-transition-name: root) {
-  @view-transition {
-    navigation: auto;
-  }
-
-  ::view-transition-group(root) {
-    animation-duration: 880ms;
-    animation-timing-function: cubic-bezier(.16, 1, .3, 1);
-  }
-
-  ::view-transition-image-pair(root) {
-    isolation: isolate;
-  }
-
-  ::view-transition-old(root) {
-    z-index: 1;
-    animation: vplNativePageOut 760ms cubic-bezier(.16, 1, .3, 1) both;
-    mix-blend-mode: normal;
-  }
-
-  ::view-transition-new(root) {
-    z-index: 2;
-    animation: vplNativePageIn 880ms cubic-bezier(.16, 1, .3, 1) both;
-    mix-blend-mode: normal;
-  }
-}
-
-@keyframes vplNativePageOut {
-  0% {
-    opacity: 1;
-    filter: blur(0) brightness(1) saturate(1);
-    transform: scale(1);
-  }
-  42% {
-    opacity: .72;
-    filter: blur(2px) brightness(.94) saturate(1.08);
-    transform: scale(1.008);
-  }
-  100% {
-    opacity: 0;
-    filter: blur(18px) brightness(.72) saturate(1.18);
-    transform: scale(1.026);
-  }
-}
-
-@keyframes vplNativePageIn {
-  0% {
-    opacity: 0;
-    filter: blur(18px) brightness(.78) saturate(1.15);
-    transform: scale(.986);
-  }
-  18% {
-    opacity: .12;
-  }
-  48% {
-    opacity: .78;
-    filter: blur(5px) brightness(.94) saturate(1.08);
-  }
-  100% {
-    opacity: 1;
-    filter: blur(0) brightness(1) saturate(1);
-    transform: scale(1);
-  }
-}
-
-/* Fallback léger : on évite volontairement un masque opaque.
-   Sur navigateur sans View Transitions, la navigation reste normale
-   au lieu d'afficher un écran de particules qui coupe le mouvement. */
 html.vpl-route-transitioning,
+html.vpl-route-transitioning body {
+  cursor: wait;
+}
+
+html.vpl-route-transitioning body {
+  overflow: hidden;
+}
+
+/* Pré-masque ultra tôt, injecté par un mini script dans le <head>.
+   Il évite le flash/la cassure avant que l'overlay JS de la page suivante
+   ait le temps de reprendre exactement le même effet. */
 html.vpl-route-preload-transition,
 html.vpl-route-preload-transition body {
-  cursor: auto !important;
-  overflow: auto !important;
-  opacity: 1 !important;
-  background: inherit !important;
+  background: #020610 !important;
+}
+
+html.vpl-route-preload-transition body {
+  opacity: 0 !important;
 }
 
 html.vpl-route-preload-transition::before,
-.vpl-page-transition {
-  display: none !important;
-}
-
-/* =========================================================
-   V29 — Transition plus visible, mais fluide
-   - On garde la fluidité native du navigateur.
-   - On renforce l'effet avec un voile lumineux capturé dans
-     le snapshot de sortie, sans gros écran noir ni rupture.
-   ========================================================= */
-html.vpl-route-leaving {
-  overflow: hidden !important;
-  cursor: progress !important;
-}
-
-html.vpl-route-leaving body {
-  animation: vplRouteBodyEnergy 520ms cubic-bezier(.16, 1, .3, 1) both !important;
-}
-
-html.vpl-route-leaving::before,
-html.vpl-route-leaving::after {
+html.vpl-route-preload-transition::after {
   content: "";
   position: fixed;
   inset: 0;
-  z-index: 2147483600;
+  z-index: 2147482998;
   pointer-events: none;
 }
 
-html.vpl-route-leaving::before {
+html.vpl-route-preload-transition::before {
   background:
-    radial-gradient(circle at var(--vpl-route-x, 50%) var(--vpl-route-y, 48%), rgba(111, 231, 255, .62) 0%, rgba(69, 190, 255, .34) 12%, rgba(9, 31, 55, .74) 34%, rgba(2, 7, 16, .88) 72%, rgba(2, 7, 16, .92) 100%),
-    radial-gradient(circle at 18% 28%, rgba(91, 213, 255, .30), transparent 34%),
-    radial-gradient(circle at 86% 62%, rgba(57, 141, 255, .24), transparent 36%),
-    repeating-radial-gradient(circle at var(--vpl-route-x, 50%) var(--vpl-route-y, 48%), rgba(255,255,255,.13) 0 1px, transparent 1px 8px);
-  opacity: 0;
-  transform: scale(.985);
-  filter: saturate(1.18) contrast(1.08);
-  animation: vplRouteVeilVisible 760ms cubic-bezier(.16, 1, .3, 1) both;
+    radial-gradient(circle at var(--vpl-transition-x, 50%) var(--vpl-transition-y, 50%), rgba(105, 222, 255, .38), transparent 26%),
+    radial-gradient(circle at 72% 28%, rgba(48, 129, 255, .24), transparent 34%),
+    linear-gradient(135deg, rgba(2, 6, 14, .98), rgba(5, 16, 31, .94) 48%, rgba(2, 5, 12, .98));
+  opacity: 1;
+  transform: scale(1);
+  filter: blur(0) saturate(1.35);
+  transition: opacity .26s ease, filter .26s ease;
 }
 
-html.vpl-route-leaving::after {
-  background:
-    linear-gradient(105deg, transparent 0%, transparent 37%, rgba(255,255,255,.0) 42%, rgba(170, 242, 255, .86) 49%, rgba(43, 201, 255, .42) 53%, transparent 62%, transparent 100%),
-    linear-gradient(180deg, transparent 0%, rgba(93, 221, 255, .16) 47%, rgba(255,255,255,.16) 50%, rgba(93, 221, 255, .13) 53%, transparent 100%);
-  opacity: 0;
+html.vpl-route-preload-transition::after {
+  z-index: 2147482999;
+  opacity: .34;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 170 170' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.95' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='170' height='170' filter='url(%23n)' opacity='.85'/%3E%3C/svg%3E");
   mix-blend-mode: screen;
-  filter: blur(.2px) drop-shadow(0 0 24px rgba(93, 221, 255, .60));
-  transform: translateX(-38%) skewX(-12deg);
-  animation: vplRouteShineVisible 820ms cubic-bezier(.16, 1, .3, 1) both;
+  transition: opacity .26s ease;
 }
 
-@supports (view-transition-name: root) {
-  @view-transition {
-    navigation: auto;
-  }
-
-  ::view-transition-group(root) {
-    animation-duration: 1120ms !important;
-    animation-timing-function: cubic-bezier(.16, 1, .3, 1) !important;
-  }
-
-  ::view-transition-image-pair(root) {
-    isolation: isolate !important;
-  }
-
-  ::view-transition-old(root) {
-    z-index: 2 !important;
-    mix-blend-mode: normal !important;
-    animation: vplRouteSnapshotOutVisible 1040ms cubic-bezier(.16, 1, .3, 1) both !important;
-  }
-
-  ::view-transition-new(root) {
-    z-index: 1 !important;
-    mix-blend-mode: normal !important;
-    animation: vplRouteSnapshotInVisible 1120ms cubic-bezier(.16, 1, .3, 1) both !important;
-  }
+html.vpl-route-preload-transition.vpl-route-preload-releasing body {
+  opacity: 1 !important;
+  transition: opacity .22s ease;
 }
 
-@keyframes vplRouteBodyEnergy {
-  0% {
-    filter: blur(0) brightness(1) saturate(1);
-    transform: scale(1);
-  }
-  100% {
-    filter: blur(7px) brightness(.78) saturate(1.22);
-    transform: scale(1.012);
-  }
+html.vpl-route-preload-transition.vpl-route-preload-releasing::before {
+  opacity: 0;
+  filter: blur(18px) saturate(1.1);
 }
 
-@keyframes vplRouteVeilVisible {
-  0% {
-    opacity: 0;
-    transform: scale(.985);
-  }
-  42% {
-    opacity: .76;
-  }
-  72% {
-    opacity: .88;
-    transform: scale(1.01);
-  }
-  100% {
-    opacity: .70;
-    transform: scale(1.018);
-  }
+html.vpl-route-preload-transition.vpl-route-preload-releasing::after {
+  opacity: 0;
 }
 
-@keyframes vplRouteShineVisible {
-  0% {
-    opacity: 0;
-    transform: translateX(-45%) skewX(-12deg);
-  }
-  22% {
-    opacity: .82;
-  }
-  58% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-    transform: translateX(52%) skewX(-12deg);
-  }
+.vpl-page-transition {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483000;
+  pointer-events: none;
+  opacity: 0;
+  overflow: hidden;
+  background: transparent;
+  transition: opacity .18s ease;
+  isolation: isolate;
 }
 
-@keyframes vplRouteSnapshotOutVisible {
-  0% {
-    opacity: 1;
-    filter: blur(0) brightness(1) saturate(1);
-    transform: scale(1);
-  }
-  32% {
-    opacity: .98;
-    filter: blur(2px) brightness(.92) saturate(1.15);
-    transform: scale(1.01);
-  }
-  72% {
-    opacity: .44;
-    filter: blur(13px) brightness(.62) saturate(1.32);
-    transform: scale(1.03);
-  }
-  100% {
-    opacity: 0;
-    filter: blur(24px) brightness(.46) saturate(1.45);
-    transform: scale(1.045);
-  }
+.vpl-page-transition.is-active {
+  opacity: 1;
 }
 
-@keyframes vplRouteSnapshotInVisible {
-  0% {
-    opacity: 0;
-    filter: blur(20px) brightness(.68) saturate(1.20);
-    transform: scale(.982);
-    clip-path: inset(42% 7% 42% 7% round 42px);
-  }
-  28% {
-    opacity: .10;
-    clip-path: inset(30% 4% 30% 4% round 34px);
-  }
-  58% {
-    opacity: .62;
-    filter: blur(8px) brightness(.88) saturate(1.12);
-    clip-path: inset(11% 1.5% 11% 1.5% round 22px);
-  }
-  100% {
-    opacity: 1;
-    filter: blur(0) brightness(1) saturate(1);
-    transform: scale(1);
-    clip-path: inset(0 0 0 0 round 0);
-  }
+.vpl-page-transition__canvas,
+.vpl-page-transition__fog,
+.vpl-page-transition__beam,
+.vpl-page-transition__grain {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
 }
 
-@media (max-width: 760px) {
-  html.vpl-route-leaving::before {
-    animation-duration: 640ms;
-    opacity: .72;
+.vpl-page-transition__canvas {
+  z-index: 3;
+  display: block;
+  mix-blend-mode: screen;
+}
+
+.vpl-page-transition__fog {
+  z-index: 1;
+  opacity: 0;
+  background:
+    radial-gradient(circle at var(--vpl-transition-x, 50%) var(--vpl-transition-y, 50%), rgba(105, 222, 255, .38), transparent 26%),
+    radial-gradient(circle at 72% 28%, rgba(48, 129, 255, .24), transparent 34%),
+    linear-gradient(135deg, rgba(2, 6, 14, .98), rgba(5, 16, 31, .94) 48%, rgba(2, 5, 12, .98));
+  transform: scale(1.08);
+  filter: blur(18px) saturate(1.3);
+}
+
+.vpl-page-transition__beam {
+  z-index: 4;
+  left: -55%;
+  width: 42%;
+  opacity: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.82), rgba(94, 225, 255, .55), transparent);
+  filter: blur(6px) drop-shadow(0 0 42px rgba(92, 221, 255, .8));
+  mix-blend-mode: screen;
+  transform: skewX(-18deg) translateX(-90%);
+}
+
+.vpl-page-transition__grain {
+  z-index: 5;
+  opacity: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 170 170' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.95' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='170' height='170' filter='url(%23n)' opacity='.85'/%3E%3C/svg%3E");
+  mix-blend-mode: screen;
+}
+
+.vpl-page-transition.is-exiting .vpl-page-transition__fog {
+  animation: vplRouteFogIn .86s cubic-bezier(.16,1,.3,1) both;
+}
+
+.vpl-page-transition.is-exiting .vpl-page-transition__beam {
+  animation: vplRouteBeam .78s cubic-bezier(.16,1,.3,1) both .06s;
+}
+
+.vpl-page-transition.is-exiting .vpl-page-transition__grain {
+  animation: vplRouteGrainIn .86s steps(2, end) both;
+}
+
+.vpl-page-transition.is-entering .vpl-page-transition__fog {
+  animation: vplRouteFogOut .92s cubic-bezier(.16,1,.3,1) both;
+}
+
+.vpl-page-transition.is-entering .vpl-page-transition__beam {
+  animation: vplRouteBeamOut .84s cubic-bezier(.16,1,.3,1) both;
+}
+
+.vpl-page-transition.is-entering .vpl-page-transition__grain {
+  animation: vplRouteGrainOut .92s steps(2, end) both;
+}
+
+@keyframes vplRouteFogIn {
+  0% { opacity: 0; transform: scale(1.10); filter: blur(28px) saturate(1.2); }
+  44% { opacity: .92; }
+  100% { opacity: 1; transform: scale(1); filter: blur(0) saturate(1.35); }
+}
+
+@keyframes vplRouteFogOut {
+  0% { opacity: 1; transform: scale(1); filter: blur(0) saturate(1.35); }
+  62% { opacity: .72; }
+  100% { opacity: 0; transform: scale(1.08); filter: blur(24px) saturate(1.05); }
+}
+
+@keyframes vplRouteBeam {
+  0% { opacity: 0; transform: skewX(-18deg) translateX(-120%); }
+  30% { opacity: 1; }
+  74% { opacity: .86; }
+  100% { opacity: 0; transform: skewX(-18deg) translateX(430%); }
+}
+
+@keyframes vplRouteBeamOut {
+  0% { opacity: .84; transform: skewX(-18deg) translateX(-60%); }
+  60% { opacity: .46; }
+  100% { opacity: 0; transform: skewX(-18deg) translateX(460%); }
+}
+
+@keyframes vplRouteGrainIn {
+  0% { opacity: 0; transform: scale(1.08); }
+  35% { opacity: .18; }
+  100% { opacity: .34; transform: scale(1); }
+}
+
+@keyframes vplRouteGrainOut {
+  0% { opacity: .34; transform: scale(1); }
+  100% { opacity: 0; transform: scale(1.08); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vpl-page-transition,
+  html.vpl-route-preload-transition::before,
+  html.vpl-route-preload-transition::after {
+    display: none !important;
   }
 
-  html.vpl-route-leaving::after {
-    animation-duration: 700ms;
+  html.vpl-route-preload-transition body {
+    opacity: 1 !important;
   }
 }
