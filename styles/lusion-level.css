@@ -6078,3 +6078,238 @@ body.vpl-home .vpl-hero {
     margin-bottom: 14px !important;
   }
 }
+
+/* =========================================================
+   V22 — optimisation mobile rapide
+   Header plus discret, hero compact, cartes/images recalées.
+   ========================================================= */
+@media (max-width: 900px) {
+  html { scroll-padding-top: 76px !important; }
+  body { overflow-x: hidden !important; }
+  .vpl-canvas, .vpl-scroll-ribbon { display: none !important; }
+  .vpl-noise { opacity: .035 !important; }
+  .vpl-container { width: min(100% - 28px, 680px) !important; }
+  .vpl-section-head, .vpl-section-head.center, .vpl-constellation-head {
+    max-width: none !important;
+    text-align: left !important;
+    margin-bottom: 22px !important;
+  }
+  .vpl-section-title, .vpl-constellation-head h2, .vpl-honeycomb-section .vpl-section-title {
+    max-width: 11ch !important;
+    font-size: clamp(2.25rem, 12vw, 4.2rem) !important;
+    line-height: .92 !important;
+    letter-spacing: -.075em !important;
+  }
+  .vpl-section-copy, .vpl-constellation-head p, .vpl-honeycomb-section .vpl-section-copy {
+    max-width: 58ch !important;
+    font-size: .98rem !important;
+    line-height: 1.62 !important;
+  }
+  .vpl-card-grid, .vpl-steps, .vpl-image-grid, .vpl-premium-grid, .vpl-carousel-grid {
+    grid-template-columns: 1fr !important;
+    gap: 14px !important;
+  }
+  .vpl-sticky { position: relative !important; top: auto !important; }
+}
+
+@media (max-width: 760px) {
+  :root { --vpl-nav-offset: 68px; --vp-radius: 24px; }
+  .vpl-page {
+    background:
+      radial-gradient(circle at 50% 0%, rgba(93,231,255,.13), transparent 30%),
+      linear-gradient(180deg, #05070c 0%, #0a1020 38%, #f7fbff 38%, #f7fbff 100%) !important;
+  }
+
+  .vpl-nav {
+    top: 7px !important;
+    left: 10px !important;
+    right: 10px !important;
+    width: auto !important;
+    min-height: 50px !important;
+    max-height: 50px !important;
+    padding: 5px 6px !important;
+    grid-template-columns: minmax(0, 1fr) auto !important;
+    gap: 8px !important;
+    border-radius: 18px !important;
+    background: rgba(5,10,18,.62) !important;
+    border-color: rgba(255,255,255,.14) !important;
+    box-shadow: 0 10px 30px rgba(0,0,0,.20), inset 0 1px 0 rgba(255,255,255,.08) !important;
+    backdrop-filter: blur(16px) saturate(1.2) !important;
+  }
+  html.vpl-scrolled .vpl-nav { top: 6px !important; opacity: .92 !important; background: rgba(5,10,18,.54) !important; }
+  .vpl-brand { gap: 8px !important; overflow: hidden !important; }
+  .vpl-brand img { width: 34px !important; height: 34px !important; padding: 4px !important; flex: 0 0 auto !important; }
+  .vpl-brand b { max-width: 42vw !important; overflow: hidden !important; text-overflow: ellipsis !important; font-size: .84rem !important; line-height: .95 !important; }
+  .vpl-brand span, .vpl-menu, .vpl-nav-ghost { display: none !important; }
+  .vpl-nav-cta {
+    min-height: 38px !important;
+    max-width: 42vw !important;
+    padding: 0 12px !important;
+    font-size: .76rem !important;
+    letter-spacing: -.035em !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    box-shadow: 0 10px 24px rgba(93,231,255,.13), inset 0 1px 0 rgba(255,255,255,.86) !important;
+  }
+
+  .vpl-hero, .vpl-inner-hero, body.vpl-home .vpl-hero {
+    min-height: auto !important;
+    padding-top: 78px !important;
+    padding-bottom: 42px !important;
+  }
+  body.vpl-home .vpl-hero-grid, .vpl-hero-grid { grid-template-columns: 1fr !important; gap: 24px !important; }
+  body.vpl-home .vpl-eyebrow, .vpl-eyebrow {
+    max-width: 100% !important;
+    padding: 8px 10px !important;
+    font-size: .76rem !important;
+    line-height: 1.2 !important;
+    white-space: normal !important;
+  }
+  body.vpl-home .vpl-title, .vpl-title {
+    max-width: 9.6ch !important;
+    margin-top: 16px !important;
+    font-size: clamp(3rem, 18vw, 5rem) !important;
+    line-height: .84 !important;
+    letter-spacing: -.085em !important;
+  }
+  body.vpl-home .vpl-lead, .vpl-lead {
+    max-width: none !important;
+    margin-top: 18px !important;
+    font-size: .98rem !important;
+    line-height: 1.58 !important;
+  }
+  body.vpl-home .vpl-actions, .vpl-actions { display: grid !important; grid-template-columns: 1fr !important; gap: 10px !important; margin-top: 22px !important; }
+  body.vpl-home .vpl-button, .vpl-button {
+    width: 100% !important;
+    min-height: 50px !important;
+    justify-content: center !important;
+    padding: 0 16px !important;
+    border-radius: 16px !important;
+    font-size: .92rem !important;
+  }
+  body.vpl-home .vpl-proof-row, .vpl-proof-row { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 8px !important; margin-top: 18px !important; }
+  body.vpl-home .vpl-proof, .vpl-proof {
+    width: 100% !important;
+    min-height: 40px !important;
+    padding: 8px 9px !important;
+    justify-content: flex-start !important;
+    font-size: .75rem !important;
+    line-height: 1.18 !important;
+    border-radius: 14px !important;
+  }
+
+  body.vpl-home .vpl-visual, .vpl-visual {
+    width: 100% !important;
+    max-width: 520px !important;
+    min-height: 0 !important;
+    margin: 0 auto !important;
+    padding: 10px !important;
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    grid-template-rows: auto !important;
+    gap: 10px !important;
+    border-radius: 26px !important;
+    overflow: hidden !important;
+    background:
+      radial-gradient(circle at 8% 0%, rgba(255,255,255,.13), transparent 28%),
+      radial-gradient(circle at 95% 4%, rgba(93,231,255,.14), transparent 32%),
+      linear-gradient(145deg, rgba(11,26,45,.82), rgba(5,13,24,.70)) !important;
+    box-shadow: 0 28px 78px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.12) !important;
+  }
+  body.vpl-home .vpl-visual::before, .vpl-visual::before { display: none !important; }
+  body.vpl-home .vpl-orb, .vpl-orb { width: 180px !important; height: 180px !important; right: -64px !important; top: -64px !important; opacity: .36 !important; pointer-events: none !important; }
+  body.vpl-home .vpl-visual-card, body.vpl-home .vpl-float-panel, .vpl-visual-card, .vpl-float-panel {
+    position: relative !important;
+    inset: auto !important;
+    width: 100% !important;
+    height: auto !important;
+    transform: none !important;
+    animation: none !important;
+  }
+  body.vpl-home .vpl-visual-card-main, .vpl-visual-card-main { grid-column: 1 !important; grid-row: auto !important; min-height: 0 !important; aspect-ratio: 1.15 / 1 !important; border-radius: 22px !important; }
+  body.vpl-home .vpl-visual-card-small, .vpl-visual-card-small { grid-column: 1 !important; grid-row: auto !important; min-height: 0 !important; aspect-ratio: 16 / 9 !important; border-radius: 20px !important; }
+  body.vpl-home .vpl-visual-card img, .vpl-visual-card img { width: 100% !important; height: 100% !important; object-fit: cover !important; object-position: center 36% !important; }
+  body.vpl-home .vpl-float-panel, .vpl-float-panel {
+    min-height: auto !important;
+    padding: 14px !important;
+    border-radius: 20px !important;
+    background: linear-gradient(135deg, rgba(7,18,31,.92), rgba(9,26,45,.78)) !important;
+    box-shadow: 0 18px 48px rgba(0,0,0,.22), inset 0 1px 0 rgba(255,255,255,.12) !important;
+  }
+  body.vpl-home .vpl-float-panel::before, .vpl-float-panel::before { width: 22px !important; margin-bottom: 10px !important; }
+  body.vpl-home .vpl-float-panel strong, .vpl-float-panel strong { font-size: .91rem !important; line-height: 1.16 !important; }
+  body.vpl-home .vpl-float-panel span, .vpl-float-panel span { margin-top: 6px !important; font-size: .78rem !important; line-height: 1.42 !important; }
+  .vpl-scroll, body.vpl-home .vpl-scroll { display: none !important; }
+
+  .vpl-marquee { margin-top: 0 !important; height: 52px !important; opacity: .78 !important; }
+  .vpl-marquee-track span { font-size: 1.05rem !important; }
+  .vpl-light, .vpl-constellation-section, .vpl-honeycomb-section, .vpl-premium-carousel {
+    background:
+      radial-gradient(circle at 50% 0%, rgba(47,127,202,.12), transparent 26%),
+      linear-gradient(180deg, #f9fcff 0%, #eef5fb 100%) !important;
+  }
+  .vpl-section, .vpl-section-dark, .vpl-constellation-section, .vpl-honeycomb-section, .vpl-final { padding: 54px 0 !important; scroll-margin-top: 72px !important; }
+  .vpl-card, .vpl-sheen-card, .vpl-step, .vpl-hex, .vpl-carousel-card { padding: 20px !important; border-radius: 22px !important; min-height: auto !important; }
+  .vpl-card h3, .vpl-step h3, .vpl-hex h3 { font-size: clamp(1.35rem, 7vw, 1.9rem) !important; line-height: 1 !important; }
+
+  .vpl-constellation-stage {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    grid-template-areas: "core" "n1" "n2" "n3" "n4" "n5" !important;
+    gap: 10px !important;
+    padding: 10px !important;
+    border-radius: 26px !important;
+    overflow: hidden !important;
+  }
+  .vpl-constellation-links { display: none !important; }
+  .vpl-constellation-core, .vpl-constellation-node { width: 100% !important; max-width: none !important; min-height: auto !important; padding: 18px !important; border-radius: 20px !important; transform: none !important; }
+  .vpl-constellation-core h3 { max-width: 100% !important; font-size: clamp(2rem, 11vw, 3rem) !important; line-height: .96 !important; }
+  .vpl-constellation-core p, .vpl-constellation-node p { font-size: .9rem !important; line-height: 1.52 !important; }
+  .vpl-constellation-core-tags { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 8px !important; }
+  .vpl-constellation-core-tags span { justify-content: center !important; text-align: center !important; padding: 9px 10px !important; }
+  .vpl-constellation-node-num, .vpl-card-num { width: 40px !important; height: 40px !important; border-radius: 14px !important; margin-bottom: 12px !important; }
+  .vpl-constellation-stage .node-5 { display: block !important; }
+  .vpl-constellation-stage .node-5 strong, .vpl-constellation-stage .node-5 h4, .vpl-constellation-stage .node-5 p { grid-column: auto !important; }
+  .vpl-constellation-stage .node-5 .vpl-constellation-node-num { margin-bottom: 12px !important; }
+
+  .vpl-image-grid { grid-template-columns: 1fr !important; gap: 12px !important; }
+  .vpl-image-grid > div { display: grid !important; gap: 12px !important; }
+  .vpl-image-card, .vpl-image-card.small { min-height: 0 !important; height: auto !important; aspect-ratio: 1.04 / 1 !important; border-radius: 24px !important; overflow: hidden !important; }
+  .vpl-image-card.small { aspect-ratio: 1.28 / 1 !important; }
+  .vpl-image-content { padding: 18px !important; }
+  .vpl-image-card h3, .vpl-image-card.small h3 { max-width: 13ch !important; font-size: clamp(1.8rem, 10vw, 3.2rem) !important; line-height: .92 !important; }
+  .vpl-image-card p { max-width: 34ch !important; font-size: .9rem !important; line-height: 1.45 !important; }
+  .vpl-section-dark { background: radial-gradient(circle at 80% 0%, rgba(93,231,255,.11), transparent 30%), linear-gradient(180deg, #05070c 0%, #0b1220 100%) !important; }
+  .vpl-honeycomb-shell, .vpl-honeycomb-grid { grid-template-columns: 1fr !important; gap: 12px !important; }
+  .vpl-honeycomb-copy { padding: 18px !important; border-radius: 22px !important; }
+  .vpl-final-box { padding: 24px 18px !important; border-radius: 26px !important; }
+}
+
+@media (max-width: 480px) {
+  .vpl-container { width: calc(100% - 22px) !important; }
+  .vpl-brand b { max-width: 38vw !important; }
+  .vpl-nav-cta { max-width: 42vw !important; font-size: 0 !important; }
+  .vpl-nav-cta::after { content: "Réserver" !important; font-size: .76rem !important; }
+  body.vpl-home .vpl-title, .vpl-title { font-size: clamp(2.75rem, 17vw, 4.25rem) !important; }
+  body.vpl-home .vpl-proof-row, .vpl-proof-row { grid-template-columns: 1fr !important; }
+  body.vpl-home .vpl-visual, .vpl-visual { border-radius: 22px !important; padding: 8px !important; }
+  body.vpl-home .vpl-visual-card-main, .vpl-visual-card-main { aspect-ratio: 1 / .82 !important; border-radius: 18px !important; }
+  body.vpl-home .vpl-visual-card-small, .vpl-visual-card-small, body.vpl-home .vpl-float-panel-a, .vpl-float-panel-a { display: none !important; }
+  .vpl-section, .vpl-section-dark, .vpl-constellation-section, .vpl-honeycomb-section, .vpl-final { padding: 46px 0 !important; }
+  .vpl-section-title, .vpl-constellation-head h2, .vpl-honeycomb-section .vpl-section-title { font-size: clamp(2rem, 12vw, 3.45rem) !important; }
+  .vpl-card, .vpl-sheen-card, .vpl-step, .vpl-hex, .vpl-carousel-card, .vpl-constellation-core, .vpl-constellation-node { padding: 17px !important; border-radius: 18px !important; }
+  .vpl-constellation-core-tags { grid-template-columns: 1fr !important; }
+  .vpl-image-card, .vpl-image-card.small { aspect-ratio: 1 / 1.08 !important; border-radius: 20px !important; }
+  .vpl-image-card.small { aspect-ratio: 1 / .92 !important; }
+  .vpl-image-content { padding: 16px !important; }
+  .vpl-image-card h3, .vpl-image-card.small h3 { font-size: clamp(1.65rem, 11vw, 2.75rem) !important; }
+  .vp-title { font-size: clamp(2rem, 13vw, 3.4rem) !important; letter-spacing: .055em !important; }
+  .vp-ecg-zone, .vp-ecg-svg { height: 190px !important; }
+}
+
+@media (max-width: 760px) and (orientation: landscape) {
+  .vpl-nav { position: absolute !important; }
+  body.vpl-home .vpl-hero, .vpl-hero, .vpl-inner-hero { padding-top: 72px !important; }
+  body.vpl-home .vpl-hero-grid, .vpl-hero-grid { gap: 18px !important; }
+  body.vpl-home .vpl-visual, .vpl-visual { max-width: 620px !important; }
+}
