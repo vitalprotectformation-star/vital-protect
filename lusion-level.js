@@ -1058,11 +1058,11 @@ window.addEventListener('DOMContentLoaded', () => {
   });
 })();
 
-/* V29 — Transition inter-pages pixelisée
-   Objectif : reproduction du principe de la vidéo de référence.
-   1) des pixels remplissent progressivement l'écran avec une couleur unie ;
-   2) la navigation a lieu uniquement quand l'écran est totalement plein ;
-   3) la nouvelle page démarre derrière le même écran uni, puis se dépixélise. */
+
+/* V30 — Transition inter-pages en particules
+   Idée : de fines particules viennent s'assembler pour recouvrir l'écran,
+   le mot-symbole VITAL PROTECT apparaît au centre, puis la nouvelle page
+   démarre sous un aplat plein avant une désintégration inverse. */
 (() => {
   const STORAGE_KEY = 'vpl-route-transition-next';
   const ORIGIN_KEY = 'vpl-route-transition-origin';
@@ -1070,17 +1070,21 @@ window.addEventListener('DOMContentLoaded', () => {
   const PREFETCH_ATTR = 'data-vpl-prefetched';
   const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)');
 
-  const CELL_DURATION_MS = 260;
-  const EXIT_WAVE_MS = 760;
-  const ENTER_WAVE_MS = 720;
-  const SOLID_HOLD_MS = 135;
-  const PRELOAD_RELEASE_MS = 80;
+  const EXIT_BUILD_MS = 980;
+  const ENTER_BREAK_MS = 980;
+  const SOLID_HOLD_MS = 220;
+  const PRELOAD_RELEASE_MS = 120;
 
   let overlay = null;
+  let overlayController = null;
   let transitionRunning = false;
   const prefetched = new Set();
 
   const clamp = (value, min = 0, max = 1) => Math.min(max, Math.max(min, value));
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const easeOutCubic = (t) => 1 - Math.pow(1 - clamp(t), 3);
+  const easeInOutCubic = (t) => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  const easeOutQuart = (t) => 1 - Math.pow(1 - clamp(t), 4);
   const nowSeed = () => Math.floor((performance.now() * 1000 + Math.random() * 1000000) % 2147483647);
 
   const seededNoise = (seed, index) => {
@@ -1092,10 +1096,19 @@ window.addEventListener('DOMContentLoaded', () => {
 
   const getSolidColor = () => {
     const fromCss = getComputedStyle(document.documentElement).getPropertyValue('--vpl-transition-solid').trim();
-    return fromCss || '#f2efe6';
+    return fromCss || '#0b1424';
+  };
+
+  const stopOverlayController = () => {
+    if (overlayController && typeof overlayController.destroy === 'function') {
+      overlayController.destroy();
+    }
+    overlayController = null;
   };
 
   const removeOverlay = () => {
+    stopOverlayController();
+
     if (overlay) {
       overlay.remove();
       overlay = null;
@@ -1116,7 +1129,7 @@ window.addEventListener('DOMContentLoaded', () => {
       root.classList.remove('vpl-route-preload-transition', 'vpl-route-preload-releasing');
       root.style.removeProperty('--vpl-transition-x');
       root.style.removeProperty('--vpl-transition-y');
-    }, PRELOAD_RELEASE_MS + 80);
+    }, PRELOAD_RELEASE_MS + 120);
   };
 
   const storeTransitionState = (originX, originY, seed) => {
@@ -1196,59 +1209,194 @@ window.addEventListener('DOMContentLoaded', () => {
     document.documentElement.style.setProperty('--vpl-transition-y', y);
   };
 
-  const buildPixelOverlay = ({ mode, originX, originY, seed }) => {
+  const createParticleOverlay = ({ mode, originX, originY, seed }) => {
+    stopOverlayController();
     if (overlay) overlay.remove();
 
-    const width = Math.max(window.innerWidth || document.documentElement.clientWidth || 1, 1);
-    const height = Math.max(window.innerHeight || document.documentElement.clientHeight || 1, 1);
-    const preferredSize = width < 680 ? 18 : width < 1120 ? 22 : 26;
-    const cols = Math.min(78, Math.max(24, Math.ceil(width / preferredSize)));
-    const cellSize = width / cols;
-    const rows = Math.min(54, Math.max(18, Math.ceil(height / cellSize)));
-    const total = cols * rows;
-    const ox = clamp(originX / width);
-    const oy = clamp(originY / height);
-    const corners = [[0, 0], [1, 0], [0, 1], [1, 1]];
-    const maxDistance = Math.max(...corners.map(([x, y]) => Math.hypot(x - ox, (y - oy) * (height / width)))) || 1;
-    const fragment = document.createDocumentFragment();
-
     overlay = document.createElement('div');
-    overlay.className = `vpl-page-transition vpl-pixel-transition is-active is-${mode}`;
+    overlay.className = `vpl-page-transition vpl-particle-transition is-${mode}`;
     overlay.setAttribute('aria-hidden', 'true');
-    overlay.style.setProperty('--vpl-cols', String(cols));
-    overlay.style.setProperty('--vpl-rows', String(rows));
     overlay.style.setProperty('--vpl-transition-solid-current', getSolidColor());
     setOrigin(overlay, originX, originY);
 
     const solid = document.createElement('div');
     solid.className = 'vpl-page-transition__solid';
 
-    const grid = document.createElement('div');
-    grid.className = 'vpl-page-transition__grid';
+    const canvas = document.createElement('canvas');
+    canvas.className = 'vpl-page-transition__canvas';
 
-    for (let index = 0; index < total; index += 1) {
-      const col = index % cols;
-      const row = Math.floor(index / cols);
-      const nx = (col + 0.5) / cols;
-      const ny = (row + 0.5) / rows;
-      const noise = seededNoise(seed, index);
-      const distance = Math.hypot(nx - ox, (ny - oy) * (height / width)) / maxDistance;
-      const order = clamp(distance * 0.74 + noise * 0.26);
-      const exitDelay = Math.round(order * EXIT_WAVE_MS);
-      const enterDelay = Math.round((1 - order) * ENTER_WAVE_MS);
+    const brand = document.createElement('div');
+    brand.className = 'vpl-page-transition__brand';
+    brand.innerHTML = '<span>Vital Protect</span>';
 
-      const cell = document.createElement('i');
-      cell.className = 'vpl-page-transition__cell';
-      cell.style.setProperty('--exit-delay', `${exitDelay}ms`);
-      cell.style.setProperty('--enter-delay', `${enterDelay}ms`);
-      cell.style.setProperty('--tone', `${0.94 + noise * 0.10}`);
-      fragment.appendChild(cell);
-    }
-
-    grid.appendChild(fragment);
-    overlay.append(solid, grid);
+    overlay.append(solid, canvas, brand);
     document.body.appendChild(overlay);
-    return overlay;
+
+    const ctx = canvas.getContext('2d', { alpha: true });
+    let raf = 0;
+    let resizeRaf = 0;
+    let startTime = null;
+    let dpr = 1;
+    let width = 0;
+    let height = 0;
+    let particles = [];
+    let destroyed = false;
+
+    const particleCountForViewport = () => {
+      const area = Math.max(1, (window.innerWidth || 1) * (window.innerHeight || 1));
+      return Math.min(1600, Math.max(360, Math.round(area / 2400)));
+    };
+
+    const buildParticles = () => {
+      const count = particleCountForViewport();
+      const cols = Math.max(16, Math.round(Math.sqrt(count * (width / Math.max(height, 1)))));
+      const rows = Math.max(12, Math.ceil(count / cols));
+      const centerX = width * 0.5;
+      const centerY = height * 0.5;
+      const maxDistance = Math.max(...[[0,0],[width,0],[0,height],[width,height]].map(([x, y]) => Math.hypot(x - originX, y - originY))) || 1;
+
+      particles = Array.from({ length: count }, (_, index) => {
+        const noiseA = seededNoise(seed, index + 11);
+        const noiseB = seededNoise(seed, index + 1011);
+        const noiseC = seededNoise(seed, index + 2011);
+        const noiseD = seededNoise(seed, index + 3011);
+        const col = index % cols;
+        const row = Math.floor(index / cols);
+        const cellW = width / cols;
+        const cellH = height / rows;
+        const tx = clamp((col + 0.14 + noiseA * 0.72) / cols, 0, 1) * width;
+        const ty = clamp((row + 0.14 + noiseB * 0.72) / rows, 0, 1) * height;
+        const angle = Math.atan2(ty - originY, tx - originX) + (noiseC - 0.5) * 0.38;
+        const travel = Math.max(width, height) * (1.05 + noiseD * 0.55);
+        const sx = originX + Math.cos(angle) * travel;
+        const sy = originY + Math.sin(angle) * travel;
+        const exAngle = angle + (noiseA - 0.5) * 0.55;
+        const exDist = travel * (1.06 + noiseB * 0.35);
+        const ex = originX + Math.cos(exAngle) * exDist;
+        const ey = originY + Math.sin(exAngle) * exDist;
+        const distNorm = clamp(Math.hypot(tx - originX, ty - originY) / maxDistance);
+        const centerNorm = clamp(Math.hypot(tx - centerX, ty - centerY) / Math.max(width, height));
+
+        return {
+          sx,
+          sy,
+          tx,
+          ty,
+          ex,
+          ey,
+          r: 0.9 + noiseA * 1.8,
+          alpha: 0.34 + noiseB * 0.58,
+          glow: 10 + noiseC * 22,
+          delay: clamp(distNorm * 0.42 + noiseD * 0.22, 0, 0.72),
+          fadeDelay: clamp((1 - distNorm) * 0.12 + centerNorm * 0.28 + noiseA * 0.24, 0, 0.72)
+        };
+      });
+    };
+
+    const resize = () => {
+      width = Math.max(window.innerWidth || document.documentElement.clientWidth || 1, 1);
+      height = Math.max(window.innerHeight || document.documentElement.clientHeight || 1, 1);
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = Math.round(width * dpr);
+      canvas.height = Math.round(height * dpr);
+      canvas.style.width = `${width}px`;
+      canvas.style.height = `${height}px`;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      buildParticles();
+    };
+
+    const drawParticle = (x, y, radius, alpha, glow, stretchX = 0, stretchY = 0) => {
+      if (alpha <= 0.001 || radius <= 0.001) return;
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.shadowBlur = glow;
+      ctx.shadowColor = 'rgba(142, 190, 235, 0.42)';
+      ctx.fillStyle = 'rgba(247, 250, 255, 0.96)';
+      ctx.beginPath();
+      ctx.ellipse(x, y, radius + stretchX, radius + stretchY, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    };
+
+    const render = (timestamp) => {
+      if (destroyed) return;
+      if (startTime == null) startTime = timestamp;
+
+      const elapsed = timestamp - startTime;
+      ctx.clearRect(0, 0, width, height);
+
+      if (mode === 'exiting') {
+        const buildProgress = clamp(elapsed / EXIT_BUILD_MS);
+        const holdProgress = clamp((elapsed - EXIT_BUILD_MS) / SOLID_HOLD_MS);
+        const solidOpacity = clamp(0.14 + easeOutQuart(buildProgress) * 0.92 + holdProgress * 0.18, 0, 1);
+        const brandIn = clamp((buildProgress - 0.24) / 0.44);
+        const brandOpacity = clamp(easeInOutCubic(brandIn) * (1 - holdProgress * 0.18), 0, 1);
+        const brandScale = 0.92 + easeOutCubic(brandIn) * 0.08;
+
+        solid.style.opacity = solidOpacity.toFixed(4);
+        brand.style.opacity = brandOpacity.toFixed(4);
+        brand.style.transform = `translate3d(0, 0, 0) scale(${brandScale.toFixed(4)})`;
+
+        particles.forEach((particle) => {
+          const p = clamp((buildProgress - particle.delay) / Math.max(0.22, 1 - particle.delay));
+          const eased = easeOutCubic(p);
+          const x = lerp(particle.sx, particle.tx, eased);
+          const y = lerp(particle.sy, particle.ty, eased);
+          const alpha = particle.alpha * clamp(0.10 + p * 1.05, 0, 1) * (1 - holdProgress * 0.12);
+          const radius = particle.r * (0.5 + p * 0.95 + holdProgress * 0.16);
+          const stretch = (1 - p) * 2.4;
+          drawParticle(x, y, radius, alpha, particle.glow, stretch, stretch * 0.45);
+        });
+
+        if (elapsed < EXIT_BUILD_MS + SOLID_HOLD_MS) {
+          raf = window.requestAnimationFrame(render);
+        }
+      } else {
+        const breakProgress = clamp(elapsed / ENTER_BREAK_MS);
+        const bgFade = 1 - easeInOutCubic(clamp((elapsed - 100) / (ENTER_BREAK_MS - 100)));
+        const brandOut = clamp(elapsed / 420);
+        const brandOpacity = 1 - easeOutCubic(brandOut);
+        const brandScale = 1 - clamp(breakProgress * 0.08, 0, 0.08);
+
+        solid.style.opacity = clamp(bgFade, 0, 1).toFixed(4);
+        brand.style.opacity = clamp(brandOpacity, 0, 1).toFixed(4);
+        brand.style.transform = `translate3d(0, 0, 0) scale(${brandScale.toFixed(4)})`;
+
+        particles.forEach((particle) => {
+          const p = clamp((breakProgress - particle.fadeDelay) / Math.max(0.22, 1 - particle.fadeDelay));
+          const eased = easeInOutCubic(p);
+          const x = lerp(particle.tx, particle.ex, eased);
+          const y = lerp(particle.ty, particle.ey, eased);
+          const alpha = particle.alpha * Math.pow(1 - p, 1.12);
+          const radius = particle.r * (1 + p * 0.85);
+          const stretch = p * 2.8;
+          drawParticle(x, y, radius, alpha, particle.glow, stretch * 0.4, stretch);
+        });
+
+        if (elapsed < ENTER_BREAK_MS) {
+          raf = window.requestAnimationFrame(render);
+        }
+      }
+    };
+
+    const onResize = () => {
+      window.cancelAnimationFrame(resizeRaf);
+      resizeRaf = window.requestAnimationFrame(resize);
+    };
+
+    resize();
+    window.addEventListener('resize', onResize, { passive: true });
+    raf = window.requestAnimationFrame(render);
+
+    return {
+      node: overlay,
+      destroy() {
+        destroyed = true;
+        window.cancelAnimationFrame(raf);
+        window.cancelAnimationFrame(resizeRaf);
+        window.removeEventListener('resize', onResize, { passive: true });
+      }
+    };
   };
 
   const shouldSkipLink = (link, event) => {
@@ -1306,18 +1454,11 @@ window.addEventListener('DOMContentLoaded', () => {
     storeTransitionState(originX, originY, seed);
     warmPage(href);
 
-    const node = buildPixelOverlay({ mode: 'exiting', originX, originY, seed });
-
-    window.requestAnimationFrame(() => {
-      node.classList.add('is-filling');
-    });
+    overlayController = createParticleOverlay({ mode: 'exiting', originX, originY, seed });
 
     window.setTimeout(() => {
-      node.classList.add('is-solid');
-      window.setTimeout(() => {
-        window.location.href = href;
-      }, SOLID_HOLD_MS);
-    }, EXIT_WAVE_MS + CELL_DURATION_MS + 60);
+      window.location.href = href;
+    }, EXIT_BUILD_MS + SOLID_HOLD_MS);
   };
 
   const startEnterTransition = () => {
@@ -1330,14 +1471,13 @@ window.addEventListener('DOMContentLoaded', () => {
     document.documentElement.classList.add('vpl-route-transitioning');
     clearTransitionStorage();
 
-    const node = buildPixelOverlay({ mode: 'entering', originX, originY, seed });
+    overlayController = createParticleOverlay({ mode: 'entering', originX, originY, seed });
 
     window.requestAnimationFrame(() => {
-      window.setTimeout(releasePreloadMask, 24);
-      window.setTimeout(() => node.classList.add('is-leaving'), PRELOAD_RELEASE_MS);
+      window.setTimeout(releasePreloadMask, 34);
     });
 
-    window.setTimeout(removeOverlay, ENTER_WAVE_MS + CELL_DURATION_MS + PRELOAD_RELEASE_MS + 180);
+    window.setTimeout(removeOverlay, ENTER_BREAK_MS + 140);
   };
 
   const initPageTransition = () => {
@@ -1349,6 +1489,7 @@ window.addEventListener('DOMContentLoaded', () => {
     if (shouldPlayEnter && !prefersReduced.matches) {
       startEnterTransition();
     } else {
+      clearTransitionStorage();
       releasePreloadMask();
     }
 
@@ -1385,3 +1526,4 @@ window.addEventListener('DOMContentLoaded', () => {
     initPageTransition();
   }
 })();
+
