@@ -7951,6 +7951,12 @@ html.vpl-route-preload-transition::before {
 
 html.vpl-route-preload-transition body {
   opacity: 0;
+  background: #020610 !important;
+}
+
+html.vpl-route-preload-transition.vpl-route-preload-releasing body {
+  opacity: 1;
+  transition: opacity .56s cubic-bezier(.16,1,.3,1);
 }
 
 .vpl-page-transition {
@@ -7960,7 +7966,7 @@ html.vpl-route-preload-transition body {
   pointer-events: none;
   opacity: 0;
   overflow: hidden;
-  background: transparent;
+  background: #020610;
   transition: opacity .12s linear;
   isolation: isolate;
   contain: strict;
@@ -7984,7 +7990,7 @@ html.vpl-route-preload-transition body {
 .vpl-page-transition__canvas {
   z-index: 4;
   display: block;
-  mix-blend-mode: screen;
+  mix-blend-mode: normal;
 }
 
 .vpl-page-transition__softener {
@@ -8121,7 +8127,9 @@ html.vpl-route-preload-transition body {
     display: none !important;
   }
 
-  html.vpl-route-preload-transition body {
+  html.vpl-route-preload-transition body,
+  html.vpl-route-preload-transition.vpl-route-preload-releasing body {
     opacity: 1 !important;
+    transition: none !important;
   }
 }
