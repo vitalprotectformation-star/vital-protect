@@ -7916,3 +7916,142 @@ body.vpl-home .vpl-float-panel-b::after { animation-delay: .9s !important; }
     opacity: .55 !important;
   }
 }
+
+/* =========================================================
+   V26 — Transition de page façon dissolution / particules
+   Inspiré de l'effet vidéo : voile granulaire, reflet et wipe doux
+   entre deux pages internes.
+   ========================================================= */
+html.vpl-route-transitioning,
+html.vpl-route-transitioning body {
+  cursor: wait;
+}
+
+html.vpl-route-transitioning body {
+  overflow: hidden;
+}
+
+.vpl-page-transition {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483000;
+  pointer-events: none;
+  opacity: 0;
+  overflow: hidden;
+  background: transparent;
+  transition: opacity .18s ease;
+  isolation: isolate;
+}
+
+.vpl-page-transition.is-active {
+  opacity: 1;
+}
+
+.vpl-page-transition__canvas,
+.vpl-page-transition__fog,
+.vpl-page-transition__beam,
+.vpl-page-transition__grain {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.vpl-page-transition__canvas {
+  z-index: 3;
+  display: block;
+  mix-blend-mode: screen;
+}
+
+.vpl-page-transition__fog {
+  z-index: 1;
+  opacity: 0;
+  background:
+    radial-gradient(circle at var(--vpl-transition-x, 50%) var(--vpl-transition-y, 50%), rgba(105, 222, 255, .38), transparent 26%),
+    radial-gradient(circle at 72% 28%, rgba(48, 129, 255, .24), transparent 34%),
+    linear-gradient(135deg, rgba(2, 6, 14, .98), rgba(5, 16, 31, .94) 48%, rgba(2, 5, 12, .98));
+  transform: scale(1.08);
+  filter: blur(18px) saturate(1.3);
+}
+
+.vpl-page-transition__beam {
+  z-index: 4;
+  left: -55%;
+  width: 42%;
+  opacity: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.82), rgba(94, 225, 255, .55), transparent);
+  filter: blur(6px) drop-shadow(0 0 42px rgba(92, 221, 255, .8));
+  mix-blend-mode: screen;
+  transform: skewX(-18deg) translateX(-90%);
+}
+
+.vpl-page-transition__grain {
+  z-index: 5;
+  opacity: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 170 170' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.95' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='170' height='170' filter='url(%23n)' opacity='.85'/%3E%3C/svg%3E");
+  mix-blend-mode: screen;
+}
+
+.vpl-page-transition.is-exiting .vpl-page-transition__fog {
+  animation: vplRouteFogIn .86s cubic-bezier(.16,1,.3,1) both;
+}
+
+.vpl-page-transition.is-exiting .vpl-page-transition__beam {
+  animation: vplRouteBeam .78s cubic-bezier(.16,1,.3,1) both .06s;
+}
+
+.vpl-page-transition.is-exiting .vpl-page-transition__grain {
+  animation: vplRouteGrainIn .86s steps(2, end) both;
+}
+
+.vpl-page-transition.is-entering .vpl-page-transition__fog {
+  animation: vplRouteFogOut .92s cubic-bezier(.16,1,.3,1) both;
+}
+
+.vpl-page-transition.is-entering .vpl-page-transition__beam {
+  animation: vplRouteBeamOut .84s cubic-bezier(.16,1,.3,1) both;
+}
+
+.vpl-page-transition.is-entering .vpl-page-transition__grain {
+  animation: vplRouteGrainOut .92s steps(2, end) both;
+}
+
+@keyframes vplRouteFogIn {
+  0% { opacity: 0; transform: scale(1.10); filter: blur(28px) saturate(1.2); }
+  44% { opacity: .92; }
+  100% { opacity: 1; transform: scale(1); filter: blur(0) saturate(1.35); }
+}
+
+@keyframes vplRouteFogOut {
+  0% { opacity: 1; transform: scale(1); filter: blur(0) saturate(1.35); }
+  62% { opacity: .72; }
+  100% { opacity: 0; transform: scale(1.08); filter: blur(24px) saturate(1.05); }
+}
+
+@keyframes vplRouteBeam {
+  0% { opacity: 0; transform: skewX(-18deg) translateX(-120%); }
+  30% { opacity: 1; }
+  74% { opacity: .86; }
+  100% { opacity: 0; transform: skewX(-18deg) translateX(430%); }
+}
+
+@keyframes vplRouteBeamOut {
+  0% { opacity: .84; transform: skewX(-18deg) translateX(-60%); }
+  60% { opacity: .46; }
+  100% { opacity: 0; transform: skewX(-18deg) translateX(460%); }
+}
+
+@keyframes vplRouteGrainIn {
+  0% { opacity: 0; transform: scale(1.08); }
+  35% { opacity: .18; }
+  100% { opacity: .34; transform: scale(1); }
+}
+
+@keyframes vplRouteGrainOut {
+  0% { opacity: .34; transform: scale(1); }
+  100% { opacity: 0; transform: scale(1.08); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vpl-page-transition { display: none !important; }
+}
