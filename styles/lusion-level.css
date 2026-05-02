@@ -8005,3 +8005,181 @@ html.vpl-route-preload-transition::before,
 .vpl-page-transition {
   display: none !important;
 }
+
+/* =========================================================
+   V29 — Transition plus visible, mais fluide
+   - On garde la fluidité native du navigateur.
+   - On renforce l'effet avec un voile lumineux capturé dans
+     le snapshot de sortie, sans gros écran noir ni rupture.
+   ========================================================= */
+html.vpl-route-leaving {
+  overflow: hidden !important;
+  cursor: progress !important;
+}
+
+html.vpl-route-leaving body {
+  animation: vplRouteBodyEnergy 520ms cubic-bezier(.16, 1, .3, 1) both !important;
+}
+
+html.vpl-route-leaving::before,
+html.vpl-route-leaving::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 2147483600;
+  pointer-events: none;
+}
+
+html.vpl-route-leaving::before {
+  background:
+    radial-gradient(circle at var(--vpl-route-x, 50%) var(--vpl-route-y, 48%), rgba(111, 231, 255, .62) 0%, rgba(69, 190, 255, .34) 12%, rgba(9, 31, 55, .74) 34%, rgba(2, 7, 16, .88) 72%, rgba(2, 7, 16, .92) 100%),
+    radial-gradient(circle at 18% 28%, rgba(91, 213, 255, .30), transparent 34%),
+    radial-gradient(circle at 86% 62%, rgba(57, 141, 255, .24), transparent 36%),
+    repeating-radial-gradient(circle at var(--vpl-route-x, 50%) var(--vpl-route-y, 48%), rgba(255,255,255,.13) 0 1px, transparent 1px 8px);
+  opacity: 0;
+  transform: scale(.985);
+  filter: saturate(1.18) contrast(1.08);
+  animation: vplRouteVeilVisible 760ms cubic-bezier(.16, 1, .3, 1) both;
+}
+
+html.vpl-route-leaving::after {
+  background:
+    linear-gradient(105deg, transparent 0%, transparent 37%, rgba(255,255,255,.0) 42%, rgba(170, 242, 255, .86) 49%, rgba(43, 201, 255, .42) 53%, transparent 62%, transparent 100%),
+    linear-gradient(180deg, transparent 0%, rgba(93, 221, 255, .16) 47%, rgba(255,255,255,.16) 50%, rgba(93, 221, 255, .13) 53%, transparent 100%);
+  opacity: 0;
+  mix-blend-mode: screen;
+  filter: blur(.2px) drop-shadow(0 0 24px rgba(93, 221, 255, .60));
+  transform: translateX(-38%) skewX(-12deg);
+  animation: vplRouteShineVisible 820ms cubic-bezier(.16, 1, .3, 1) both;
+}
+
+@supports (view-transition-name: root) {
+  @view-transition {
+    navigation: auto;
+  }
+
+  ::view-transition-group(root) {
+    animation-duration: 1120ms !important;
+    animation-timing-function: cubic-bezier(.16, 1, .3, 1) !important;
+  }
+
+  ::view-transition-image-pair(root) {
+    isolation: isolate !important;
+  }
+
+  ::view-transition-old(root) {
+    z-index: 2 !important;
+    mix-blend-mode: normal !important;
+    animation: vplRouteSnapshotOutVisible 1040ms cubic-bezier(.16, 1, .3, 1) both !important;
+  }
+
+  ::view-transition-new(root) {
+    z-index: 1 !important;
+    mix-blend-mode: normal !important;
+    animation: vplRouteSnapshotInVisible 1120ms cubic-bezier(.16, 1, .3, 1) both !important;
+  }
+}
+
+@keyframes vplRouteBodyEnergy {
+  0% {
+    filter: blur(0) brightness(1) saturate(1);
+    transform: scale(1);
+  }
+  100% {
+    filter: blur(7px) brightness(.78) saturate(1.22);
+    transform: scale(1.012);
+  }
+}
+
+@keyframes vplRouteVeilVisible {
+  0% {
+    opacity: 0;
+    transform: scale(.985);
+  }
+  42% {
+    opacity: .76;
+  }
+  72% {
+    opacity: .88;
+    transform: scale(1.01);
+  }
+  100% {
+    opacity: .70;
+    transform: scale(1.018);
+  }
+}
+
+@keyframes vplRouteShineVisible {
+  0% {
+    opacity: 0;
+    transform: translateX(-45%) skewX(-12deg);
+  }
+  22% {
+    opacity: .82;
+  }
+  58% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(52%) skewX(-12deg);
+  }
+}
+
+@keyframes vplRouteSnapshotOutVisible {
+  0% {
+    opacity: 1;
+    filter: blur(0) brightness(1) saturate(1);
+    transform: scale(1);
+  }
+  32% {
+    opacity: .98;
+    filter: blur(2px) brightness(.92) saturate(1.15);
+    transform: scale(1.01);
+  }
+  72% {
+    opacity: .44;
+    filter: blur(13px) brightness(.62) saturate(1.32);
+    transform: scale(1.03);
+  }
+  100% {
+    opacity: 0;
+    filter: blur(24px) brightness(.46) saturate(1.45);
+    transform: scale(1.045);
+  }
+}
+
+@keyframes vplRouteSnapshotInVisible {
+  0% {
+    opacity: 0;
+    filter: blur(20px) brightness(.68) saturate(1.20);
+    transform: scale(.982);
+    clip-path: inset(42% 7% 42% 7% round 42px);
+  }
+  28% {
+    opacity: .10;
+    clip-path: inset(30% 4% 30% 4% round 34px);
+  }
+  58% {
+    opacity: .62;
+    filter: blur(8px) brightness(.88) saturate(1.12);
+    clip-path: inset(11% 1.5% 11% 1.5% round 22px);
+  }
+  100% {
+    opacity: 1;
+    filter: blur(0) brightness(1) saturate(1);
+    transform: scale(1);
+    clip-path: inset(0 0 0 0 round 0);
+  }
+}
+
+@media (max-width: 760px) {
+  html.vpl-route-leaving::before {
+    animation-duration: 640ms;
+    opacity: .72;
+  }
+
+  html.vpl-route-leaving::after {
+    animation-duration: 700ms;
+  }
+}
