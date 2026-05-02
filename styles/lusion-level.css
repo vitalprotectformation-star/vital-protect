@@ -7745,3 +7745,174 @@ body.vpl-home .vpl-float-panel-a strong {
     display: none !important;
   }
 }
+
+/* =========================================================
+   HERO CARD — REFLET LUMIÈRE VISIBLE / FORCE SHINE FIX
+   ========================================================= */
+
+body.vpl-home .vpl-visual {
+  overflow: hidden !important;
+  isolation: isolate !important;
+}
+
+body.vpl-home .vpl-card-sweep {
+  display: block !important;
+  position: absolute !important;
+  z-index: 80 !important;
+  top: -34% !important;
+  bottom: -34% !important;
+  left: -48% !important;
+  width: 42% !important;
+  height: auto !important;
+  border-radius: 999px !important;
+  pointer-events: none !important;
+  opacity: 0 !important;
+  background:
+    linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255,255,255,.00) 18%,
+      rgba(160,238,255,.22) 34%,
+      rgba(255,255,255,.92) 48%,
+      rgba(93,231,255,.72) 56%,
+      rgba(255,255,255,.22) 70%,
+      transparent 100%
+    ) !important;
+  filter: blur(.6px) drop-shadow(0 0 22px rgba(93,231,255,.92)) drop-shadow(0 0 54px rgba(93,231,255,.44)) !important;
+  mix-blend-mode: screen !important;
+  transform: translateX(-135%) rotate(18deg) !important;
+  animation: vplUltraVisibleCardSweep 2.85s cubic-bezier(.16,1,.3,1) infinite .35s !important;
+  clip-path: inset(0 round 38px) !important;
+}
+
+body.vpl-home .vpl-visual::after {
+  content: "" !important;
+  display: block !important;
+  position: absolute !important;
+  z-index: 79 !important;
+  top: -40% !important;
+  bottom: -40% !important;
+  left: -55% !important;
+  width: 52% !important;
+  border-radius: 999px !important;
+  pointer-events: none !important;
+  opacity: 0 !important;
+  background:
+    linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255,255,255,.00) 27%,
+      rgba(255,255,255,.34) 42%,
+      rgba(255,255,255,.78) 49%,
+      rgba(93,231,255,.38) 58%,
+      transparent 74%,
+      transparent 100%
+    ) !important;
+  filter: blur(3px) drop-shadow(0 0 36px rgba(93,231,255,.74)) !important;
+  mix-blend-mode: screen !important;
+  transform: translateX(-125%) rotate(18deg) !important;
+  animation: vplUltraVisibleCardSweepSoft 2.85s cubic-bezier(.16,1,.3,1) infinite .35s !important;
+}
+
+body.vpl-home .vpl-visual-shine {
+  display: block !important;
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 81 !important;
+  overflow: hidden !important;
+  border-radius: inherit !important;
+  pointer-events: none !important;
+  mix-blend-mode: screen !important;
+}
+
+body.vpl-home .vpl-visual-shine::before {
+  content: "" !important;
+  position: absolute !important;
+  top: -36% !important;
+  bottom: -36% !important;
+  left: -50% !important;
+  width: 20% !important;
+  height: auto !important;
+  border-radius: 999px !important;
+  opacity: 0 !important;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.96), rgba(126,236,255,.54), transparent) !important;
+  box-shadow: 0 0 26px rgba(255,255,255,.72), 0 0 62px rgba(93,231,255,.65) !important;
+  filter: blur(.2px) !important;
+  transform: translateX(-130%) rotate(18deg) !important;
+  animation: vplUltraVisibleCardSweepCore 2.85s cubic-bezier(.16,1,.3,1) infinite .35s !important;
+}
+
+body.vpl-home .vpl-visual-shine::after {
+  content: "" !important;
+  position: absolute !important;
+  right: 1px !important;
+  top: 11% !important;
+  width: 9px !important;
+  height: 9px !important;
+  border-radius: 50% !important;
+  background: #fff !important;
+  box-shadow: 0 0 18px #fff, 0 0 42px rgba(93,231,255,1), 0 0 92px rgba(93,231,255,.72) !important;
+  animation: vplSparkBeatWow 1.55s ease-in-out infinite !important;
+}
+
+body.vpl-home .vpl-visual-card::before,
+body.vpl-home .vpl-float-panel::after {
+  content: "" !important;
+  position: absolute !important;
+  z-index: 8 !important;
+  top: -42% !important;
+  bottom: -42% !important;
+  left: -52% !important;
+  width: 32% !important;
+  border-radius: 999px !important;
+  pointer-events: none !important;
+  opacity: 0 !important;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.52), rgba(93,231,255,.28), transparent) !important;
+  filter: blur(1px) !important;
+  mix-blend-mode: screen !important;
+  transform: translateX(-140%) rotate(18deg) !important;
+  animation: vplUltraVisibleCardSweepInside 2.85s cubic-bezier(.16,1,.3,1) infinite .35s !important;
+}
+
+body.vpl-home .vpl-visual-card-small::before { animation-delay: .55s !important; }
+body.vpl-home .vpl-float-panel-a::after { animation-delay: .72s !important; }
+body.vpl-home .vpl-float-panel-b::after { animation-delay: .9s !important; }
+
+@keyframes vplUltraVisibleCardSweep {
+  0%, 20% { opacity: 0; transform: translateX(-130%) rotate(18deg); }
+  30% { opacity: .98; }
+  48% { opacity: .88; }
+  68%, 100% { opacity: 0; transform: translateX(460%) rotate(18deg); }
+}
+
+@keyframes vplUltraVisibleCardSweepSoft {
+  0%, 18% { opacity: 0; transform: translateX(-135%) rotate(18deg); }
+  31% { opacity: .82; }
+  57% { opacity: .52; }
+  72%, 100% { opacity: 0; transform: translateX(390%) rotate(18deg); }
+}
+
+@keyframes vplUltraVisibleCardSweepCore {
+  0%, 22% { opacity: 0; transform: translateX(-150%) rotate(18deg); }
+  33% { opacity: 1; }
+  43% { opacity: .92; }
+  62%, 100% { opacity: 0; transform: translateX(650%) rotate(18deg); }
+}
+
+@keyframes vplUltraVisibleCardSweepInside {
+  0%, 24% { opacity: 0; transform: translateX(-150%) rotate(18deg); }
+  37% { opacity: .72; }
+  52% { opacity: .42; }
+  70%, 100% { opacity: 0; transform: translateX(520%) rotate(18deg); }
+}
+
+@media (max-width: 760px) {
+  body.vpl-home .vpl-card-sweep,
+  body.vpl-home .vpl-visual::after,
+  body.vpl-home .vpl-visual-shine::before,
+  body.vpl-home .vpl-visual-card::before,
+  body.vpl-home .vpl-float-panel::after {
+    animation-duration: 4.4s !important;
+    opacity: .55 !important;
+  }
+}
