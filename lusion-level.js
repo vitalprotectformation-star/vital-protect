@@ -973,3 +973,69 @@ window.addEventListener('DOMContentLoaded', () => {
     }
   }, { passive: true });
 })();
+
+/* V24 — Hero carte animée / parallax premium */
+(() => {
+  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const canHover = window.matchMedia('(hover:hover) and (pointer:fine)');
+
+  window.addEventListener('DOMContentLoaded', () => {
+    const hero = document.querySelector('body.vpl-home .vpl-hero');
+    const visual = document.querySelector('body.vpl-home [data-hero-visual]');
+
+    if (hero) {
+      requestAnimationFrame(() => {
+        hero.classList.add('vpl-hero-mounted');
+      });
+    }
+
+    if (!visual || prefersReduced.matches || !canHover.matches) return;
+
+    const animatedItems = [...visual.querySelectorAll('[data-depth]')];
+    let raf = null;
+    let lastEvent = null;
+
+    const reset = () => {
+      visual.style.setProperty('--hero-rx', '0deg');
+      visual.style.setProperty('--hero-ry', '0deg');
+      visual.style.setProperty('--hero-x', '50%');
+      visual.style.setProperty('--hero-y', '50%');
+      animatedItems.forEach((item) => {
+        item.style.setProperty('--card-x', '0px');
+        item.style.setProperty('--card-y', '0px');
+      });
+    };
+
+    const render = () => {
+      raf = null;
+      if (!lastEvent) return;
+
+      const rect = visual.getBoundingClientRect();
+      const px = (lastEvent.clientX - rect.left) / rect.width;
+      const py = (lastEvent.clientY - rect.top) / rect.height;
+      const x = Math.max(0, Math.min(1, px));
+      const y = Math.max(0, Math.min(1, py));
+      const rx = (x - .5) * 7.5;
+      const ry = (0.5 - y) * 6;
+
+      visual.style.setProperty('--hero-rx', `${rx.toFixed(2)}deg`);
+      visual.style.setProperty('--hero-ry', `${ry.toFixed(2)}deg`);
+      visual.style.setProperty('--hero-x', `${(x * 100).toFixed(1)}%`);
+      visual.style.setProperty('--hero-y', `${(y * 100).toFixed(1)}%`);
+
+      animatedItems.forEach((item) => {
+        const depth = Number(item.getAttribute('data-depth') || 1);
+        item.style.setProperty('--card-x', `${((x - .5) * depth * 18).toFixed(2)}px`);
+        item.style.setProperty('--card-y', `${((y - .5) * depth * 14).toFixed(2)}px`);
+      });
+    };
+
+    visual.addEventListener('pointermove', (event) => {
+      lastEvent = event;
+      if (!raf) raf = requestAnimationFrame(render);
+    });
+
+    visual.addEventListener('pointerleave', reset);
+    reset();
+  });
+})();
