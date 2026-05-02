@@ -936,7 +936,41 @@ window.addEventListener('DOMContentLoaded', () => {
       // on ne reset pas l'animation en cours, on garde juste l'état visuel lors d'un resize
     });
 
-    document.addEventListener('DOMContentLoaded', startIntro);
+    function shouldSkipIntroForRouteTransition() {
+      try {
+        return sessionStorage.getItem('vpl-route-transition-next') === '1'
+          || document.documentElement.classList.contains('vpl-route-preload-transition');
+      } catch (_) {
+        return document.documentElement.classList.contains('vpl-route-preload-transition');
+      }
+    }
+
+    function hideIntroImmediately() {
+      const intro = document.getElementById('vpIntro');
+      if (!intro) return;
+
+      clearTimers();
+      if (activeAnimation) {
+        cancelAnimationFrame(activeAnimation);
+        activeAnimation = null;
+      }
+      clearTimeout(beatResetTimer);
+
+      intro.classList.add('vp-hidden');
+      intro.classList.remove('vp-open');
+      document.body.classList.remove('vp-intro-playing');
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // Si l'accueil est ouvert après une transition inter-page, on évite
+      // de relancer l'intro ECG sous le masque de dépixélisation.
+      if (shouldSkipIntroForRouteTransition()) {
+        hideIntroImmediately();
+        return;
+      }
+
+      startIntro();
+    });
 
 /* V21 — Header compact au scroll */
 (() => {
@@ -1024,44 +1058,41 @@ window.addEventListener('DOMContentLoaded', () => {
   });
 })();
 
-/* V28 — Transition inter-pages sans l'ancien effet granulaire
-   Principe corrigé :
-   1) la page actuelle se ferme vers un écran uni Vital Protect ;
-   2) le changement de page se fait uniquement quand l'écran est déjà plein ;
-   3) la page suivante commence avec le même écran plein puis le retire proprement.
-   Pas de canvas, pas de particules : donc plus de cassure liée au changement de document. */
+/* V29 — Transition inter-pages pixelisée
+   Objectif : reproduction du principe de la vidéo de référence.
+   1) des pixels remplissent progressivement l'écran avec une couleur unie ;
+   2) la navigation a lieu uniquement quand l'écran est totalement plein ;
+   3) la nouvelle page démarre derrière le même écran uni, puis se dépixélise. */
 (() => {
   const STORAGE_KEY = 'vpl-route-transition-next';
   const ORIGIN_KEY = 'vpl-route-transition-origin';
+  const SEED_KEY = 'vpl-route-transition-seed';
   const PREFETCH_ATTR = 'data-vpl-prefetched';
   const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)');
 
-  const EXIT_TOTAL_MS = 980;
-  const ENTER_TOTAL_MS = 820;
-  const SAFE_HOLD_MS = 130;
+  const CELL_DURATION_MS = 260;
+  const EXIT_WAVE_MS = 760;
+  const ENTER_WAVE_MS = 720;
+  const SOLID_HOLD_MS = 135;
+  const PRELOAD_RELEASE_MS = 80;
 
   let overlay = null;
   let transitionRunning = false;
   const prefetched = new Set();
 
   const clamp = (value, min = 0, max = 1) => Math.min(max, Math.max(min, value));
+  const nowSeed = () => Math.floor((performance.now() * 1000 + Math.random() * 1000000) % 2147483647);
 
-  const createOverlay = () => {
-    if (overlay) return overlay;
+  const seededNoise = (seed, index) => {
+    let value = (seed + index * 374761393) | 0;
+    value = (value ^ (value >>> 13)) * 1274126177;
+    value = value ^ (value >>> 16);
+    return ((value >>> 0) % 10000) / 10000;
+  };
 
-    overlay = document.createElement('div');
-    overlay.className = 'vpl-page-transition vpl-brand-gate';
-    overlay.setAttribute('aria-hidden', 'true');
-    overlay.innerHTML = `
-      <div class="vpl-brand-gate__field"></div>
-      <div class="vpl-brand-gate__halo"></div>
-      <div class="vpl-brand-gate__ring"></div>
-      <div class="vpl-brand-gate__beam"></div>
-      <div class="vpl-brand-gate__brand"><span>VITAL PROTECT</span></div>
-    `;
-
-    document.body.appendChild(overlay);
-    return overlay;
+  const getSolidColor = () => {
+    const fromCss = getComputedStyle(document.documentElement).getPropertyValue('--vpl-transition-solid').trim();
+    return fromCss || '#f2efe6';
   };
 
   const removeOverlay = () => {
@@ -1071,6 +1102,8 @@ window.addEventListener('DOMContentLoaded', () => {
     }
 
     document.documentElement.classList.remove('vpl-route-transitioning');
+    document.documentElement.style.removeProperty('--vpl-transition-x');
+    document.documentElement.style.removeProperty('--vpl-transition-y');
     transitionRunning = false;
   };
 
@@ -1083,12 +1116,13 @@ window.addEventListener('DOMContentLoaded', () => {
       root.classList.remove('vpl-route-preload-transition', 'vpl-route-preload-releasing');
       root.style.removeProperty('--vpl-transition-x');
       root.style.removeProperty('--vpl-transition-y');
-    }, ENTER_TOTAL_MS + 120);
+    }, PRELOAD_RELEASE_MS + 80);
   };
 
-  const storeTransitionState = (originX, originY) => {
+  const storeTransitionState = (originX, originY, seed) => {
     try {
       sessionStorage.setItem(STORAGE_KEY, '1');
+      sessionStorage.setItem(SEED_KEY, String(seed));
       sessionStorage.setItem(ORIGIN_KEY, JSON.stringify({
         x: clamp(originX / Math.max(window.innerWidth || 1, 1)),
         y: clamp(originY / Math.max(window.innerHeight || 1, 1))
@@ -1111,10 +1145,20 @@ window.addEventListener('DOMContentLoaded', () => {
     }
   };
 
+  const readTransitionSeed = () => {
+    try {
+      const value = Number(sessionStorage.getItem(SEED_KEY));
+      return Number.isFinite(value) ? value : 1;
+    } catch (_) {
+      return 1;
+    }
+  };
+
   const clearTransitionStorage = () => {
     try {
       sessionStorage.removeItem(STORAGE_KEY);
       sessionStorage.removeItem(ORIGIN_KEY);
+      sessionStorage.removeItem(SEED_KEY);
     } catch (_) {}
   };
 
@@ -1152,6 +1196,61 @@ window.addEventListener('DOMContentLoaded', () => {
     document.documentElement.style.setProperty('--vpl-transition-y', y);
   };
 
+  const buildPixelOverlay = ({ mode, originX, originY, seed }) => {
+    if (overlay) overlay.remove();
+
+    const width = Math.max(window.innerWidth || document.documentElement.clientWidth || 1, 1);
+    const height = Math.max(window.innerHeight || document.documentElement.clientHeight || 1, 1);
+    const preferredSize = width < 680 ? 18 : width < 1120 ? 22 : 26;
+    const cols = Math.min(78, Math.max(24, Math.ceil(width / preferredSize)));
+    const cellSize = width / cols;
+    const rows = Math.min(54, Math.max(18, Math.ceil(height / cellSize)));
+    const total = cols * rows;
+    const ox = clamp(originX / width);
+    const oy = clamp(originY / height);
+    const corners = [[0, 0], [1, 0], [0, 1], [1, 1]];
+    const maxDistance = Math.max(...corners.map(([x, y]) => Math.hypot(x - ox, (y - oy) * (height / width)))) || 1;
+    const fragment = document.createDocumentFragment();
+
+    overlay = document.createElement('div');
+    overlay.className = `vpl-page-transition vpl-pixel-transition is-active is-${mode}`;
+    overlay.setAttribute('aria-hidden', 'true');
+    overlay.style.setProperty('--vpl-cols', String(cols));
+    overlay.style.setProperty('--vpl-rows', String(rows));
+    overlay.style.setProperty('--vpl-transition-solid-current', getSolidColor());
+    setOrigin(overlay, originX, originY);
+
+    const solid = document.createElement('div');
+    solid.className = 'vpl-page-transition__solid';
+
+    const grid = document.createElement('div');
+    grid.className = 'vpl-page-transition__grid';
+
+    for (let index = 0; index < total; index += 1) {
+      const col = index % cols;
+      const row = Math.floor(index / cols);
+      const nx = (col + 0.5) / cols;
+      const ny = (row + 0.5) / rows;
+      const noise = seededNoise(seed, index);
+      const distance = Math.hypot(nx - ox, (ny - oy) * (height / width)) / maxDistance;
+      const order = clamp(distance * 0.74 + noise * 0.26);
+      const exitDelay = Math.round(order * EXIT_WAVE_MS);
+      const enterDelay = Math.round((1 - order) * ENTER_WAVE_MS);
+
+      const cell = document.createElement('i');
+      cell.className = 'vpl-page-transition__cell';
+      cell.style.setProperty('--exit-delay', `${exitDelay}ms`);
+      cell.style.setProperty('--enter-delay', `${enterDelay}ms`);
+      cell.style.setProperty('--tone', `${0.94 + noise * 0.10}`);
+      fragment.appendChild(cell);
+    }
+
+    grid.appendChild(fragment);
+    overlay.append(solid, grid);
+    document.body.appendChild(overlay);
+    return overlay;
+  };
+
   const shouldSkipLink = (link, event) => {
     if (!link || transitionRunning || prefersReduced.matches) return true;
     if (event && (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0)) return true;
@@ -1172,7 +1271,7 @@ window.addEventListener('DOMContentLoaded', () => {
     if (url.origin !== window.location.origin) return true;
 
     const samePath = url.pathname === window.location.pathname && url.search === window.location.search;
-    if (samePath && url.hash) return true;
+    if (samePath) return true;
 
     const lastPart = url.pathname.split('/').pop() || '';
     if (/\.[a-z0-9]+$/i.test(lastPart) && !/\.html?$/i.test(lastPart)) return true;
@@ -1202,48 +1301,43 @@ window.addEventListener('DOMContentLoaded', () => {
     const rect = eventTarget?.getBoundingClientRect?.();
     const originX = rect ? rect.left + rect.width / 2 : window.innerWidth / 2;
     const originY = rect ? rect.top + rect.height / 2 : window.innerHeight / 2;
+    const seed = nowSeed();
 
-    storeTransitionState(originX, originY);
+    storeTransitionState(originX, originY, seed);
     warmPage(href);
 
-    const node = createOverlay();
-    setOrigin(node, originX, originY);
-    node.classList.remove('is-entering', 'is-leaving');
-    node.classList.add('is-active', 'is-exiting');
+    const node = buildPixelOverlay({ mode: 'exiting', originX, originY, seed });
 
-    // Navigation uniquement quand le gate est devenu plein + logo lisible.
+    window.requestAnimationFrame(() => {
+      node.classList.add('is-filling');
+    });
+
     window.setTimeout(() => {
       node.classList.add('is-solid');
       window.setTimeout(() => {
         window.location.href = href;
-      }, SAFE_HOLD_MS);
-    }, EXIT_TOTAL_MS);
+      }, SOLID_HOLD_MS);
+    }, EXIT_WAVE_MS + CELL_DURATION_MS + 60);
   };
 
   const startEnterTransition = () => {
     const storedOrigin = readTransitionOrigin();
     const originX = storedOrigin?.originX ?? window.innerWidth / 2;
     const originY = storedOrigin?.originY ?? window.innerHeight / 2;
+    const seed = readTransitionSeed();
 
     transitionRunning = true;
     document.documentElement.classList.add('vpl-route-transitioning');
     clearTransitionStorage();
 
-    const node = createOverlay();
-    setOrigin(node, originX, originY);
-    node.classList.remove('is-exiting', 'is-solid');
-    node.classList.add('is-active', 'is-entering');
+    const node = buildPixelOverlay({ mode: 'entering', originX, originY, seed });
 
-    // On garde le masque inline jusqu'à ce que l'overlay JS soit déjà posé.
     window.requestAnimationFrame(() => {
-      window.setTimeout(releasePreloadMask, 40);
+      window.setTimeout(releasePreloadMask, 24);
+      window.setTimeout(() => node.classList.add('is-leaving'), PRELOAD_RELEASE_MS);
     });
 
-    window.setTimeout(() => {
-      node.classList.add('is-leaving');
-    }, 30);
-
-    window.setTimeout(removeOverlay, ENTER_TOTAL_MS + 180);
+    window.setTimeout(removeOverlay, ENTER_WAVE_MS + CELL_DURATION_MS + PRELOAD_RELEASE_MS + 180);
   };
 
   const initPageTransition = () => {
