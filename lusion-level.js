@@ -1030,7 +1030,7 @@ window.addEventListener('DOMContentLoaded', () => {
   const META_KEY = 'vpl-route-transition-origin';
   const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)');
   const TRANSITION_EXIT_MS = 1180;
-  const TRANSITION_ENTER_MS = 1080;
+  const TRANSITION_ENTER_MS = 1280;
 
   const clamp = (value, min = 0, max = 1) => Math.min(max, Math.max(min, value));
   const easeInOut = (x) => {
@@ -1047,7 +1047,12 @@ window.addEventListener('DOMContentLoaded', () => {
   let firstFramePainted = false;
 
   const removePreloadMask = () => {
-    document.documentElement.classList.remove('vpl-route-preload-transition');
+    document.documentElement.classList.remove('vpl-route-preload-transition', 'vpl-route-preload-releasing');
+  };
+
+  const releasePreloadMask = () => {
+    if (!document.documentElement.classList.contains('vpl-route-preload-transition')) return;
+    document.documentElement.classList.add('vpl-route-preload-releasing');
   };
 
   const createOverlay = () => {
@@ -1164,11 +1169,13 @@ window.addEventListener('DOMContentLoaded', () => {
 
       ctx.clearRect(0, 0, width, height);
 
-      // Fond continu : il devient totalement couvrant avant la navigation,
-      // puis se dissout progressivement sur la page suivante. Ça supprime la coupure.
+      // Fond continu : il devient totalement couvrant avant la navigation.
+      // À l'entrée on garde un vrai écran couvrant au début, puis on l'ouvre
+      // lentement : la nouvelle page ne peut plus apparaître en "cut".
+      const enterFade = raw < .20 ? 0 : easeOut((raw - .20) / .80);
       const baseAlpha = exit
-        ? Math.min(.98, .12 + .88 * p)
-        : Math.max(0, .98 * (1 - easeOut(raw)));
+        ? Math.min(1, .18 + .82 * p)
+        : Math.max(0, .99 * (1 - enterFade));
       const gradient = ctx.createRadialGradient(originX, originY, 0, originX, originY, Math.max(width, height) * .86);
       gradient.addColorStop(0, `rgba(112, 232, 255, ${baseAlpha * .56})`);
       gradient.addColorStop(.36, `rgba(13, 48, 87, ${baseAlpha * .78})`);
@@ -1214,15 +1221,17 @@ window.addEventListener('DOMContentLoaded', () => {
 
       // Léger voile de sécurité : au pic, le changement de document est masqué.
       ctx.globalCompositeOperation = 'source-over';
-      ctx.fillStyle = `rgba(1, 5, 12, ${coverage * .26})`;
+      ctx.fillStyle = `rgba(1, 5, 12, ${exit ? coverage * .32 : baseAlpha * .34})`; 
       ctx.fillRect(0, 0, width, height);
 
       if (!firstFramePainted) {
         firstFramePainted = true;
-        if (mode === 'enter') {
-          // La page devient visible uniquement quand le voile canvas est déjà peint.
-          removePreloadMask();
-        }
+      }
+
+      if (mode === 'enter' && raw >= .16) {
+        // On commence à faire réapparaître le body seulement quand le voile
+        // canvas est déjà dense. Le contenu arrive donc sous le voile, sans flash.
+        releasePreloadMask();
       }
 
       if (raw < 1) {
