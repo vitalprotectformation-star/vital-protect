@@ -7920,11 +7920,14 @@ body.vpl-home .vpl-float-panel-b::after { animation-delay: .9s !important; }
 
 
 /* =========================================================
-   V27 — Transition de page en deux temps
-   1) dissolution qui remplit totalement l'écran
-   2) écran uni Vital Protect pendant le changement de page
-   3) désintégration inverse sur la page suivante
+   V29 — Transition de page pixelisée
+   Pixels -> écran uni -> dépixélisation de la nouvelle page.
    ========================================================= */
+:root {
+  --vpl-transition-solid: #f2efe6;
+  --vpl-transition-cell-shadow: rgba(48, 38, 26, .06);
+}
+
 html.vpl-route-transitioning,
 html.vpl-route-transitioning body {
   cursor: wait;
@@ -7934,53 +7937,25 @@ html.vpl-route-transitioning body {
   overflow: hidden;
 }
 
-/* Pré-masque très tôt dans le <head> : il doit être IDENTIQUE à l'état plein
-   de la transition JS pour cacher le vrai changement de document. */
+/* Pré-masque injecté très tôt dans le <head> : il doit être identique à
+   la couleur pleine de l'overlay JS afin de supprimer tout flash entre pages. */
 html.vpl-route-preload-transition,
 html.vpl-route-preload-transition body {
-  background: #020610 !important;
-}
-
-html.vpl-route-preload-transition::before,
-html.vpl-route-preload-transition::after {
-  position: fixed;
-  inset: 0;
-  z-index: 2147482998;
-  pointer-events: none;
+  background: var(--vpl-transition-solid, #f2efe6) !important;
 }
 
 html.vpl-route-preload-transition::before {
   content: "";
-  background:
-    radial-gradient(circle at var(--vpl-transition-x, 50%) var(--vpl-transition-y, 50%), rgba(105, 222, 255, .42), transparent 27%),
-    radial-gradient(circle at 74% 30%, rgba(47, 130, 255, .26), transparent 34%),
-    radial-gradient(circle at 22% 74%, rgba(84, 220, 255, .16), transparent 32%),
-    linear-gradient(135deg, #020610 0%, #071525 48%, #02050b 100%);
-  opacity: 1;
-  filter: saturate(1.32);
-}
-
-html.vpl-route-preload-transition::after {
-  content: "VITAL PROTECT";
+  position: fixed;
+  inset: 0;
   z-index: 2147482999;
-  display: grid;
-  place-items: center;
-  color: rgba(239, 250, 255, .96);
-  font-size: clamp(1.35rem, 4.8vw, 4.4rem);
-  font-weight: 950;
-  letter-spacing: .18em;
-  text-transform: uppercase;
-  text-shadow:
-    0 0 18px rgba(104, 225, 255, .72),
-    0 0 54px rgba(42, 157, 255, .42);
+  pointer-events: none;
+  background: var(--vpl-transition-solid, #f2efe6);
+  opacity: 1;
 }
 
 html.vpl-route-preload-transition.vpl-route-preload-releasing::before {
-  animation: vplRoutePreloadSolidOut .62s cubic-bezier(.16,1,.3,1) both;
-}
-
-html.vpl-route-preload-transition.vpl-route-preload-releasing::after {
-  animation: vplRoutePreloadBrandOut .46s cubic-bezier(.16,1,.3,1) both;
+  animation: vplPixelPreloadOut .12s linear both;
 }
 
 .vpl-page-transition {
@@ -7988,211 +7963,112 @@ html.vpl-route-preload-transition.vpl-route-preload-releasing::after {
   inset: 0;
   z-index: 2147483000;
   pointer-events: none;
-  opacity: 0;
   overflow: hidden;
-  background: transparent;
-  transition: opacity .16s ease;
   isolation: isolate;
-}
-
-.vpl-page-transition.is-active {
-  opacity: 1;
+  background: transparent;
+  contain: layout paint style;
 }
 
 .vpl-page-transition__solid,
-.vpl-page-transition__canvas,
-.vpl-page-transition__fog,
-.vpl-page-transition__beam,
-.vpl-page-transition__grain,
-.vpl-page-transition__brand {
+.vpl-page-transition__grid {
   position: absolute;
   inset: 0;
-  width: 100%;
-  height: 100%;
 }
 
 .vpl-page-transition__solid {
   z-index: 0;
+  background: var(--vpl-transition-solid-current, var(--vpl-transition-solid, #f2efe6));
   opacity: 0;
-  background:
-    radial-gradient(circle at var(--vpl-transition-x, 50%) var(--vpl-transition-y, 50%), rgba(105, 222, 255, .42), transparent 27%),
-    radial-gradient(circle at 74% 30%, rgba(47, 130, 255, .26), transparent 34%),
-    radial-gradient(circle at 22% 74%, rgba(84, 220, 255, .16), transparent 32%),
-    linear-gradient(135deg, #020610 0%, #071525 48%, #02050b 100%);
-  filter: saturate(1.32);
 }
 
-.vpl-page-transition__canvas {
-  z-index: 3;
-  display: block;
-  mix-blend-mode: screen;
-}
-
-.vpl-page-transition__fog {
+.vpl-page-transition__grid {
   z-index: 1;
-  opacity: 0;
-  background:
-    radial-gradient(circle at var(--vpl-transition-x, 50%) var(--vpl-transition-y, 50%), rgba(105, 222, 255, .38), transparent 26%),
-    radial-gradient(circle at 72% 28%, rgba(48, 129, 255, .24), transparent 34%),
-    linear-gradient(135deg, rgba(2, 6, 14, .98), rgba(5, 16, 31, .94) 48%, rgba(2, 5, 12, .98));
-  transform: scale(1.08);
-  filter: blur(18px) saturate(1.3);
-}
-
-.vpl-page-transition__beam {
-  z-index: 4;
-  left: -55%;
-  width: 42%;
-  opacity: 0;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,.82), rgba(94, 225, 255, .55), transparent);
-  filter: blur(6px) drop-shadow(0 0 42px rgba(92, 221, 255, .8));
-  mix-blend-mode: screen;
-  transform: skewX(-18deg) translateX(-90%);
-}
-
-.vpl-page-transition__grain {
-  z-index: 5;
-  opacity: 0;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 170 170' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.95' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='170' height='170' filter='url(%23n)' opacity='.85'/%3E%3C/svg%3E");
-  mix-blend-mode: screen;
-}
-
-.vpl-page-transition__brand {
-  z-index: 6;
   display: grid;
-  place-items: center;
+  grid-template-columns: repeat(var(--vpl-cols), minmax(0, 1fr));
+  grid-template-rows: repeat(var(--vpl-rows), minmax(0, 1fr));
+  transform: translateZ(0);
+}
+
+.vpl-page-transition__cell {
+  display: block;
+  width: calc(100% + 1.6px);
+  height: calc(100% + 1.6px);
+  margin: -.8px;
+  background: var(--vpl-transition-solid-current, var(--vpl-transition-solid, #f2efe6));
   opacity: 0;
-  transform: scale(.96);
-}
-
-.vpl-page-transition__brand span {
-  color: rgba(239, 250, 255, .96);
-  font-size: clamp(1.35rem, 4.8vw, 4.4rem);
-  font-weight: 950;
-  letter-spacing: .18em;
-  text-transform: uppercase;
-  text-shadow:
-    0 0 18px rgba(104, 225, 255, .72),
-    0 0 54px rgba(42, 157, 255, .42);
-}
-
-.vpl-page-transition.is-exiting .vpl-page-transition__fog {
-  animation: vplRouteFogIn 1.02s cubic-bezier(.16,1,.3,1) both;
+  transform: scale(.24);
+  filter: brightness(var(--tone, 1));
+  box-shadow: 0 0 0 .5px var(--vpl-transition-cell-shadow);
+  will-change: opacity, transform;
+  transition:
+    opacity .12s steps(1, end),
+    transform .26s cubic-bezier(.16, 1, .3, 1);
 }
 
 .vpl-page-transition.is-exiting .vpl-page-transition__solid {
-  animation: vplRouteSolidIn 1.12s cubic-bezier(.16,1,.3,1) both;
+  opacity: 0;
 }
 
-.vpl-page-transition.is-exiting .vpl-page-transition__brand {
-  animation: vplRouteBrandIn .72s cubic-bezier(.16,1,.3,1) both .42s;
+.vpl-page-transition.is-exiting.is-filling .vpl-page-transition__cell {
+  opacity: 1;
+  transform: scale(1.035);
+  transition-delay: var(--exit-delay);
 }
 
-.vpl-page-transition.is-exiting .vpl-page-transition__beam {
-  animation: vplRouteBeam .78s cubic-bezier(.16,1,.3,1) both .06s;
+.vpl-page-transition.is-exiting.is-solid .vpl-page-transition__solid {
+  opacity: 1;
 }
 
-.vpl-page-transition.is-exiting .vpl-page-transition__grain {
-  animation: vplRouteGrainIn 1.02s steps(2, end) both;
+.vpl-page-transition.is-exiting.is-solid .vpl-page-transition__cell {
+  opacity: 1;
+  transform: scale(1.035);
+}
+
+.vpl-page-transition.is-entering {
+  background: var(--vpl-transition-solid-current, var(--vpl-transition-solid, #f2efe6));
 }
 
 .vpl-page-transition.is-entering .vpl-page-transition__solid {
   opacity: 1;
-  animation: vplRouteSolidOut 1.08s cubic-bezier(.16,1,.3,1) both;
 }
 
-.vpl-page-transition.is-entering .vpl-page-transition__brand {
+.vpl-page-transition.is-entering .vpl-page-transition__cell {
   opacity: 1;
-  transform: scale(1);
-  animation: vplRouteBrandOut .66s cubic-bezier(.16,1,.3,1) both;
+  transform: scale(1.035);
 }
 
-.vpl-page-transition.is-entering .vpl-page-transition__fog {
-  animation: vplRouteFogOut 1.05s cubic-bezier(.16,1,.3,1) both;
+.vpl-page-transition.is-entering.is-leaving {
+  animation: vplPixelOverlayTransparent .18s linear .08s both;
 }
 
-.vpl-page-transition.is-entering .vpl-page-transition__beam {
-  animation: vplRouteBeamOut .88s cubic-bezier(.16,1,.3,1) both;
+.vpl-page-transition.is-entering.is-leaving .vpl-page-transition__solid {
+  animation: vplPixelSolidOut .16s linear .04s both;
 }
 
-.vpl-page-transition.is-entering .vpl-page-transition__grain {
-  animation: vplRouteGrainOut 1.05s steps(2, end) both;
+.vpl-page-transition.is-entering.is-leaving .vpl-page-transition__cell {
+  opacity: 0;
+  transform: scale(.18);
+  transition-delay: var(--enter-delay);
 }
 
-@keyframes vplRouteSolidIn {
-  0%, 42% { opacity: 0; filter: blur(20px) saturate(1.1); }
-  72% { opacity: .96; filter: blur(2px) saturate(1.28); }
-  100% { opacity: 1; filter: blur(0) saturate(1.32); }
+@keyframes vplPixelSolidOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
 }
 
-@keyframes vplRouteSolidOut {
-  0% { opacity: 1; filter: blur(0) saturate(1.32); }
-  18% { opacity: 1; }
-  100% { opacity: 0; filter: blur(24px) saturate(1.05); }
+@keyframes vplPixelOverlayTransparent {
+  from { background-color: var(--vpl-transition-solid-current, var(--vpl-transition-solid, #f2efe6)); }
+  to { background-color: transparent; }
 }
 
-@keyframes vplRouteBrandIn {
-  0% { opacity: 0; transform: scale(.92) translateY(12px); filter: blur(14px); }
-  62% { opacity: 1; filter: blur(0); }
-  100% { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); }
-}
-
-@keyframes vplRouteBrandOut {
-  0% { opacity: 1; transform: scale(1); filter: blur(0); }
-  100% { opacity: 0; transform: scale(1.06); filter: blur(16px); }
-}
-
-@keyframes vplRoutePreloadSolidOut {
-  0% { opacity: 1; filter: blur(0) saturate(1.32); }
-  100% { opacity: 0; filter: blur(24px) saturate(1.05); }
-}
-
-@keyframes vplRoutePreloadBrandOut {
-  0% { opacity: 1; transform: scale(1); filter: blur(0); }
-  100% { opacity: 0; transform: scale(1.06); filter: blur(16px); }
-}
-
-@keyframes vplRouteFogIn {
-  0% { opacity: 0; transform: scale(1.10); filter: blur(28px) saturate(1.2); }
-  44% { opacity: .92; }
-  100% { opacity: 1; transform: scale(1); filter: blur(0) saturate(1.35); }
-}
-
-@keyframes vplRouteFogOut {
-  0% { opacity: 1; transform: scale(1); filter: blur(0) saturate(1.35); }
-  48% { opacity: .72; }
-  100% { opacity: 0; transform: scale(1.08); filter: blur(24px) saturate(1.05); }
-}
-
-@keyframes vplRouteBeam {
-  0% { opacity: 0; transform: skewX(-18deg) translateX(-120%); }
-  30% { opacity: 1; }
-  74% { opacity: .86; }
-  100% { opacity: 0; transform: skewX(-18deg) translateX(430%); }
-}
-
-@keyframes vplRouteBeamOut {
-  0% { opacity: .84; transform: skewX(-18deg) translateX(-60%); }
-  60% { opacity: .46; }
-  100% { opacity: 0; transform: skewX(-18deg) translateX(460%); }
-}
-
-@keyframes vplRouteGrainIn {
-  0% { opacity: 0; transform: scale(1.08); }
-  35% { opacity: .18; }
-  100% { opacity: .34; transform: scale(1); }
-}
-
-@keyframes vplRouteGrainOut {
-  0% { opacity: .34; transform: scale(1); }
-  100% { opacity: 0; transform: scale(1.08); }
+@keyframes vplPixelPreloadOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .vpl-page-transition,
-  html.vpl-route-preload-transition::before,
-  html.vpl-route-preload-transition::after {
+  html.vpl-route-preload-transition::before {
     display: none !important;
   }
 }
-
