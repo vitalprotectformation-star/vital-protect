@@ -1024,12 +1024,13 @@ window.addEventListener('DOMContentLoaded', () => {
   });
 })();
 
-/* V26 — Transition inter-pages granulaire / reflet lumineux */
+/* V27 — Transition inter-pages granulaire fluide / sans coupure */
 (() => {
   const STORAGE_KEY = 'vpl-route-transition-next';
+  const META_KEY = 'vpl-route-transition-origin';
   const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)');
-  const TRANSITION_EXIT_MS = 880;
-  const TRANSITION_ENTER_MS = 980;
+  const TRANSITION_EXIT_MS = 1180;
+  const TRANSITION_ENTER_MS = 1080;
 
   const clamp = (value, min = 0, max = 1) => Math.min(max, Math.max(min, value));
   const easeInOut = (x) => {
@@ -1037,11 +1038,17 @@ window.addEventListener('DOMContentLoaded', () => {
     return t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
   };
   const easeOut = (x) => 1 - Math.pow(1 - clamp(x), 3);
+  const easeIn = (x) => Math.pow(clamp(x), 3);
 
   let overlay = null;
   let activeRaf = null;
   let activeResize = null;
   let transitionRunning = false;
+  let firstFramePainted = false;
+
+  const removePreloadMask = () => {
+    document.documentElement.classList.remove('vpl-route-preload-transition');
+  };
 
   const createOverlay = () => {
     if (overlay) return overlay;
@@ -1050,6 +1057,7 @@ window.addEventListener('DOMContentLoaded', () => {
     overlay.className = 'vpl-page-transition';
     overlay.setAttribute('aria-hidden', 'true');
     overlay.innerHTML = `
+      <div class="vpl-page-transition__softener"></div>
       <div class="vpl-page-transition__fog"></div>
       <canvas class="vpl-page-transition__canvas"></canvas>
       <div class="vpl-page-transition__beam"></div>
@@ -1072,14 +1080,26 @@ window.addEventListener('DOMContentLoaded', () => {
       overlay.remove();
       overlay = null;
     }
+    removePreloadMask();
     document.documentElement.classList.remove('vpl-route-transitioning');
     transitionRunning = false;
+    firstFramePainted = false;
+  };
+
+  const readStoredOrigin = () => {
+    try {
+      const raw = sessionStorage.getItem(META_KEY);
+      sessionStorage.removeItem(META_KEY);
+      if (!raw) return null;
+      const parsed = JSON.parse(raw);
+      if (typeof parsed?.x === 'number' && typeof parsed?.y === 'number') return parsed;
+    } catch (_) {}
+    return null;
   };
 
   const runParticleVeil = ({ mode, originX, originY, duration, onDone }) => {
     const node = createOverlay();
     const canvas = node.querySelector('.vpl-page-transition__canvas');
-    const fog = node.querySelector('.vpl-page-transition__fog');
     const ctx = canvas.getContext('2d', { alpha: true });
 
     let width = 0;
@@ -1097,7 +1117,10 @@ window.addEventListener('DOMContentLoaded', () => {
       canvas.style.height = `${height}px`;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-      const count = Math.min(3600, Math.max(1200, Math.floor((width * height) / 520)));
+      originX = clamp(originX || width / 2, 0, width);
+      originY = clamp(originY || height / 2, 0, height);
+
+      const count = Math.min(5600, Math.max(1800, Math.floor((width * height) / 390)));
       particles = Array.from({ length: count }, () => {
         const x = Math.random() * width;
         const y = Math.random() * height;
@@ -1107,17 +1130,19 @@ window.addEventListener('DOMContentLoaded', () => {
         return {
           x,
           y,
-          r: Math.random() * 2.6 + .45,
-          driftX: (Math.random() - .5) * 62,
-          driftY: (Math.random() - .5) * 96,
-          wave: Math.random() * .38 + distance * .22 + (y / height) * .22,
-          hue: 195 + Math.random() * 35,
-          light: 68 + Math.random() * 22,
-          delay: Math.random() * .22
+          r: Math.random() * 2.8 + .45,
+          driftX: (Math.random() - .5) * 92,
+          driftY: (Math.random() - .5) * 116,
+          wave: Math.random() * .30 + distance * .24 + (y / height) * .18,
+          hue: 190 + Math.random() * 42,
+          light: 68 + Math.random() * 24,
+          delay: Math.random() * .20,
+          twinkle: Math.random() * Math.PI * 2
         };
       });
     };
 
+    if (activeResize) window.removeEventListener('resize', activeResize);
     activeResize = resize;
     resize();
     window.addEventListener('resize', resize, { passive: true });
@@ -1128,57 +1153,77 @@ window.addEventListener('DOMContentLoaded', () => {
     node.classList.add('is-active', mode === 'enter' ? 'is-entering' : 'is-exiting');
 
     const start = performance.now();
+    firstFramePainted = false;
 
     const frame = (now) => {
       const raw = clamp((now - start) / duration);
       const p = easeInOut(raw);
-      const visible = mode === 'exit' ? p : 1 - p;
-      const sweep = mode === 'exit' ? easeOut(raw) : 1 - easeOut(raw);
+      const exit = mode === 'exit';
+      const coverage = exit ? p : 1 - p;
+      const dissolve = exit ? easeOut(raw) : 1 - easeIn(raw);
 
       ctx.clearRect(0, 0, width, height);
 
-      const baseAlpha = mode === 'exit' ? .78 * p : .78 * (1 - p);
-      const gradient = ctx.createRadialGradient(originX, originY, 0, originX, originY, Math.max(width, height) * .82);
-      gradient.addColorStop(0, `rgba(107, 229, 255, ${baseAlpha * .54})`);
-      gradient.addColorStop(.38, `rgba(12, 43, 78, ${baseAlpha * .76})`);
-      gradient.addColorStop(1, `rgba(2, 6, 14, ${baseAlpha})`);
+      // Fond continu : il devient totalement couvrant avant la navigation,
+      // puis se dissout progressivement sur la page suivante. Ça supprime la coupure.
+      const baseAlpha = exit
+        ? Math.min(.98, .12 + .88 * p)
+        : Math.max(0, .98 * (1 - easeOut(raw)));
+      const gradient = ctx.createRadialGradient(originX, originY, 0, originX, originY, Math.max(width, height) * .86);
+      gradient.addColorStop(0, `rgba(112, 232, 255, ${baseAlpha * .56})`);
+      gradient.addColorStop(.36, `rgba(13, 48, 87, ${baseAlpha * .78})`);
+      gradient.addColorStop(.70, `rgba(4, 13, 27, ${baseAlpha * .94})`);
+      gradient.addColorStop(1, `rgba(1, 5, 12, ${baseAlpha})`);
       ctx.fillStyle = gradient;
       ctx.fillRect(0, 0, width, height);
 
-      // Rideau granulaire : l'effet progresse avec une légère vague verticale,
-      // comme la désintégration visible dans la vidéo de référence.
+      // Grand voile diagonal très doux, évite l'impression de découpe droite.
+      const diagonal = ctx.createLinearGradient(-width * .18, 0, width * 1.12, height);
+      diagonal.addColorStop(0, `rgba(0, 0, 0, ${baseAlpha * .18})`);
+      diagonal.addColorStop(.42, `rgba(89, 221, 255, ${baseAlpha * .12})`);
+      diagonal.addColorStop(1, `rgba(0, 0, 0, ${baseAlpha * .30})`);
+      ctx.fillStyle = diagonal;
+      ctx.fillRect(0, 0, width, height);
+
       ctx.globalCompositeOperation = 'source-over';
       for (const particle of particles) {
-        const local = mode === 'exit'
-          ? clamp((sweep - particle.wave + particle.delay) / .34)
-          : clamp(((1 - sweep) - particle.wave + particle.delay) / .34);
-        const alpha = mode === 'exit' ? easeOut(local) : 1 - easeOut(local);
-        if (alpha <= .01) continue;
+        const local = exit
+          ? clamp((dissolve - particle.wave + particle.delay) / .42)
+          : clamp(((1 - dissolve) - particle.wave + particle.delay) / .42);
+        const alpha = exit ? easeOut(local) : 1 - easeOut(local);
+        if (alpha <= .008) continue;
 
-        const travel = mode === 'exit' ? p : (1 - p);
-        const shimmer = Math.sin((now * .006) + particle.x * .02 + particle.y * .012) * 9;
+        const travel = exit ? p : 1 - p;
+        const shimmer = Math.sin((now * .007) + particle.twinkle + particle.x * .016 + particle.y * .011) * 10;
         const x = particle.x + particle.driftX * travel + shimmer * alpha;
-        const y = particle.y + particle.driftY * travel - 38 * travel;
-        const radius = particle.r * (1 + alpha * 1.4);
+        const y = particle.y + particle.driftY * travel - 46 * travel;
+        const radius = particle.r * (1 + alpha * 1.65);
 
         ctx.beginPath();
         ctx.arc(x, y, radius, 0, Math.PI * 2);
-        ctx.fillStyle = `hsla(${particle.hue}, 92%, ${particle.light}%, ${alpha * .92})`;
+        ctx.fillStyle = `hsla(${particle.hue}, 94%, ${particle.light}%, ${alpha * .95})`;
         ctx.fill();
 
-        if (alpha > .54) {
+        if (alpha > .42) {
           ctx.beginPath();
-          ctx.arc(x, y, radius * 2.2, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(255,255,255,${(alpha - .54) * .18})`;
+          ctx.arc(x, y, radius * 2.45, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(255,255,255,${(alpha - .42) * .20})`;
           ctx.fill();
         }
       }
 
-      // Micro brouillard sombre pour que le changement de page soit réellement masqué.
-      ctx.globalCompositeOperation = 'multiply';
-      ctx.fillStyle = `rgba(2, 6, 14, ${visible * .28})`;
-      ctx.fillRect(0, 0, width, height);
+      // Léger voile de sécurité : au pic, le changement de document est masqué.
       ctx.globalCompositeOperation = 'source-over';
+      ctx.fillStyle = `rgba(1, 5, 12, ${coverage * .26})`;
+      ctx.fillRect(0, 0, width, height);
+
+      if (!firstFramePainted) {
+        firstFramePainted = true;
+        if (mode === 'enter') {
+          // La page devient visible uniquement quand le voile canvas est déjà peint.
+          removePreloadMask();
+        }
+      }
 
       if (raw < 1) {
         activeRaf = requestAnimationFrame(frame);
@@ -1188,6 +1233,7 @@ window.addEventListener('DOMContentLoaded', () => {
       }
     };
 
+    if (activeRaf) cancelAnimationFrame(activeRaf);
     activeRaf = requestAnimationFrame(frame);
   };
 
@@ -1213,7 +1259,6 @@ window.addEventListener('DOMContentLoaded', () => {
     const samePath = url.pathname === window.location.pathname && url.search === window.location.search;
     if (samePath && url.hash) return true;
 
-    // On réserve l'effet aux pages HTML / routes propres, pas aux assets.
     const lastPart = url.pathname.split('/').pop() || '';
     if (/\.[a-z0-9]+$/i.test(lastPart) && !/\.html?$/i.test(lastPart)) return true;
 
@@ -1230,6 +1275,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
     try {
       sessionStorage.setItem(STORAGE_KEY, '1');
+      sessionStorage.setItem(META_KEY, JSON.stringify({ x: originX, y: originY }));
     } catch (_) {}
 
     runParticleVeil({
@@ -1243,11 +1289,7 @@ window.addEventListener('DOMContentLoaded', () => {
     });
   };
 
-  window.addEventListener('pageshow', (event) => {
-    if (event.persisted) removeOverlay();
-  });
-
-  window.addEventListener('DOMContentLoaded', () => {
+  const bootEnterTransition = () => {
     let shouldPlayEnter = false;
     try {
       shouldPlayEnter = sessionStorage.getItem(STORAGE_KEY) === '1';
@@ -1255,23 +1297,37 @@ window.addEventListener('DOMContentLoaded', () => {
     } catch (_) {}
 
     if (shouldPlayEnter && !prefersReduced.matches) {
+      const stored = readStoredOrigin();
       transitionRunning = true;
       document.documentElement.classList.add('vpl-route-transitioning');
       runParticleVeil({
         mode: 'enter',
-        originX: window.innerWidth / 2,
-        originY: window.innerHeight / 2,
+        originX: stored?.x || window.innerWidth / 2,
+        originY: stored?.y || window.innerHeight / 2,
         duration: TRANSITION_ENTER_MS,
         onDone: removeOverlay
       });
+    } else {
+      removePreloadMask();
     }
+  };
 
-    document.addEventListener('click', (event) => {
-      const link = event.target.closest?.('a[href]');
-      if (shouldSkipLink(link, event)) return;
-
-      event.preventDefault();
-      startExitTransition(link.href, link);
-    }, true);
+  window.addEventListener('pageshow', (event) => {
+    if (event.persisted) removeOverlay();
   });
+
+  // L'écouteur est posé tout de suite ; pas besoin d'attendre DOMContentLoaded.
+  document.addEventListener('click', (event) => {
+    const link = event.target.closest?.('a[href]');
+    if (shouldSkipLink(link, event)) return;
+
+    event.preventDefault();
+    startExitTransition(link.href, link);
+  }, true);
+
+  if (document.body) {
+    bootEnterTransition();
+  } else {
+    document.addEventListener('DOMContentLoaded', bootEnterTransition, { once: true });
+  }
 })();
