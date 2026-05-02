@@ -1015,8 +1015,8 @@ window.addEventListener('DOMContentLoaded', () => {
       const py = (lastEvent.clientY - rect.top) / rect.height;
       const x = Math.max(0, Math.min(1, px));
       const y = Math.max(0, Math.min(1, py));
-      const rx = (x - .5) * 7.5;
-      const ry = (0.5 - y) * 6;
+      const rx = (x - .5) * 5.2;
+      const ry = (0.5 - y) * 4.2;
 
       visual.style.setProperty('--hero-rx', `${rx.toFixed(2)}deg`);
       visual.style.setProperty('--hero-ry', `${ry.toFixed(2)}deg`);
@@ -1025,8 +1025,8 @@ window.addEventListener('DOMContentLoaded', () => {
 
       animatedItems.forEach((item) => {
         const depth = Number(item.getAttribute('data-depth') || 1);
-        item.style.setProperty('--card-x', `${((x - .5) * depth * 18).toFixed(2)}px`);
-        item.style.setProperty('--card-y', `${((y - .5) * depth * 14).toFixed(2)}px`);
+        item.style.setProperty('--card-x', `${((x - .5) * depth * 12).toFixed(2)}px`);
+        item.style.setProperty('--card-y', `${((y - .5) * depth * 10).toFixed(2)}px`);
       });
     };
 
