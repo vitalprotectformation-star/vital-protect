@@ -697,34 +697,18 @@ window.addEventListener('DOMContentLoaded', () => {
     const HIDE_DELAY = OPEN_DELAY + 1650;
 
     const ECG_PATH = `M 0 115
-             L 130 115
-             L 250 115
-             L 340 115
-             L 430 112
-             L 510 120
-             L 590 115
-             L 700 115
-             L 820 115
-             L 920 115
-             L 995 111
-             L 1060 124
-             L 1120 115
-             L 1185 115
-             L 1240 115
-             L 1292 115
-             L 1332 112
-             L 1370 124
-             L 1415 24
-             L 1462 206
-             L 1515 82
-             L 1580 115
-             L 1660 115
-             L 1760 115
-             L 1850 115
+             L 1320 115
+             L 1368 115
+             L 1398 88
+             L 1428 115
+             L 1464 115
+             L 1502 24
+             L 1544 206
+             L 1588 115
              L 1920 115`;
 
     const FLATLINE_PATH = "M 0 115 L 1920 115";
-    const HEARTBEAT_POINTS = [0.24, 0.54, 0.76];
+    const HEARTBEAT_POINTS = [0.79];
 
     let timers = [];
     let activeAnimation = null;
