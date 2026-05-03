@@ -282,7 +282,36 @@
         font-size: 2rem;
       }
     }
-  </style>
+  
+
+    /* Mobile hardening page CGV */
+    @media (max-width: 760px) {
+      html, body { max-width: 100%; overflow-x: hidden; }
+      .container { width: calc(100% - 24px); }
+      .header-inner { min-height: 0; padding: 10px 0 12px; }
+      .brand img { height: 44px; }
+      .brand-text { font-size: 1.05rem; }
+      .brand-sub { display: none; }
+      .nav-links {
+        width: 100%;
+        display: flex;
+        flex-wrap: nowrap;
+        justify-content: flex-start;
+        overflow-x: auto;
+        padding-bottom: 6px;
+        margin-bottom: -6px;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+      }
+      .nav-links::-webkit-scrollbar { display: none; }
+      .nav-links a { flex: 0 0 auto; white-space: nowrap; padding: 9px 11px; font-size: 0.86rem; }
+      .hero { padding: 42px 0 32px; }
+      .hero-card, .legal-card { padding: 22px; border-radius: 20px; }
+      .hero h1 { font-size: clamp(1.85rem, 10vw, 2.35rem); }
+      main { padding: 34px 0 46px; }
+      .footer-grid { gap: 14px; }
+    }
+</style>
   <link rel="stylesheet" href="/styles/lusion-level.css" />
 </head>
 <body class="vpl-inner-page">

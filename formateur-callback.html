@@ -98,7 +98,19 @@
       white-space: pre-wrap;
       text-align: left;
     }
-  </style>
+  
+
+    /* Mobile hardening login */
+    @media (max-width: 480px) {
+      body { padding: 18px; justify-content: flex-start; padding-top: 42px; }
+      .logo { margin-bottom: 18px; }
+      .logo img { width: min(190px, 58vw); }
+      .card { padding: 22px; border-radius: 20px; }
+      h1 { font-size: 1.55rem; line-height: 1.15; }
+      input { font-size: 16px; }
+      .btn { min-height: 46px; }
+    }
+</style>
 </head>
 <body>
   <div class="card">

@@ -485,7 +485,56 @@
         font-size: 1rem;
       }
     }
-  </style>
+  
+
+    /* Mobile hardening admin */
+    @media (max-width: 720px) {
+      html, body { max-width: 100%; overflow-x: hidden; }
+      .layout { display: block; }
+      .sidebar {
+        position: relative;
+        height: auto;
+        padding: 16px 12px;
+      }
+      .brand-wrap { align-items: center; gap: 10px; }
+      .brand-wrap img { height: 56px; }
+      .brand { font-size: 1.35rem; }
+      .brand-sub { margin-bottom: 14px; font-size: 0.92rem; }
+      .nav-group {
+        display: flex;
+        gap: 8px;
+        overflow-x: auto;
+        padding-bottom: 6px;
+        margin-bottom: -6px;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+      }
+      .nav-group::-webkit-scrollbar { display: none; }
+      .nav-btn {
+        flex: 0 0 auto;
+        width: auto;
+        white-space: nowrap;
+        padding: 10px 12px;
+        font-size: 0.88rem;
+      }
+      .sidebar-footer { margin-top: 14px; }
+      .content { padding: 18px 12px 28px; }
+      .page-header { gap: 12px; }
+      .page-title { font-size: 1.55rem; line-height: 1.12; }
+      .page-subtitle { font-size: 0.94rem; line-height: 1.5; }
+      .stats, .filters, .filters.filters-2, .filters.filters-3, .filters.filters-4, .kpi-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+      .card { border-radius: 18px; margin-top: 16px; }
+      .card-header, .card-body, .stat-card { padding: 16px; }
+      input, select, textarea { font-size: 16px; }
+      .actions-row, .form-switcher { display: grid; grid-template-columns: 1fr; gap: 10px; }
+      .btn { width: 100%; min-height: 44px; }
+      .table-wrap { margin-inline: -16px; padding-inline: 16px; }
+      table { min-width: 920px; }
+    }
+</style>
 </head>
 <body>
   <div class="layout">
