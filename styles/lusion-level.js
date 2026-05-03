@@ -187,9 +187,6 @@ window.addEventListener('DOMContentLoaded', () => {
         ticking = false;
       };
 
-      // V25 : le ruban reste statique. Les spirales sont intégrées directement au chemin SVG.
-
-
       updateRibbon();
       window.addEventListener('scroll', () => {
         if (!ticking) {

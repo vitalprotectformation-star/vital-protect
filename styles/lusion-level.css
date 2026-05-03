@@ -7924,29 +7924,302 @@ body.vpl-home .vpl-float-panel-b::after { animation-delay: .9s !important; }
    ========================================================= */
 
 /* =========================================================
-   V25 — Ruban statique avec spirales intégrées au tracé
-   Le ruban ne suit plus la souris. Les boucles sont fixes dans
-   le SVG et servent uniquement à mettre en valeur certaines zones.
+   V25 — optimisation mobile finale
+   Override placé en fin de fichier pour gagner sur les versions précédentes.
    ========================================================= */
-.vpl-scroll-ribbon-svg {
-  transform: none !important;
-  transform-origin: center !important;
-  will-change: auto !important;
+html,
+body {
+  max-width: 100%;
+  overflow-x: hidden;
+  -webkit-text-size-adjust: 100%;
 }
 
-.vpl-ribbon-progress {
-  stroke-linecap: round !important;
-  stroke-linejoin: round !important;
-  vector-effect: non-scaling-stroke;
+.vpl-page,
+.vpl-container,
+.vpl-hero-grid,
+.vpl-section,
+.vpl-section-dark,
+.vpl-final {
+  min-width: 0;
 }
 
-.vpl-scroll-ribbon.is-drawing .vpl-ribbon-progress {
-  filter:
-    drop-shadow(0 0 12px rgba(47,127,202,.56))
-    drop-shadow(0 0 30px rgba(47,127,202,.34))
-    drop-shadow(0 0 52px rgba(255,255,255,.18)) !important;
+@media (max-width: 900px) {
+  .vpl-canvas,
+  .vpl-scroll-ribbon {
+    display: none !important;
+  }
+
+  .vpl-container,
+  body.vpl-home .vpl-hero > .vpl-container {
+    width: min(100% - 28px, 720px) !important;
+  }
+
+  .vpl-card-grid,
+  .vpl-steps,
+  .vpl-image-grid,
+  .vpl-premium-grid,
+  .vpl-carousel-grid,
+  .vpl-hero-grid,
+  body.vpl-home .vpl-hero-grid,
+  .vpl-inner-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .vpl-sticky {
+    position: relative !important;
+    top: auto !important;
+  }
+
+  .vpl-section-title,
+  .vpl-constellation-head h2,
+  .vpl-honeycomb-section .vpl-section-title {
+    max-width: 12ch !important;
+    font-size: clamp(2.15rem, 10vw, 4rem) !important;
+    line-height: .94 !important;
+  }
+
+  .vpl-section-copy,
+  .vpl-lead,
+  body.vpl-home .vpl-lead {
+    max-width: 62ch !important;
+    font-size: 0.98rem !important;
+    line-height: 1.62 !important;
+  }
+
+  .vpl-card,
+  .vpl-sheen-card,
+  .vpl-step,
+  .vpl-hex,
+  .vpl-carousel-card,
+  .vpl-final-box,
+  .vpl-constellation-stage,
+  .vpl-visual {
+    max-width: 100% !important;
+  }
 }
 
-.vpl-scroll-ribbon .vpl-ribbon-dot {
-  transition: opacity .16s ease, filter .16s ease !important;
+@media (max-width: 760px) {
+  :root {
+    --vpl-nav-offset: 70px;
+  }
+
+  .vpl-nav,
+  body.vpl-home .vpl-nav {
+    position: fixed !important;
+    top: 8px !important;
+    left: 10px !important;
+    right: 10px !important;
+    width: auto !important;
+    min-height: 50px !important;
+    max-height: 52px !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) auto !important;
+    align-items: center !important;
+    gap: 8px !important;
+    padding: 6px !important;
+    border-radius: 18px !important;
+    transform: none !important;
+    overflow: hidden !important;
+  }
+
+  .vpl-brand,
+  body.vpl-home .vpl-brand {
+    min-width: 0 !important;
+    overflow: hidden !important;
+  }
+
+  .vpl-brand img,
+  body.vpl-home .vpl-brand img {
+    width: 34px !important;
+    height: 34px !important;
+    flex: 0 0 auto !important;
+  }
+
+  .vpl-brand b,
+  body.vpl-home .vpl-brand b {
+    max-width: 46vw !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+    font-size: .84rem !important;
+  }
+
+  .vpl-brand span,
+  .vpl-menu,
+  .vpl-nav-ghost,
+  body.vpl-home .vpl-brand span,
+  body.vpl-home .vpl-menu,
+  body.vpl-home .vpl-nav-ghost {
+    display: none !important;
+  }
+
+  .vpl-nav-cta,
+  body.vpl-home .vpl-nav-cta {
+    max-width: 43vw !important;
+    min-height: 38px !important;
+    padding: 0 12px !important;
+    font-size: .76rem !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  .vpl-hero,
+  .vpl-inner-hero,
+  body.vpl-home .vpl-hero,
+  body.vpl-home .vpl-inner-hero {
+    min-height: auto !important;
+    padding-top: 78px !important;
+    padding-bottom: 44px !important;
+  }
+
+  .vpl-title,
+  body.vpl-home .vpl-title,
+  .vpl-inner-title {
+    max-width: 10ch !important;
+    font-size: clamp(2.75rem, 16vw, 4.85rem) !important;
+    line-height: .88 !important;
+    letter-spacing: -.08em !important;
+  }
+
+  .vpl-actions,
+  body.vpl-home .vpl-actions,
+  .vpl-final-actions {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+  }
+
+  .vpl-button,
+  body.vpl-home .vpl-button,
+  .vpl-final-actions .vpl-button {
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 50px !important;
+    justify-content: center !important;
+  }
+
+  .vpl-proof-row,
+  body.vpl-home .vpl-proof-row {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 8px !important;
+  }
+
+  .vpl-proof,
+  body.vpl-home .vpl-proof {
+    width: 100% !important;
+    min-width: 0 !important;
+    border-radius: 14px !important;
+  }
+
+  .vpl-visual,
+  body.vpl-home .vpl-visual {
+    width: 100% !important;
+    max-width: 560px !important;
+    margin-inline: auto !important;
+    padding: 10px !important;
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    grid-template-rows: auto !important;
+    gap: 10px !important;
+    overflow: hidden !important;
+  }
+
+  .vpl-visual-card,
+  .vpl-float-panel,
+  body.vpl-home .vpl-visual-card,
+  body.vpl-home .vpl-float-panel {
+    position: relative !important;
+    inset: auto !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    transform: none !important;
+    animation: none !important;
+  }
+
+  .vpl-visual-card-main,
+  body.vpl-home .vpl-visual-card-main {
+    aspect-ratio: 1.08 / 1 !important;
+  }
+
+  .vpl-visual-card-small,
+  body.vpl-home .vpl-visual-card-small {
+    aspect-ratio: 16 / 9 !important;
+  }
+
+  .vpl-visual-card img,
+  body.vpl-home .vpl-visual-card img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+  }
+
+  .vpl-section,
+  .vpl-section-dark,
+  .vpl-constellation-section,
+  .vpl-honeycomb-section,
+  .vpl-final {
+    padding: 54px 0 !important;
+  }
+
+  .vpl-card,
+  .vpl-sheen-card,
+  .vpl-step,
+  .vpl-hex,
+  .vpl-carousel-card,
+  .vpl-final-box,
+  .vpl-constellation-core,
+  .vpl-constellation-node {
+    padding: 20px !important;
+    border-radius: 22px !important;
+    min-height: auto !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .vpl-container,
+  body.vpl-home .vpl-hero > .vpl-container {
+    width: calc(100% - 22px) !important;
+  }
+
+  .vpl-nav-cta,
+  body.vpl-home .vpl-nav-cta {
+    max-width: 42vw !important;
+    font-size: 0 !important;
+  }
+
+  .vpl-nav-cta::after,
+  body.vpl-home .vpl-nav-cta::after {
+    content: "Réserver" !important;
+    font-size: .76rem !important;
+  }
+
+  .vpl-title,
+  body.vpl-home .vpl-title,
+  .vpl-inner-title {
+    max-width: 10.4ch !important;
+    font-size: clamp(2.55rem, 15.5vw, 4.15rem) !important;
+  }
+
+  .vpl-proof-row,
+  body.vpl-home .vpl-proof-row {
+    grid-template-columns: 1fr !important;
+  }
+
+  .vpl-visual-card-small,
+  .vpl-float-panel-a,
+  body.vpl-home .vpl-visual-card-small,
+  body.vpl-home .vpl-float-panel-a {
+    display: none !important;
+  }
+
+  .vpl-section,
+  .vpl-section-dark,
+  .vpl-constellation-section,
+  .vpl-honeycomb-section,
+  .vpl-final {
+    padding: 46px 0 !important;
+  }
 }
