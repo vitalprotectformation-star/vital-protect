@@ -7921,12 +7921,12 @@ body.vpl-home .vpl-float-panel-b::after { animation-delay: .9s !important; }
 
 
 /* =========================================================
-   V30 — Transition de page en fines particules
-   Particules -> écran plein + Vital Protect -> désintégration.
+   V31 — Transition canvas bloc violet
+   Fermeture = réintégration. Ouverture = désintégration.
    ========================================================= */
 :root {
-  --vpl-transition-solid: #0b1424;
-  --vpl-transition-text: #f8fbff;
+  --vpl-transition-solid: #7c3aed;
+  --vpl-transition-text: #ffffff;
 }
 
 html.vpl-route-transitioning,
@@ -7940,23 +7940,40 @@ html.vpl-route-transitioning body {
 
 html.vpl-route-preload-transition,
 html.vpl-route-preload-transition body {
-  background: var(--vpl-transition-solid, #0b1424) !important;
+  background: var(--vpl-transition-solid, #7c3aed) !important;
+}
+
+html.vpl-route-preload-transition::before,
+html.vpl-route-preload-transition::after {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
 }
 
 html.vpl-route-preload-transition::before {
   content: "";
-  position: fixed;
-  inset: 0;
-  z-index: 2147482999;
-  pointer-events: none;
-  background:
-    radial-gradient(circle at 50% 48%, rgba(120, 172, 226, .10), transparent 28%),
-    linear-gradient(180deg, rgba(10, 18, 33, .98), rgba(11, 20, 36, 1));
+  z-index: 2147482998;
+  background: var(--vpl-transition-solid, #7c3aed);
   opacity: 1;
 }
 
-html.vpl-route-preload-transition.vpl-route-preload-releasing::before {
-  animation: vplParticlePreloadOut .18s ease both;
+html.vpl-route-preload-transition::after {
+  content: "VITAL PROTECT";
+  z-index: 2147482999;
+  display: grid;
+  place-items: center;
+  color: var(--vpl-transition-text, #fff);
+  font-size: clamp(1.15rem, 3.8vw, 3.8rem);
+  font-weight: 950;
+  letter-spacing: .28em;
+  text-indent: .28em;
+  text-transform: uppercase;
+  text-shadow: 0 18px 60px rgba(0,0,0,.28);
+}
+
+html.vpl-route-preload-transition.vpl-route-preload-releasing::before,
+html.vpl-route-preload-transition.vpl-route-preload-releasing::after {
+  animation: vplBlockPreloadOut .22s ease both;
 }
 
 .vpl-page-transition {
@@ -7967,29 +7984,20 @@ html.vpl-route-preload-transition.vpl-route-preload-releasing::before {
   overflow: hidden;
   isolation: isolate;
   contain: layout paint style;
+  background: transparent;
 }
 
-.vpl-page-transition__solid,
 .vpl-page-transition__canvas,
 .vpl-page-transition__brand {
   position: absolute;
   inset: 0;
-}
-
-.vpl-page-transition__solid {
-  z-index: 0;
-  opacity: 0;
-  background:
-    radial-gradient(circle at 50% 50%, rgba(143, 189, 236, .10), transparent 24%),
-    radial-gradient(circle at 18% 18%, rgba(68, 116, 165, .12), transparent 24%),
-    radial-gradient(circle at 84% 24%, rgba(255, 255, 255, .05), transparent 20%),
-    linear-gradient(180deg, rgba(8, 14, 27, .98), rgba(11, 20, 36, 1));
+  width: 100%;
+  height: 100%;
 }
 
 .vpl-page-transition__canvas {
   z-index: 1;
-  width: 100%;
-  height: 100%;
+  display: block;
 }
 
 .vpl-page-transition__brand {
@@ -7998,48 +8006,37 @@ html.vpl-route-preload-transition.vpl-route-preload-releasing::before {
   place-items: center;
   padding: 28px;
   opacity: 0;
-  transform: translate3d(0, 0, 0) scale(.96);
+  transform: translate3d(0, 0, 0) scale(.97);
   will-change: opacity, transform;
 }
 
 .vpl-page-transition__brand span {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: clamp(54px, 7vw, 92px);
-  padding: .32em 1em;
-  border-radius: 999px;
-  border: 1px solid rgba(255,255,255,.14);
-  background: rgba(255,255,255,.06);
-  color: var(--vpl-transition-text, #f8fbff);
-  text-transform: uppercase;
-  font-size: clamp(1.05rem, 2.1vw, 2rem);
+  color: var(--vpl-transition-text, #fff);
+  font-size: clamp(1.15rem, 3.8vw, 3.8rem);
   font-weight: 950;
-  letter-spacing: .34em;
-  text-indent: .34em;
-  box-shadow:
-    0 24px 80px rgba(0,0,0,.36),
-    inset 0 1px 0 rgba(255,255,255,.10);
-  backdrop-filter: blur(12px) saturate(1.15);
-  -webkit-backdrop-filter: blur(12px) saturate(1.15);
+  letter-spacing: .28em;
+  text-indent: .28em;
+  text-transform: uppercase;
+  text-shadow: 0 18px 60px rgba(0,0,0,.28);
 }
 
-@keyframes vplParticlePreloadOut {
+@keyframes vplBlockPreloadOut {
   from { opacity: 1; }
   to { opacity: 0; }
 }
 
 @media (max-width: 700px) {
+  html.vpl-route-preload-transition::after,
   .vpl-page-transition__brand span {
-    letter-spacing: .22em;
-    text-indent: .22em;
-    padding: .42em .9em;
+    letter-spacing: .18em;
+    text-indent: .18em;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .vpl-page-transition,
-  html.vpl-route-preload-transition::before {
+  html.vpl-route-preload-transition::before,
+  html.vpl-route-preload-transition::after {
     display: none !important;
   }
 }

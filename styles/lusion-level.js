@@ -962,8 +962,9 @@ window.addEventListener('DOMContentLoaded', () => {
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-      // Si l'accueil est ouvert après une transition inter-page, on évite
-      // de relancer l'intro ECG sous le masque de dépixélisation.
+      // Important : lorsqu'on arrive sur l'accueil via une transition inter-page,
+      // l'intro ECG ne doit pas se rejouer. Sinon elle se superpose au gate
+      // VITAL PROTECT et donne exactement la coupure visible dans la vidéo.
       if (shouldSkipIntroForRouteTransition()) {
         hideIntroImmediately();
         return;
@@ -1059,10 +1060,9 @@ window.addEventListener('DOMContentLoaded', () => {
 })();
 
 
-/* V30 — Transition inter-pages en particules
-   Idée : de fines particules viennent s'assembler pour recouvrir l'écran,
-   le mot-symbole VITAL PROTECT apparaît au centre, puis la nouvelle page
-   démarre sous un aplat plein avant une désintégration inverse. */
+/* V31 — Transition inter-pages fidèle aux deux démos fournies
+   Fermeture : la page visible se recouvre par réintégration de petits carrés.
+   Ouverture : la nouvelle page est sous un bloc plein, qui se désintègre. */
 (() => {
   const STORAGE_KEY = 'vpl-route-transition-next';
   const ORIGIN_KEY = 'vpl-route-transition-origin';
@@ -1070,50 +1070,53 @@ window.addEventListener('DOMContentLoaded', () => {
   const PREFETCH_ATTR = 'data-vpl-prefetched';
   const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)');
 
-  const EXIT_BUILD_MS = 980;
-  const ENTER_BREAK_MS = 980;
-  const SOLID_HOLD_MS = 220;
-  const PRELOAD_RELEASE_MS = 120;
+  const TILE_SIZE = 11;
+  const HOLD_DURATION = 240;
+  const FLOW_DURATION = 1550;
+  const PARTICLE_LIFE = 980;
+  const EXTRA_SAFE_MS = 110;
+  const TOTAL_DURATION = HOLD_DURATION + FLOW_DURATION + PARTICLE_LIFE * 1.25 + EXTRA_SAFE_MS;
 
   let overlay = null;
-  let overlayController = null;
+  let controller = null;
   let transitionRunning = false;
   const prefetched = new Set();
 
-  const clamp = (value, min = 0, max = 1) => Math.min(max, Math.max(min, value));
+  const clamp01 = (value) => Math.max(0, Math.min(1, value));
   const lerp = (a, b, t) => a + (b - a) * t;
-  const easeOutCubic = (t) => 1 - Math.pow(1 - clamp(t), 3);
-  const easeInOutCubic = (t) => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-  const easeOutQuart = (t) => 1 - Math.pow(1 - clamp(t), 4);
+  const easeInOutCubic = (t) => {
+    t = clamp01(t);
+    return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  };
+  const easeOutCubic = (t) => 1 - Math.pow(1 - clamp01(t), 3);
   const nowSeed = () => Math.floor((performance.now() * 1000 + Math.random() * 1000000) % 2147483647);
 
-  const seededNoise = (seed, index) => {
-    let value = (seed + index * 374761393) | 0;
-    value = (value ^ (value >>> 13)) * 1274126177;
-    value = value ^ (value >>> 16);
-    return ((value >>> 0) % 10000) / 10000;
+  const seededRandom = (seed) => {
+    let state = seed >>> 0;
+    return () => {
+      state = (state + 0x6D2B79F5) | 0;
+      let t = Math.imul(state ^ (state >>> 15), 1 | state);
+      t ^= t + Math.imul(t ^ (t >>> 7), 61 | t);
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
   };
 
   const getSolidColor = () => {
     const fromCss = getComputedStyle(document.documentElement).getPropertyValue('--vpl-transition-solid').trim();
-    return fromCss || '#0b1424';
+    return fromCss || '#7c3aed';
   };
 
-  const stopOverlayController = () => {
-    if (overlayController && typeof overlayController.destroy === 'function') {
-      overlayController.destroy();
-    }
-    overlayController = null;
+  const stopController = () => {
+    if (controller && typeof controller.destroy === 'function') controller.destroy();
+    controller = null;
   };
 
   const removeOverlay = () => {
-    stopOverlayController();
-
+    stopController();
     if (overlay) {
       overlay.remove();
       overlay = null;
     }
-
     document.documentElement.classList.remove('vpl-route-transitioning');
     document.documentElement.style.removeProperty('--vpl-transition-x');
     document.documentElement.style.removeProperty('--vpl-transition-y');
@@ -1129,7 +1132,7 @@ window.addEventListener('DOMContentLoaded', () => {
       root.classList.remove('vpl-route-preload-transition', 'vpl-route-preload-releasing');
       root.style.removeProperty('--vpl-transition-x');
       root.style.removeProperty('--vpl-transition-y');
-    }, PRELOAD_RELEASE_MS + 120);
+    }, 260);
   };
 
   const storeTransitionState = (originX, originY, seed) => {
@@ -1137,8 +1140,8 @@ window.addEventListener('DOMContentLoaded', () => {
       sessionStorage.setItem(STORAGE_KEY, '1');
       sessionStorage.setItem(SEED_KEY, String(seed));
       sessionStorage.setItem(ORIGIN_KEY, JSON.stringify({
-        x: clamp(originX / Math.max(window.innerWidth || 1, 1)),
-        y: clamp(originY / Math.max(window.innerHeight || 1, 1))
+        x: clamp01(originX / Math.max(window.innerWidth || 1, 1)),
+        y: clamp01(originY / Math.max(window.innerHeight || 1, 1))
       }));
     } catch (_) {}
   };
@@ -1150,8 +1153,8 @@ window.addEventListener('DOMContentLoaded', () => {
       const data = JSON.parse(raw);
       if (!Number.isFinite(data?.x) || !Number.isFinite(data?.y)) return null;
       return {
-        originX: clamp(data.x) * (window.innerWidth || 1),
-        originY: clamp(data.y) * (window.innerHeight || 1)
+        originX: clamp01(data.x) * (window.innerWidth || 1),
+        originY: clamp01(data.y) * (window.innerHeight || 1)
       };
     } catch (_) {
       return null;
@@ -1200,8 +1203,8 @@ window.addEventListener('DOMContentLoaded', () => {
   const setOrigin = (node, originX, originY) => {
     const width = window.innerWidth || document.documentElement.clientWidth || 1;
     const height = window.innerHeight || document.documentElement.clientHeight || 1;
-    const x = `${clamp(originX / width) * 100}%`;
-    const y = `${clamp(originY / height) * 100}%`;
+    const x = `${clamp01(originX / width) * 100}%`;
+    const y = `${clamp01(originY / height) * 100}%`;
 
     node.style.setProperty('--vpl-transition-x', x);
     node.style.setProperty('--vpl-transition-y', y);
@@ -1209,193 +1212,283 @@ window.addEventListener('DOMContentLoaded', () => {
     document.documentElement.style.setProperty('--vpl-transition-y', y);
   };
 
-  const createParticleOverlay = ({ mode, originX, originY, seed }) => {
-    stopOverlayController();
+  const buildCanvasTransition = ({ mode, originX, originY, seed }) => {
+    stopController();
     if (overlay) overlay.remove();
 
     overlay = document.createElement('div');
-    overlay.className = `vpl-page-transition vpl-particle-transition is-${mode}`;
+    overlay.className = `vpl-page-transition vpl-block-transition is-${mode}`;
     overlay.setAttribute('aria-hidden', 'true');
     overlay.style.setProperty('--vpl-transition-solid-current', getSolidColor());
     setOrigin(overlay, originX, originY);
-
-    const solid = document.createElement('div');
-    solid.className = 'vpl-page-transition__solid';
 
     const canvas = document.createElement('canvas');
     canvas.className = 'vpl-page-transition__canvas';
 
     const brand = document.createElement('div');
     brand.className = 'vpl-page-transition__brand';
-    brand.innerHTML = '<span>Vital Protect</span>';
+    brand.innerHTML = '<span>VITAL PROTECT</span>';
 
-    overlay.append(solid, canvas, brand);
+    overlay.append(canvas, brand);
     document.body.appendChild(overlay);
 
     const ctx = canvas.getContext('2d', { alpha: true });
-    let raf = 0;
-    let resizeRaf = 0;
-    let startTime = null;
+    const color = getSolidColor();
+    let w = 0;
+    let h = 0;
     let dpr = 1;
-    let width = 0;
-    let height = 0;
+    let tiles = [];
     let particles = [];
+    let cursor = 0;
+    let raf = 0;
+    let resizeTimer = 0;
+    let startTime = 0;
     let destroyed = false;
 
-    const particleCountForViewport = () => {
-      const area = Math.max(1, (window.innerWidth || 1) * (window.innerHeight || 1));
-      return Math.min(1600, Math.max(360, Math.round(area / 2400)));
-    };
+    const createTiles = () => {
+      const rand = seededRandom(seed || 1);
+      const cols = Math.ceil(w / TILE_SIZE);
+      const rows = Math.ceil(h / TILE_SIZE);
+      tiles = [];
+      particles = [];
+      cursor = 0;
 
-    const buildParticles = () => {
-      const count = particleCountForViewport();
-      const cols = Math.max(16, Math.round(Math.sqrt(count * (width / Math.max(height, 1)))));
-      const rows = Math.max(12, Math.ceil(count / cols));
-      const centerX = width * 0.5;
-      const centerY = height * 0.5;
-      const maxDistance = Math.max(...[[0,0],[width,0],[0,height],[width,height]].map(([x, y]) => Math.hypot(x - originX, y - originY))) || 1;
+      for (let y = 0; y < rows; y += 1) {
+        for (let x = 0; x < cols; x += 1) {
+          tiles.push({
+            x: x * TILE_SIZE,
+            y: y * TILE_SIZE,
+            released: false,
+            filling: false,
+            filled: mode === 'entering'
+          });
+        }
+      }
 
-      particles = Array.from({ length: count }, (_, index) => {
-        const noiseA = seededNoise(seed, index + 11);
-        const noiseB = seededNoise(seed, index + 1011);
-        const noiseC = seededNoise(seed, index + 2011);
-        const noiseD = seededNoise(seed, index + 3011);
-        const col = index % cols;
-        const row = Math.floor(index / cols);
-        const cellW = width / cols;
-        const cellH = height / rows;
-        const tx = clamp((col + 0.14 + noiseA * 0.72) / cols, 0, 1) * width;
-        const ty = clamp((row + 0.14 + noiseB * 0.72) / rows, 0, 1) * height;
-        const angle = Math.atan2(ty - originY, tx - originX) + (noiseC - 0.5) * 0.38;
-        const travel = Math.max(width, height) * (1.05 + noiseD * 0.55);
-        const sx = originX + Math.cos(angle) * travel;
-        const sy = originY + Math.sin(angle) * travel;
-        const exAngle = angle + (noiseA - 0.5) * 0.55;
-        const exDist = travel * (1.06 + noiseB * 0.35);
-        const ex = originX + Math.cos(exAngle) * exDist;
-        const ey = originY + Math.sin(exAngle) * exDist;
-        const distNorm = clamp(Math.hypot(tx - originX, ty - originY) / maxDistance);
-        const centerNorm = clamp(Math.hypot(tx - centerX, ty - centerY) / Math.max(width, height));
+      for (let i = tiles.length - 1; i > 0; i -= 1) {
+        const j = Math.floor(rand() * (i + 1));
+        [tiles[i], tiles[j]] = [tiles[j], tiles[i]];
+      }
 
-        return {
-          sx,
-          sy,
-          tx,
-          ty,
-          ex,
-          ey,
-          r: 0.9 + noiseA * 1.8,
-          alpha: 0.34 + noiseB * 0.58,
-          glow: 10 + noiseC * 22,
-          delay: clamp(distNorm * 0.42 + noiseD * 0.22, 0, 0.72),
-          fadeDelay: clamp((1 - distNorm) * 0.12 + centerNorm * 0.28 + noiseA * 0.24, 0, 0.72)
-        };
+      tiles.sort((a, b) => {
+        const ax = a.x - w / 2;
+        const ay = a.y - h / 2;
+        const bx = b.x - w / 2;
+        const by = b.y - h / 2;
+        const da = Math.sqrt(ax * ax + ay * ay) + rand() * 900;
+        const db = Math.sqrt(bx * bx + by * by) + rand() * 900;
+        return da - db;
       });
+
+      if (mode === 'exiting') tiles.reverse();
     };
 
     const resize = () => {
-      width = Math.max(window.innerWidth || document.documentElement.clientWidth || 1, 1);
-      height = Math.max(window.innerHeight || document.documentElement.clientHeight || 1, 1);
       dpr = Math.min(window.devicePixelRatio || 1, 2);
-      canvas.width = Math.round(width * dpr);
-      canvas.height = Math.round(height * dpr);
-      canvas.style.width = `${width}px`;
-      canvas.style.height = `${height}px`;
+      w = window.innerWidth || document.documentElement.clientWidth || 1;
+      h = window.innerHeight || document.documentElement.clientHeight || 1;
+      canvas.width = Math.ceil(w * dpr);
+      canvas.height = Math.ceil(h * dpr);
+      canvas.style.width = `${w}px`;
+      canvas.style.height = `${h}px`;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      buildParticles();
+      createTiles();
     };
 
-    const drawParticle = (x, y, radius, alpha, glow, stretchX = 0, stretchY = 0) => {
-      if (alpha <= 0.001 || radius <= 0.001) return;
+    const drawFullBlock = () => {
+      ctx.clearRect(0, 0, w, h);
+      ctx.fillStyle = color;
+      ctx.fillRect(0, 0, w, h);
+    };
+
+    const tileCenter = (tile) => ({
+      cx: tile.x + TILE_SIZE / 2,
+      cy: tile.y + TILE_SIZE / 2
+    });
+
+    const releaseTile = (tile, now) => {
+      tile.released = true;
+      tile.filled = false;
+
+      const rand = seededRandom(seed + Math.round(tile.x * 13 + tile.y * 17));
+      const { cx, cy } = tileCenter(tile);
+      const fromCenterX = cx - w / 2;
+      const fromCenterY = cy - h / 2;
+      const baseAngle = Math.atan2(fromCenterY, fromCenterX);
+      const angle = baseAngle + (-0.85 + rand() * 1.7);
+      const speed = 0.55 + rand() * 1.9;
+      const size = TILE_SIZE + rand() * 7;
+
+      particles.push({
+        x: cx,
+        y: cy,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed,
+        size,
+        rotation: rand() * Math.PI,
+        spin: -0.055 + rand() * 0.11,
+        born: now,
+        life: PARTICLE_LIFE * (0.72 + rand() * 0.5),
+        alpha: 0.75 + rand() * 0.25,
+        wobble: rand() * 100
+      });
+    };
+
+    const launchTile = (tile, now) => {
+      tile.filling = true;
+
+      const rand = seededRandom(seed + Math.round(tile.x * 13 + tile.y * 17));
+      const { cx, cy } = tileCenter(tile);
+      const fromCenterX = cx - w / 2;
+      const fromCenterY = cy - h / 2;
+      const baseAngle = Math.atan2(fromCenterY, fromCenterX);
+      const angle = baseAngle + (-0.85 + rand() * 1.7);
+      const speed = 0.55 + rand() * 1.9;
+      const size = TILE_SIZE + rand() * 7;
+      const life = PARTICLE_LIFE * (0.72 + rand() * 0.5);
+      const travelDistance = speed * (life / 16.67) * 2.05 + 40;
+
+      particles.push({
+        tile,
+        startX: cx + Math.cos(angle) * travelDistance,
+        startY: cy + Math.sin(angle) * travelDistance,
+        endX: cx,
+        endY: cy,
+        size,
+        rotation: rand() * Math.PI,
+        spin: -0.055 + rand() * 0.11,
+        born: now,
+        life,
+        alpha: 0.75 + rand() * 0.25,
+        wobble: rand() * 100
+      });
+    };
+
+    const drawTiles = () => {
       ctx.save();
-      ctx.globalAlpha = alpha;
-      ctx.shadowBlur = glow;
-      ctx.shadowColor = 'rgba(142, 190, 235, 0.42)';
-      ctx.fillStyle = 'rgba(247, 250, 255, 0.96)';
-      ctx.beginPath();
-      ctx.ellipse(x, y, radius + stretchX, radius + stretchY, 0, 0, Math.PI * 2);
-      ctx.fill();
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = color;
+
+      for (let i = 0; i < tiles.length; i += 1) {
+        const tile = tiles[i];
+        if (mode === 'entering') {
+          if (!tile.released) ctx.fillRect(tile.x, tile.y, TILE_SIZE + 1, TILE_SIZE + 1);
+        } else if (tile.filled) {
+          ctx.fillRect(tile.x, tile.y, TILE_SIZE + 1, TILE_SIZE + 1);
+        }
+      }
+
       ctx.restore();
     };
 
-    const render = (timestamp) => {
-      if (destroyed) return;
-      if (startTime == null) startTime = timestamp;
+    const drawParticles = (now) => {
+      for (let i = particles.length - 1; i >= 0; i -= 1) {
+        const p = particles[i];
+        const age = now - p.born;
+        const lifeProgress = clamp01(age / p.life);
 
-      const elapsed = timestamp - startTime;
-      ctx.clearRect(0, 0, width, height);
-
-      if (mode === 'exiting') {
-        const buildProgress = clamp(elapsed / EXIT_BUILD_MS);
-        const holdProgress = clamp((elapsed - EXIT_BUILD_MS) / SOLID_HOLD_MS);
-        const solidOpacity = clamp(0.14 + easeOutQuart(buildProgress) * 0.92 + holdProgress * 0.18, 0, 1);
-        const brandIn = clamp((buildProgress - 0.24) / 0.44);
-        const brandOpacity = clamp(easeInOutCubic(brandIn) * (1 - holdProgress * 0.18), 0, 1);
-        const brandScale = 0.92 + easeOutCubic(brandIn) * 0.08;
-
-        solid.style.opacity = solidOpacity.toFixed(4);
-        brand.style.opacity = brandOpacity.toFixed(4);
-        brand.style.transform = `translate3d(0, 0, 0) scale(${brandScale.toFixed(4)})`;
-
-        particles.forEach((particle) => {
-          const p = clamp((buildProgress - particle.delay) / Math.max(0.22, 1 - particle.delay));
-          const eased = easeOutCubic(p);
-          const x = lerp(particle.sx, particle.tx, eased);
-          const y = lerp(particle.sy, particle.ty, eased);
-          const alpha = particle.alpha * clamp(0.10 + p * 1.05, 0, 1) * (1 - holdProgress * 0.12);
-          const radius = particle.r * (0.5 + p * 0.95 + holdProgress * 0.16);
-          const stretch = (1 - p) * 2.4;
-          drawParticle(x, y, radius, alpha, particle.glow, stretch, stretch * 0.45);
-        });
-
-        if (elapsed < EXIT_BUILD_MS + SOLID_HOLD_MS) {
-          raf = window.requestAnimationFrame(render);
+        if (lifeProgress >= 1) {
+          if (mode === 'exiting' && p.tile) p.tile.filled = true;
+          particles.splice(i, 1);
+          continue;
         }
-      } else {
-        const breakProgress = clamp(elapsed / ENTER_BREAK_MS);
-        const bgFade = 1 - easeInOutCubic(clamp((elapsed - 100) / (ENTER_BREAK_MS - 100)));
-        const brandOut = clamp(elapsed / 420);
-        const brandOpacity = 1 - easeOutCubic(brandOut);
-        const brandScale = 1 - clamp(breakProgress * 0.08, 0, 0.08);
 
-        solid.style.opacity = clamp(bgFade, 0, 1).toFixed(4);
-        brand.style.opacity = clamp(brandOpacity, 0, 1).toFixed(4);
-        brand.style.transform = `translate3d(0, 0, 0) scale(${brandScale.toFixed(4)})`;
+        p.wobble += 0.09;
+        p.rotation += p.spin;
 
-        particles.forEach((particle) => {
-          const p = clamp((breakProgress - particle.fadeDelay) / Math.max(0.22, 1 - particle.fadeDelay));
-          const eased = easeInOutCubic(p);
-          const x = lerp(particle.tx, particle.ex, eased);
-          const y = lerp(particle.ty, particle.ey, eased);
-          const alpha = particle.alpha * Math.pow(1 - p, 1.12);
-          const radius = particle.r * (1 + p * 0.85);
-          const stretch = p * 2.8;
-          drawParticle(x, y, radius, alpha, particle.glow, stretch * 0.4, stretch);
-        });
+        ctx.save();
+        ctx.fillStyle = color;
 
-        if (elapsed < ENTER_BREAK_MS) {
-          raf = window.requestAnimationFrame(render);
+        if (mode === 'entering') {
+          const drift = easeOutCubic(lifeProgress);
+          p.x += p.vx * (1 + drift * 1.6) + Math.cos(p.wobble) * 0.55;
+          p.y += p.vy * (1 + drift * 1.6) + Math.sin(p.wobble) * 0.55;
+          ctx.globalAlpha = p.alpha * (1 - easeInOutCubic(lifeProgress));
+          ctx.translate(p.x, p.y);
+        } else {
+          const arrival = easeInOutCubic(lifeProgress);
+          const wobbleAmount = 0.55 * (1 - easeOutCubic(lifeProgress));
+          const x = lerp(p.startX, p.endX, arrival) + Math.cos(p.wobble) * wobbleAmount;
+          const y = lerp(p.startY, p.endY, arrival) + Math.sin(p.wobble) * wobbleAmount;
+          ctx.globalAlpha = p.alpha * easeInOutCubic(lifeProgress);
+          ctx.translate(x, y);
         }
+
+        ctx.rotate(p.rotation);
+        ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+        ctx.restore();
       }
+      ctx.globalAlpha = 1;
+    };
+
+    const render = (now) => {
+      if (destroyed) return;
+      if (!startTime) startTime = now;
+
+      const elapsed = now - startTime;
+      const rawProgress = clamp01((elapsed - HOLD_DURATION) / FLOW_DURATION);
+      const flowProgress = easeInOutCubic(rawProgress);
+      const targetCount = Math.floor(flowProgress * tiles.length);
+
+      ctx.clearRect(0, 0, w, h);
+
+      while (cursor < targetCount) {
+        if (mode === 'entering') releaseTile(tiles[cursor], now);
+        else launchTile(tiles[cursor], now);
+        cursor += 1;
+      }
+
+      drawTiles();
+      drawParticles(now);
+
+      if (mode === 'entering') {
+        const brandAlpha = clamp01(1 - rawProgress * 2.05);
+        brand.style.opacity = brandAlpha.toFixed(4);
+        brand.style.transform = `translate3d(0, 0, 0) scale(${(1 + rawProgress * 0.035).toFixed(4)})`;
+      } else {
+        const brandAlpha = clamp01((rawProgress - 0.56) / 0.22);
+        brand.style.opacity = brandAlpha.toFixed(4);
+        brand.style.transform = `translate3d(0, 0, 0) scale(${(0.97 + brandAlpha * 0.03).toFixed(4)})`;
+      }
+
+      if (elapsed >= TOTAL_DURATION && particles.length === 0) {
+        if (mode === 'exiting') {
+          drawFullBlock();
+          brand.style.opacity = '1';
+          brand.style.transform = 'translate3d(0, 0, 0) scale(1)';
+        } else {
+          removeOverlay();
+        }
+        return;
+      }
+
+      raf = requestAnimationFrame(render);
     };
 
     const onResize = () => {
-      window.cancelAnimationFrame(resizeRaf);
-      resizeRaf = window.requestAnimationFrame(resize);
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        resize();
+        if (mode === 'entering') drawFullBlock();
+      }, 160);
     };
 
     resize();
+    if (mode === 'entering') {
+      drawFullBlock();
+      brand.style.opacity = '1';
+    }
     window.addEventListener('resize', onResize, { passive: true });
-    raf = window.requestAnimationFrame(render);
+    raf = requestAnimationFrame(render);
 
     return {
-      node: overlay,
       destroy() {
         destroyed = true;
-        window.cancelAnimationFrame(raf);
-        window.cancelAnimationFrame(resizeRaf);
-        window.removeEventListener('resize', onResize, { passive: true });
-      }
+        cancelAnimationFrame(raf);
+        clearTimeout(resizeTimer);
+        window.removeEventListener('resize', onResize);
+      },
+      drawFullBlock
     };
   };
 
@@ -1454,11 +1547,11 @@ window.addEventListener('DOMContentLoaded', () => {
     storeTransitionState(originX, originY, seed);
     warmPage(href);
 
-    overlayController = createParticleOverlay({ mode: 'exiting', originX, originY, seed });
+    controller = buildCanvasTransition({ mode: 'exiting', originX, originY, seed });
 
     window.setTimeout(() => {
       window.location.href = href;
-    }, EXIT_BUILD_MS + SOLID_HOLD_MS);
+    }, TOTAL_DURATION + 80);
   };
 
   const startEnterTransition = () => {
@@ -1471,13 +1564,13 @@ window.addEventListener('DOMContentLoaded', () => {
     document.documentElement.classList.add('vpl-route-transitioning');
     clearTransitionStorage();
 
-    overlayController = createParticleOverlay({ mode: 'entering', originX, originY, seed });
+    controller = buildCanvasTransition({ mode: 'entering', originX, originY, seed });
 
-    window.requestAnimationFrame(() => {
-      window.setTimeout(releasePreloadMask, 34);
+    requestAnimationFrame(() => {
+      setTimeout(releasePreloadMask, 34);
     });
 
-    window.setTimeout(removeOverlay, ENTER_BREAK_MS + 140);
+    window.setTimeout(removeOverlay, TOTAL_DURATION + 180);
   };
 
   const initPageTransition = () => {
