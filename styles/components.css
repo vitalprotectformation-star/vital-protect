@@ -2477,3 +2477,355 @@ details[open] summary::after {
     grid-column: auto;
   }
 }
+
+/* =========================================================
+   Mobile hardening — public pages
+   Navigation compacte, formulaires lisibles iOS, cartes/images sans débordement.
+   ========================================================= */
+html,
+body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  -webkit-text-size-adjust: 100%;
+}
+
+img,
+svg,
+video,
+canvas {
+  max-width: 100%;
+}
+
+button,
+input,
+select,
+textarea {
+  max-width: 100%;
+}
+
+@media (max-width: 900px) {
+  .site-header {
+    position: sticky;
+  }
+
+  .site-header__inner {
+    min-height: 0;
+    padding: 10px 0 12px;
+    align-items: start;
+  }
+
+  .site-brand {
+    width: 100%;
+  }
+
+  .site-brand img {
+    height: 48px;
+  }
+
+  .site-brand__title {
+    font-size: clamp(0.95rem, 4.8vw, 1.18rem);
+    line-height: 1;
+  }
+
+  .site-brand__subtitle {
+    font-size: 0.78rem;
+  }
+
+  .site-nav {
+    width: 100%;
+    max-width: 100%;
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    gap: 8px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 2px 2px 8px;
+    margin: 0 -2px -8px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .site-nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .site-nav a {
+    flex: 0 0 auto;
+    white-space: nowrap;
+    padding: 9px 11px;
+    font-size: 0.86rem;
+    border-radius: 999px;
+  }
+
+  .site-nav .nav-cta {
+    order: -1;
+  }
+
+  .hero-shell,
+  .glass-panel,
+  .surface-panel,
+  .cta-panel,
+  .faq-cta,
+  .legal-hero__card,
+  .legal-side,
+  .legal-main,
+  .legal-box,
+  .card,
+  .info-card,
+  .soft-card,
+  .faq-card,
+  .proof-card,
+  .audience-card,
+  .pillar-card,
+  .map-card,
+  .map-sidebar,
+  .standard-card,
+  .governance-card,
+  .difference-card,
+  .timeline-card,
+  .problem-card,
+  .benefit-card,
+  .format-card,
+  .sector-card,
+  .authority-card,
+  .process-card,
+  .contact-panel,
+  .info-panel,
+  .profile-card,
+  .network-card,
+  .module-card,
+  .step-card,
+  .session-card,
+  .offer-card,
+  .form-card {
+    border-radius: clamp(18px, 6vw, 24px);
+  }
+
+  .method-hero__title,
+  .stage-hero__title,
+  .enterprise-hero__title,
+  .trainer-hero__title,
+  .faq-hero__title,
+  .contact-hero__title,
+  .legal-hero__title {
+    max-width: 100%;
+    font-size: clamp(2rem, 12vw, 3.35rem);
+    line-height: 0.96;
+  }
+
+  .method-hero__lead,
+  .stage-hero__desc,
+  .enterprise-hero__lead,
+  .trainer-hero__lead,
+  .faq-hero__lead,
+  .contact-hero__lead,
+  .legal-hero__lead,
+  .section-head p,
+  .cta-panel p {
+    font-size: 0.98rem;
+    line-height: 1.68;
+  }
+
+  .method-hero__media,
+  .enterprise-hero__media,
+  .trainer-hero__media,
+  .pedagogy-media {
+    min-height: 340px;
+  }
+
+  .method-hero__copy,
+  .stage-hero__copy,
+  .enterprise-hero__copy,
+  .trainer-hero__copy,
+  .faq-hero__card,
+  .contact-hero__copy,
+  .contact-hero__side,
+  .positioning-panel,
+  .pedagogy-content,
+  .method-panel,
+  .soft-panel,
+  .booking-card,
+  .stage-summary-card,
+  .cta-stage,
+  .cta-panel,
+  .faq-side,
+  .faq-group,
+  .faq-intro,
+  .faq-cta,
+  .legal-side,
+  .legal-main,
+  .legal-box,
+  .form-card {
+    padding: clamp(20px, 5.5vw, 26px);
+  }
+
+  .card,
+  .info-card,
+  .soft-card,
+  .faq-card,
+  .proof-card,
+  .audience-card,
+  .pillar-card,
+  .map-card,
+  .map-sidebar,
+  .standard-card,
+  .governance-card,
+  .difference-card,
+  .timeline-card,
+  .problem-card,
+  .benefit-card,
+  .format-card,
+  .sector-card,
+  .authority-card,
+  .process-card,
+  .contact-panel,
+  .info-panel,
+  .profile-card,
+  .network-card,
+  .module-card,
+  .step-card {
+    padding: clamp(18px, 5vw, 22px);
+  }
+
+  .form-field input,
+  .form-field select,
+  .form-field textarea,
+  input,
+  select,
+  textarea {
+    font-size: 16px;
+  }
+
+  .form-actions,
+  .cta-actions,
+  .faq-cta-actions,
+  .timeline-cta,
+  .method-hero__actions,
+  .stage-hero__actions,
+  .enterprise-hero__actions,
+  .trainer-hero__actions,
+  .contact-hero__actions,
+  .session-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .btn,
+  .form-actions .btn,
+  .cta-actions .btn,
+  .faq-cta-actions .btn,
+  .timeline-cta .btn,
+  .method-hero__actions .btn,
+  .stage-hero__actions .btn,
+  .enterprise-hero__actions .btn,
+  .trainer-hero__actions .btn,
+  .contact-hero__actions .btn,
+  .session-actions .btn {
+    width: 100%;
+    min-height: 50px;
+  }
+}
+
+@media (max-width: 560px) {
+  .container {
+    width: calc(100% - 22px);
+  }
+
+  section {
+    padding: 44px 0;
+  }
+
+  .site-brand__subtitle {
+    display: none;
+  }
+
+  .site-brand img {
+    height: 42px;
+  }
+
+  .site-nav a {
+    font-size: 0.82rem;
+    padding: 8px 10px;
+  }
+
+  .section-head h2,
+  .cta-panel h2,
+  .faq-cta h2,
+  .positioning-panel h2,
+  .pedagogy-content h2 {
+    font-size: clamp(1.75rem, 10vw, 2.45rem);
+    line-height: 1.02;
+  }
+
+  .method-hero,
+  .stage-hero,
+  .enterprise-hero,
+  .trainer-hero,
+  .faq-hero,
+  .contact-hero,
+  .legal-hero {
+    padding: 42px 0 34px;
+  }
+
+  .method-hero__media,
+  .enterprise-hero__media,
+  .trainer-hero__media,
+  .pedagogy-media {
+    min-height: 260px;
+  }
+
+  .method-hero__note,
+  .enterprise-hero__note,
+  .trainer-hero__note {
+    margin: 12px;
+    padding: 15px;
+    border-radius: 18px;
+  }
+
+  .stage-hero__proofs,
+  .enterprise-hero__proofs,
+  .trainer-hero__proofs,
+  .faq-hero__proofs,
+  .contact-hero__proofs,
+  .method-hero__points {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .stage-hero__proof,
+  .enterprise-hero__proof,
+  .trainer-hero__proof,
+  .faq-hero__proof,
+  .contact-proof,
+  .method-hero__point {
+    width: 100%;
+    justify-content: flex-start;
+    border-radius: 16px;
+  }
+
+  .session-top,
+  .offer-price {
+    gap: 10px;
+  }
+
+  .session-price {
+    white-space: normal;
+    font-size: 1.25rem;
+  }
+
+  .offer-card {
+    min-height: 0;
+    padding: 22px;
+  }
+
+  .offer-badge {
+    position: static;
+    width: fit-content;
+    margin-left: auto;
+  }
+}
