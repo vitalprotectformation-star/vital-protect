@@ -7924,36 +7924,29 @@ body.vpl-home .vpl-float-panel-b::after { animation-delay: .9s !important; }
    ========================================================= */
 
 /* =========================================================
-   V24 — Ruban à inertie : il suit le geste, pas la souris
+   V25 — Ruban statique avec spirales intégrées au tracé
+   Le ruban ne suit plus la souris. Les boucles sont fixes dans
+   le SVG et servent uniquement à mettre en valeur certaines zones.
    ========================================================= */
-@media (hover: hover) and (pointer: fine) and (min-width: 901px) {
-  .vpl-scroll-ribbon {
-    --vpl-ribbon-motion-x: 0px;
-    --vpl-ribbon-motion-y: 0px;
-    --vpl-ribbon-motion-rotate: 0deg;
-  }
+.vpl-scroll-ribbon-svg {
+  transform: none !important;
+  transform-origin: center !important;
+  will-change: auto !important;
+}
 
-  .vpl-scroll-ribbon-svg {
-    transform:
-      translate3d(var(--vpl-ribbon-motion-x), var(--vpl-ribbon-motion-y), 0)
-      rotate(var(--vpl-ribbon-motion-rotate))
-      scale(1.012) !important;
-    transform-origin: 74% 24% !important;
-    will-change: transform !important;
-  }
+.vpl-ribbon-progress {
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
+  vector-effect: non-scaling-stroke;
+}
 
-  .vpl-scroll-ribbon.is-gesture-active .vpl-ribbon-progress {
-    filter:
-      drop-shadow(0 0 13px rgba(47,127,202,.58))
-      drop-shadow(0 0 32px rgba(47,127,202,.35))
-      drop-shadow(0 0 56px rgba(255,255,255,.18)) !important;
-  }
+.vpl-scroll-ribbon.is-drawing .vpl-ribbon-progress {
+  filter:
+    drop-shadow(0 0 12px rgba(47,127,202,.56))
+    drop-shadow(0 0 30px rgba(47,127,202,.34))
+    drop-shadow(0 0 52px rgba(255,255,255,.18)) !important;
+}
 
-  .vpl-scroll-ribbon.is-gesture-active .vpl-ribbon-dot {
-    opacity: 1 !important;
-    filter:
-      drop-shadow(0 0 12px rgba(47,127,202,.78))
-      drop-shadow(0 0 28px rgba(47,127,202,.48))
-      drop-shadow(0 0 44px rgba(255,255,255,.24)) !important;
-  }
+.vpl-scroll-ribbon .vpl-ribbon-dot {
+  transition: opacity .16s ease, filter .16s ease !important;
 }
