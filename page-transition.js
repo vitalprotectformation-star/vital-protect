@@ -1,6 +1,7 @@
 /* Transition inter-pages Vital Protect
-   Sortie : la page visible est remplie par le bloc bleu.
-   Entrée : le bloc bleu se désintègre pour révéler la nouvelle page. */
+   Effet conservé : mosaïque / particules autour de l'écran de marque.
+   Correction : les trous transparents qui laissaient apparaître la page précédente/suivante
+   sont adoucis, et le retrait des calques est synchronisé pour supprimer le soubresaut au milieu. */
 (function () {
   if (window.VitalPageTransition) return;
 
@@ -9,9 +10,13 @@
   var SEED_KEY = 'vpl-route-transition-seed';
   var PREFETCH_ATTR = 'data-vpl-prefetched';
   var COLOR = '#2f6f9f';
+  var EXIT_BACKDROP = '#e9f8ff';
+  var ENTER_VEIL_OPACITY = 0.88;
   var SPLASH_IMAGE = 'transition-screen.png';
   var TILE_SIZE = 11;
   var HOLD_DURATION = 240;
+  var ENTER_STATIC_RELEASE_DELAY = HOLD_DURATION + 80;
+  var PRELOAD_MASK_RELEASE_DELAY = HOLD_DURATION + 170;
   var FLOW_DURATION = 1550;
   var PARTICLE_LIFE = 980;
   var EXTRA_SAFE_MS = 110;
@@ -115,8 +120,10 @@
       'html.vpl-route-transitioning{cursor:progress}',
       'html.vpl-route-transitioning,html.vpl-route-transitioning body{overflow:hidden!important}',
       '.vpl-page-transition{position:fixed!important;inset:0!important;z-index:2147483000!important;pointer-events:none!important;overflow:hidden!important;isolation:isolate!important;contain:layout paint style!important;background:transparent!important;opacity:1!important;visibility:visible!important;transform:none!important}',
+      '.vpl-page-transition.is-exiting{background:' + EXIT_BACKDROP + '!important}',
+      '.vpl-page-transition__veil{position:absolute;inset:0;z-index:0;background-color:' + EXIT_BACKDROP + ';background-image:var(--vpl-transition-image);background-position:center;background-size:cover;background-repeat:no-repeat;opacity:0;transform:translateZ(0);backface-visibility:hidden;will-change:opacity}',
       '.vpl-page-transition__canvas{position:absolute;inset:0;width:100%;height:100%;z-index:1;display:block;transform:translateZ(0);backface-visibility:hidden}',
-      '.vpl-page-transition__static{position:absolute;inset:0;z-index:2;background-color:' + COLOR + ';background-image:var(--vpl-transition-image);background-position:center;background-size:cover;background-repeat:no-repeat;opacity:0;transform:translateZ(0);backface-visibility:hidden;will-change:opacity;transition:opacity ' + HANDOFF_DURATION + 'ms ease}',
+      '.vpl-page-transition__static{position:absolute;inset:0;z-index:2;background-color:' + COLOR + ';background-image:var(--vpl-transition-image);background-position:center;background-size:cover;background-repeat:no-repeat;opacity:0;transform:translateZ(0);backface-visibility:hidden;will-change:opacity;transition:none}',
       '@keyframes vplBlockPreloadOut{from{opacity:1}to{opacity:0}}',
       '@media(prefers-reduced-motion:reduce){.vpl-page-transition,html.vpl-route-preload-transition::before{display:none!important}}'
     ].join('\n');
@@ -282,6 +289,10 @@
     overlay.style.setProperty('--vpl-transition-solid-current', getSolidColor());
     setOrigin(overlay, originX, originY);
 
+    var veilLayer = document.createElement('div');
+    veilLayer.className = 'vpl-page-transition__veil';
+    veilLayer.style.opacity = mode === 'entering' ? String(ENTER_VEIL_OPACITY) : '0';
+
     var canvas = document.createElement('canvas');
     canvas.className = 'vpl-page-transition__canvas';
 
@@ -289,6 +300,7 @@
     staticLayer.className = 'vpl-page-transition__static';
     staticLayer.style.opacity = mode === 'entering' ? '1' : '0';
 
+    overlay.appendChild(veilLayer);
     overlay.appendChild(canvas);
     overlay.appendChild(staticLayer);
     (document.body || document.documentElement).appendChild(overlay);
@@ -539,21 +551,45 @@
     }
 
     function showStaticHandoff() {
+      staticLayer.style.transition = 'none';
       staticLayer.style.opacity = '1';
       canvas.style.transition = 'opacity ' + HANDOFF_DURATION + 'ms ease';
       canvas.style.opacity = '0';
     }
 
-    function softenEnterStart() {
+    function releaseEnterStaticLayer() {
       /*
-        La couche CSS reste au-dessus du canvas pendant les premières images.
-        Ça masque le micro-saut entre l'image de l'ancienne page, le masque
-        de préchargement et le canvas de désintégration.
+        La couche CSS reste au-dessus jusqu'à ce que le canvas ait peint
+        une image complète. On la retire ensuite sans fondu : le fondu
+        entre deux calques presque identiques créait un flash/soubresaut
+        au milieu de l'animation sur certains navigateurs.
       */
       window.setTimeout(function () {
         if (destroyed) return;
-        staticLayer.style.opacity = '0';
-      }, Math.max(0, HOLD_DURATION - 70));
+        requestAnimationFrame(function () {
+          if (destroyed) return;
+          drawFullBlock();
+          requestAnimationFrame(function () {
+            if (destroyed) return;
+            staticLayer.style.transition = 'none';
+            staticLayer.style.opacity = '0';
+            staticLayer.style.visibility = 'hidden';
+          });
+        });
+      }, Math.max(0, ENTER_STATIC_RELEASE_DELAY));
+    }
+
+    function fadeEnterVeil() {
+      /*
+        On garde l'effet de désintégration, mais on évite que les premiers
+        trous révèlent brutalement une page sombre. Le voile léger disparaît
+        ensuite, donc la nouvelle page est bien révélée par les particules.
+      */
+      window.setTimeout(function () {
+        if (destroyed) return;
+        veilLayer.style.transition = 'opacity ' + Math.round(FLOW_DURATION + PARTICLE_LIFE * 0.65) + 'ms ease';
+        veilLayer.style.opacity = '0';
+      }, Math.max(0, HOLD_DURATION + 90));
     }
 
     function render(now) {
@@ -612,7 +648,8 @@
 
     if (mode === 'entering') {
       drawFullBlock();
-      softenEnterStart();
+      releaseEnterStaticLayer();
+      fadeEnterVeil();
     }
     /* Pas de recalcul pendant la transition : certains navigateurs déclenchent
        un resize au changement de page, ce qui créait un léger soubresaut. */
@@ -713,7 +750,7 @@
       controller = buildCanvasTransition({ mode: 'entering', originX: originX, originY: originY, seed: seed });
 
       requestAnimationFrame(function () {
-        setTimeout(releasePreloadMask, 80);
+        setTimeout(releasePreloadMask, PRELOAD_MASK_RELEASE_DELAY);
       });
 
       window.setTimeout(removeOverlay, TOTAL_DURATION + HANDOFF_DURATION + 180);
