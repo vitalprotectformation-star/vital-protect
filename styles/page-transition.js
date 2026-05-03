@@ -1,8 +1,8 @@
 /* Transition inter-pages Vital Protect
-   Version bleu uni : l'ancienne page se remplit en bleu par mosaïque/particules,
-   la navigation se fait quand l'écran est 100% bleu, puis le bleu se désintègre
-   pour révéler la nouvelle page. L'image de transition est volontairement désactivée
-   afin de masquer le micro-saut entre deux vraies pages HTML. */
+   Version handoff bleu strict : toute l'animation de sortie se termine
+   sur l'ancienne page jusqu'à un écran bleu 100% plein. La navigation
+   n'est lancée qu'après peinture réelle de ce bleu, puis la nouvelle page
+   démarre directement sur le même bleu qui se désintègre. */
 (function () {
   if (window.VitalPageTransition) return;
 
@@ -18,11 +18,12 @@
   var TILE_SIZE = 11;
   var HOLD_DURATION = 240;
   var ENTER_STATIC_RELEASE_DELAY = 0;
-  var PRELOAD_MASK_RELEASE_DELAY = 80;
+  var PRELOAD_MASK_RELEASE_DELAY = 0;
   var FLOW_DURATION = 1550;
   var PARTICLE_LIFE = 980;
   var EXTRA_SAFE_MS = 110;
   var HANDOFF_DURATION = 220;
+  var NAVIGATE_AFTER_SOLID_DELAY = 140;
   var TOTAL_DURATION = HOLD_DURATION + FLOW_DURATION + PARTICLE_LIFE * 1.25 + EXTRA_SAFE_MS;
 
   var overlay = null;
@@ -291,6 +292,7 @@
     var originX = options.originX;
     var originY = options.originY;
     var seed = options.seed;
+    var onSolid = typeof options.onSolid === 'function' ? options.onSolid : null;
 
     stopController();
     if (overlay) overlay.remove();
@@ -332,6 +334,7 @@
     var resizeTimer = 0;
     var startTime = 0;
     var destroyed = false;
+    var solidHandoffDone = false;
 
     function createTiles() {
       var rand = seededRandom(seed || 1);
@@ -549,10 +552,29 @@
     }
 
     function showStaticHandoff() {
+      if (solidHandoffDone) return;
+      solidHandoffDone = true;
+
+      /*
+        Handoff strict : on peint d'abord un bleu CSS plein au-dessus du canvas.
+        La navigation n'est déclenchée qu'après deux frames réelles, donc le
+        navigateur a eu le temps d'afficher l'écran uni avant de détruire la page.
+      */
       staticLayer.style.transition = 'none';
       staticLayer.style.opacity = '1';
+      staticLayer.style.visibility = 'visible';
       canvas.style.transition = 'opacity ' + HANDOFF_DURATION + 'ms ease';
       canvas.style.opacity = '0';
+
+      if (mode === 'exiting' && onSolid) {
+        requestAnimationFrame(function () {
+          requestAnimationFrame(function () {
+            window.setTimeout(function () {
+              if (!destroyed) onSolid();
+            }, NAVIGATE_AFTER_SOLID_DELAY);
+          });
+        });
+      }
     }
 
     function releaseEnterStaticLayer() {
@@ -718,16 +740,21 @@
     var originY = rect ? rect.top + rect.height / 2 : window.innerHeight / 2;
     var seed = nowSeed();
 
-    storeTransitionState(originX, originY, seed);
     warmPage(href);
 
     whenSplashReady(function () {
       if (!transitionRunning) return;
-      controller = buildCanvasTransition({ mode: 'exiting', originX: originX, originY: originY, seed: seed });
-
-      window.setTimeout(function () {
-        window.location.href = href;
-      }, TOTAL_DURATION + HANDOFF_DURATION + 80);
+      controller = buildCanvasTransition({
+        mode: 'exiting',
+        originX: originX,
+        originY: originY,
+        seed: seed,
+        onSolid: function () {
+          if (!transitionRunning) return;
+          storeTransitionState(originX, originY, seed);
+          window.location.href = href;
+        }
+      });
     });
   }
 
@@ -748,7 +775,9 @@
       controller = buildCanvasTransition({ mode: 'entering', originX: originX, originY: originY, seed: seed });
 
       requestAnimationFrame(function () {
-        setTimeout(releasePreloadMask, PRELOAD_MASK_RELEASE_DELAY);
+        requestAnimationFrame(function () {
+          setTimeout(releasePreloadMask, PRELOAD_MASK_RELEASE_DELAY);
+        });
       });
 
       window.setTimeout(removeOverlay, TOTAL_DURATION + HANDOFF_DURATION + 180);
