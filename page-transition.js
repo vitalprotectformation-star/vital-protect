@@ -64,7 +64,8 @@
       'html.vpl-route-preload-transition::before{content:"";position:fixed;inset:0;z-index:2147482998;pointer-events:none;background:' + COLOR + ';opacity:1}',
       'html.vpl-route-preload-transition.vpl-route-preload-releasing::before{animation:vplBlockPreloadOut .22s ease both}',
       'html.vpl-route-transitioning{cursor:progress}',
-      '.vpl-page-transition{position:fixed;inset:0;z-index:2147483000;pointer-events:none;overflow:hidden;isolation:isolate;contain:layout paint style;background:transparent}',
+      'html.vpl-route-transitioning,html.vpl-route-transitioning body{overflow:hidden!important}',
+      '.vpl-page-transition{position:fixed!important;inset:0!important;z-index:2147483000!important;pointer-events:none!important;overflow:hidden!important;isolation:isolate!important;contain:layout paint style!important;background:transparent!important;opacity:1!important;visibility:visible!important;transform:none!important}',
       '.vpl-page-transition__canvas{position:absolute;inset:0;width:100%;height:100%;z-index:1;display:block}',
       '@keyframes vplBlockPreloadOut{from{opacity:1}to{opacity:0}}',
       '@media(prefers-reduced-motion:reduce){.vpl-page-transition,html.vpl-route-preload-transition::before{display:none!important}}'
@@ -232,7 +233,7 @@
     canvas.className = 'vpl-page-transition__canvas';
 
     overlay.appendChild(canvas);
-    document.body.appendChild(overlay);
+    (document.body || document.documentElement).appendChild(overlay);
 
     var ctx = canvas.getContext('2d', { alpha: true });
     var color = getSolidColor();
@@ -342,6 +343,13 @@
 
     function launchTile(tile, now) {
       tile.filling = true;
+
+      /*
+        Sortie renforcée : la case devient visible dès son lancement.
+        Les particules gardent le mouvement organique, mais la page se remplit
+        clairement avant le changement d'URL.
+      */
+      if (mode === 'exiting') tile.filled = true;
 
       var rand = seededRandom(seed + Math.round(tile.x * 13 + tile.y * 17));
       var center = tileCenter(tile);
@@ -597,7 +605,13 @@
     document.addEventListener('click', function (event) {
       var link = event.target.closest && event.target.closest('a[href]');
       if (shouldSkipLink(link, event)) return;
+
       event.preventDefault();
+      event.stopPropagation();
+      if (typeof event.stopImmediatePropagation === 'function') {
+        event.stopImmediatePropagation();
+      }
+
       startExitTransition(link.href, link);
     }, true);
   }
