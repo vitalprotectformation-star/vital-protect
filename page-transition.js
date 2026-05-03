@@ -1,6 +1,6 @@
 /* Transition inter-pages Vital Protect
-   Sortie : la page visible est remplie par le bloc violet.
-   Entrée : le bloc violet se désintègre pour révéler la nouvelle page. */
+   Sortie : la page visible est remplie par le bloc bleu.
+   Entrée : le bloc bleu se désintègre pour révéler la nouvelle page. */
 (function () {
   if (window.VitalPageTransition) return;
 
@@ -8,7 +8,7 @@
   var ORIGIN_KEY = 'vpl-route-transition-origin';
   var SEED_KEY = 'vpl-route-transition-seed';
   var PREFETCH_ATTR = 'data-vpl-prefetched';
-  var COLOR = '#7c3aed';
+  var COLOR = '#2f6f9f';
   var TILE_SIZE = 11;
   var HOLD_DURATION = 240;
   var FLOW_DURATION = 1550;
