@@ -1,6 +1,6 @@
 /* Transition inter-pages Vital Protect
-   Sortie : la page visible est remplie par le bloc violet.
-   Entrée : le bloc violet se désintègre pour révéler la nouvelle page. */
+   Sortie : la page visible est remplie par le bloc bleu.
+   Entrée : le bloc bleu se désintègre pour révéler la nouvelle page. */
 (function () {
   if (window.VitalPageTransition) return;
 
@@ -8,7 +8,8 @@
   var ORIGIN_KEY = 'vpl-route-transition-origin';
   var SEED_KEY = 'vpl-route-transition-seed';
   var PREFETCH_ATTR = 'data-vpl-prefetched';
-  var COLOR = '#7c3aed';
+  var COLOR = '#2f6f9f';
+  var SPLASH_IMAGE = 'transition-screen.png';
   var TILE_SIZE = 11;
   var HOLD_DURATION = 240;
   var FLOW_DURATION = 1550;
@@ -21,6 +22,24 @@
   var transitionRunning = false;
   var prefetched = new Set();
   var prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)');
+
+  var splashImage = null;
+  var splashImageReady = false;
+
+  function getSplashUrl() {
+    return new URL(SPLASH_IMAGE, window.location.href).href;
+  }
+
+  function ensureSplashImage() {
+    if (splashImage) return splashImage;
+    splashImage = new Image();
+    splashImage.decoding = 'async';
+    splashImage.onload = function () { splashImageReady = true; };
+    splashImage.onerror = function () { splashImageReady = false; };
+    splashImage.src = getSplashUrl();
+    if (splashImage.complete && splashImage.naturalWidth > 0) splashImageReady = true;
+    return splashImage;
+  }
 
   function clamp01(value) {
     return Math.max(0, Math.min(1, value));
@@ -59,12 +78,13 @@
     var style = document.createElement('style');
     style.id = 'vpl-page-transition-style';
     style.textContent = [
-      ':root{--vpl-transition-solid:' + COLOR + ';--vpl-transition-text:#fff}',
+      ':root{--vpl-transition-solid:' + COLOR + ';--vpl-transition-text:#fff;--vpl-transition-image:url("' + getSplashUrl() + '")}',
       'html.vpl-route-preload-transition,html.vpl-route-preload-transition body{background:' + COLOR + '!important}',
-      'html.vpl-route-preload-transition::before{content:"";position:fixed;inset:0;z-index:2147482998;pointer-events:none;background:' + COLOR + ';opacity:1}',
+      'html.vpl-route-preload-transition::before{content:"";position:fixed;inset:0;z-index:2147482998;pointer-events:none;background:' + COLOR + ' center/cover no-repeat;background-image:var(--vpl-transition-image);opacity:1}',
       'html.vpl-route-preload-transition.vpl-route-preload-releasing::before{animation:vplBlockPreloadOut .22s ease both}',
       'html.vpl-route-transitioning{cursor:progress}',
-      '.vpl-page-transition{position:fixed;inset:0;z-index:2147483000;pointer-events:none;overflow:hidden;isolation:isolate;contain:layout paint style;background:transparent}',
+      'html.vpl-route-transitioning,html.vpl-route-transitioning body{overflow:hidden!important}',
+      '.vpl-page-transition{position:fixed!important;inset:0!important;z-index:2147483000!important;pointer-events:none!important;overflow:hidden!important;isolation:isolate!important;contain:layout paint style!important;background:' + COLOR + ' center/cover no-repeat!important;background-image:var(--vpl-transition-image)!important;opacity:1!important;visibility:visible!important;transform:none!important}',
       '.vpl-page-transition__canvas{position:absolute;inset:0;width:100%;height:100%;z-index:1;display:block}',
       '@keyframes vplBlockPreloadOut{from{opacity:1}to{opacity:0}}',
       '@media(prefers-reduced-motion:reduce){.vpl-page-transition,html.vpl-route-preload-transition::before{display:none!important}}'
@@ -84,6 +104,7 @@
   function prepareIncomingMask() {
     if (!hasIncomingTransition()) return;
 
+    ensureSplashImage();
     injectTransitionStyles();
 
     try {
@@ -183,6 +204,8 @@
     if (!href || prefetched.has(href)) return;
     prefetched.add(href);
 
+    ensureSplashImage();
+
     try {
       var link = document.createElement('link');
       link.rel = 'prefetch';
@@ -232,10 +255,13 @@
     canvas.className = 'vpl-page-transition__canvas';
 
     overlay.appendChild(canvas);
-    document.body.appendChild(overlay);
+    (document.body || document.documentElement).appendChild(overlay);
 
     var ctx = canvas.getContext('2d', { alpha: true });
     var color = getSolidColor();
+    var textureCanvas = document.createElement('canvas');
+    var textureCtx = textureCanvas.getContext('2d', { alpha: false });
+    var textureReady = false;
     var w = 0;
     var h = 0;
     var dpr = 1;
@@ -287,6 +313,29 @@
       if (mode === 'exiting') tiles.reverse();
     }
 
+    function renderTexture() {
+      var image = ensureSplashImage();
+      textureReady = !!(image && splashImageReady && image.naturalWidth > 0 && image.naturalHeight > 0);
+      textureCanvas.width = Math.max(1, Math.round(w));
+      textureCanvas.height = Math.max(1, Math.round(h));
+      textureCtx.clearRect(0, 0, w, h);
+
+      if (!textureReady) {
+        textureCtx.fillStyle = color;
+        textureCtx.fillRect(0, 0, w, h);
+        return;
+      }
+
+      var iw = image.naturalWidth || image.width;
+      var ih = image.naturalHeight || image.height;
+      var scale = Math.max(w / iw, h / ih);
+      var dw = iw * scale;
+      var dh = ih * scale;
+      var dx = (w - dw) / 2;
+      var dy = (h - dh) / 2;
+      textureCtx.drawImage(image, dx, dy, dw, dh);
+    }
+
     function resize() {
       dpr = Math.min(window.devicePixelRatio || 1, 2);
       w = window.innerWidth || document.documentElement.clientWidth || 1;
@@ -296,13 +345,17 @@
       canvas.style.width = w + 'px';
       canvas.style.height = h + 'px';
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      renderTexture();
       createTiles();
     }
 
     function drawFullBlock() {
       ctx.clearRect(0, 0, w, h);
-      ctx.fillStyle = color;
-      ctx.fillRect(0, 0, w, h);
+      if (textureReady) ctx.drawImage(textureCanvas, 0, 0, w, h);
+      else {
+        ctx.fillStyle = color;
+        ctx.fillRect(0, 0, w, h);
+      }
     }
 
     function tileCenter(tile) {
@@ -330,6 +383,10 @@
         y: center.cy,
         vx: Math.cos(angle) * speed,
         vy: Math.sin(angle) * speed,
+        sx: tile.x,
+        sy: tile.y,
+        sw: TILE_SIZE + 1,
+        sh: TILE_SIZE + 1,
         size: size,
         rotation: rand() * Math.PI,
         spin: -0.055 + rand() * 0.11,
@@ -342,6 +399,13 @@
 
     function launchTile(tile, now) {
       tile.filling = true;
+
+      /*
+        Sortie renforcée : la case devient visible dès son lancement.
+        Les particules gardent le mouvement organique, mais la page se remplit
+        clairement avant le changement d'URL.
+      */
+      if (mode === 'exiting') tile.filled = true;
 
       var rand = seededRandom(seed + Math.round(tile.x * 13 + tile.y * 17));
       var center = tileCenter(tile);
@@ -360,6 +424,10 @@
         startY: center.cy + Math.sin(angle) * travelDistance,
         endX: center.cx,
         endY: center.cy,
+        sx: tile.x,
+        sy: tile.y,
+        sw: TILE_SIZE + 1,
+        sh: TILE_SIZE + 1,
         size: size,
         rotation: rand() * Math.PI,
         spin: -0.055 + rand() * 0.11,
@@ -377,9 +445,12 @@
 
       for (var i = 0; i < tiles.length; i += 1) {
         var tile = tiles[i];
-        if (mode === 'entering') {
-          if (!tile.released) ctx.fillRect(tile.x, tile.y, TILE_SIZE + 1, TILE_SIZE + 1);
-        } else if (tile.filled) {
+        var shouldDraw = mode === 'entering' ? !tile.released : tile.filled;
+        if (!shouldDraw) continue;
+
+        if (textureReady) {
+          ctx.drawImage(textureCanvas, tile.x, tile.y, TILE_SIZE + 1, TILE_SIZE + 1, tile.x, tile.y, TILE_SIZE + 1, TILE_SIZE + 1);
+        } else {
           ctx.fillRect(tile.x, tile.y, TILE_SIZE + 1, TILE_SIZE + 1);
         }
       }
@@ -421,7 +492,11 @@
         }
 
         ctx.rotate(p.rotation);
-        ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+        if (textureReady) {
+          ctx.drawImage(textureCanvas, p.sx, p.sy, p.sw, p.sh, -p.size / 2, -p.size / 2, p.size, p.size);
+        } else {
+          ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+        }
         ctx.restore();
       }
       ctx.globalAlpha = 1;
@@ -468,6 +543,18 @@
     }
 
     resize();
+
+    var splash = ensureSplashImage();
+    if (splash && !splashImageReady) {
+      splash.addEventListener('load', function handleSplashLoad() {
+        renderTexture();
+        if (mode === 'entering' || (mode === 'exiting' && cursor >= tiles.length)) {
+          drawFullBlock();
+        }
+        splash.removeEventListener('load', handleSplashLoad);
+      });
+    }
+
     if (mode === 'entering') {
       drawFullBlock();
     }
@@ -571,6 +658,7 @@
   }
 
   function initPageTransition() {
+    ensureSplashImage();
     injectTransitionStyles();
 
     if (hasIncomingTransition() && !(prefersReduced && prefersReduced.matches)) {
@@ -581,23 +669,32 @@
     }
 
     document.addEventListener('pointerover', function (event) {
-      var link = event.target.closest && event.target.closest('a[href]');
+      var target = event.target && event.target.nodeType === 1 ? event.target : event.target && event.target.parentElement;
+      var link = target && target.closest && target.closest('a[href]');
       if (!link || link.hasAttribute(PREFETCH_ATTR) || shouldSkipLink(link, null)) return;
       link.setAttribute(PREFETCH_ATTR, 'true');
       warmPage(link.href);
     }, { passive: true });
 
     document.addEventListener('focusin', function (event) {
-      var link = event.target.closest && event.target.closest('a[href]');
+      var target = event.target && event.target.nodeType === 1 ? event.target : event.target && event.target.parentElement;
+      var link = target && target.closest && target.closest('a[href]');
       if (!link || link.hasAttribute(PREFETCH_ATTR) || shouldSkipLink(link, null)) return;
       link.setAttribute(PREFETCH_ATTR, 'true');
       warmPage(link.href);
     });
 
     document.addEventListener('click', function (event) {
-      var link = event.target.closest && event.target.closest('a[href]');
+      var target = event.target && event.target.nodeType === 1 ? event.target : event.target && event.target.parentElement;
+      var link = target && target.closest && target.closest('a[href]');
       if (shouldSkipLink(link, event)) return;
+
       event.preventDefault();
+      event.stopPropagation();
+      if (typeof event.stopImmediatePropagation === 'function') {
+        event.stopImmediatePropagation();
+      }
+
       startExitTransition(link.href, link);
     }, true);
   }
@@ -623,6 +720,7 @@
     go: navigateWithTransition,
     remove: removeOverlay
   };
+  window.vplNavigate = navigateWithTransition;
 
   prepareIncomingMask();
 
