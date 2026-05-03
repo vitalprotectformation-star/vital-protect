@@ -15,6 +15,7 @@
   var FLOW_DURATION = 1550;
   var PARTICLE_LIFE = 980;
   var EXTRA_SAFE_MS = 110;
+  var HANDOFF_DURATION = 220;
   var TOTAL_DURATION = HOLD_DURATION + FLOW_DURATION + PARTICLE_LIFE * 1.25 + EXTRA_SAFE_MS;
 
   var overlay = null;
@@ -109,12 +110,13 @@
     style.textContent = [
       ':root{--vpl-transition-solid:' + COLOR + ';--vpl-transition-text:#fff;--vpl-transition-image:url("' + getSplashUrl() + '")}',
       'html.vpl-route-preload-transition,html.vpl-route-preload-transition body{background:' + COLOR + '!important}',
-      'html.vpl-route-preload-transition::before{content:"";position:fixed;inset:0;z-index:2147482998;pointer-events:none;background:' + COLOR + ' center/cover no-repeat;background-image:var(--vpl-transition-image);opacity:1}',
-      'html.vpl-route-preload-transition.vpl-route-preload-releasing::before{animation:vplBlockPreloadOut .22s ease both}',
+      'html.vpl-route-preload-transition::before{content:"";position:fixed;inset:0;z-index:2147482998;pointer-events:none;background-color:' + COLOR + ';background-image:var(--vpl-transition-image);background-position:center;background-size:cover;background-repeat:no-repeat;opacity:1;transform:translateZ(0);backface-visibility:hidden}',
+      'html.vpl-route-preload-transition.vpl-route-preload-releasing::before{animation:vplBlockPreloadOut .28s ease both}',
       'html.vpl-route-transitioning{cursor:progress}',
       'html.vpl-route-transitioning,html.vpl-route-transitioning body{overflow:hidden!important}',
       '.vpl-page-transition{position:fixed!important;inset:0!important;z-index:2147483000!important;pointer-events:none!important;overflow:hidden!important;isolation:isolate!important;contain:layout paint style!important;background:transparent!important;opacity:1!important;visibility:visible!important;transform:none!important}',
-      '.vpl-page-transition__canvas{position:absolute;inset:0;width:100%;height:100%;z-index:1;display:block}',
+      '.vpl-page-transition__canvas{position:absolute;inset:0;width:100%;height:100%;z-index:1;display:block;transform:translateZ(0);backface-visibility:hidden}',
+      '.vpl-page-transition__static{position:absolute;inset:0;z-index:2;background-color:' + COLOR + ';background-image:var(--vpl-transition-image);background-position:center;background-size:cover;background-repeat:no-repeat;opacity:0;transform:translateZ(0);backface-visibility:hidden;will-change:opacity;transition:opacity ' + HANDOFF_DURATION + 'ms ease}',
       '@keyframes vplBlockPreloadOut{from{opacity:1}to{opacity:0}}',
       '@media(prefers-reduced-motion:reduce){.vpl-page-transition,html.vpl-route-preload-transition::before{display:none!important}}'
     ].join('\n');
@@ -183,7 +185,7 @@
       root.classList.remove('vpl-route-preload-transition', 'vpl-route-preload-releasing');
       root.style.removeProperty('--vpl-transition-x');
       root.style.removeProperty('--vpl-transition-y');
-    }, 260);
+    }, 320);
   }
 
   function storeTransitionState(originX, originY, seed) {
@@ -283,7 +285,12 @@
     var canvas = document.createElement('canvas');
     canvas.className = 'vpl-page-transition__canvas';
 
+    var staticLayer = document.createElement('div');
+    staticLayer.className = 'vpl-page-transition__static';
+    staticLayer.style.opacity = mode === 'entering' ? '1' : '0';
+
     overlay.appendChild(canvas);
+    overlay.appendChild(staticLayer);
     (document.body || document.documentElement).appendChild(overlay);
 
     var ctx = canvas.getContext('2d', { alpha: true });
@@ -531,6 +538,24 @@
       ctx.globalAlpha = 1;
     }
 
+    function showStaticHandoff() {
+      staticLayer.style.opacity = '1';
+      canvas.style.transition = 'opacity ' + HANDOFF_DURATION + 'ms ease';
+      canvas.style.opacity = '0';
+    }
+
+    function softenEnterStart() {
+      /*
+        La couche CSS reste au-dessus du canvas pendant les premières images.
+        Ça masque le micro-saut entre l'image de l'ancienne page, le masque
+        de préchargement et le canvas de désintégration.
+      */
+      window.setTimeout(function () {
+        if (destroyed) return;
+        staticLayer.style.opacity = '0';
+      }, Math.max(0, HOLD_DURATION - 70));
+    }
+
     function render(now) {
       if (destroyed) return;
       if (!startTime) startTime = now;
@@ -554,6 +579,7 @@
       if (elapsed >= TOTAL_DURATION && particles.length === 0) {
         if (mode === 'exiting') {
           drawFullBlock();
+          showStaticHandoff();
         } else {
           removeOverlay();
         }
@@ -586,8 +612,10 @@
 
     if (mode === 'entering') {
       drawFullBlock();
+      softenEnterStart();
     }
-    window.addEventListener('resize', onResize, { passive: true });
+    /* Pas de recalcul pendant la transition : certains navigateurs déclenchent
+       un resize au changement de page, ce qui créait un léger soubresaut. */
     raf = requestAnimationFrame(render);
 
     return {
@@ -664,7 +692,7 @@
 
       window.setTimeout(function () {
         window.location.href = href;
-      }, TOTAL_DURATION + 80);
+      }, TOTAL_DURATION + HANDOFF_DURATION + 80);
     });
   }
 
@@ -685,10 +713,10 @@
       controller = buildCanvasTransition({ mode: 'entering', originX: originX, originY: originY, seed: seed });
 
       requestAnimationFrame(function () {
-        setTimeout(releasePreloadMask, 34);
+        setTimeout(releasePreloadMask, 80);
       });
 
-      window.setTimeout(removeOverlay, TOTAL_DURATION + 180);
+      window.setTimeout(removeOverlay, TOTAL_DURATION + HANDOFF_DURATION + 180);
     });
   }
 
