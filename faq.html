@@ -16,8 +16,9 @@
   </script>
   <style>
     html.vpl-route-preload-transition,html.vpl-route-preload-transition body{background:#2f6f9f!important}
-    html.vpl-route-preload-transition::before{content:"";position:fixed;inset:0;z-index:2147482998;pointer-events:none;background:#2f6f9f;opacity:1}
+    html.vpl-route-preload-transition::before{content:"";position:fixed;inset:0;z-index:2147482998;pointer-events:none;background:#2f6f9f url("transition-screen.png") center/cover no-repeat;opacity:1}
   </style>
+  <link rel="preload" as="image" href="transition-screen.png" />
   <script src="/page-transition.js"></script>
   <script>
     if (!window.VitalPageTransition) {
