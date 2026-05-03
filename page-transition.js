@@ -61,19 +61,13 @@
     style.textContent = [
       ':root{--vpl-transition-solid:' + COLOR + ';--vpl-transition-text:#fff}',
       'html.vpl-route-preload-transition,html.vpl-route-preload-transition body{background:' + COLOR + '!important}',
-      'html.vpl-route-preload-transition::before,html.vpl-route-preload-transition::after{position:fixed;inset:0;pointer-events:none}',
-      'html.vpl-route-preload-transition::before{content:"";z-index:2147482998;background:' + COLOR + ';opacity:1}',
-      'html.vpl-route-preload-transition::after{content:"VITAL PROTECT";z-index:2147482999;display:grid;place-items:center;color:#fff;font-size:clamp(1.15rem,3.8vw,3.8rem);font-weight:950;letter-spacing:.28em;text-indent:.28em;text-transform:uppercase;text-shadow:0 18px 60px rgba(0,0,0,.28)}',
-      'html.vpl-route-preload-transition.vpl-route-preload-releasing::before,html.vpl-route-preload-transition.vpl-route-preload-releasing::after{animation:vplBlockPreloadOut .22s ease both}',
+      'html.vpl-route-preload-transition::before{content:"";position:fixed;inset:0;z-index:2147482998;pointer-events:none;background:' + COLOR + ';opacity:1}',
+      'html.vpl-route-preload-transition.vpl-route-preload-releasing::before{animation:vplBlockPreloadOut .22s ease both}',
       'html.vpl-route-transitioning{cursor:progress}',
       '.vpl-page-transition{position:fixed;inset:0;z-index:2147483000;pointer-events:none;overflow:hidden;isolation:isolate;contain:layout paint style;background:transparent}',
-      '.vpl-page-transition__canvas,.vpl-page-transition__brand{position:absolute;inset:0;width:100%;height:100%}',
-      '.vpl-page-transition__canvas{z-index:1;display:block}',
-      '.vpl-page-transition__brand{z-index:2;display:grid;place-items:center;padding:28px;opacity:0;transform:translate3d(0,0,0) scale(.97);will-change:opacity,transform}',
-      '.vpl-page-transition__brand span{color:#fff;font-size:clamp(1.15rem,3.8vw,3.8rem);font-weight:950;letter-spacing:.28em;text-indent:.28em;text-transform:uppercase;text-shadow:0 18px 60px rgba(0,0,0,.28)}',
+      '.vpl-page-transition__canvas{position:absolute;inset:0;width:100%;height:100%;z-index:1;display:block}',
       '@keyframes vplBlockPreloadOut{from{opacity:1}to{opacity:0}}',
-      '@media(max-width:700px){html.vpl-route-preload-transition::after,.vpl-page-transition__brand span{letter-spacing:.18em;text-indent:.18em}}',
-      '@media(prefers-reduced-motion:reduce){.vpl-page-transition,html.vpl-route-preload-transition::before,html.vpl-route-preload-transition::after{display:none!important}}'
+      '@media(prefers-reduced-motion:reduce){.vpl-page-transition,html.vpl-route-preload-transition::before{display:none!important}}'
     ].join('\n');
 
     (document.head || document.documentElement).appendChild(style);
@@ -237,12 +231,7 @@
     var canvas = document.createElement('canvas');
     canvas.className = 'vpl-page-transition__canvas';
 
-    var brand = document.createElement('div');
-    brand.className = 'vpl-page-transition__brand';
-    brand.innerHTML = '<span>VITAL PROTECT</span>';
-
     overlay.appendChild(canvas);
-    overlay.appendChild(brand);
     document.body.appendChild(overlay);
 
     var ctx = canvas.getContext('2d', { alpha: true });
@@ -458,21 +447,9 @@
       drawTiles();
       drawParticles(now);
 
-      if (mode === 'entering') {
-        var brandAlphaIn = clamp01(1 - rawProgress * 2.05);
-        brand.style.opacity = brandAlphaIn.toFixed(4);
-        brand.style.transform = 'translate3d(0, 0, 0) scale(' + (1 + rawProgress * 0.035).toFixed(4) + ')';
-      } else {
-        var brandAlphaOut = clamp01((rawProgress - 0.56) / 0.22);
-        brand.style.opacity = brandAlphaOut.toFixed(4);
-        brand.style.transform = 'translate3d(0, 0, 0) scale(' + (0.97 + brandAlphaOut * 0.03).toFixed(4) + ')';
-      }
-
       if (elapsed >= TOTAL_DURATION && particles.length === 0) {
         if (mode === 'exiting') {
           drawFullBlock();
-          brand.style.opacity = '1';
-          brand.style.transform = 'translate3d(0, 0, 0) scale(1)';
         } else {
           removeOverlay();
         }
@@ -493,7 +470,6 @@
     resize();
     if (mode === 'entering') {
       drawFullBlock();
-      brand.style.opacity = '1';
     }
     window.addEventListener('resize', onResize, { passive: true });
     raf = requestAnimationFrame(render);
