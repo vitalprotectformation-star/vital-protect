@@ -1,9 +1,30 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <script src="/page-transition.js"></script>
 
-  <meta charset="UTF-8" />
+  <script>
+    (function () {
+      try {
+        if (sessionStorage.getItem('vpl-route-transition-next') !== '1') return;
+        var root = document.documentElement;
+        var origin = JSON.parse(sessionStorage.getItem('vpl-route-transition-origin') || '{}');
+        if (Number.isFinite(origin.x)) root.style.setProperty('--vpl-transition-x', (Math.max(0, Math.min(1, origin.x)) * 100) + '%');
+        if (Number.isFinite(origin.y)) root.style.setProperty('--vpl-transition-y', (Math.max(0, Math.min(1, origin.y)) * 100) + '%');
+        root.classList.add('vpl-route-preload-transition');
+      } catch (_) {}
+    })();
+  </script>
+  <style>
+    html.vpl-route-preload-transition,html.vpl-route-preload-transition body{background:#7c3aed!important}
+    html.vpl-route-preload-transition::before{content:"";position:fixed;inset:0;z-index:2147482998;pointer-events:none;background:#7c3aed;opacity:1}
+  </style>
+  <script src="/page-transition.js"></script>
+  <script>
+    if (!window.VitalPageTransition) {
+      document.write('<script src="page-transition.js"><\/script>');
+    }
+  </script>
+<meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Connexion en cours — VITAL PROTECT</title>
   <style>
@@ -92,7 +113,7 @@
             showDebug(exchangeError.message);
 
             setTimeout(() => {
-              window.location.href = "/admin-login.html";
+              (window.VitalPageTransition ? window.VitalPageTransition.go("/admin-login.html") : (window.location.href = "/admin-login.html"));
             }, 1800);
             return;
           }
@@ -111,7 +132,7 @@
           showDebug(sessionError.message);
 
           setTimeout(() => {
-            window.location.href = "/admin-login.html";
+            (window.VitalPageTransition ? window.VitalPageTransition.go("/admin-login.html") : (window.location.href = "/admin-login.html"));
           }, 1800);
           return;
         }
@@ -121,7 +142,7 @@
           showDebug("Aucun utilisateur trouvé dans la session.");
 
           setTimeout(() => {
-            window.location.href = "/admin-login.html";
+            (window.VitalPageTransition ? window.VitalPageTransition.go("/admin-login.html") : (window.location.href = "/admin-login.html"));
           }, 1800);
           return;
         }
@@ -142,7 +163,7 @@
           showDebug(adminError.message);
 
           setTimeout(() => {
-            window.location.href = "/admin-login.html";
+            (window.VitalPageTransition ? window.VitalPageTransition.go("/admin-login.html") : (window.location.href = "/admin-login.html"));
           }, 1800);
           return;
         }
@@ -153,14 +174,14 @@
           showDebug("Aucun email admin correspondant.");
 
           setTimeout(() => {
-            window.location.href = "/admin-login.html";
+            (window.VitalPageTransition ? window.VitalPageTransition.go("/admin-login.html") : (window.location.href = "/admin-login.html"));
           }, 1800);
           return;
         }
 
         status.textContent = "Connexion validée. Redirection vers l’admin...";
         setTimeout(() => {
-          window.location.href = "/admin.html";
+          (window.VitalPageTransition ? window.VitalPageTransition.go("/admin.html") : (window.location.href = "/admin.html"));
         }, 700);
       } catch (error) {
         console.error("Erreur callback admin:", error);
@@ -168,7 +189,7 @@
         showDebug(error.message || "Erreur inconnue");
 
         setTimeout(() => {
-          window.location.href = "/admin-login.html";
+          (window.VitalPageTransition ? window.VitalPageTransition.go("/admin-login.html") : (window.location.href = "/admin-login.html"));
         }, 1800);
       }
     }

@@ -589,21 +589,24 @@
     }
 
     document.addEventListener('pointerover', function (event) {
-      var link = event.target.closest && event.target.closest('a[href]');
+      var target = event.target && event.target.nodeType === 1 ? event.target : event.target && event.target.parentElement;
+      var link = target && target.closest && target.closest('a[href]');
       if (!link || link.hasAttribute(PREFETCH_ATTR) || shouldSkipLink(link, null)) return;
       link.setAttribute(PREFETCH_ATTR, 'true');
       warmPage(link.href);
     }, { passive: true });
 
     document.addEventListener('focusin', function (event) {
-      var link = event.target.closest && event.target.closest('a[href]');
+      var target = event.target && event.target.nodeType === 1 ? event.target : event.target && event.target.parentElement;
+      var link = target && target.closest && target.closest('a[href]');
       if (!link || link.hasAttribute(PREFETCH_ATTR) || shouldSkipLink(link, null)) return;
       link.setAttribute(PREFETCH_ATTR, 'true');
       warmPage(link.href);
     });
 
     document.addEventListener('click', function (event) {
-      var link = event.target.closest && event.target.closest('a[href]');
+      var target = event.target && event.target.nodeType === 1 ? event.target : event.target && event.target.parentElement;
+      var link = target && target.closest && target.closest('a[href]');
       if (shouldSkipLink(link, event)) return;
 
       event.preventDefault();
@@ -637,6 +640,7 @@
     go: navigateWithTransition,
     remove: removeOverlay
   };
+  window.vplNavigate = navigateWithTransition;
 
   prepareIncomingMask();
 

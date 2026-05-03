@@ -1,9 +1,30 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <script src="/page-transition.js"></script>
 
-  <meta charset="UTF-8" />
+  <script>
+    (function () {
+      try {
+        if (sessionStorage.getItem('vpl-route-transition-next') !== '1') return;
+        var root = document.documentElement;
+        var origin = JSON.parse(sessionStorage.getItem('vpl-route-transition-origin') || '{}');
+        if (Number.isFinite(origin.x)) root.style.setProperty('--vpl-transition-x', (Math.max(0, Math.min(1, origin.x)) * 100) + '%');
+        if (Number.isFinite(origin.y)) root.style.setProperty('--vpl-transition-y', (Math.max(0, Math.min(1, origin.y)) * 100) + '%');
+        root.classList.add('vpl-route-preload-transition');
+      } catch (_) {}
+    })();
+  </script>
+  <style>
+    html.vpl-route-preload-transition,html.vpl-route-preload-transition body{background:#7c3aed!important}
+    html.vpl-route-preload-transition::before{content:"";position:fixed;inset:0;z-index:2147482998;pointer-events:none;background:#7c3aed;opacity:1}
+  </style>
+  <script src="/page-transition.js"></script>
+  <script>
+    if (!window.VitalPageTransition) {
+      document.write('<script src="page-transition.js"><\/script>');
+    }
+  </script>
+<meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Admin VITAL PROTECT</title>
   <style>
@@ -1446,7 +1467,7 @@
       }
 
       if (!session?.user?.email) {
-        window.location.href = "/admin-login.html";
+        (window.VitalPageTransition ? window.VitalPageTransition.go("/admin-login.html") : (window.location.href = "/admin-login.html"));
         return null;
       }
 
@@ -1460,13 +1481,13 @@
 
       if (error) {
         console.error("Erreur vérification admin:", error);
-        window.location.href = "/admin-login.html";
+        (window.VitalPageTransition ? window.VitalPageTransition.go("/admin-login.html") : (window.location.href = "/admin-login.html"));
         return null;
       }
 
       if (!adminUser) {
         await supabase.auth.signOut();
-        window.location.href = "/admin-login.html";
+        (window.VitalPageTransition ? window.VitalPageTransition.go("/admin-login.html") : (window.location.href = "/admin-login.html"));
         return null;
       }
 
@@ -1524,7 +1545,7 @@
     if (logoutBtn) {
       logoutBtn.addEventListener("click", async () => {
         await supabase.auth.signOut();
-        window.location.href = "/admin-login.html";
+        (window.VitalPageTransition ? window.VitalPageTransition.go("/admin-login.html") : (window.location.href = "/admin-login.html"));
       });
     }
 
@@ -2445,7 +2466,7 @@ Cordialement,
 VITAL PROTECT`
       );
 
-      window.location.href = `mailto:?bcc=${encodeURIComponent(emails.join(","))}&subject=${subject}&body=${body}`;
+      (window.VitalPageTransition ? window.VitalPageTransition.go(`mailto:?bcc=${encodeURIComponent(emails.join(","))}&subject=${subject}&body=${body}`) : (window.location.href = `mailto:?bcc=${encodeURIComponent(emails.join(","))}&subject=${subject}&body=${body}`));
     };
 
     window.deleteStage = async (stageId, stageTitle) => {

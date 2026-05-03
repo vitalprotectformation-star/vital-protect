@@ -1,9 +1,30 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <script src="/page-transition.js"></script>
 
-  <meta charset="UTF-8" />
+  <script>
+    (function () {
+      try {
+        if (sessionStorage.getItem('vpl-route-transition-next') !== '1') return;
+        var root = document.documentElement;
+        var origin = JSON.parse(sessionStorage.getItem('vpl-route-transition-origin') || '{}');
+        if (Number.isFinite(origin.x)) root.style.setProperty('--vpl-transition-x', (Math.max(0, Math.min(1, origin.x)) * 100) + '%');
+        if (Number.isFinite(origin.y)) root.style.setProperty('--vpl-transition-y', (Math.max(0, Math.min(1, origin.y)) * 100) + '%');
+        root.classList.add('vpl-route-preload-transition');
+      } catch (_) {}
+    })();
+  </script>
+  <style>
+    html.vpl-route-preload-transition,html.vpl-route-preload-transition body{background:#7c3aed!important}
+    html.vpl-route-preload-transition::before{content:"";position:fixed;inset:0;z-index:2147482998;pointer-events:none;background:#7c3aed;opacity:1}
+  </style>
+  <script src="/page-transition.js"></script>
+  <script>
+    if (!window.VitalPageTransition) {
+      document.write('<script src="page-transition.js"><\/script>');
+    }
+  </script>
+<meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Connexion formateur — VITAL PROTECT</title>
 
@@ -122,7 +143,7 @@
             showDebug(exchangeError.message);
 
             setTimeout(() => {
-              window.location.href = "/formateur-login.html";
+              (window.VitalPageTransition ? window.VitalPageTransition.go("/formateur-login.html") : (window.location.href = "/formateur-login.html"));
             }, 1800);
             return;
           }
@@ -137,14 +158,14 @@
         if (!session?.user?.email) {
           message.textContent = "Aucune session détectée. Redirection...";
           setTimeout(() => {
-            window.location.href = "/formateur-login.html";
+            (window.VitalPageTransition ? window.VitalPageTransition.go("/formateur-login.html") : (window.location.href = "/formateur-login.html"));
           }, 1500);
           return;
         }
 
         message.textContent = "Connexion réussie. Redirection vers votre espace formateur...";
         setTimeout(() => {
-          window.location.href = "/espace-formateur.html";
+          (window.VitalPageTransition ? window.VitalPageTransition.go("/espace-formateur.html") : (window.location.href = "/espace-formateur.html"));
         }, 900);
       } catch (error) {
         console.error("Erreur callback formateur:", error);
@@ -152,7 +173,7 @@
         showDebug(error.message || "Erreur inconnue");
 
         setTimeout(() => {
-          window.location.href = "/formateur-login.html";
+          (window.VitalPageTransition ? window.VitalPageTransition.go("/formateur-login.html") : (window.location.href = "/formateur-login.html"));
         }, 1800);
       }
     }

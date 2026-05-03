@@ -1,18 +1,16 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <script src="/page-transition.js"></script>
 
   <script>
-    (function(){
+    (function () {
       try {
-        if (sessionStorage.getItem('vpl-route-transition-next') === '1') {
-          var root = document.documentElement;
-          var origin = JSON.parse(sessionStorage.getItem('vpl-route-transition-origin') || '{}');
-          if (Number.isFinite(origin.x)) root.style.setProperty('--vpl-transition-x', (Math.max(0, Math.min(1, origin.x)) * 100) + '%');
-          if (Number.isFinite(origin.y)) root.style.setProperty('--vpl-transition-y', (Math.max(0, Math.min(1, origin.y)) * 100) + '%');
-          root.classList.add('vpl-route-preload-transition');
-        }
+        if (sessionStorage.getItem('vpl-route-transition-next') !== '1') return;
+        var root = document.documentElement;
+        var origin = JSON.parse(sessionStorage.getItem('vpl-route-transition-origin') || '{}');
+        if (Number.isFinite(origin.x)) root.style.setProperty('--vpl-transition-x', (Math.max(0, Math.min(1, origin.x)) * 100) + '%');
+        if (Number.isFinite(origin.y)) root.style.setProperty('--vpl-transition-y', (Math.max(0, Math.min(1, origin.y)) * 100) + '%');
+        root.classList.add('vpl-route-preload-transition');
       } catch (_) {}
     })();
   </script>
@@ -20,8 +18,13 @@
     html.vpl-route-preload-transition,html.vpl-route-preload-transition body{background:#7c3aed!important}
     html.vpl-route-preload-transition::before{content:"";position:fixed;inset:0;z-index:2147482998;pointer-events:none;background:#7c3aed;opacity:1}
   </style>
-
-  <meta charset="UTF-8" />
+  <script src="/page-transition.js"></script>
+  <script>
+    if (!window.VitalPageTransition) {
+      document.write('<script src="page-transition.js"><\/script>');
+    }
+  </script>
+<meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Le standard Vital Protect — Référentiel structuré de sécurité personnelle</title>
   <meta
