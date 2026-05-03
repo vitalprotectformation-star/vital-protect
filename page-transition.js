@@ -1,8 +1,8 @@
 /* Transition inter-pages Vital Protect
-   Version handoff bleu strict : toute l'animation de sortie se termine
-   sur l'ancienne page jusqu'à un écran bleu 100% plein. La navigation
-   n'est lancée qu'après peinture réelle de ce bleu, puis la nouvelle page
-   démarre directement sur le même bleu qui se désintègre. */
+   Version handoff image strict : toute l'animation de sortie se termine
+   sur l'ancienne page jusqu'à l'image de transition 100% pleine. La navigation
+   n'est lancée qu'après peinture réelle de cette image, puis la nouvelle page
+   démarre directement sur la même image qui se désintègre. */
 (function () {
   if (window.VitalPageTransition) return;
 
@@ -13,7 +13,7 @@
   var COLOR = '#2f6f9f';
   var EXIT_BACKDROP = COLOR;
   var ENTER_VEIL_OPACITY = 0;
-  var SOLID_BLUE_ONLY = true;
+  var SOLID_BLUE_ONLY = false;
   var SPLASH_IMAGE = 'transition-screen.png';
   var TILE_SIZE = 11;
   var HOLD_DURATION = 240;
@@ -126,9 +126,9 @@
     var style = document.createElement('style');
     style.id = 'vpl-page-transition-style';
     style.textContent = [
-      ':root{--vpl-transition-solid:' + COLOR + ';--vpl-transition-text:#fff}',
+      ':root{--vpl-transition-solid:' + COLOR + ';--vpl-transition-text:#fff;--vpl-transition-image:url("' + getSplashUrl() + '")}',
       'html.vpl-route-preload-transition,html.vpl-route-preload-transition body{background:' + COLOR + '!important}',
-      'html.vpl-route-preload-transition::before{content:"";position:fixed;inset:0;z-index:2147482998;pointer-events:none;background:' + COLOR + ';opacity:1;transform:translateZ(0);backface-visibility:hidden}',
+      'html.vpl-route-preload-transition::before{content:"";position:fixed;inset:0;z-index:2147482998;pointer-events:none;background-color:' + COLOR + ';background-image:var(--vpl-transition-image);background-position:center;background-size:cover;background-repeat:no-repeat;opacity:1;transform:translateZ(0);backface-visibility:hidden}',
       'html.vpl-route-preload-transition.vpl-route-preload-releasing::before{animation:vplBlockPreloadOut .24s ease both}',
       'html.vpl-route-transitioning{cursor:progress}',
       'html.vpl-route-transitioning,html.vpl-route-transitioning body{overflow:hidden!important}',
@@ -136,7 +136,7 @@
       '.vpl-page-transition.is-exiting{background:transparent!important}',
       '.vpl-page-transition__veil{position:absolute;inset:0;z-index:0;background-color:' + COLOR + ';opacity:0;transform:translateZ(0);backface-visibility:hidden;will-change:opacity}',
       '.vpl-page-transition__canvas{position:absolute;inset:0;width:100%;height:100%;z-index:1;display:block;transform:translateZ(0);backface-visibility:hidden}',
-      '.vpl-page-transition__static{position:absolute;inset:0;z-index:2;background-color:' + COLOR + ';opacity:0;transform:translateZ(0);backface-visibility:hidden;will-change:opacity;transition:none}',
+      '.vpl-page-transition__static{position:absolute;inset:0;z-index:2;background-color:' + COLOR + ';background-image:var(--vpl-transition-image);background-position:center;background-size:cover;background-repeat:no-repeat;opacity:0;transform:translateZ(0);backface-visibility:hidden;will-change:opacity;transition:none}',
       '@keyframes vplBlockPreloadOut{from{opacity:1}to{opacity:0}}',
       '@media(prefers-reduced-motion:reduce){.vpl-page-transition,html.vpl-route-preload-transition::before{display:none!important}}'
     ].join('\n');
@@ -377,12 +377,26 @@
     }
 
     function renderTexture() {
-      textureReady = false;
+      var image = ensureSplashImage();
+      textureReady = !!(image && splashImageReady && image.naturalWidth > 0 && image.naturalHeight > 0);
       textureCanvas.width = Math.max(1, Math.round(w));
       textureCanvas.height = Math.max(1, Math.round(h));
       textureCtx.clearRect(0, 0, w, h);
-      textureCtx.fillStyle = color;
-      textureCtx.fillRect(0, 0, w, h);
+
+      if (!textureReady) {
+        textureCtx.fillStyle = color;
+        textureCtx.fillRect(0, 0, w, h);
+        return;
+      }
+
+      var iw = image.naturalWidth || image.width;
+      var ih = image.naturalHeight || image.height;
+      var scale = Math.max(w / iw, h / ih);
+      var dw = iw * scale;
+      var dh = ih * scale;
+      var dx = (w - dw) / 2;
+      var dy = (h - dh) / 2;
+      textureCtx.drawImage(image, dx, dy, dw, dh);
     }
 
     function resize() {
@@ -556,9 +570,9 @@
       solidHandoffDone = true;
 
       /*
-        Handoff strict : on peint d'abord un bleu CSS plein au-dessus du canvas.
+        Handoff strict : on peint d'abord l'image de transition CSS pleine au-dessus du canvas.
         La navigation n'est déclenchée qu'après deux frames réelles, donc le
-        navigateur a eu le temps d'afficher l'écran uni avant de détruire la page.
+        navigateur a eu le temps d'afficher l'image complète avant de détruire la page.
       */
       staticLayer.style.transition = 'none';
       staticLayer.style.opacity = '1';
@@ -579,8 +593,8 @@
 
     function releaseEnterStaticLayer() {
       /*
-        La couche CSS bleue reste au-dessus jusqu'à ce que le canvas ait peint
-        un écran bleu complet. On la retire ensuite sans fondu : le fondu
+        La couche CSS image reste au-dessus jusqu'à ce que le canvas ait peint
+        l'image complète. On la retire ensuite sans fondu : le fondu
         entre deux calques presque identiques créait un flash/soubresaut
         au milieu de l'animation sur certains navigateurs.
       */
