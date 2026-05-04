@@ -1167,82 +1167,88 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 
-/* V27 — Ambiance audio optionnelle Vital Protect */
+/* V29 — Audio dans la barre de menu, lancement fiable au clic */
 window.addEventListener('DOMContentLoaded', () => {
   const STORAGE_KEY = 'vpl-audio-enabled';
-  const VOLUME = 0.10;
-  const AUDIO_SRC = '/Safety Circuit.mp3';
+  const VOLUME = 0.12;
+  const AUDIO_SRC = '/safety-circuit.mp3';
 
-  if (document.querySelector('.vpl-audio-toggle')) return;
+  const nav = document.querySelector('.vpl-nav');
+  if (!nav) return;
+
+  document.querySelectorAll('.vpl-audio-toggle').forEach((oldButton) => oldButton.remove());
+  document.querySelectorAll('audio.vpl-audio-player').forEach((oldAudio) => oldAudio.remove());
 
   const audio = document.createElement('audio');
   audio.className = 'vpl-audio-player';
-  audio.src = AUDIO_SRC;
   audio.loop = true;
-  audio.preload = 'none';
+  audio.preload = 'auto';
   audio.volume = VOLUME;
-  audio.setAttribute('aria-hidden', 'true');
+  audio.setAttribute('playsinline', '');
+  audio.innerHTML = '<source src="' + AUDIO_SRC + '" type="audio/mpeg">';
+  document.body.appendChild(audio);
 
   const button = document.createElement('button');
   button.type = 'button';
-  button.className = 'vpl-audio-toggle';
-  button.setAttribute('aria-label', 'Activer l’ambiance sonore');
+  button.className = 'vpl-audio-toggle vpl-audio-toggle--nav';
+  button.setAttribute('aria-label', 'Activer la musique');
   button.setAttribute('aria-pressed', 'false');
   button.innerHTML = '<span class="vpl-audio-toggle__icon">♪</span><span class="vpl-audio-toggle__text">Son</span>';
 
-  document.body.appendChild(audio);
-  document.body.appendChild(button);
+  const burger = nav.querySelector('.vpl-nav-burger');
+  if (burger) {
+    nav.insertBefore(button, burger);
+  } else {
+    nav.appendChild(button);
+  }
 
   let enabled = false;
 
   const setVisualState = (isEnabled) => {
     button.classList.toggle('is-active', isEnabled);
     button.setAttribute('aria-pressed', isEnabled ? 'true' : 'false');
-    button.setAttribute('aria-label', isEnabled ? 'Couper l’ambiance sonore' : 'Activer l’ambiance sonore');
-    button.querySelector('.vpl-audio-toggle__text').textContent = isEnabled ? 'Pause' : 'Son';
+    button.setAttribute('aria-label', isEnabled ? 'Couper la musique' : 'Activer la musique');
+    const label = button.querySelector('.vpl-audio-toggle__text');
+    if (label) label.textContent = isEnabled ? 'Pause' : 'Son';
   };
 
-  const tryPlay = () => {
+  const playAudio = async () => {
     audio.volume = VOLUME;
-    const promise = audio.play();
-    if (promise && typeof promise.catch === 'function') {
-      promise.catch(() => {
-        enabled = false;
-        setVisualState(false);
-        try { sessionStorage.setItem(STORAGE_KEY, '0'); } catch (_) {}
-      });
+    try {
+      if (!audio.currentSrc) audio.load();
+      await audio.play();
+      enabled = true;
+      setVisualState(true);
+      try { sessionStorage.setItem(STORAGE_KEY, '1'); } catch (_) {}
+    } catch (error) {
+      enabled = false;
+      setVisualState(false);
+      try { sessionStorage.setItem(STORAGE_KEY, '0'); } catch (_) {}
+      console.warn('Vital Protect audio: lecture impossible', error);
     }
   };
 
-  const enableAudio = () => {
-    enabled = true;
-    setVisualState(true);
-    try { sessionStorage.setItem(STORAGE_KEY, '1'); } catch (_) {}
-    tryPlay();
-  };
-
-  const disableAudio = () => {
-    enabled = false;
+  const pauseAudio = () => {
     audio.pause();
+    enabled = false;
     setVisualState(false);
     try { sessionStorage.setItem(STORAGE_KEY, '0'); } catch (_) {}
   };
 
-  button.addEventListener('click', () => {
+  button.addEventListener('click', (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+
     if (enabled && !audio.paused) {
-      disableAudio();
+      pauseAudio();
     } else {
-      enableAudio();
+      playAudio();
     }
   });
 
   try {
     if (sessionStorage.getItem(STORAGE_KEY) === '1') {
-      enabled = true;
       setVisualState(true);
-      // Certains navigateurs bloquent la reprise après changement de page.
-      // Dans ce cas, le bouton reste visible et l’utilisateur peut relancer en un clic.
-      tryPlay();
     }
   } catch (_) {}
 });
