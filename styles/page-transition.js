@@ -14,7 +14,8 @@
   var EXIT_BACKDROP = COLOR;
   var ENTER_VEIL_OPACITY = 0;
   var SOLID_BLUE_ONLY = false;
-  var SPLASH_IMAGE = 'transition-screen.png';
+  var SPLASH_IMAGE_DESKTOP = 'transition-screen.png';
+  var SPLASH_IMAGE_MOBILE = 'transition-screen-mobile.jpg';
   var MOBILE_IMAGE_QUERY = '(max-width: 768px), (pointer: coarse) and (orientation: portrait)';
   var TILE_SIZE = 11;
   var HOLD_DURATION = 240;
@@ -35,17 +36,26 @@
 
   var splashImage = null;
   var splashImageReady = false;
+  var splashImageUrl = '';
 
-  function getSplashUrl() {
-    return new URL(SPLASH_IMAGE, window.location.href).href;
-  }
-
-  function shouldContainSplashImage() {
+  function shouldUseMobileSplashImage() {
     try {
       return window.matchMedia && window.matchMedia(MOBILE_IMAGE_QUERY).matches;
     } catch (_) {
       return Math.min(window.innerWidth || 0, window.innerHeight || 0) <= 768;
     }
+  }
+
+  function getSplashName() {
+    return shouldUseMobileSplashImage() ? SPLASH_IMAGE_MOBILE : SPLASH_IMAGE_DESKTOP;
+  }
+
+  function getSplashUrl() {
+    return new URL(getSplashName(), window.location.href).href;
+  }
+
+  function shouldContainSplashImage() {
+    return false;
   }
 
   function ensureSplashImage() {
@@ -54,12 +64,15 @@
       return null;
     }
 
-    if (splashImage) return splashImage;
+    var desiredUrl = getSplashUrl();
+    if (splashImage && splashImageUrl === desiredUrl) return splashImage;
+    splashImageReady = false;
+    splashImageUrl = desiredUrl;
     splashImage = new Image();
     splashImage.decoding = 'async';
     splashImage.onload = function () { splashImageReady = true; };
     splashImage.onerror = function () { splashImageReady = false; };
-    splashImage.src = getSplashUrl();
+    splashImage.src = splashImageUrl;
     if (splashImage.complete && splashImage.naturalWidth > 0) splashImageReady = true;
     return splashImage;
   }
@@ -135,7 +148,7 @@
     var style = document.createElement('style');
     style.id = 'vpl-page-transition-style';
     style.textContent = [
-      ':root{--vpl-transition-solid:' + COLOR + ';--vpl-transition-text:#fff;--vpl-transition-image:url("' + getSplashUrl() + '");--vpl-transition-bg-size:cover}',
+      ':root{--vpl-transition-solid:' + COLOR + ';--vpl-transition-text:#fff;--vpl-transition-image:url("' + new URL(SPLASH_IMAGE_DESKTOP, window.location.href).href + '");--vpl-transition-mobile-image:url("' + new URL(SPLASH_IMAGE_MOBILE, window.location.href).href + '");--vpl-transition-bg-size:cover}',
       'html.vpl-route-preload-transition,html.vpl-route-preload-transition body{background:' + COLOR + '!important}',
       'html.vpl-route-preload-transition::before{content:"";position:fixed;inset:0;z-index:2147482998;pointer-events:none;background-color:' + COLOR + ';background-image:var(--vpl-transition-image);background-position:center;background-size:var(--vpl-transition-bg-size);background-repeat:no-repeat;opacity:1;transform:translateZ(0);backface-visibility:hidden}',
       'html.vpl-route-preload-transition.vpl-route-preload-releasing::before{animation:vplBlockPreloadOut .24s ease both}',
@@ -146,7 +159,7 @@
       '.vpl-page-transition__veil{position:absolute;inset:0;z-index:0;background-color:' + COLOR + ';opacity:0;transform:translateZ(0);backface-visibility:hidden;will-change:opacity}',
       '.vpl-page-transition__canvas{position:absolute;inset:0;width:100%;height:100%;z-index:1;display:block;transform:translateZ(0);backface-visibility:hidden}',
       '.vpl-page-transition__static{position:absolute;inset:0;z-index:2;background-color:' + COLOR + ';background-image:var(--vpl-transition-image);background-position:center;background-size:var(--vpl-transition-bg-size);background-repeat:no-repeat;opacity:0;transform:translateZ(0);backface-visibility:hidden;will-change:opacity;transition:none}',
-      '@media(max-width:768px),(pointer:coarse) and (orientation:portrait){:root{--vpl-transition-bg-size:contain}}',
+      '@media(max-width:768px),(pointer:coarse) and (orientation:portrait){:root{--vpl-transition-image:var(--vpl-transition-mobile-image);--vpl-transition-bg-size:cover}}',
       '@keyframes vplBlockPreloadOut{from{opacity:1}to{opacity:0}}',
       '@media(prefers-reduced-motion:reduce){.vpl-page-transition,html.vpl-route-preload-transition::before{display:none!important}}'
     ].join('\n');
