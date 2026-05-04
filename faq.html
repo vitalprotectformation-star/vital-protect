@@ -15,11 +15,14 @@
     })();
   </script>
   <style>
+    html{--vpl-transition-image:url("transition-screen.png");--vpl-transition-bg-size:cover}
     html.vpl-route-preload-transition,html.vpl-route-preload-transition body{background:#2f6f9f!important}
-    html.vpl-route-preload-transition::before{content:"";position:fixed;inset:0;z-index:2147482998;pointer-events:none;background:#2f6f9f url("transition-screen.png") center/cover no-repeat;opacity:1}
+    html.vpl-route-preload-transition::before{content:"";position:fixed;inset:0;z-index:2147482998;pointer-events:none;background-color:#2f6f9f;background-image:var(--vpl-transition-image);background-position:center;background-size:var(--vpl-transition-bg-size);background-repeat:no-repeat;opacity:1}
+    @media (max-width: 768px), (pointer: coarse) and (orientation: portrait){html{--vpl-transition-image:url("transition-screen-mobile.jpg");--vpl-transition-bg-size:cover}}
   </style>
-  <link rel="preload" as="image" href="transition-screen.png" />
-  <script src="page-transition.js"></script>
+  <link rel="preload" as="image" href="transition-screen.png" media="(min-width: 769px)" />
+  <link rel="preload" as="image" href="transition-screen-mobile.jpg" media="(max-width: 768px), (pointer: coarse) and (orientation: portrait)" />
+  <script src="/page-transition.js"></script>
   <script>
     if (!window.VitalPageTransition) {
       document.write('<script src="page-transition.js"><\/script>');
@@ -33,11 +36,11 @@
     content="Questions fréquentes sur Vital Protect : le standard, les stages, les entreprises, le parcours formateur, la réservation et le cadre de transmission."
   />
 
-  <link rel="icon" href="logo.png" type="image/png" />
-  <link rel="stylesheet" href="styles/tokens.css" />
-  <link rel="stylesheet" href="styles/base.css" />
-  <link rel="stylesheet" href="styles/components.css" />
-  <link rel="stylesheet" href="styles/lusion-level.css" />
+  <link rel="icon" href="/logo.png" type="image/png" />
+  <link rel="stylesheet" href="/styles/tokens.css" />
+  <link rel="stylesheet" href="/styles/base.css" />
+  <link rel="stylesheet" href="/styles/components.css" />
+  <link rel="stylesheet" href="/styles/lusion-level.css" />
 </head>
 <body class="vpl-inner-page">
   <canvas class="vpl-canvas" aria-hidden="true"></canvas>
@@ -52,8 +55,8 @@
           <stop offset="100%" stop-color="#0b3a6f" stop-opacity="0.92"></stop>
         </linearGradient>
       </defs>
-      <path class="vpl-ribbon-base" pathLength="1" d="M920 -90 C970 82 840 115 815 245 C792 355 910 365 885 470 C858 582 660 540 700 395 C724 306 846 314 838 398 C832 466 744 464 752 398 C758 348 820 360 813 405 C807 447 760 465 718 505 C640 580 655 700 535 755 C405 815 285 724 318 600 C350 480 535 500 558 615 C579 720 432 755 405 662 C388 600 460 560 505 600 C550 640 500 705 438 730 C335 772 232 878 280 1015 C338 1182 575 1085 620 1238 C657 1362 507 1430 412 1340 C325 1258 420 1128 542 1195 C628 1243 590 1358 502 1345 C438 1335 446 1264 502 1275 C562 1286 545 1370 610 1440 C675 1510 815 1500 745 1640 C705 1720 600 1740 430 1750"></path>
-      <path class="vpl-ribbon-progress" pathLength="1" d="M920 -90 C970 82 840 115 815 245 C792 355 910 365 885 470 C858 582 660 540 700 395 C724 306 846 314 838 398 C832 466 744 464 752 398 C758 348 820 360 813 405 C807 447 760 465 718 505 C640 580 655 700 535 755 C405 815 285 724 318 600 C350 480 535 500 558 615 C579 720 432 755 405 662 C388 600 460 560 505 600 C550 640 500 705 438 730 C335 772 232 878 280 1015 C338 1182 575 1085 620 1238 C657 1362 507 1430 412 1340 C325 1258 420 1128 542 1195 C628 1243 590 1358 502 1345 C438 1335 446 1264 502 1275 C562 1286 545 1370 610 1440 C675 1510 815 1500 745 1640 C705 1720 600 1740 430 1750"></path>
+      <path class="vpl-ribbon-base" pathLength="1" d="M920 -80 C980 130 700 120 760 330 C820 520 990 560 860 760 C700 1010 240 930 300 1180 C360 1420 760 1350 680 1580 C640 1680 560 1710 430 1750"></path>
+      <path class="vpl-ribbon-progress" pathLength="1" d="M920 -80 C980 130 700 120 760 330 C820 520 990 560 860 760 C700 1010 240 930 300 1180 C360 1420 760 1350 680 1580 C640 1680 560 1710 430 1750"></path>
       <circle class="vpl-ribbon-dot" cx="920" cy="-80" r="18"></circle>
     </svg>
   </div>
@@ -61,7 +64,7 @@
 
   <header class="vpl-nav">
       <a href="/index.html" class="vpl-brand" aria-label="Accueil Vital Protect">
-        <img src="logo.png" alt="Vital Protect" />
+        <img src="/logo.png" alt="Vital Protect" />
         <div>
           <b>VITAL PROTECT</b>
           <span>Standard sécurité personnelle</span>
@@ -95,7 +98,7 @@
             </div>
           </div>
           <div class="vpl-inner-visual">
-            <img src="formatrice-briefe-groupe-assis.png" alt="Lever les freins" />
+            <img src="/formatrice-briefe-groupe-assis.png" alt="Lever les freins" />
             <div class="vpl-inner-stat">
               <strong>Lever les freins</strong>
               <span>Niveau, sécurité, âge, contact, réservation et cadre pédagogique.</span>

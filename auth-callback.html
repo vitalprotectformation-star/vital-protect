@@ -15,10 +15,13 @@
     })();
   </script>
   <style>
+    html{--vpl-transition-image:url("transition-screen.png");--vpl-transition-bg-size:cover}
     html.vpl-route-preload-transition,html.vpl-route-preload-transition body{background:#2f6f9f!important}
-    html.vpl-route-preload-transition::before{content:"";position:fixed;inset:0;z-index:2147482998;pointer-events:none;background:#2f6f9f url("transition-screen.png") center/cover no-repeat;opacity:1}
+    html.vpl-route-preload-transition::before{content:"";position:fixed;inset:0;z-index:2147482998;pointer-events:none;background-color:#2f6f9f;background-image:var(--vpl-transition-image);background-position:center;background-size:var(--vpl-transition-bg-size);background-repeat:no-repeat;opacity:1}
+    @media (max-width: 768px), (pointer: coarse) and (orientation: portrait){html{--vpl-transition-image:url("transition-screen-mobile.jpg");--vpl-transition-bg-size:cover}}
   </style>
-  <link rel="preload" as="image" href="transition-screen.png" />
+  <link rel="preload" as="image" href="transition-screen.png" media="(min-width: 769px)" />
+  <link rel="preload" as="image" href="transition-screen-mobile.jpg" media="(max-width: 768px), (pointer: coarse) and (orientation: portrait)" />
   <script src="/page-transition.js"></script>
   <script>
     if (!window.VitalPageTransition) {
