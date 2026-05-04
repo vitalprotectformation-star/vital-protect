@@ -1165,3 +1165,84 @@ window.addEventListener('DOMContentLoaded', () => {
   });
 });
 
+
+/* V27 — Ambiance audio optionnelle Vital Protect */
+window.addEventListener('DOMContentLoaded', () => {
+  const STORAGE_KEY = 'vpl-audio-enabled';
+  const VOLUME = 0.10;
+  const AUDIO_SRC = '/Safety Circuit.mp3';
+
+  if (document.querySelector('.vpl-audio-toggle')) return;
+
+  const audio = document.createElement('audio');
+  audio.className = 'vpl-audio-player';
+  audio.src = AUDIO_SRC;
+  audio.loop = true;
+  audio.preload = 'none';
+  audio.volume = VOLUME;
+  audio.setAttribute('aria-hidden', 'true');
+
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = 'vpl-audio-toggle';
+  button.setAttribute('aria-label', 'Activer l’ambiance sonore');
+  button.setAttribute('aria-pressed', 'false');
+  button.innerHTML = '<span class="vpl-audio-toggle__icon">♪</span><span class="vpl-audio-toggle__text">Ambiance</span>';
+
+  document.body.appendChild(audio);
+  document.body.appendChild(button);
+
+  let enabled = false;
+
+  const setVisualState = (isEnabled) => {
+    button.classList.toggle('is-active', isEnabled);
+    button.setAttribute('aria-pressed', isEnabled ? 'true' : 'false');
+    button.setAttribute('aria-label', isEnabled ? 'Couper l’ambiance sonore' : 'Activer l’ambiance sonore');
+    button.querySelector('.vpl-audio-toggle__text').textContent = isEnabled ? 'Pause' : 'Ambiance';
+  };
+
+  const tryPlay = () => {
+    audio.volume = VOLUME;
+    const promise = audio.play();
+    if (promise && typeof promise.catch === 'function') {
+      promise.catch(() => {
+        enabled = false;
+        setVisualState(false);
+        try { sessionStorage.setItem(STORAGE_KEY, '0'); } catch (_) {}
+      });
+    }
+  };
+
+  const enableAudio = () => {
+    enabled = true;
+    setVisualState(true);
+    try { sessionStorage.setItem(STORAGE_KEY, '1'); } catch (_) {}
+    tryPlay();
+  };
+
+  const disableAudio = () => {
+    enabled = false;
+    audio.pause();
+    setVisualState(false);
+    try { sessionStorage.setItem(STORAGE_KEY, '0'); } catch (_) {}
+  };
+
+  button.addEventListener('click', () => {
+    if (enabled && !audio.paused) {
+      disableAudio();
+    } else {
+      enableAudio();
+    }
+  });
+
+  try {
+    if (sessionStorage.getItem(STORAGE_KEY) === '1') {
+      enabled = true;
+      setVisualState(true);
+      // Certains navigateurs bloquent la reprise après changement de page.
+      // Dans ce cas, le bouton reste visible et l’utilisateur peut relancer en un clic.
+      tryPlay();
+    }
+  } catch (_) {}
+});
+
