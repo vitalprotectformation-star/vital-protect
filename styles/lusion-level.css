@@ -8296,3 +8296,205 @@ body {
     padding: 46px 0 !important;
   }
 }
+
+
+/* =========================================================
+   Correctif intro mobile/desktop — composition propre VITAL / PROTECT
+   Objectif : éviter l'effet "deux images mal collées".
+   - VITAL est uniquement dans le panneau haut.
+   - PROTECT est uniquement dans le panneau bas.
+   - La ligne ECG passe dans l'espace entre les deux mots.
+   - La lueur est globale, pas dupliquée dans chaque moitié.
+   ========================================================= */
+
+.vp-intro {
+  background:
+    radial-gradient(circle at 50% 50%, rgba(93,231,255,.08), transparent 32%),
+    linear-gradient(140deg, var(--vp-bg) 0%, var(--vp-bg-2) 52%, var(--vp-bg) 100%);
+}
+
+.vp-brand-halo {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: min(720px, 86vw);
+  height: min(360px, 42vh);
+  transform: translate(-50%, -50%);
+  border-radius: 999px;
+  pointer-events: none;
+  z-index: 7;
+  opacity: .88;
+  background:
+    radial-gradient(ellipse at center,
+      rgba(93,231,255,.22) 0%,
+      rgba(93,231,255,.13) 32%,
+      rgba(93,231,255,.055) 54%,
+      transparent 74%);
+  box-shadow:
+    0 0 42px rgba(93,231,255,.13),
+    inset 0 0 24px rgba(93,231,255,.08);
+}
+
+.vp-brand-halo::after {
+  content: "";
+  position: absolute;
+  inset: 8%;
+  border-radius: inherit;
+  border: 1px solid rgba(93,231,255,.16);
+  box-shadow:
+    0 0 28px rgba(93,231,255,.12),
+    inset 0 0 22px rgba(93,231,255,.08);
+}
+
+.vp-content {
+  justify-content: center;
+  pointer-events: none;
+}
+
+.vp-content-top {
+  top: 0;
+  bottom: auto;
+  height: 50vh;
+  align-items: flex-end;
+}
+
+.vp-content-bottom {
+  top: 50vh;
+  bottom: auto;
+  height: 50vh;
+  align-items: flex-start;
+}
+
+.vp-content-box,
+.vp-content-box-top,
+.vp-content-box-bottom {
+  width: min(1100px, 94vw) !important;
+  padding-left: 18px !important;
+  padding-right: 18px !important;
+  transform: none !important;
+  z-index: 12;
+}
+
+.vp-content-box::before,
+.vp-content-box::after {
+  display: none !important;
+}
+
+.vp-content-box-top {
+  padding-top: 0 !important;
+  padding-bottom: clamp(34px, 6.2vh, 72px) !important;
+}
+
+.vp-content-box-bottom {
+  padding-top: clamp(40px, 6.8vh, 78px) !important;
+  padding-bottom: 0 !important;
+}
+
+.vp-title-stack {
+  gap: 0 !important;
+}
+
+.vp-title {
+  z-index: 12;
+  line-height: .88;
+  letter-spacing: .115em;
+}
+
+.vp-title-top,
+.vp-title-bottom,
+.vp-title.is-beating {
+  transform: none !important;
+}
+
+.vp-title.is-beating {
+  filter: brightness(1.08) drop-shadow(0 0 8px rgba(93,231,255,.34));
+}
+
+.vp-subtitle {
+  margin-top: clamp(18px, 3.2vh, 32px) !important;
+  z-index: 12;
+}
+
+.vp-ecg-zone {
+  z-index: 10;
+}
+
+.vp-ecg-line {
+  stroke-width: 4.5;
+}
+
+.vp-intro.vp-open .vp-brand-halo {
+  opacity: 0;
+  transition: opacity .32s ease;
+}
+
+@media (max-width: 480px) {
+  .vp-brand-halo {
+    width: min(390px, 94vw) !important;
+    height: 248px !important;
+    opacity: .82 !important;
+  }
+
+  .vp-brand-halo::after {
+    inset: 9% 5% !important;
+  }
+
+  .vp-content-box,
+  .vp-content-box-top,
+  .vp-content-box-bottom {
+    width: 100vw !important;
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+    transform: none !important;
+  }
+
+  .vp-content-box-top {
+    padding-bottom: 38px !important;
+  }
+
+  .vp-content-box-bottom {
+    padding-top: 46px !important;
+  }
+
+  .vp-title {
+    font-size: clamp(2.55rem, 14.4vw, 4rem) !important;
+    line-height: .86 !important;
+    letter-spacing: .07em !important;
+    text-shadow:
+      0 0 9px rgba(255,255,255,.94),
+      0 0 24px rgba(93,231,255,.60),
+      0 0 52px rgba(93,231,255,.28) !important;
+  }
+
+  .vp-subtitle {
+    margin-top: 20px !important;
+    font-size: clamp(.68rem, 3.25vw, .82rem) !important;
+    letter-spacing: .15em !important;
+    white-space: nowrap;
+  }
+
+  .vp-ecg-zone,
+  .vp-ecg-svg {
+    height: 176px !important;
+  }
+}
+
+@media (max-width: 380px) {
+  .vp-title {
+    font-size: clamp(2.35rem, 13.2vw, 3.35rem) !important;
+    letter-spacing: .055em !important;
+  }
+
+  .vp-content-box-top {
+    padding-bottom: 34px !important;
+  }
+
+  .vp-content-box-bottom {
+    padding-top: 42px !important;
+  }
+
+  .vp-subtitle {
+    font-size: .66rem !important;
+    letter-spacing: .12em !important;
+  }
+}
