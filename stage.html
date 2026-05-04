@@ -32,6 +32,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Fiche stage — Vital Protect</title>
 
+  <link rel="canonical" href="https://vital-protect.fr/stage.html" />
   <link rel="icon" href="/logo.png" type="image/png" />
   <link rel="stylesheet" href="/styles/tokens.css" />
   <link rel="stylesheet" href="/styles/base.css" />
@@ -119,7 +120,7 @@
             <div class="vpl-section-head">
               <span class="vpl-section-kicker">Expérience participant</span>
               <h2 class="vpl-section-title">Une réservation plus lisible.</h2>
-              <p class="vpl-section-copy">La fiche stage doit rendre le choix simple : où, quand, avec qui, combien, et dans quel cadre.</p>
+              <p class="vpl-section-copy">Toutes les informations utiles sont regroupées pour choisir sereinement : lieu, horaires, durée, prix, places restantes et cadre pédagogique.</p>
             </div>
 
             <div class="vpl-card-grid">
@@ -245,7 +246,7 @@
 
             <div class="selected-stage-box">
               <span class="selected-stage-label">Stage sélectionné</span>
-              <div class="selected-stage-value" id="selectedStageValue">Chargement…</div>
+              <div class="selected-stage-value" id="selectedStageValue">Informations de session en cours de vérification…</div>
             </div>
 
             <div class="booking-total" id="bookingTotal">Total : —</div>
@@ -298,6 +299,9 @@
               </div>
 
               <button class="btn btn-dark" type="submit">Procéder au paiement</button>
+              <p class="form-rgpd-note" style="margin:12px 0 0; color: var(--vp-text-soft); font-size:.86rem; line-height:1.55;">
+                Les informations transmises via ce formulaire sont utilisées uniquement pour répondre à votre demande. Vous pouvez exercer vos droits d’accès, de rectification ou de suppression en écrivant à vitalprotectformation@gmail.com. Voir notre politique de confidentialité.
+              </p>
             </form>
           </div>
         </div>
@@ -362,7 +366,7 @@
             <div class="vpl-section-head vpl-sticky">
               <span class="vpl-section-kicker">Déroulé</span>
               <h2 class="vpl-section-title">Comprendre avant d’agir.</h2>
-              <p class="vpl-section-copy">Un stage doit être lisible : contexte, démonstration, mise en pratique, retour au calme.</p>
+              <p class="vpl-section-copy">Chaque stage suit une progression lisible : contexte, démonstration, mise en pratique, retour au calme.</p>
             </div>
             <div class="vpl-step-list">
               <article class="vpl-step"><b>01</b><div><h3>Briefing</h3><p>Objectifs, règles de sécurité et cadre de participation.</p></div></article>
@@ -463,6 +467,30 @@
       bookingTotal.textContent = `Total : ${formatPrice(Number(stage.price || 0) * places)}`;
     }
 
+    function showNoSessionState(message = "Aucune session ouverte actuellement — laissez votre email pour être prévenu.") {
+      heroTitle.textContent = "Aucune session ouverte actuellement";
+      heroDescription.textContent = "Nous publierons les prochaines dates dès qu’une session sera confirmée.";
+      selectedStageValue.textContent = message;
+      bookingTotal.textContent = "Total : —";
+      metaCity.textContent = "—";
+      metaDate.textContent = "Date à venir";
+      metaPrice.textContent = "—";
+      metaPlaces.textContent = "—";
+      metaRegion.textContent = "—";
+      metaDepartment.textContent = "—";
+      practicalAddress.textContent = "Adresse communiquée avec la session";
+      practicalTime.textContent = "Horaires à venir";
+      practicalDuration.textContent = "Durée précisée avec la session";
+      practicalType.textContent = "Stage Vital Protect";
+      if (cityDisplay) cityDisplay.value = "";
+      if (bookingForm) {
+        bookingForm.querySelectorAll("input, select, textarea, button").forEach((field) => {
+          field.disabled = true;
+        });
+      }
+      showBookingStatus(message, "info");
+    }
+
     function applyStageToPage() {
       if (!stage) return;
 
@@ -503,8 +531,7 @@
 
     async function loadStage() {
       if (!stageId) {
-        heroTitle.textContent = "Stage introuvable";
-        heroDescription.textContent = "Aucun identifiant de stage n’a été fourni dans l’URL.";
+        showNoSessionState();
         return;
       }
 
@@ -517,8 +544,7 @@
 
       if (error || !data) {
         console.error("Erreur chargement stage:", error);
-        heroTitle.textContent = "Stage introuvable";
-        heroDescription.textContent = "Impossible de charger les informations de ce stage.";
+        showNoSessionState();
         return;
       }
 
