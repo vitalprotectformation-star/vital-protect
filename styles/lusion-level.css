@@ -8636,3 +8636,128 @@ body .vpl-nav .vpl-brand span {
     font-size: .9rem !important;
   }
 }
+
+
+/* =========================================================
+   V26 — Alvéoles mobile premium
+   - retournement plus cinématique
+   - effet plus premium, une par une
+   ========================================================= */
+@media (max-width: 760px) {
+  .vpl-honeycomb-section {
+    background:
+      radial-gradient(circle at 20% 12%, rgba(72,156,224,.10), transparent 30%),
+      radial-gradient(circle at 80% 10%, rgba(255,255,255,.65), transparent 22%),
+      linear-gradient(180deg, #f8fbff 0%, #edf4fb 100%) !important;
+  }
+
+  .vpl-honeycomb-grid {
+    perspective: 1400px !important;
+    gap: 12px 12px !important;
+  }
+
+  .vpl-hex,
+  .vpl-hex:nth-child(2n) {
+    height: 108px !important;
+    min-height: 108px !important;
+    transform-origin: 50% 50% !important;
+    transform: rotateY(180deg) rotateZ(-1.4deg) scale(.92) !important;
+    background:
+      radial-gradient(circle at 26% 18%, rgba(255,255,255,.18), rgba(255,255,255,0) 28%),
+      linear-gradient(145deg, rgba(188,204,220,.95), rgba(164,184,203,.96) 56%, rgba(138,161,183,.98)) !important;
+    border-color: rgba(168,194,216,.92) !important;
+    box-shadow:
+      0 12px 24px rgba(17,33,51,.10),
+      inset 0 1px 0 rgba(255,255,255,.32),
+      inset 0 -18px 28px rgba(65,95,124,.10) !important;
+    transition:
+      transform .85s cubic-bezier(.16,1,.3,1),
+      box-shadow .4s ease,
+      filter .35s ease,
+      background .35s ease !important;
+    will-change: transform, filter !important;
+  }
+
+  .vpl-hex:nth-child(2n) {
+    transform: translateY(18px) rotateY(180deg) rotateZ(1.4deg) scale(.92) !important;
+  }
+
+  .vpl-hex::before {
+    inset: 11px !important;
+    background:
+      linear-gradient(145deg, rgba(255,255,255,.22), rgba(255,255,255,0) 58%),
+      radial-gradient(circle at 50% 50%, rgba(255,255,255,.08), rgba(255,255,255,0) 72%) !important;
+    opacity: .95 !important;
+  }
+
+  .vpl-hex::after {
+    inset: 22px 24px !important;
+    border-color: rgba(255,255,255,.22) !important;
+    opacity: .42 !important;
+  }
+
+  .vpl-hex span {
+    opacity: 0 !important;
+    transform: translateZ(22px) translateY(4px) scale(.94) !important;
+    transition: opacity .28s ease .18s, transform .55s cubic-bezier(.16,1,.3,1) .12s !important;
+    font-size: .98rem !important;
+    letter-spacing: -.03em !important;
+  }
+
+  .vpl-hex.is-visible {
+    background:
+      radial-gradient(circle at 22% 16%, rgba(255,255,255,.96), rgba(255,255,255,0) 28%),
+      linear-gradient(145deg, rgba(255,255,255,.99), rgba(237,244,250,.98) 54%, rgba(196,218,236,.90)) !important;
+    box-shadow:
+      0 20px 38px rgba(12,24,40,.16),
+      0 0 0 1px rgba(255,255,255,.38) inset,
+      inset 0 1px 0 rgba(255,255,255,.90) !important;
+    filter: saturate(1.04) brightness(1.02) !important;
+  }
+
+  .vpl-hex.is-visible:nth-child(2n) {
+    transform: translateY(18px) rotateY(0deg) rotateZ(0deg) scale(1) !important;
+  }
+
+  .vpl-hex.is-visible:nth-child(2n+1) {
+    transform: rotateY(0deg) rotateZ(0deg) scale(1) !important;
+  }
+
+  .vpl-hex.is-visible span {
+    opacity: 1 !important;
+    transform: translateZ(28px) translateY(0) scale(1) !important;
+  }
+
+  .vpl-honeycomb-grid .vpl-hex:nth-child(1) { transition-delay: .02s !important; }
+  .vpl-honeycomb-grid .vpl-hex:nth-child(2) { transition-delay: .09s !important; }
+  .vpl-honeycomb-grid .vpl-hex:nth-child(3) { transition-delay: .16s !important; }
+  .vpl-honeycomb-grid .vpl-hex:nth-child(4) { transition-delay: .23s !important; }
+  .vpl-honeycomb-grid .vpl-hex:nth-child(5) { transition-delay: .30s !important; }
+  .vpl-honeycomb-grid .vpl-hex:nth-child(6) { transition-delay: .37s !important; }
+  .vpl-honeycomb-grid .vpl-hex:nth-child(7) { transition-delay: .44s !important; }
+  .vpl-honeycomb-grid .vpl-hex:nth-child(8) { transition-delay: .51s !important; }
+  .vpl-honeycomb-grid .vpl-hex:nth-child(9) { transition-delay: .58s !important; }
+  .vpl-honeycomb-grid .vpl-hex:nth-child(10) { transition-delay: .65s !important; }
+  .vpl-honeycomb-grid .vpl-hex:nth-child(11) { transition-delay: .72s !important; }
+  .vpl-honeycomb-grid .vpl-hex:nth-child(12) { transition-delay: .79s !important; }
+
+  .vpl-honeycomb-copy .vpl-sheen-card {
+    background:
+      radial-gradient(circle at 14% 10%, rgba(255,255,255,.96), rgba(255,255,255,0) 20%),
+      linear-gradient(180deg, rgba(255,255,255,.95), rgba(243,248,252,.92)) !important;
+    border: 1px solid rgba(255,255,255,.74) !important;
+    box-shadow: 0 22px 44px rgba(8,18,32,.10), inset 0 1px 0 rgba(255,255,255,.86) !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .vpl-hex,
+  .vpl-hex:nth-child(2n) {
+    height: 96px !important;
+    min-height: 96px !important;
+  }
+
+  .vpl-hex span {
+    font-size: .92rem !important;
+  }
+}
