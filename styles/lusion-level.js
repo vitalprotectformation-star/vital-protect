@@ -1060,3 +1060,80 @@ window.addEventListener('DOMContentLoaded', () => {
 })();
 
 /* Transition inter-pages : déplacée dans /page-transition.js pour l’appliquer à toutes les pages HTML du site. */
+
+
+/* V23 — burger menu mobile */
+window.addEventListener('DOMContentLoaded', () => {
+  const MOBILE_QUERY = '(max-width: 760px)';
+  const nav = document.querySelector('.vpl-nav');
+  const menu = nav ? nav.querySelector('.vpl-menu') : null;
+  if (!nav || !menu) return;
+
+  const cta = nav.querySelector('.vpl-nav-cta');
+  if (!menu.id) menu.id = 'vpl-mobile-menu';
+
+  let burger = nav.querySelector('.vpl-nav-burger');
+  if (!burger) {
+    burger = document.createElement('button');
+    burger.type = 'button';
+    burger.className = 'vpl-nav-burger';
+    burger.setAttribute('aria-label', 'Ouvrir le menu');
+    burger.setAttribute('aria-controls', menu.id);
+    burger.setAttribute('aria-expanded', 'false');
+    burger.innerHTML = '<span></span><span></span><span></span>';
+    nav.appendChild(burger);
+  }
+
+  if (cta && !menu.querySelector('.vpl-mobile-menu-cta')) {
+    const mobileCta = cta.cloneNode(true);
+    mobileCta.classList.add('vpl-mobile-menu-cta');
+    mobileCta.removeAttribute('style');
+    menu.appendChild(mobileCta);
+  }
+
+  let backdrop = document.querySelector('.vpl-mobile-menu-backdrop');
+  if (!backdrop) {
+    backdrop = document.createElement('button');
+    backdrop.type = 'button';
+    backdrop.className = 'vpl-mobile-menu-backdrop';
+    backdrop.setAttribute('aria-label', 'Fermer le menu');
+    backdrop.hidden = true;
+    document.body.appendChild(backdrop);
+  }
+
+  const isMobile = () => window.matchMedia(MOBILE_QUERY).matches;
+
+  function setOpen(open) {
+    const allow = isMobile() && open;
+    nav.classList.toggle('is-open', allow);
+    burger.classList.toggle('is-active', allow);
+    burger.setAttribute('aria-expanded', allow ? 'true' : 'false');
+    burger.setAttribute('aria-label', allow ? 'Fermer le menu' : 'Ouvrir le menu');
+    document.documentElement.classList.toggle('vpl-mobile-menu-open', allow);
+    if (allow) {
+      backdrop.hidden = false;
+      requestAnimationFrame(() => backdrop.classList.add('is-visible'));
+    } else {
+      backdrop.classList.remove('is-visible');
+      window.setTimeout(() => {
+        if (!document.documentElement.classList.contains('vpl-mobile-menu-open')) backdrop.hidden = true;
+      }, 220);
+    }
+  }
+
+  burger.addEventListener('click', () => setOpen(!nav.classList.contains('is-open')));
+  backdrop.addEventListener('click', () => setOpen(false));
+
+  menu.querySelectorAll('a').forEach((link) => {
+    link.addEventListener('click', () => setOpen(false));
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') setOpen(false);
+  });
+
+  window.addEventListener('resize', () => {
+    if (!isMobile()) setOpen(false);
+  });
+});
+
