@@ -15,6 +15,7 @@
   var ENTER_VEIL_OPACITY = 0;
   var SOLID_BLUE_ONLY = false;
   var SPLASH_IMAGE = 'transition-screen.png';
+  var MOBILE_IMAGE_QUERY = '(max-width: 768px), (pointer: coarse) and (orientation: portrait)';
   var TILE_SIZE = 11;
   var HOLD_DURATION = 240;
   var ENTER_STATIC_RELEASE_DELAY = 0;
@@ -37,6 +38,14 @@
 
   function getSplashUrl() {
     return new URL(SPLASH_IMAGE, window.location.href).href;
+  }
+
+  function shouldContainSplashImage() {
+    try {
+      return window.matchMedia && window.matchMedia(MOBILE_IMAGE_QUERY).matches;
+    } catch (_) {
+      return Math.min(window.innerWidth || 0, window.innerHeight || 0) <= 768;
+    }
   }
 
   function ensureSplashImage() {
@@ -126,9 +135,9 @@
     var style = document.createElement('style');
     style.id = 'vpl-page-transition-style';
     style.textContent = [
-      ':root{--vpl-transition-solid:' + COLOR + ';--vpl-transition-text:#fff;--vpl-transition-image:url("' + getSplashUrl() + '")}',
+      ':root{--vpl-transition-solid:' + COLOR + ';--vpl-transition-text:#fff;--vpl-transition-image:url("' + getSplashUrl() + '");--vpl-transition-bg-size:cover}',
       'html.vpl-route-preload-transition,html.vpl-route-preload-transition body{background:' + COLOR + '!important}',
-      'html.vpl-route-preload-transition::before{content:"";position:fixed;inset:0;z-index:2147482998;pointer-events:none;background-color:' + COLOR + ';background-image:var(--vpl-transition-image);background-position:center;background-size:cover;background-repeat:no-repeat;opacity:1;transform:translateZ(0);backface-visibility:hidden}',
+      'html.vpl-route-preload-transition::before{content:"";position:fixed;inset:0;z-index:2147482998;pointer-events:none;background-color:' + COLOR + ';background-image:var(--vpl-transition-image);background-position:center;background-size:var(--vpl-transition-bg-size);background-repeat:no-repeat;opacity:1;transform:translateZ(0);backface-visibility:hidden}',
       'html.vpl-route-preload-transition.vpl-route-preload-releasing::before{animation:vplBlockPreloadOut .24s ease both}',
       'html.vpl-route-transitioning{cursor:progress}',
       'html.vpl-route-transitioning,html.vpl-route-transitioning body{overflow:hidden!important}',
@@ -136,7 +145,8 @@
       '.vpl-page-transition.is-exiting{background:transparent!important}',
       '.vpl-page-transition__veil{position:absolute;inset:0;z-index:0;background-color:' + COLOR + ';opacity:0;transform:translateZ(0);backface-visibility:hidden;will-change:opacity}',
       '.vpl-page-transition__canvas{position:absolute;inset:0;width:100%;height:100%;z-index:1;display:block;transform:translateZ(0);backface-visibility:hidden}',
-      '.vpl-page-transition__static{position:absolute;inset:0;z-index:2;background-color:' + COLOR + ';background-image:var(--vpl-transition-image);background-position:center;background-size:cover;background-repeat:no-repeat;opacity:0;transform:translateZ(0);backface-visibility:hidden;will-change:opacity;transition:none}',
+      '.vpl-page-transition__static{position:absolute;inset:0;z-index:2;background-color:' + COLOR + ';background-image:var(--vpl-transition-image);background-position:center;background-size:var(--vpl-transition-bg-size);background-repeat:no-repeat;opacity:0;transform:translateZ(0);backface-visibility:hidden;will-change:opacity;transition:none}',
+      '@media(max-width:768px),(pointer:coarse) and (orientation:portrait){:root{--vpl-transition-bg-size:contain}}',
       '@keyframes vplBlockPreloadOut{from{opacity:1}to{opacity:0}}',
       '@media(prefers-reduced-motion:reduce){.vpl-page-transition,html.vpl-route-preload-transition::before{display:none!important}}'
     ].join('\n');
@@ -389,9 +399,12 @@
         return;
       }
 
+      textureCtx.fillStyle = color;
+      textureCtx.fillRect(0, 0, w, h);
+
       var iw = image.naturalWidth || image.width;
       var ih = image.naturalHeight || image.height;
-      var scale = Math.max(w / iw, h / ih);
+      var scale = shouldContainSplashImage() ? Math.min(w / iw, h / ih) : Math.max(w / iw, h / ih);
       var dw = iw * scale;
       var dh = ih * scale;
       var dx = (w - dw) / 2;

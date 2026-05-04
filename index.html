@@ -9,16 +9,14 @@
         var STORAGE_KEY = 'vpl-route-transition-next';
         var ORIGIN_KEY = 'vpl-route-transition-origin';
         var SEED_KEY = 'vpl-route-transition-seed';
-        var HOME_INTRO_KEY = 'vpl-home-initial-intro-played';
 
-        if (sessionStorage.getItem(STORAGE_KEY) !== '1' && sessionStorage.getItem(HOME_INTRO_KEY) !== '1') {
-          sessionStorage.setItem(HOME_INTRO_KEY, '1');
+        // Sur l'accueil, on utilise maintenant la même animation d'entrée
+        // que les autres pages, même lors d'une ouverture directe du site.
+        if (sessionStorage.getItem(STORAGE_KEY) !== '1') {
           sessionStorage.setItem(STORAGE_KEY, '1');
           sessionStorage.setItem(SEED_KEY, String(Math.floor((Date.now() + Math.random() * 100000) % 2147483647)));
           sessionStorage.setItem(ORIGIN_KEY, JSON.stringify({ x: 0.5, y: 0.5 }));
         }
-
-        if (sessionStorage.getItem(STORAGE_KEY) !== '1') return;
 
         var origin = JSON.parse(sessionStorage.getItem(ORIGIN_KEY) || '{}');
         if (Number.isFinite(origin.x)) root.style.setProperty('--vpl-transition-x', (Math.max(0, Math.min(1, origin.x)) * 100) + '%');
@@ -30,6 +28,7 @@
   <style>
     html.vpl-route-preload-transition,html.vpl-route-preload-transition body{background:#2f6f9f!important}
     html.vpl-route-preload-transition::before{content:"";position:fixed;inset:0;z-index:2147482998;pointer-events:none;background:#2f6f9f url("transition-screen.png") center/cover no-repeat;opacity:1}
+    @media (max-width: 768px), (pointer: coarse) and (orientation: portrait){html.vpl-route-preload-transition::before{background-size:contain}}
   </style>
   <link rel="preload" as="image" href="transition-screen.png" />
   <script src="/page-transition.js"></script>
