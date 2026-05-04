@@ -1187,7 +1187,7 @@ window.addEventListener('DOMContentLoaded', () => {
   button.className = 'vpl-audio-toggle';
   button.setAttribute('aria-label', 'Activer l’ambiance sonore');
   button.setAttribute('aria-pressed', 'false');
-  button.innerHTML = '<span class="vpl-audio-toggle__icon">♪</span><span class="vpl-audio-toggle__text">Ambiance</span>';
+  button.innerHTML = '<span class="vpl-audio-toggle__icon">♪</span><span class="vpl-audio-toggle__text">Son</span>';
 
   document.body.appendChild(audio);
   document.body.appendChild(button);
@@ -1198,7 +1198,7 @@ window.addEventListener('DOMContentLoaded', () => {
     button.classList.toggle('is-active', isEnabled);
     button.setAttribute('aria-pressed', isEnabled ? 'true' : 'false');
     button.setAttribute('aria-label', isEnabled ? 'Couper l’ambiance sonore' : 'Activer l’ambiance sonore');
-    button.querySelector('.vpl-audio-toggle__text').textContent = isEnabled ? 'Pause' : 'Ambiance';
+    button.querySelector('.vpl-audio-toggle__text').textContent = isEnabled ? 'Pause' : 'Son';
   };
 
   const tryPlay = () => {
