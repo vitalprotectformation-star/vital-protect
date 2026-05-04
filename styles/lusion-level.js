@@ -1121,7 +1121,11 @@ window.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  burger.addEventListener('click', () => setOpen(!nav.classList.contains('is-open')));
+  burger.addEventListener('click', (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    setOpen(!nav.classList.contains('is-open'));
+  });
   backdrop.addEventListener('click', () => setOpen(false));
 
   menu.querySelectorAll('a').forEach((link) => {

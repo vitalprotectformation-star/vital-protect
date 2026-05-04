@@ -8385,3 +8385,57 @@ body {
   }
 }
 
+/* V24 — correctif ouverture burger mobile : panneau non clippé */
+@media (max-width: 760px) {
+  .vpl-nav,
+  .vpl-nav.is-open {
+    overflow: visible !important;
+    max-height: none !important;
+    contain: none !important;
+  }
+
+  .vpl-nav .vpl-menu {
+    position: fixed !important;
+    top: 66px !important;
+    left: 10px !important;
+    right: 10px !important;
+    width: auto !important;
+    z-index: 2147482500 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 7px !important;
+    padding: 11px !important;
+    border-radius: 22px !important;
+    background: rgba(5,10,18,.94) !important;
+    border: 1px solid rgba(255,255,255,.13) !important;
+    box-shadow: 0 26px 70px rgba(0,0,0,.36), inset 0 1px 0 rgba(255,255,255,.08) !important;
+    backdrop-filter: blur(18px) saturate(1.2) !important;
+    -webkit-backdrop-filter: blur(18px) saturate(1.2) !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+    transform: translateY(-8px) scale(.985) !important;
+    transform-origin: top center !important;
+    transition: opacity .22s ease, transform .22s ease, visibility .22s ease !important;
+    max-height: calc(100dvh - 84px) !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  .vpl-nav.is-open .vpl-menu {
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+    transform: translateY(0) scale(1) !important;
+  }
+
+  .vpl-mobile-menu-backdrop {
+    z-index: 2147482400 !important;
+  }
+
+  .vpl-nav-burger {
+    z-index: 2147482600 !important;
+  }
+}
+
