@@ -88,7 +88,7 @@
           <div>
             <div class="vpl-eyebrow" id="heroType">Stage Vital Protect</div>
             <h1 class="vpl-inner-title"><span id="heroTitle">Réserver un stage Vital Protect.</span></h1>
-            <p class="vpl-inner-lead" id="heroDescription">Consultez les informations pratiques, vérifiez le cadre de sécurité et réservez une session animée par un formateur certifié.</p>
+            <p class="vpl-inner-lead" id="heroDescription">Consultez les informations pratiques, vérifiez le cadre de sécurité et réservez une session animée par un formateur habilité.</p>
             <div class="vpl-actions">
               <a class="vpl-button vpl-button-primary" href="/stage.html">Trouver un stage</a>
               <a class="vpl-button vpl-button-secondary" href="/contact.html">Nous contacter</a>
@@ -107,12 +107,22 @@
 
       <div class="vpl-marquee" aria-hidden="true">
         <div class="vpl-marquee-track">
-          <span>Date</span><span>Lieu</span><span>Durée</span><span>Formateur certifié</span><span>Réservation</span>
+          <span>Date</span><span>Lieu</span><span>Durée</span><span>Formateur habilité</span><span>Réservation vérifiée</span>
         </div>
         <div class="vpl-marquee-track">
-          <span>Date</span><span>Lieu</span><span>Durée</span><span>Formateur certifié</span><span>Réservation</span>
+          <span>Date</span><span>Lieu</span><span>Durée</span><span>Formateur habilité</span><span>Réservation vérifiée</span>
         </div>
       </div>
+
+      <section class="vpl-section" aria-label="Informations principales de la session">
+        <div class="vpl-container">
+          <div class="vpl-card-grid">
+            <article class="vpl-card"><div class="vpl-card-num">Ville</div><h3 id="metaCity">À confirmer</h3><p id="metaRegion">Région à confirmer</p></article>
+            <article class="vpl-card"><div class="vpl-card-num">Date</div><h3 id="metaDate">Date à venir</h3><p id="metaDepartment">Département à confirmer</p></article>
+            <article class="vpl-card"><div class="vpl-card-num">Prix</div><h3 id="metaPrice">À confirmer</h3><p><span id="metaPlaces">—</span> place(s) restante(s)</p></article>
+          </div>
+        </div>
+      </section>
 
       <div class="vpl-light vpl-internal-effects">
         <section class="vpl-section">
@@ -126,7 +136,7 @@
             <div class="vpl-card-grid">
               <article class="vpl-card"><div class="vpl-card-num">01</div><h3>Informations claires</h3><p>Ville, adresse, horaire, durée, niveau, âge minimum et accessibilité.</p></article>
               <article class="vpl-card"><div class="vpl-card-num">02</div><h3>Cadre sécurisé</h3><p>Règles de sécurité, aptitude physique, comportement attendu et limites du stage.</p></article>
-              <article class="vpl-card"><div class="vpl-card-num">03</div><h3>Confirmation</h3><p>Après paiement, le participant reçoit les consignes et les conditions d’annulation.</p></article>
+              <article class="vpl-card"><div class="vpl-card-num">03</div><h3>Confirmation</h3><p>Le paiement n’est proposé que si la session est complète : date, lieu, tarif, places et conditions.</p></article>
             </div>
           </div>
         </section>
@@ -236,7 +246,7 @@
           <span class="eyebrow">Réservation</span>
           <h2>Réserver votre place sur ce stage</h2>
           <p>
-            Complétez vos informations puis finalisez votre réservation avec paiement sécurisé.
+            Complétez vos informations uniquement lorsqu’une session complète est affichée. Le paiement est désactivé si une information essentielle manque.
           </p>
         </div>
 
@@ -246,14 +256,14 @@
 
             <div class="selected-stage-box">
               <span class="selected-stage-label">Stage sélectionné</span>
-              <div class="selected-stage-value" id="selectedStageValue">Informations de session en cours de vérification…</div>
+              <div class="selected-stage-value" id="selectedStageValue">Aucune session complète sélectionnée pour le moment.</div>
             </div>
 
-            <div class="booking-total" id="bookingTotal">Total : —</div>
+            <div class="booking-total" id="bookingTotal">Total : en attente d’une session complète</div>
             <div id="bookingStatus" class="booking-status"></div>
 
             <div class="bullet-list" style="margin-top: 20px;">
-              <div class="bullet-item"><strong>Paiement :</strong> sécurisé via Stripe.</div>
+              <div class="bullet-item"><strong>Paiement :</strong> proposé uniquement si la session est complète et publiée.</div>
               <div class="bullet-item"><strong>Réservation :</strong> votre place est enregistrée après validation du paiement.</div>
               <div class="bullet-item"><strong>Conseil :</strong> présentez-vous quelques minutes avant le début du stage.</div>
             </div>
@@ -298,7 +308,7 @@
                 </div>
               </div>
 
-              <button class="btn btn-dark" type="submit">Procéder au paiement</button>
+              <button class="btn btn-dark" type="submit" id="bookingSubmitButton" disabled>Réservation indisponible pour le moment</button>
               <p class="form-rgpd-note" style="margin:12px 0 0; color: var(--vp-text-soft); font-size:.86rem; line-height:1.55;">
                 Les informations transmises via ce formulaire sont utilisées uniquement pour répondre à votre demande. Vous pouvez exercer vos droits d’accès, de rectification ou de suppression en écrivant à vitalprotectformation@gmail.com. Voir notre politique de confidentialité.
               </p>
@@ -331,7 +341,7 @@
 
           <article class="faq-card">
             <h3>Comment se passe la réservation ?</h3>
-            <p>Vous complétez le formulaire, accédez au paiement sécurisé Stripe, puis recevez la confirmation du parcours de réservation.</p>
+            <p>Vous complétez le formulaire uniquement lorsqu’une session complète est publiée. Le paiement Stripe est alors proposé et vous recevez la confirmation.</p>
           </article>
 
           <article class="faq-card">
@@ -348,7 +358,7 @@
           <h2>Comprendre le stage avant de réserver</h2>
           <p>
             Cette fiche existe pour donner une vision claire du cadre, des objectifs et des informations pratiques,
-            avant l’inscription et le paiement.
+            avant toute inscription ou demande de paiement.
           </p>
 
           <div class="cta-actions">
@@ -384,7 +394,7 @@
         <strong>VITAL PROTECT</strong>
         <p>
           Une méthode structurée de sécurité personnelle fondée sur la prévention, l’évitement,
-          la réaction réaliste, la pédagogie progressive et la certification des formateurs.
+          la réaction réaliste, la pédagogie progressive et l’habilitation des formateurs.
         </p>
       </div>
 
@@ -409,123 +419,138 @@
     const params = new URLSearchParams(window.location.search);
     const stageId = params.get("id") || "";
 
-    const heroType = document.getElementById("heroType");
-    const heroTitle = document.getElementById("heroTitle");
-    const heroDescription = document.getElementById("heroDescription");
-
-    const metaCity = document.getElementById("metaCity");
-    const metaDate = document.getElementById("metaDate");
-    const metaPrice = document.getElementById("metaPrice");
-    const metaPlaces = document.getElementById("metaPlaces");
-    const metaRegion = document.getElementById("metaRegion");
-    const metaDepartment = document.getElementById("metaDepartment");
-
-    const practicalAddress = document.getElementById("practicalAddress");
-    const practicalTime = document.getElementById("practicalTime");
-    const practicalDuration = document.getElementById("practicalDuration");
-    const practicalType = document.getElementById("practicalType");
-
-    const audienceText = document.getElementById("audienceText");
-    const objectiveText = document.getElementById("objectiveText");
-
-    const selectedStageValue = document.getElementById("selectedStageValue");
-    const cityDisplay = document.getElementById("cityDisplay");
-    const bookingTotal = document.getElementById("bookingTotal");
-    const bookingStatus = document.getElementById("bookingStatus");
-    const placesInput = document.getElementById("places");
-    const bookingForm = document.getElementById("bookingForm");
+    const $ = (id) => document.getElementById(id);
+    const heroType = $("heroType");
+    const heroTitle = $("heroTitle");
+    const heroDescription = $("heroDescription");
+    const metaCity = $("metaCity");
+    const metaDate = $("metaDate");
+    const metaPrice = $("metaPrice");
+    const metaPlaces = $("metaPlaces");
+    const metaRegion = $("metaRegion");
+    const metaDepartment = $("metaDepartment");
+    const practicalAddress = $("practicalAddress");
+    const practicalTime = $("practicalTime");
+    const practicalDuration = $("practicalDuration");
+    const practicalType = $("practicalType");
+    const audienceText = $("audienceText");
+    const objectiveText = $("objectiveText");
+    const selectedStageValue = $("selectedStageValue");
+    const cityDisplay = $("cityDisplay");
+    const bookingTotal = $("bookingTotal");
+    const bookingStatus = $("bookingStatus");
+    const placesInput = $("places");
+    const bookingForm = $("bookingForm");
+    const bookingSubmitButton = $("bookingSubmitButton");
 
     let stage = null;
+    let bookingEnabled = false;
+
+    function setText(element, value) {
+      if (element) element.textContent = value;
+    }
 
     function formatPrice(price) {
-      return `${Number(price || 0).toFixed(0)} €`;
+      const amount = Number(price || 0);
+      if (!Number.isFinite(amount) || amount <= 0) return "Prix à confirmer";
+      return `${amount.toFixed(0)} €`;
     }
 
     function formatDate(dateString) {
       if (!dateString) return "Date non disponible";
       const date = new Date(dateString);
       if (Number.isNaN(date.getTime())) return "Date non disponible";
-      return date.toLocaleDateString("fr-FR", {
-        day: "2-digit",
-        month: "long",
-        year: "numeric"
-      });
+      return date.toLocaleDateString("fr-FR", { day: "2-digit", month: "long", year: "numeric" });
     }
 
     function showBookingStatus(message, type = "info") {
+      if (!bookingStatus) return;
       bookingStatus.className = `booking-status show ${type}`;
       bookingStatus.textContent = message;
     }
 
-    function updateBookingTotal() {
-      if (!stage) {
-        bookingTotal.textContent = "Total : —";
-        return;
-      }
-
-      const places = Math.max(1, Number(placesInput.value || 1));
-      bookingTotal.textContent = `Total : ${formatPrice(Number(stage.price || 0) * places)}`;
+    function hasCompleteSession(item) {
+      if (!item) return false;
+      const requiredText = [item.id, item.title, item.city, item.address, item.stage_date, item.start_time, item.duration, item.training_type];
+      const hasRequiredText = requiredText.every((value) => String(value || "").trim().length > 0);
+      const hasPrice = Number(item.price || 0) > 0;
+      const hasPlaces = Number(item.remaining_places || 0) > 0;
+      return hasRequiredText && hasPrice && hasPlaces;
     }
 
-    function showNoSessionState(message = "Aucune session ouverte actuellement — laissez votre email pour être prévenu.") {
-      heroTitle.textContent = "Aucune session ouverte actuellement";
-      heroDescription.textContent = "Nous publierons les prochaines dates dès qu’une session sera confirmée.";
-      selectedStageValue.textContent = message;
-      bookingTotal.textContent = "Total : —";
-      metaCity.textContent = "—";
-      metaDate.textContent = "Date à venir";
-      metaPrice.textContent = "—";
-      metaPlaces.textContent = "—";
-      metaRegion.textContent = "—";
-      metaDepartment.textContent = "—";
-      practicalAddress.textContent = "Adresse communiquée avec la session";
-      practicalTime.textContent = "Horaires à venir";
-      practicalDuration.textContent = "Durée précisée avec la session";
-      practicalType.textContent = "Stage Vital Protect";
-      if (cityDisplay) cityDisplay.value = "";
+    function setBookingEnabled(enabled, message = "") {
+      bookingEnabled = Boolean(enabled);
       if (bookingForm) {
-        bookingForm.querySelectorAll("input, select, textarea, button").forEach((field) => {
-          field.disabled = true;
+        bookingForm.querySelectorAll("input, select, textarea").forEach((field) => {
+          if (field.id === "cityDisplay") {
+            field.disabled = true;
+          } else {
+            field.disabled = !bookingEnabled;
+          }
         });
       }
-      showBookingStatus(message, "info");
+      if (bookingSubmitButton) {
+        bookingSubmitButton.disabled = !bookingEnabled;
+        bookingSubmitButton.textContent = bookingEnabled ? "Procéder au paiement" : "Réservation indisponible pour le moment";
+      }
+      if (message) showBookingStatus(message, bookingEnabled ? "success" : "info");
+    }
+
+    function updateBookingTotal() {
+      if (!stage || !hasCompleteSession(stage)) {
+        setText(bookingTotal, "Total : en attente d’une session complète");
+        return;
+      }
+      const places = Math.max(1, Number(placesInput?.value || 1));
+      setText(bookingTotal, `Total : ${formatPrice(Number(stage.price || 0) * places)}`);
+    }
+
+    function showNoSessionState(message = "Aucune session complète n’est ouverte actuellement. Revenez bientôt ou contactez l’équipe pour être prévenu.") {
+      stage = null;
+      setText(heroTitle, "Aucune session ouverte actuellement");
+      setText(heroDescription, "Les prochaines dates seront publiées dès qu’une session aura une date, un lieu, un tarif, des places et des conditions confirmés.");
+      setText(selectedStageValue, message);
+      setText(bookingTotal, "Total : en attente d’une session complète");
+      setText(metaCity, "À confirmer");
+      setText(metaDate, "Date à venir");
+      setText(metaPrice, "Prix à confirmer");
+      setText(metaPlaces, "—");
+      setText(metaRegion, "Région à confirmer");
+      setText(metaDepartment, "Département à confirmer");
+      setText(practicalAddress, "Adresse publiée avec la session");
+      setText(practicalTime, "Horaires publiés avec la session");
+      setText(practicalDuration, "Durée publiée avec la session");
+      setText(practicalType, "Stage Vital Protect");
+      if (cityDisplay) cityDisplay.value = "";
+      setBookingEnabled(false, message);
     }
 
     function applyStageToPage() {
       if (!stage) return;
-
       document.title = `${stage.title || "Stage"} — Vital Protect`;
+      setText(heroType, stage.training_type || "Stage Vital Protect");
+      setText(heroTitle, stage.title || "Stage Vital Protect");
+      setText(heroDescription, stage.description || "Ce stage s’inscrit dans la méthode Vital Protect : compréhension du risque, prévention de l’escalade et réponses simples adaptées à la vie réelle.");
+      setText(metaCity, stage.city || "À confirmer");
+      setText(metaDate, formatDate(stage.stage_date));
+      setText(metaPrice, formatPrice(stage.price));
+      setText(metaPlaces, String(stage.remaining_places ?? "—"));
+      setText(metaRegion, stage.region || "Région à confirmer");
+      setText(metaDepartment, stage.department || "Département à confirmer");
+      setText(practicalAddress, stage.address || "Adresse à confirmer");
+      setText(practicalTime, stage.start_time || "Horaire à confirmer");
+      setText(practicalDuration, stage.duration || "Durée à confirmer");
+      setText(practicalType, stage.training_type || "Stage Vital Protect");
+      setText(selectedStageValue, `${stage.title || "Stage"} — ${stage.city || "Ville à confirmer"} — ${formatDate(stage.stage_date)}`);
+      if (cityDisplay) cityDisplay.value = stage.city || "";
+      setText(audienceText, "Ce stage s’adresse aux personnes qui veulent développer des repères concrets de sécurité personnelle dans un cadre accessible, progressif et sérieux.");
+      setText(objectiveText, stage.description || "Ce stage s’inscrit dans la méthode Vital Protect : comprendre le risque, améliorer la lecture des situations, prévenir l’escalade et développer des réponses simples et réalistes.");
 
-      heroType.textContent = stage.training_type || "Stage Vital Protect";
-      heroTitle.textContent = stage.title || "Stage Vital Protect";
-      heroDescription.textContent =
-        stage.description ||
-        "Ce stage s’inscrit dans la méthode Vital Protect : compréhension du risque, prévention de l’escalade et réponses simples adaptées à la vie réelle.";
-
-      metaCity.textContent = stage.city || "—";
-      metaDate.textContent = formatDate(stage.stage_date);
-      metaPrice.textContent = formatPrice(stage.price);
-      metaPlaces.textContent = `${stage.remaining_places ?? 0}`;
-      metaRegion.textContent = stage.region || "—";
-      metaDepartment.textContent = stage.department || "—";
-
-      practicalAddress.textContent = stage.address || "Non précisée";
-      practicalTime.textContent = stage.start_time || "À confirmer";
-      practicalDuration.textContent = stage.duration || "À confirmer";
-      practicalType.textContent = stage.training_type || "Stage";
-
-      selectedStageValue.textContent =
-        `${stage.title || "Stage"} — ${stage.city || "Ville"} — ${formatDate(stage.stage_date)}`;
-
-      cityDisplay.value = stage.city || "";
-
-      audienceText.textContent =
-        "Ce stage s’adresse aux personnes qui veulent développer des repères concrets de sécurité personnelle dans un cadre accessible, progressif et sérieux.";
-
-      objectiveText.textContent =
-        stage.description ||
-        "Ce stage s’inscrit dans la méthode Vital Protect : comprendre le risque, améliorer la lecture des situations, prévenir l’escalade et développer des réponses simples et réalistes.";
-
+      if (!hasCompleteSession(stage)) {
+        setBookingEnabled(false, "Réservation désactivée : une ou plusieurs informations essentielles de la session sont à confirmer.");
+      } else {
+        setBookingEnabled(true, "Session complète : vous pouvez réserver votre place.");
+      }
       updateBookingTotal();
     }
 
@@ -534,79 +559,72 @@
         showNoSessionState();
         return;
       }
-
       const { data, error } = await supabase
         .from("stages")
         .select("*")
         .eq("id", stageId)
         .eq("status", "published")
         .maybeSingle();
-
       if (error || !data) {
         console.error("Erreur chargement stage:", error);
         showNoSessionState();
         return;
       }
-
       stage = data;
       applyStageToPage();
     }
 
-    bookingForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
-
-      if (!stage) {
-        showBookingStatus("Impossible de réserver ce stage pour le moment.", "error");
-        return;
-      }
-
-      const firstName = document.getElementById("firstName").value.trim();
-      const lastName = document.getElementById("lastName").value.trim();
-      const email = document.getElementById("email").value.trim();
-      const phone = document.getElementById("phone").value.trim();
-      const places = Math.max(1, Number(document.getElementById("places").value || 1));
-
-      if (!firstName || !lastName || !email || !phone) {
-        showBookingStatus("Merci de remplir tous les champs obligatoires.", "error");
-        return;
-      }
-
-      showBookingStatus("Redirection vers le paiement Stripe...", "info");
-
-      try {
-        const res = await fetch("/api/create-checkout-session", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            stage_id: stage.id,
-            stage_title: stage.title || "",
-            first_name: firstName,
-            last_name: lastName,
-            email: email,
-            phone: phone,
-            places: places,
-            unit_price: Number(stage.price || 0)
-          })
-        });
-
-        const result = await res.json();
-
-        if (result.url) {
-          (window.VitalPageTransition ? window.VitalPageTransition.go(result.url) : (window.location.href = result.url));
-        } else {
-          showBookingStatus(result.error || "Erreur lors de la redirection vers Stripe.", "error");
-          console.error(result);
+    if (bookingForm) {
+      bookingForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        if (!stage || !bookingEnabled || !hasCompleteSession(stage)) {
+          showBookingStatus("Impossible de réserver : la session n’est pas complète ou n’est plus disponible.", "error");
+          return;
         }
-      } catch (error) {
-        showBookingStatus("Erreur réseau.", "error");
-        console.error(error);
-      }
-    });
+        const firstName = $("firstName")?.value.trim();
+        const lastName = $("lastName")?.value.trim();
+        const email = $("email")?.value.trim();
+        const phone = $("phone")?.value.trim();
+        const places = Math.max(1, Number($("places")?.value || 1));
+        if (!firstName || !lastName || !email || !phone) {
+          showBookingStatus("Merci de remplir tous les champs obligatoires.", "error");
+          return;
+        }
+        if (places > Number(stage.remaining_places || 0)) {
+          showBookingStatus("Le nombre de places demandé dépasse les places restantes.", "error");
+          return;
+        }
+        showBookingStatus("Redirection vers le paiement Stripe...", "info");
+        try {
+          const res = await fetch("/api/create-checkout-session", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              stage_id: stage.id,
+              stage_title: stage.title || "",
+              first_name: firstName,
+              last_name: lastName,
+              email,
+              phone,
+              places,
+              unit_price: Number(stage.price || 0)
+            })
+          });
+          const result = await res.json();
+          if (result.url) {
+            (window.VitalPageTransition ? window.VitalPageTransition.go(result.url) : (window.location.href = result.url));
+          } else {
+            showBookingStatus(result.error || "Erreur lors de la redirection vers Stripe.", "error");
+            console.error(result);
+          }
+        } catch (error) {
+          showBookingStatus("Erreur réseau.", "error");
+          console.error(error);
+        }
+      });
+    }
 
-    placesInput.addEventListener("input", updateBookingTotal);
-
+    placesInput?.addEventListener("input", updateBookingTotal);
     loadStage();
   </script>
 

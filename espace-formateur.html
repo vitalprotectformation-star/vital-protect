@@ -571,7 +571,7 @@
           <div class="card">
             <h2 class="section-title">Créer un stage</h2>
             <div class="alert alert-warning">
-              <p>Aucun module certifié valide n’a été retrouvé pour votre profil.</p>
+              <p>Aucun module habilité valide n’a été retrouvé pour votre profil.</p>
               <p>Impossible de créer un stage tant qu’aucun module valide n’est disponible.</p>
             </div>
           </div>
@@ -581,11 +581,11 @@
       return `
         <div class="card">
           <h2 class="section-title">Créer un stage</h2>
-          <p class="muted">Vous pouvez publier un stage uniquement sur un module pour lequel vous êtes certifié et à jour.</p>
+          <p class="muted">Vous pouvez publier un stage uniquement sur un module pour lequel vous êtes habilité et à jour.</p>
 
           <form id="createStageForm">
             <div class="field">
-              <label for="stageTrainingType">Module certifié</label>
+              <label for="stageTrainingType">Module habilité</label>
               <select id="stageTrainingType" required>
                 <option value="">Choisir un module</option>
                 ${certifiedModules.map(module => `<option value="${module}">${module}</option>`).join("")}
@@ -740,7 +740,7 @@
 
       app.innerHTML = `
         <h1>Espace formateur</h1>
-        <p class="muted">Votre espace est actif. Votre certification et votre affiliation sont à jour.</p>
+        <p class="muted">Votre espace est actif. Votre habilitation et votre affiliation sont à jour.</p>
 
         ${affiliationFeedback}
 
@@ -759,7 +759,7 @@
             <div class="value">${trainer.email || "—"}</div>
           </div>
           <div class="info-box">
-            <span class="label">Certification</span>
+            <span class="label">Habilitation</span>
             <div class="value"><span class="badge badge-success">Valide</span></div>
           </div>
           <div class="info-box">
@@ -790,9 +790,9 @@
         <div class="debug">Email session : ${sessionEmail}
 Email trouvé : ${trainer.email}
 ID formateur : ${trainer.id}
-Certification valide : ${certValid}
+Habilitation valide : ${certValid}
 Affiliation valide : ${affiliationValid}
-Modules certifiés valides : ${certifiedModules.join(", ") || "aucun"}</div>
+Modules habilités valides : ${certifiedModules.join(", ") || "aucun"}</div>
       `;
 
       attachLogoutButtons();
@@ -840,7 +840,7 @@ Modules certifiés valides : ${certifiedModules.join(", ") || "aucun"}</div>
                 <div class="value">${formatDate(trainer.affiliation_end)}</div>
               </div>
               <div class="info-box">
-                <span class="label">Certification</span>
+                <span class="label">Habilitation</span>
                 <div class="value">
                   <span class="badge ${certValid ? "badge-success" : "badge-danger"}">
                     ${certValid ? "Valide" : "Expirée"}
@@ -848,7 +848,7 @@ Modules certifiés valides : ${certifiedModules.join(", ") || "aucun"}</div>
                 </div>
               </div>
               <div class="info-box">
-                <span class="label">Fin certification</span>
+                <span class="label">Fin habilitation</span>
                 <div class="value">${formatDate(trainer.certification_expiry)}</div>
               </div>
             </div>
@@ -867,7 +867,7 @@ Modules certifiés valides : ${certifiedModules.join(", ") || "aucun"}</div>
           <div class="debug">Email session : ${sessionEmail}
 Email trouvé : ${trainer.email}
 ID formateur : ${trainer.id}
-Certification valide : ${certValid}
+Habilitation valide : ${certValid}
 Affiliation valide : ${affiliationValid}
 Affiliation status : ${trainer.affiliation_status || "—"}
 Affiliation end : ${trainer.affiliation_end || "—"}</div>
@@ -893,8 +893,8 @@ Affiliation end : ${trainer.affiliation_end || "—"}</div>
           ${affiliationFeedback}
 
           <div class="alert alert-warning">
-            <h2>Certification expirée</h2>
-            <p>Votre affiliation est active, mais votre certification n’est plus valide.</p>
+            <h2>Habilitation expirée</h2>
+            <p>Votre affiliation est active, mais votre habilitation n’est plus valide.</p>
             <p>Vous devez suivre le parcours de renouvellement / recyclage pour retrouver un statut complet.</p>
           </div>
 
@@ -908,7 +908,7 @@ Affiliation end : ${trainer.affiliation_end || "—"}</div>
               <div class="value">${trainer.email || "—"}</div>
             </div>
             <div class="info-box">
-              <span class="label">Certification</span>
+              <span class="label">Habilitation</span>
               <div class="value"><span class="badge badge-danger">Expirée</span></div>
             </div>
             <div class="info-box">
@@ -933,9 +933,9 @@ Affiliation end : ${trainer.affiliation_end || "—"}</div>
           <div class="debug">Email session : ${sessionEmail}
 Email trouvé : ${trainer.email}
 ID formateur : ${trainer.id}
-Certification valide : ${certValid}
+Habilitation valide : ${certValid}
 Affiliation valide : ${affiliationValid}
-Certification expiry : ${trainer.certification_expiry || "—"}</div>
+Date fin habilitation : ${trainer.certification_expiry || "—"}</div>
         `;
 
         attachLogoutButtons();
