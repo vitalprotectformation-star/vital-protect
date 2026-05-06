@@ -1165,90 +1165,14 @@ window.addEventListener('DOMContentLoaded', () => {
   });
 });
 
-
-/* V29 — Audio dans la barre de menu, lancement fiable au clic */
+/* V30 — Musique supprimée : aucun lecteur audio ni bouton Son n'est injecté */
 window.addEventListener('DOMContentLoaded', () => {
-  const STORAGE_KEY = 'vpl-audio-enabled';
-  const VOLUME = 0.12;
-  const AUDIO_SRC = '/safety-circuit.mp3';
-
-  const nav = document.querySelector('.vpl-nav');
-  if (!nav) return;
-
   document.querySelectorAll('.vpl-audio-toggle').forEach((oldButton) => oldButton.remove());
-  document.querySelectorAll('audio.vpl-audio-player').forEach((oldAudio) => oldAudio.remove());
-
-  const audio = document.createElement('audio');
-  audio.className = 'vpl-audio-player';
-  audio.loop = true;
-  audio.preload = 'auto';
-  audio.volume = VOLUME;
-  audio.setAttribute('playsinline', '');
-  audio.innerHTML = '<source src="' + AUDIO_SRC + '" type="audio/mpeg">';
-  document.body.appendChild(audio);
-
-  const button = document.createElement('button');
-  button.type = 'button';
-  button.className = 'vpl-audio-toggle vpl-audio-toggle--nav';
-  button.setAttribute('aria-label', 'Activer la musique');
-  button.setAttribute('aria-pressed', 'false');
-  button.innerHTML = '<span class="vpl-audio-toggle__icon">♪</span><span class="vpl-audio-toggle__text">Son</span>';
-
-  const burger = nav.querySelector('.vpl-nav-burger');
-  if (burger) {
-    nav.insertBefore(button, burger);
-  } else {
-    nav.appendChild(button);
-  }
-
-  let enabled = false;
-
-  const setVisualState = (isEnabled) => {
-    button.classList.toggle('is-active', isEnabled);
-    button.setAttribute('aria-pressed', isEnabled ? 'true' : 'false');
-    button.setAttribute('aria-label', isEnabled ? 'Couper la musique' : 'Activer la musique');
-    const label = button.querySelector('.vpl-audio-toggle__text');
-    if (label) label.textContent = isEnabled ? 'Pause' : 'Son';
-  };
-
-  const playAudio = async () => {
-    audio.volume = VOLUME;
+  document.querySelectorAll('audio.vpl-audio-player').forEach((audio) => {
     try {
-      if (!audio.currentSrc) audio.load();
-      await audio.play();
-      enabled = true;
-      setVisualState(true);
-      try { sessionStorage.setItem(STORAGE_KEY, '1'); } catch (_) {}
-    } catch (error) {
-      enabled = false;
-      setVisualState(false);
-      try { sessionStorage.setItem(STORAGE_KEY, '0'); } catch (_) {}
-      console.warn('Vital Protect audio: lecture impossible', error);
-    }
-  };
-
-  const pauseAudio = () => {
-    audio.pause();
-    enabled = false;
-    setVisualState(false);
-    try { sessionStorage.setItem(STORAGE_KEY, '0'); } catch (_) {}
-  };
-
-  button.addEventListener('click', (event) => {
-    event.preventDefault();
-    event.stopPropagation();
-
-    if (enabled && !audio.paused) {
-      pauseAudio();
-    } else {
-      playAudio();
-    }
+      if (audio && typeof audio.pause === 'function') audio.pause();
+    } catch (_) {}
+    if (audio && typeof audio.remove === 'function') audio.remove();
   });
-
-  try {
-    if (sessionStorage.getItem(STORAGE_KEY) === '1') {
-      setVisualState(true);
-    }
-  } catch (_) {}
+  try { sessionStorage.removeItem('vpl-audio-enabled'); } catch (_) {}
 });
-
