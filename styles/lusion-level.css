@@ -9125,3 +9125,73 @@ body.page-methode .cta-actions {
     margin-left: 18px;
   }
 }
+
+/* =========================================================
+   Passe éditoriale globale — pages allégées
+   ========================================================= */
+body.page-editorial-light main > section,
+body.page-legal-clean main > section {
+  scroll-margin-top: 140px;
+}
+
+body.page-editorial-light .section-head,
+body.page-editorial-light .vpl-section-head {
+  max-width: 850px;
+}
+
+body.page-editorial-light .section-head--center,
+body.page-editorial-light .vpl-section-head.center {
+  margin-inline: auto;
+}
+
+body.page-editorial-light .section-head p,
+body.page-editorial-light .vpl-section-copy,
+body.page-editorial-light .soft-card p,
+body.page-editorial-light .info-card p,
+body.page-editorial-light .faq-card p,
+body.page-editorial-light .benefit-card p,
+body.page-editorial-light .problem-card p,
+body.page-editorial-light .process-card p,
+body.page-editorial-light .standard-card p,
+body.page-editorial-light .timeline-card p {
+  max-width: 64ch;
+}
+
+body.page-editorial-light .vpl-light,
+body.page-editorial-light .vpl-internal-effects {
+  background: transparent !important;
+}
+
+body.page-editorial-light .vpl-image-card,
+body.page-editorial-light .vpl-inner-visual img {
+  transform: none !important;
+}
+
+body.page-editorial-light .vpl-inner-stat {
+  margin-top: 18px !important;
+}
+
+body.page-legal-clean .vpl-inner-hero-grid {
+  grid-template-columns: minmax(0, 1fr) !important;
+  max-width: 980px;
+}
+
+body.page-legal-clean .vpl-inner-title,
+body.page-legal-clean .vpl-inner-lead {
+  max-width: 920px !important;
+}
+
+body.page-legal-clean .vpl-inner-hero {
+  padding-bottom: 72px !important;
+}
+
+@media (max-width: 768px) {
+  body.page-editorial-light .vpl-image-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  body.page-editorial-light .vpl-image-card,
+  body.page-editorial-light .vpl-image-card.small {
+    min-height: 340px !important;
+  }
+}
