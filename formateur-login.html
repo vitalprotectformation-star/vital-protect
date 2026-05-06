@@ -156,6 +156,23 @@
     }
   
 
+    /* V31 — anti-débordement textes/boutons */
+    html, body { max-width: 100%; overflow-x: hidden; }
+    .card, .card *, .status, .footer-link {
+      min-width: 0;
+      max-width: 100%;
+      overflow-wrap: break-word;
+      word-break: normal;
+      hyphens: auto;
+    }
+    .btn, .footer-link a {
+      height: auto;
+      white-space: normal;
+      line-height: 1.25;
+      text-align: center;
+    }
+
+
     /* Mobile hardening login */
     @media (max-width: 480px) {
       body { padding: 18px; justify-content: flex-start; padding-top: 42px; }

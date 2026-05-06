@@ -338,6 +338,25 @@
       text-align: center;
     }
 
+    /* V31 — anti-débordement textes/boutons */
+    html, body { max-width: 100%; overflow-x: hidden; }
+    .container, .header-inner, .brand, .nav-links, .grid, .grid-3, .actions, .card { min-width: 0; }
+    .card, .card *, .info-box, .alert, .badge, .value, .muted, .form-note {
+      max-width: 100%;
+      min-width: 0;
+      overflow-wrap: break-word;
+      word-break: normal;
+      hyphens: auto;
+    }
+    .btn, .nav-links a, .nav-links button, .badge {
+      height: auto;
+      white-space: normal;
+      line-height: 1.25;
+      text-align: center;
+    }
+    .brand-text { min-width: 0; overflow-wrap: break-word; }
+
+
     @media (max-width: 900px) {
       .grid,
       .grid-3 {
