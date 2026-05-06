@@ -8763,452 +8763,266 @@ body .vpl-nav .vpl-brand span {
 }
 
 
-/* V30 — styles audio supprimés : la musique et le bouton Son ne sont plus affichés. */
-
 /* =========================================================
-   V31 — garde-fous responsive texte / boutons / encarts
-   Objectif : empêcher les textes de sortir des cartes, badges
-   et boutons sur desktop, tablette et mobile.
+   V29 — Audio navbar
    ========================================================= */
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
+.vpl-audio-toggle {
+  position: relative !important;
+  z-index: 3 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 7px !important;
+  min-height: 42px !important;
+  padding: 0 12px !important;
+  border: 1px solid rgba(255,255,255,.14) !important;
+  border-radius: 999px !important;
+  color: rgba(255,255,255,.92) !important;
+  background: rgba(255,255,255,.06) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.08) !important;
+  backdrop-filter: blur(12px) saturate(1.2) !important;
+  cursor: pointer !important;
+  font: inherit !important;
+  font-weight: 900 !important;
+  font-size: .78rem !important;
+  letter-spacing: -.02em !important;
+  white-space: nowrap !important;
+  line-height: 1 !important;
+  transition: background .2s ease, border-color .2s ease, color .2s ease, transform .2s ease, box-shadow .2s ease !important;
 }
 
-html,
-body {
-  max-width: 100% !important;
-  overflow-x: hidden !important;
+.vpl-audio-toggle:hover {
+  background: rgba(255,255,255,.10) !important;
+  border-color: rgba(93,231,255,.28) !important;
+  color: #fff !important;
+  transform: translateY(-1px) !important;
 }
 
-.vpl-page,
-.vpl-container,
-.container,
-.vpl-hero-grid,
-.vpl-inner-hero-grid,
-.vpl-card-grid,
-.vpl-steps,
-.vpl-step-list,
-.vpl-image-grid,
-.vpl-actions,
-.cta-actions,
-.form-grid,
-.booking-layout,
-.contact-layout,
-.split-panel,
-.legal-layout,
-.privacy-layout,
-.faq-layout,
-.faq-intro-grid,
-.offer-grid,
-.sessions-grid,
-.module-grid,
-.benefit-grid,
-.authority-grid,
-.format-grid,
-.process-grid,
-.problem-grid,
-.sector-grid,
-.network-grid,
-.profile-grid,
-.timeline-grid,
-.standard-grid,
-.pillars-grid,
-.governance-grid,
-.difference-grid,
-.card-grid-3,
-.grid,
-.grid-3 {
-  min-width: 0 !important;
-}
-
-.vpl-card-grid > *,
-.vpl-steps > *,
-.vpl-step-list > *,
-.vpl-image-grid > *,
-.vpl-actions > *,
-.cta-actions > *,
-.form-grid > *,
-.booking-layout > *,
-.contact-layout > *,
-.split-panel > *,
-.legal-layout > *,
-.privacy-layout > *,
-.faq-layout > *,
-.faq-intro-grid > *,
-.offer-grid > *,
-.sessions-grid > *,
-.module-grid > *,
-.benefit-grid > *,
-.authority-grid > *,
-.format-grid > *,
-.process-grid > *,
-.problem-grid > *,
-.sector-grid > *,
-.network-grid > *,
-.profile-grid > *,
-.timeline-grid > *,
-.standard-grid > *,
-.pillars-grid > *,
-.governance-grid > *,
-.difference-grid > *,
-.card-grid-3 > *,
-.grid > *,
-.grid-3 > * {
-  min-width: 0 !important;
-}
-
-.vpl-card,
-.vpl-sheen-card,
-.vpl-step,
-.vpl-final-box,
-.vpl-constellation-core,
-.vpl-constellation-node,
-.vpl-float-panel,
-.vpl-image-content,
-.card,
-.soft-card,
-.info-card,
-.booking-card,
-.selected-stage-box,
-.stage-summary-card,
-.faq-card,
-.faq-mini-card,
-.faq-highlight,
-.contact-panel,
-.contact-proof,
-.form-card,
-.benefit-card,
-.authority-card,
-.format-card,
-.positioning-card,
-.positioning-panel,
-.problem-card,
-.process-card,
-.sector-card,
-.testimonial-card,
-.method-panel,
-.pedagogy-block,
-.pillar-card,
-.standard-card,
-.timeline-card,
-.governance-card,
-.difference-card,
-.module-card,
-.offer-card,
-.profile-card,
-.network-card,
-.session-card,
-.legal-card,
-.legal-alert,
-.legal-section,
-.privacy-highlight,
-.privacy-section,
-.cta-panel {
-  max-width: 100% !important;
-  min-width: 0 !important;
-  height: auto !important;
-  overflow-wrap: break-word !important;
-  word-break: normal !important;
-  hyphens: auto !important;
-}
-
-.vpl-card *,
-.vpl-sheen-card *,
-.vpl-step *,
-.vpl-final-box *,
-.vpl-constellation-core *,
-.vpl-constellation-node *,
-.vpl-float-panel *,
-.card *,
-.soft-card *,
-.info-card *,
-.booking-card *,
-.selected-stage-box *,
-.stage-summary-card *,
-.faq-card *,
-.faq-mini-card *,
-.contact-panel *,
-.form-card *,
-.benefit-card *,
-.authority-card *,
-.format-card *,
-.problem-card *,
-.process-card *,
-.sector-card *,
-.testimonial-card *,
-.method-panel *,
-.pedagogy-block *,
-.pillar-card *,
-.standard-card *,
-.timeline-card *,
-.governance-card *,
-.difference-card *,
-.module-card *,
-.offer-card *,
-.profile-card *,
-.network-card *,
-.session-card *,
-.legal-card *,
-.legal-alert *,
-.legal-section *,
-.privacy-highlight *,
-.privacy-section *,
-.cta-panel * {
-  min-width: 0 !important;
-  max-width: 100%;
-}
-
-.vpl-button,
-.btn,
-button,
-.vpl-nav-cta,
-.cta-actions a,
-.faq-cta-actions a,
-.session-actions a,
-.session-actions button,
-.actions a,
-.actions button {
-  max-width: 100% !important;
-  min-width: 0 !important;
-  height: auto !important;
-  white-space: normal !important;
-  line-height: 1.22 !important;
-  text-align: center !important;
-  overflow-wrap: break-word !important;
-}
-
-.vpl-button,
-.btn,
-.vpl-nav-cta {
-  padding-top: 12px !important;
-  padding-bottom: 12px !important;
-}
-
-.vpl-actions,
-.cta-actions,
-.faq-cta-actions,
-.session-actions,
-.actions {
-  flex-wrap: wrap !important;
-  max-width: 100% !important;
-}
-
-.vpl-eyebrow,
-.eyebrow,
-.vpl-tag,
-.module-chip,
-.offer-badge,
-.badge,
-.meta-item,
-.booking-status,
-.availability,
-.vpl-constellation-core-tags span {
-  min-width: 0 !important;
-  max-width: 100% !important;
-  height: auto !important;
-  white-space: normal !important;
-  line-height: 1.22 !important;
-  overflow-wrap: break-word !important;
-  text-align: center;
-}
-
-/* Accueil : les 4 garanties passent en 2 colonnes pour garder de vrais encarts. */
-body.vpl-home .vpl-proof-row,
-.vpl-proof-row {
+.vpl-audio-toggle__icon {
   display: grid !important;
-  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-  gap: 12px !important;
-  max-width: min(100%, 640px) !important;
-  align-items: stretch !important;
+  place-items: center !important;
+  width: 22px !important;
+  height: 22px !important;
+  border-radius: 999px !important;
+  background: rgba(93,231,255,.14) !important;
+  color: #dff8ff !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.12) !important;
+  font-size: .95rem !important;
 }
 
-body.vpl-home .vpl-proof,
-.vpl-proof {
-  width: 100% !important;
-  min-width: 0 !important;
-  min-height: 0 !important;
-  height: auto !important;
-  padding: 12px 14px !important;
-  border-radius: 16px !important;
-  align-items: flex-start !important;
-  justify-content: flex-start !important;
-  overflow: visible !important;
-  overflow-wrap: break-word !important;
+.vpl-audio-toggle.is-active {
+  color: #041320 !important;
+  background: linear-gradient(135deg, #eef8ff, #d6ecff 58%, #b8defd) !important;
+  border-color: rgba(255,255,255,.72) !important;
+  box-shadow: 0 12px 28px rgba(93,231,255,.14), inset 0 1px 0 rgba(255,255,255,.86) !important;
 }
 
-body.vpl-home .vpl-proof svg,
-.vpl-proof svg {
-  flex: 0 0 auto !important;
+.vpl-audio-toggle.is-active .vpl-audio-toggle__icon {
+  color: #041320 !important;
+  background: rgba(4,19,32,.08) !important;
 }
 
-body.vpl-home .vpl-proof span,
-.vpl-proof span {
-  display: block !important;
-  flex: 1 1 auto !important;
-  min-width: 0 !important;
-  max-width: 100% !important;
-  white-space: normal !important;
-  line-height: 1.22 !important;
-  overflow-wrap: break-word !important;
-  word-break: normal !important;
-  hyphens: auto !important;
-}
-
-@media (max-width: 1080px) {
-  body.vpl-home .vpl-proof-row,
-  .vpl-proof-row {
-    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-  }
-
-  .vpl-actions,
-  body.vpl-home .vpl-actions,
-  .cta-actions,
-  .faq-cta-actions,
-  .session-actions,
-  .actions {
-    display: grid !important;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)) !important;
-    gap: 12px !important;
-  }
-
-  .vpl-button,
-  body.vpl-home .vpl-button,
-  .btn {
-    width: 100% !important;
-    justify-content: center !important;
-  }
+.vpl-audio-player {
+  display: none !important;
 }
 
 @media (max-width: 760px) {
-  .vpl-container,
-  .container,
-  body.vpl-home .vpl-hero > .vpl-container {
-    width: min(100% - 24px, 720px) !important;
+  .vpl-nav {
+    grid-template-columns: minmax(0, 1fr) auto auto !important;
   }
 
-  .vpl-inner-title,
-  .vpl-title,
-  body.vpl-home .vpl-title,
-  .vpl-section-title,
-  h1,
-  h2,
-  h3 {
-    overflow-wrap: break-word !important;
-    word-break: normal !important;
-    hyphens: auto !important;
+  .vpl-audio-toggle {
+    min-height: 42px !important;
+    width: auto !important;
+    padding: 0 10px !important;
+    border-radius: 14px !important;
+    background: rgba(255,255,255,.08) !important;
+    border-color: rgba(93,231,255,.20) !important;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.10) !important;
   }
 
-  .vpl-inner-hero-grid,
-  .vpl-card-grid,
-  .vpl-steps,
-  .vpl-step-list,
-  .vpl-image-grid,
-  .booking-layout,
-  .contact-layout,
-  .split-panel,
-  .legal-layout,
-  .privacy-layout,
-  .faq-layout,
-  .faq-intro-grid,
-  .offer-grid,
-  .sessions-grid,
-  .module-grid,
-  .benefit-grid,
-  .authority-grid,
-  .format-grid,
-  .process-grid,
-  .problem-grid,
-  .sector-grid,
-  .network-grid,
-  .profile-grid,
-  .timeline-grid,
-  .standard-grid,
-  .pillars-grid,
-  .governance-grid,
-  .difference-grid,
-  .card-grid-3,
-  .grid,
-  .grid-3 {
-    grid-template-columns: 1fr !important;
+  .vpl-audio-toggle__text {
+    display: inline !important;
+    font-size: .76rem !important;
   }
 
-  .vpl-card,
-  .vpl-sheen-card,
-  .vpl-step,
-  .vpl-final-box,
-  .vpl-constellation-core,
-  .vpl-constellation-node,
-  .card,
-  .soft-card,
-  .info-card,
-  .booking-card,
-  .selected-stage-box,
-  .stage-summary-card,
-  .faq-card,
-  .faq-mini-card,
-  .contact-panel,
-  .form-card,
-  .benefit-card,
-  .authority-card,
-  .format-card,
-  .problem-card,
-  .process-card,
-  .sector-card,
-  .testimonial-card,
-  .method-panel,
-  .pedagogy-block,
-  .pillar-card,
-  .standard-card,
-  .timeline-card,
-  .governance-card,
-  .difference-card,
-  .module-card,
-  .offer-card,
-  .profile-card,
-  .network-card,
-  .session-card,
-  .legal-card,
-  .legal-alert,
-  .legal-section,
-  .privacy-highlight,
-  .privacy-section,
-  .cta-panel {
-    padding-left: min(20px, 5vw) !important;
-    padding-right: min(20px, 5vw) !important;
-  }
-
-  body.vpl-home .vpl-proof-row,
-  .vpl-proof-row {
-    grid-template-columns: 1fr !important;
-  }
-
-  body.vpl-home .vpl-proof,
-  .vpl-proof {
-    align-items: center !important;
-    min-height: 52px !important;
+  .vpl-audio-toggle__icon {
+    width: 22px !important;
+    height: 22px !important;
   }
 }
 
 @media (max-width: 420px) {
-  .vpl-button,
-  body.vpl-home .vpl-button,
-  .btn,
-  .vpl-nav-cta {
-    font-size: .92rem !important;
-    padding-left: 14px !important;
-    padding-right: 14px !important;
+  .vpl-audio-toggle {
+    min-width: 42px !important;
+    width: 42px !important;
+    padding: 0 !important;
   }
 
-  body.vpl-home .vpl-proof,
-  .vpl-proof {
-    padding: 11px 12px !important;
-    gap: 9px !important;
+  .vpl-audio-toggle__text {
+    display: none !important;
+  }
+}
+
+
+/* =========================================================
+   Page méthode — simplification + sécurisation responsive
+   ========================================================= */
+body.page-methode .vpl-scroll-ribbon {
+  display: none !important;
+}
+
+body.page-methode .vpl-inner-hero {
+  padding-bottom: 72px !important;
+}
+
+body.page-methode .vpl-inner-hero-grid {
+  align-items: center;
+  gap: clamp(28px, 5vw, 72px);
+}
+
+body.page-methode .vpl-inner-title {
+  max-width: 9ch;
+}
+
+body.page-methode .vpl-inner-lead {
+  max-width: 58ch;
+}
+
+body.page-methode .vpl-inner-visual {
+  min-height: auto !important;
+  display: grid;
+  justify-items: end;
+  align-content: start;
+}
+
+body.page-methode .vpl-inner-visual img {
+  position: relative !important;
+  inset: auto !important;
+  width: min(520px, 100%) !important;
+  height: auto !important;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  transform: none !important;
+  border-radius: 32px;
+}
+
+body.page-methode .vpl-inner-stat {
+  position: relative !important;
+  left: auto !important;
+  bottom: auto !important;
+  width: min(340px, calc(100% - 20px));
+  margin: -42px auto 0 18px;
+  z-index: 2;
+}
+
+body.page-methode .section-head {
+  max-width: 860px;
+}
+
+body.page-methode .section-head.section-head--center {
+  margin-inline: auto;
+}
+
+body.page-methode .section-head p,
+body.page-methode .pillar-card p,
+body.page-methode .timeline-card p,
+body.page-methode .standard-card p,
+body.page-methode .method-panel p,
+body.page-methode .cta-panel p {
+  max-width: 62ch;
+}
+
+body.page-methode .pillars-grid {
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 20px;
+}
+
+body.page-methode .timeline-grid {
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+body.page-methode .standard-grid {
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+body.page-methode .method-split {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 22px;
+}
+
+body.page-methode .pillar-card,
+body.page-methode .timeline-card,
+body.page-methode .standard-card,
+body.page-methode .method-panel {
+  height: 100%;
+}
+
+body.page-methode .method-panel {
+  padding: 30px;
+}
+
+body.page-methode .bullet-item {
+  line-height: 1.6;
+}
+
+body.page-methode .cta-panel {
+  text-align: center;
+}
+
+body.page-methode .cta-actions {
+  justify-content: center;
+}
+
+@media (max-width: 1080px) {
+  body.page-methode main {
+    margin-top: -110px !important;
   }
 
-  body.vpl-home .vpl-proof span,
-  .vpl-proof span {
-    font-size: .84rem !important;
+  body.page-methode .vpl-inner-hero {
+    padding-top: 210px !important;
+  }
+
+  body.page-methode .vpl-inner-visual {
+    justify-items: stretch;
+  }
+
+  body.page-methode .vpl-inner-stat {
+    width: min(360px, 100%);
+    margin: 16px 0 0;
+  }
+}
+
+@media (max-width: 820px) {
+  body.page-methode .method-split {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  body.page-methode main {
+    margin-top: -80px !important;
+  }
+
+  body.page-methode .vpl-inner-hero {
+    padding-top: 190px !important;
+    padding-bottom: 52px !important;
+  }
+
+  body.page-methode .vpl-inner-title {
+    max-width: 7.8ch !important;
+  }
+
+  body.page-methode .vpl-inner-stat {
+    width: 100%;
+    margin: 14px 0 0;
+  }
+
+  body.page-methode .pillars-grid,
+  body.page-methode .timeline-grid,
+  body.page-methode .standard-grid {
+    grid-template-columns: 1fr;
   }
 }
