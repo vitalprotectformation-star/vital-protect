@@ -8911,8 +8911,8 @@ body.page-methode .vpl-inner-stat {
   position: relative !important;
   left: auto !important;
   bottom: auto !important;
-  width: min(340px, calc(100% - 20px));
-  margin: -42px auto 0 18px;
+  width: min(420px, 100%);
+  margin: 18px 0 0 0;
   z-index: 2;
 }
 
@@ -8990,7 +8990,7 @@ body.page-methode .cta-actions {
   }
 
   body.page-methode .vpl-inner-stat {
-    width: min(360px, 100%);
+    width: min(420px, 100%);
     margin: 16px 0 0;
   }
 }
