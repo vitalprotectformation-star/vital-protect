@@ -9032,3 +9032,52 @@ body.page-methode .cta-actions {
     grid-template-columns: 1fr;
   }
 }
+
+
+/* =========================================================
+   Correctif global — bandeaux défilants plus lisibles
+   ========================================================= */
+.vpl-marquee {
+  color: #07111f !important;
+  background:
+    linear-gradient(135deg, rgba(255,255,255,.92), rgba(216,230,243,.86)) !important;
+  border-block: 1px solid rgba(7,17,31,.10) !important;
+}
+
+.vpl-marquee-track {
+  min-width: 100% !important;
+  justify-content: space-around !important;
+  gap: clamp(28px, 5vw, 72px) !important;
+  padding: clamp(22px, 3vw, 36px) 0 !important;
+}
+
+.vpl-marquee span,
+.vpl-marquee em {
+  color: #07111f !important;
+  opacity: 1 !important;
+  white-space: nowrap !important;
+  font-size: clamp(1.65rem, 3.2vw, 3.9rem) !important;
+  line-height: .9 !important;
+  font-weight: 950 !important;
+  letter-spacing: -.055em !important;
+}
+
+/* Variante interne : même lisibilité sur les pages fond clair ou fond sombre */
+.vpl-inner-page .vpl-marquee {
+  color: #07111f !important;
+  background:
+    linear-gradient(135deg, rgba(255,255,255,.96), rgba(224,235,246,.90)) !important;
+}
+
+@media (max-width: 768px) {
+  .vpl-marquee-track {
+    gap: 34px !important;
+    padding: 18px 0 !important;
+  }
+
+  .vpl-marquee span,
+  .vpl-marquee em {
+    font-size: clamp(1.35rem, 9vw, 2.65rem) !important;
+    line-height: .95 !important;
+  }
+}
