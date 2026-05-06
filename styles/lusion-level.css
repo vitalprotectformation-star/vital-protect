@@ -9195,3 +9195,192 @@ body.page-legal-clean .vpl-inner-hero {
     min-height: 340px !important;
   }
 }
+
+
+/* =========================================================
+   Page stage — cadres sûrs + ruban vraiment en arrière-plan
+   ========================================================= */
+body.page-stage .vpl-scroll-ribbon {
+  z-index: 0 !important;
+  opacity: .16 !important;
+  mix-blend-mode: normal !important;
+}
+
+body.page-stage .vpl-ribbon-progress {
+  stroke-width: 34 !important;
+  filter: drop-shadow(0 0 10px rgba(109,183,255,.16)) !important;
+}
+
+body.page-stage .vpl-ribbon-dot {
+  opacity: .28 !important;
+}
+
+body.page-stage main,
+body.page-stage .vpl-inner-hero,
+body.page-stage main > section,
+body.page-stage .vpl-marquee,
+body.page-stage footer {
+  position: relative;
+  z-index: 3 !important;
+}
+
+body.page-stage .vpl-inner-hero {
+  overflow: hidden;
+  padding-bottom: clamp(58px, 8vw, 98px) !important;
+}
+
+body.page-stage .vpl-inner-hero-grid {
+  align-items: center;
+  gap: clamp(28px, 5vw, 76px);
+}
+
+body.page-stage .vpl-inner-title {
+  max-width: 8.7ch;
+  overflow-wrap: normal;
+}
+
+body.page-stage .vpl-inner-lead {
+  max-width: 58ch;
+}
+
+body.page-stage .vpl-inner-visual {
+  justify-items: end;
+}
+
+body.page-stage .vpl-inner-stat {
+  width: min(420px, 100%);
+  margin-top: 18px !important;
+}
+
+body.page-stage .vpl-card-grid,
+body.page-stage .card-grid-3,
+body.page-stage .faq-grid,
+body.page-stage .split-panel,
+body.page-stage .booking-layout {
+  position: relative;
+  z-index: 4;
+}
+
+body.page-stage .vpl-card,
+body.page-stage .info-card,
+body.page-stage .faq-card,
+body.page-stage .soft-card,
+body.page-stage .card,
+body.page-stage .selected-stage-box,
+body.page-stage .booking-status,
+body.page-stage .bullet-item {
+  min-width: 0;
+  overflow: hidden;
+  overflow-wrap: break-word;
+  word-break: normal;
+  hyphens: auto;
+}
+
+body.page-stage .vpl-card {
+  min-height: auto !important;
+  padding: clamp(22px, 2.4vw, 30px) !important;
+}
+
+body.page-stage .vpl-card-num {
+  width: auto !important;
+  min-width: 58px;
+  max-width: 100%;
+  height: auto !important;
+  min-height: 46px;
+  margin-bottom: clamp(36px, 5vw, 72px) !important;
+  padding: 0 14px;
+  white-space: normal;
+  text-align: center;
+}
+
+body.page-stage .vpl-card h3,
+body.page-stage .info-card h3,
+body.page-stage .faq-card h3,
+body.page-stage .soft-panel h3,
+body.page-stage .stage-summary-card h3 {
+  max-width: 100%;
+  overflow-wrap: break-word;
+  line-height: 1.12;
+}
+
+body.page-stage .vpl-card p,
+body.page-stage .info-card p,
+body.page-stage .faq-card p,
+body.page-stage .soft-panel p,
+body.page-stage .stage-summary-card p,
+body.page-stage .selected-stage-value,
+body.page-stage .booking-total,
+body.page-stage .booking-status,
+body.page-stage .form-rgpd-note {
+  max-width: 100%;
+  overflow-wrap: break-word;
+  line-height: 1.65;
+}
+
+body.page-stage .split-panel,
+body.page-stage .booking-layout {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+body.page-stage .card-grid-3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+body.page-stage .form-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+body.page-stage input,
+body.page-stage textarea,
+body.page-stage button,
+body.page-stage .btn,
+body.page-stage .vpl-button {
+  max-width: 100%;
+  white-space: normal;
+}
+
+body.page-stage .vpl-marquee {
+  overflow: hidden;
+}
+
+body.page-stage .vpl-marquee-track {
+  align-items: center;
+}
+
+body.page-stage .vpl-marquee span {
+  line-height: 1.05 !important;
+}
+
+@media (max-width: 1080px) {
+  body.page-stage .split-panel,
+  body.page-stage .booking-layout,
+  body.page-stage .card-grid-3 {
+    grid-template-columns: 1fr;
+  }
+
+  body.page-stage .vpl-inner-visual {
+    justify-items: stretch;
+  }
+}
+
+@media (max-width: 720px) {
+  body.page-stage .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  body.page-stage .vpl-card-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  body.page-stage .vpl-inner-title {
+    max-width: 7.5ch !important;
+  }
+
+  body.page-stage .vpl-inner-stat {
+    width: 100%;
+  }
+
+  body.page-stage .vpl-scroll-ribbon {
+    display: none !important;
+  }
+}
