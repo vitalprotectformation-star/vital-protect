@@ -8764,3 +8764,451 @@ body .vpl-nav .vpl-brand span {
 
 
 /* V30 — styles audio supprimés : la musique et le bouton Son ne sont plus affichés. */
+
+/* =========================================================
+   V31 — garde-fous responsive texte / boutons / encarts
+   Objectif : empêcher les textes de sortir des cartes, badges
+   et boutons sur desktop, tablette et mobile.
+   ========================================================= */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  max-width: 100% !important;
+  overflow-x: hidden !important;
+}
+
+.vpl-page,
+.vpl-container,
+.container,
+.vpl-hero-grid,
+.vpl-inner-hero-grid,
+.vpl-card-grid,
+.vpl-steps,
+.vpl-step-list,
+.vpl-image-grid,
+.vpl-actions,
+.cta-actions,
+.form-grid,
+.booking-layout,
+.contact-layout,
+.split-panel,
+.legal-layout,
+.privacy-layout,
+.faq-layout,
+.faq-intro-grid,
+.offer-grid,
+.sessions-grid,
+.module-grid,
+.benefit-grid,
+.authority-grid,
+.format-grid,
+.process-grid,
+.problem-grid,
+.sector-grid,
+.network-grid,
+.profile-grid,
+.timeline-grid,
+.standard-grid,
+.pillars-grid,
+.governance-grid,
+.difference-grid,
+.card-grid-3,
+.grid,
+.grid-3 {
+  min-width: 0 !important;
+}
+
+.vpl-card-grid > *,
+.vpl-steps > *,
+.vpl-step-list > *,
+.vpl-image-grid > *,
+.vpl-actions > *,
+.cta-actions > *,
+.form-grid > *,
+.booking-layout > *,
+.contact-layout > *,
+.split-panel > *,
+.legal-layout > *,
+.privacy-layout > *,
+.faq-layout > *,
+.faq-intro-grid > *,
+.offer-grid > *,
+.sessions-grid > *,
+.module-grid > *,
+.benefit-grid > *,
+.authority-grid > *,
+.format-grid > *,
+.process-grid > *,
+.problem-grid > *,
+.sector-grid > *,
+.network-grid > *,
+.profile-grid > *,
+.timeline-grid > *,
+.standard-grid > *,
+.pillars-grid > *,
+.governance-grid > *,
+.difference-grid > *,
+.card-grid-3 > *,
+.grid > *,
+.grid-3 > * {
+  min-width: 0 !important;
+}
+
+.vpl-card,
+.vpl-sheen-card,
+.vpl-step,
+.vpl-final-box,
+.vpl-constellation-core,
+.vpl-constellation-node,
+.vpl-float-panel,
+.vpl-image-content,
+.card,
+.soft-card,
+.info-card,
+.booking-card,
+.selected-stage-box,
+.stage-summary-card,
+.faq-card,
+.faq-mini-card,
+.faq-highlight,
+.contact-panel,
+.contact-proof,
+.form-card,
+.benefit-card,
+.authority-card,
+.format-card,
+.positioning-card,
+.positioning-panel,
+.problem-card,
+.process-card,
+.sector-card,
+.testimonial-card,
+.method-panel,
+.pedagogy-block,
+.pillar-card,
+.standard-card,
+.timeline-card,
+.governance-card,
+.difference-card,
+.module-card,
+.offer-card,
+.profile-card,
+.network-card,
+.session-card,
+.legal-card,
+.legal-alert,
+.legal-section,
+.privacy-highlight,
+.privacy-section,
+.cta-panel {
+  max-width: 100% !important;
+  min-width: 0 !important;
+  height: auto !important;
+  overflow-wrap: break-word !important;
+  word-break: normal !important;
+  hyphens: auto !important;
+}
+
+.vpl-card *,
+.vpl-sheen-card *,
+.vpl-step *,
+.vpl-final-box *,
+.vpl-constellation-core *,
+.vpl-constellation-node *,
+.vpl-float-panel *,
+.card *,
+.soft-card *,
+.info-card *,
+.booking-card *,
+.selected-stage-box *,
+.stage-summary-card *,
+.faq-card *,
+.faq-mini-card *,
+.contact-panel *,
+.form-card *,
+.benefit-card *,
+.authority-card *,
+.format-card *,
+.problem-card *,
+.process-card *,
+.sector-card *,
+.testimonial-card *,
+.method-panel *,
+.pedagogy-block *,
+.pillar-card *,
+.standard-card *,
+.timeline-card *,
+.governance-card *,
+.difference-card *,
+.module-card *,
+.offer-card *,
+.profile-card *,
+.network-card *,
+.session-card *,
+.legal-card *,
+.legal-alert *,
+.legal-section *,
+.privacy-highlight *,
+.privacy-section *,
+.cta-panel * {
+  min-width: 0 !important;
+  max-width: 100%;
+}
+
+.vpl-button,
+.btn,
+button,
+.vpl-nav-cta,
+.cta-actions a,
+.faq-cta-actions a,
+.session-actions a,
+.session-actions button,
+.actions a,
+.actions button {
+  max-width: 100% !important;
+  min-width: 0 !important;
+  height: auto !important;
+  white-space: normal !important;
+  line-height: 1.22 !important;
+  text-align: center !important;
+  overflow-wrap: break-word !important;
+}
+
+.vpl-button,
+.btn,
+.vpl-nav-cta {
+  padding-top: 12px !important;
+  padding-bottom: 12px !important;
+}
+
+.vpl-actions,
+.cta-actions,
+.faq-cta-actions,
+.session-actions,
+.actions {
+  flex-wrap: wrap !important;
+  max-width: 100% !important;
+}
+
+.vpl-eyebrow,
+.eyebrow,
+.vpl-tag,
+.module-chip,
+.offer-badge,
+.badge,
+.meta-item,
+.booking-status,
+.availability,
+.vpl-constellation-core-tags span {
+  min-width: 0 !important;
+  max-width: 100% !important;
+  height: auto !important;
+  white-space: normal !important;
+  line-height: 1.22 !important;
+  overflow-wrap: break-word !important;
+  text-align: center;
+}
+
+/* Accueil : les 4 garanties passent en 2 colonnes pour garder de vrais encarts. */
+body.vpl-home .vpl-proof-row,
+.vpl-proof-row {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 12px !important;
+  max-width: min(100%, 640px) !important;
+  align-items: stretch !important;
+}
+
+body.vpl-home .vpl-proof,
+.vpl-proof {
+  width: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  height: auto !important;
+  padding: 12px 14px !important;
+  border-radius: 16px !important;
+  align-items: flex-start !important;
+  justify-content: flex-start !important;
+  overflow: visible !important;
+  overflow-wrap: break-word !important;
+}
+
+body.vpl-home .vpl-proof svg,
+.vpl-proof svg {
+  flex: 0 0 auto !important;
+}
+
+body.vpl-home .vpl-proof span,
+.vpl-proof span {
+  display: block !important;
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  white-space: normal !important;
+  line-height: 1.22 !important;
+  overflow-wrap: break-word !important;
+  word-break: normal !important;
+  hyphens: auto !important;
+}
+
+@media (max-width: 1080px) {
+  body.vpl-home .vpl-proof-row,
+  .vpl-proof-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .vpl-actions,
+  body.vpl-home .vpl-actions,
+  .cta-actions,
+  .faq-cta-actions,
+  .session-actions,
+  .actions {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)) !important;
+    gap: 12px !important;
+  }
+
+  .vpl-button,
+  body.vpl-home .vpl-button,
+  .btn {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+}
+
+@media (max-width: 760px) {
+  .vpl-container,
+  .container,
+  body.vpl-home .vpl-hero > .vpl-container {
+    width: min(100% - 24px, 720px) !important;
+  }
+
+  .vpl-inner-title,
+  .vpl-title,
+  body.vpl-home .vpl-title,
+  .vpl-section-title,
+  h1,
+  h2,
+  h3 {
+    overflow-wrap: break-word !important;
+    word-break: normal !important;
+    hyphens: auto !important;
+  }
+
+  .vpl-inner-hero-grid,
+  .vpl-card-grid,
+  .vpl-steps,
+  .vpl-step-list,
+  .vpl-image-grid,
+  .booking-layout,
+  .contact-layout,
+  .split-panel,
+  .legal-layout,
+  .privacy-layout,
+  .faq-layout,
+  .faq-intro-grid,
+  .offer-grid,
+  .sessions-grid,
+  .module-grid,
+  .benefit-grid,
+  .authority-grid,
+  .format-grid,
+  .process-grid,
+  .problem-grid,
+  .sector-grid,
+  .network-grid,
+  .profile-grid,
+  .timeline-grid,
+  .standard-grid,
+  .pillars-grid,
+  .governance-grid,
+  .difference-grid,
+  .card-grid-3,
+  .grid,
+  .grid-3 {
+    grid-template-columns: 1fr !important;
+  }
+
+  .vpl-card,
+  .vpl-sheen-card,
+  .vpl-step,
+  .vpl-final-box,
+  .vpl-constellation-core,
+  .vpl-constellation-node,
+  .card,
+  .soft-card,
+  .info-card,
+  .booking-card,
+  .selected-stage-box,
+  .stage-summary-card,
+  .faq-card,
+  .faq-mini-card,
+  .contact-panel,
+  .form-card,
+  .benefit-card,
+  .authority-card,
+  .format-card,
+  .problem-card,
+  .process-card,
+  .sector-card,
+  .testimonial-card,
+  .method-panel,
+  .pedagogy-block,
+  .pillar-card,
+  .standard-card,
+  .timeline-card,
+  .governance-card,
+  .difference-card,
+  .module-card,
+  .offer-card,
+  .profile-card,
+  .network-card,
+  .session-card,
+  .legal-card,
+  .legal-alert,
+  .legal-section,
+  .privacy-highlight,
+  .privacy-section,
+  .cta-panel {
+    padding-left: min(20px, 5vw) !important;
+    padding-right: min(20px, 5vw) !important;
+  }
+
+  body.vpl-home .vpl-proof-row,
+  .vpl-proof-row {
+    grid-template-columns: 1fr !important;
+  }
+
+  body.vpl-home .vpl-proof,
+  .vpl-proof {
+    align-items: center !important;
+    min-height: 52px !important;
+  }
+}
+
+@media (max-width: 420px) {
+  .vpl-button,
+  body.vpl-home .vpl-button,
+  .btn,
+  .vpl-nav-cta {
+    font-size: .92rem !important;
+    padding-left: 14px !important;
+    padding-right: 14px !important;
+  }
+
+  body.vpl-home .vpl-proof,
+  .vpl-proof {
+    padding: 11px 12px !important;
+    gap: 9px !important;
+  }
+
+  body.vpl-home .vpl-proof span,
+  .vpl-proof span {
+    font-size: .84rem !important;
+  }
+}
