@@ -1108,26 +1108,31 @@ img { max-width: 100%; display: block; }
 
 .vpl-inner-visual {
   position: relative;
-  min-height: 420px;
+  min-height: auto;
+  display: grid;
+  justify-items: end;
+  align-content: start;
 }
 
 .vpl-inner-visual img {
-  position: absolute;
-  inset: 20px 0 0 auto;
-  width: min(520px, 92%);
-  height: 360px;
+  position: relative;
+  inset: auto;
+  width: min(520px, 100%);
+  height: auto;
+  aspect-ratio: 4 / 3;
   object-fit: cover;
   border-radius: 38px;
   border: 1px solid rgba(255,255,255,.16);
   box-shadow: 0 35px 100px rgba(0,0,0,.32);
-  transform: rotate(1.5deg);
+  transform: none;
 }
 
 .vpl-inner-stat {
-  position: absolute;
-  left: 0;
-  bottom: 12px;
-  width: min(320px, 82%);
+  position: relative;
+  left: auto;
+  bottom: auto;
+  width: min(380px, 100%);
+  margin-top: 18px;
   padding: 18px;
   border-radius: 26px;
   background: rgba(255,255,255,.90);
@@ -1218,7 +1223,7 @@ body:not(.vpl-home) main > section:not(.vpl-inner-hero) {
 
   .vpl-visual,
   .vpl-inner-visual {
-    min-height: 520px !important;
+    min-height: auto !important;
   }
 
   .vpl-visual-card-main {
@@ -1239,7 +1244,8 @@ body:not(.vpl-home) main > section:not(.vpl-inner-hero) {
     position: relative;
     left: auto;
     bottom: auto;
-    margin-top: -44px;
+    width: min(420px, 100%);
+    margin-top: 16px;
   }
 }
 
