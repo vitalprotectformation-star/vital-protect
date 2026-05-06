@@ -1,8 +1,8 @@
 <!DOCTYPE html>
+
 <html lang="fr">
 <head>
-
-  <script>
+<script>
     (function () {
       try {
         if (sessionStorage.getItem('vpl-route-transition-next') !== '1') return;
@@ -14,401 +14,312 @@
       } catch (_) {}
     })();
   </script>
-  <style>
+<style>
     html{--vpl-transition-image:url("transition-screen.png");--vpl-transition-bg-size:cover}
     html.vpl-route-preload-transition,html.vpl-route-preload-transition body{background:#2f6f9f!important}
     html.vpl-route-preload-transition::before{content:"";position:fixed;inset:0;z-index:2147482998;pointer-events:none;background-color:#2f6f9f;background-image:var(--vpl-transition-image);background-position:center;background-size:var(--vpl-transition-bg-size);background-repeat:no-repeat;opacity:1}
     @media (max-width: 768px), (pointer: coarse) and (orientation: portrait){html{--vpl-transition-image:url("transition-screen-mobile.jpg");--vpl-transition-bg-size:cover}}
   </style>
-  <link rel="preload" as="image" href="transition-screen.png" media="(min-width: 769px)" />
-  <link rel="preload" as="image" href="transition-screen-mobile.jpg" media="(max-width: 768px), (pointer: coarse) and (orientation: portrait)" />
-  <script src="/page-transition.js"></script>
-  <script>
+<link as="image" href="transition-screen.png" media="(min-width: 769px)" rel="preload"/>
+<link as="image" href="transition-screen-mobile.jpg" media="(max-width: 768px), (pointer: coarse) and (orientation: portrait)" rel="preload"/>
+<script src="/page-transition.js"></script>
+<script>
     if (!window.VitalPageTransition) {
       document.write('<script src="page-transition.js"><\/script>');
     }
   </script>
-<meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Fiche stage — Vital Protect</title>
-
-  <link rel="canonical" href="https://vital-protect.fr/stage.html" />
-  <link rel="icon" href="/logo.png" type="image/png" />
-  <link rel="stylesheet" href="/styles/tokens.css" />
-  <link rel="stylesheet" href="/styles/base.css" />
-  <link rel="stylesheet" href="/styles/components.css" />
-  <link rel="stylesheet" href="/styles/lusion-level.css" />
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Fiche stage — Vital Protect</title>
+<link href="https://vital-protect.fr/stage.html" rel="canonical"/>
+<link href="/logo.png" rel="icon" type="image/png"/>
+<link href="/styles/tokens.css" rel="stylesheet"/>
+<link href="/styles/base.css" rel="stylesheet"/>
+<link href="/styles/components.css" rel="stylesheet"/>
+<link href="/styles/lusion-level.css" rel="stylesheet"/>
 </head>
-<body class="vpl-inner-page">
-  <canvas class="vpl-canvas" aria-hidden="true"></canvas>
-  <div class="vpl-noise" aria-hidden="true"></div>
-  <div class="vpl-scroll-ribbon" aria-hidden="true">
-    <svg class="vpl-scroll-ribbon-svg" viewBox="0 0 1000 1600" preserveAspectRatio="none">
-      <defs>
-        <linearGradient id="vplRibbonGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stop-color="#d8ecff" stop-opacity="0.96"></stop>
-          <stop offset="38%" stop-color="#6db7ff" stop-opacity="0.94"></stop>
-          <stop offset="72%" stop-color="#2f7fca" stop-opacity="0.94"></stop>
-          <stop offset="100%" stop-color="#0b3a6f" stop-opacity="0.92"></stop>
-        </linearGradient>
-      </defs>
-      <path class="vpl-ribbon-base" pathLength="1" d="M920 -80 C980 130 700 120 760 330 C820 520 990 560 860 760 C700 1010 240 930 300 1180 C360 1420 760 1350 680 1580 C640 1680 560 1710 430 1750"></path>
-      <path class="vpl-ribbon-progress" pathLength="1" d="M920 -80 C980 130 700 120 760 330 C820 520 990 560 860 760 C700 1010 240 930 300 1180 C360 1420 760 1350 680 1580 C640 1680 560 1710 430 1750"></path>
-      <circle class="vpl-ribbon-dot" cx="920" cy="-80" r="18"></circle>
-    </svg>
-  </div>
+<body class="vpl-inner-page page-editorial-light">
+<canvas aria-hidden="true" class="vpl-canvas"></canvas>
+<div aria-hidden="true" class="vpl-noise"></div>
+<div aria-hidden="true" class="vpl-scroll-ribbon">
+<svg class="vpl-scroll-ribbon-svg" preserveaspectratio="none" viewbox="0 0 1000 1600">
+<defs>
+<lineargradient id="vplRibbonGradient" x1="0%" x2="0%" y1="0%" y2="100%">
+<stop offset="0%" stop-color="#d8ecff" stop-opacity="0.96"></stop>
+<stop offset="38%" stop-color="#6db7ff" stop-opacity="0.94"></stop>
+<stop offset="72%" stop-color="#2f7fca" stop-opacity="0.94"></stop>
+<stop offset="100%" stop-color="#0b3a6f" stop-opacity="0.92"></stop>
+</lineargradient>
+</defs>
+<path class="vpl-ribbon-base" d="M920 -80 C980 130 700 120 760 330 C820 520 990 560 860 760 C700 1010 240 930 300 1180 C360 1420 760 1350 680 1580 C640 1680 560 1710 430 1750" pathlength="1"></path>
+<path class="vpl-ribbon-progress" d="M920 -80 C980 130 700 120 760 330 C820 520 990 560 860 760 C700 1010 240 930 300 1180 C360 1420 760 1350 680 1580 C640 1680 560 1710 430 1750" pathlength="1"></path>
+<circle class="vpl-ribbon-dot" cx="920" cy="-80" r="18"></circle>
+</svg>
+</div>
+<header class="vpl-nav">
+<a aria-label="Accueil Vital Protect" class="vpl-brand" href="/index.html">
+<img alt="Vital Protect" src="/logo.png"/>
+<div>
+<b>VITAL PROTECT</b>
+<span>Standard sécurité personnelle</span>
+</div>
+</a>
+<nav aria-label="Navigation principale" class="vpl-menu">
+<a data-page="index" href="/index.html">Accueil</a>
+<a data-page="methode" href="/methode.html">Standard</a>
+<a class="active" data-page="stage" href="/stage.html">Stages</a>
+<a data-page="entreprises" href="/entreprises.html">Entreprises</a>
+<a data-page="devenir-formateur" href="/devenir-formateur.html">Formateurs</a>
+<a data-page="faq" href="/faq.html">FAQ</a>
+<a data-page="contact" href="/contact.html">Contact</a>
+<a class="vpl-nav-ghost" href="/formateur-login.html">Espace</a>
+</nav>
+<a class="vpl-nav-cta" href="/stage.html">Trouver un stage</a>
+</header>
+<main>
+<section class="vpl-inner-hero">
+<div class="vpl-container vpl-inner-hero-grid">
+<div>
+<div class="vpl-eyebrow" id="heroType">Stage Vital Protect</div>
+<h1 class="vpl-inner-title"><span id="heroTitle">Réserver un stage Vital Protect.</span></h1>
+<p class="vpl-inner-lead" id="heroDescription">Consultez les informations pratiques, vérifiez le cadre de sécurité et réservez une session animée par un formateur habilité.</p>
+<div class="vpl-actions">
+<a class="vpl-button vpl-button-primary" href="/stage.html">Trouver un stage</a>
+<a class="vpl-button vpl-button-secondary" href="/contact.html">Nous contacter</a>
+</div>
+</div>
+<div class="vpl-inner-visual">
+<img alt="Stage rattaché au standard" src="/groupe-dehors-briefing-securite.png"/>
+<div class="vpl-inner-stat">
+<strong>Stage rattaché au standard</strong>
+<span>Date, lieu, durée, type, formateur et conditions sont affichés clairement.</span>
+</div>
+</div>
+</div>
+</section>
+<!-- V4_INTERNAL_EFFECTS_INSERTED -->
+<div aria-hidden="true" class="vpl-marquee">
+<div class="vpl-marquee-track">
+<span>Date</span><span>Lieu</span><span>Durée</span><span>Formateur habilité</span><span>Réservation vérifiée</span>
+</div>
+<div class="vpl-marquee-track">
+<span>Date</span><span>Lieu</span><span>Durée</span><span>Formateur habilité</span><span>Réservation vérifiée</span>
+</div>
+</div>
+<section aria-label="Informations principales de la session" class="vpl-section">
+<div class="vpl-container">
+<div class="vpl-card-grid">
+<article class="vpl-card"><div class="vpl-card-num">Ville</div><h3 id="metaCity">À confirmer</h3><p id="metaRegion">Région à confirmer</p></article>
+<article class="vpl-card"><div class="vpl-card-num">Date</div><h3 id="metaDate">Date à venir</h3><p id="metaDepartment">Département à confirmer</p></article>
+<article class="vpl-card"><div class="vpl-card-num">Prix</div><h3 id="metaPrice">À confirmer</h3><p><span id="metaPlaces">—</span> place(s) restante(s)</p></article>
+</div>
+</div>
+</section>
+<div class="vpl-light vpl-internal-effects">
 
-
-  <header class="vpl-nav">
-      <a href="/index.html" class="vpl-brand" aria-label="Accueil Vital Protect">
-        <img src="/logo.png" alt="Vital Protect" />
-        <div>
-          <b>VITAL PROTECT</b>
-          <span>Standard sécurité personnelle</span>
-        </div>
-      </a>
-
-      <nav class="vpl-menu" aria-label="Navigation principale">
-        <a href="/index.html" data-page="index">Accueil</a>
-        <a href="/methode.html" data-page="methode">Standard</a>
-        <a href="/stage.html" data-page="stage" class="active">Stages</a>
-        <a href="/entreprises.html" data-page="entreprises">Entreprises</a>
-        <a href="/devenir-formateur.html" data-page="devenir-formateur">Formateurs</a>
-        <a href="/faq.html" data-page="faq">FAQ</a>
-        <a href="/contact.html" data-page="contact">Contact</a>
-        <a href="/formateur-login.html" class="vpl-nav-ghost">Espace</a>
-      </nav>
-
-      <a href="/stage.html" class="vpl-nav-cta">Trouver un stage</a>
-    </header>
-
-  <main>
-    <section class="vpl-inner-hero">
-        <div class="vpl-container vpl-inner-hero-grid">
-          <div>
-            <div class="vpl-eyebrow" id="heroType">Stage Vital Protect</div>
-            <h1 class="vpl-inner-title"><span id="heroTitle">Réserver un stage Vital Protect.</span></h1>
-            <p class="vpl-inner-lead" id="heroDescription">Consultez les informations pratiques, vérifiez le cadre de sécurité et réservez une session animée par un formateur habilité.</p>
-            <div class="vpl-actions">
-              <a class="vpl-button vpl-button-primary" href="/stage.html">Trouver un stage</a>
-              <a class="vpl-button vpl-button-secondary" href="/contact.html">Nous contacter</a>
-            </div>
-          </div>
-          <div class="vpl-inner-visual">
-            <img src="/groupe-dehors-briefing-securite.png" alt="Stage rattaché au standard" />
-            <div class="vpl-inner-stat">
-              <strong>Stage rattaché au standard</strong>
-              <span>Date, lieu, durée, type, formateur et conditions sont affichés clairement.</span>
-            </div>
-          </div>
-        </div>
-      </section>
-      <!-- V4_INTERNAL_EFFECTS_INSERTED -->
-
-      <div class="vpl-marquee" aria-hidden="true">
-        <div class="vpl-marquee-track">
-          <span>Date</span><span>Lieu</span><span>Durée</span><span>Formateur habilité</span><span>Réservation vérifiée</span>
-        </div>
-        <div class="vpl-marquee-track">
-          <span>Date</span><span>Lieu</span><span>Durée</span><span>Formateur habilité</span><span>Réservation vérifiée</span>
-        </div>
-      </div>
-
-      <section class="vpl-section" aria-label="Informations principales de la session">
-        <div class="vpl-container">
-          <div class="vpl-card-grid">
-            <article class="vpl-card"><div class="vpl-card-num">Ville</div><h3 id="metaCity">À confirmer</h3><p id="metaRegion">Région à confirmer</p></article>
-            <article class="vpl-card"><div class="vpl-card-num">Date</div><h3 id="metaDate">Date à venir</h3><p id="metaDepartment">Département à confirmer</p></article>
-            <article class="vpl-card"><div class="vpl-card-num">Prix</div><h3 id="metaPrice">À confirmer</h3><p><span id="metaPlaces">—</span> place(s) restante(s)</p></article>
-          </div>
-        </div>
-      </section>
-
-      <div class="vpl-light vpl-internal-effects">
-        <section class="vpl-section">
-          <div class="vpl-container">
-            <div class="vpl-section-head">
-              <span class="vpl-section-kicker">Expérience participant</span>
-              <h2 class="vpl-section-title">Une réservation plus lisible.</h2>
-              <p class="vpl-section-copy">Toutes les informations utiles sont regroupées pour choisir sereinement : lieu, horaires, durée, prix, places restantes et cadre pédagogique.</p>
-            </div>
-
-            <div class="vpl-card-grid">
-              <article class="vpl-card"><div class="vpl-card-num">01</div><h3>Informations claires</h3><p>Ville, adresse, horaire, durée, niveau, âge minimum et accessibilité.</p></article>
-              <article class="vpl-card"><div class="vpl-card-num">02</div><h3>Cadre sécurisé</h3><p>Règles de sécurité, aptitude physique, comportement attendu et limites du stage.</p></article>
-              <article class="vpl-card"><div class="vpl-card-num">03</div><h3>Confirmation</h3><p>Le paiement n’est proposé que si la session est complète : date, lieu, tarif, places et conditions.</p></article>
-            </div>
-          </div>
-        </section>
-      </div>
-
-
-    <section>
-      <div class="container split-panel">
-        <div class="soft-card soft-panel">
-          <span class="eyebrow">Pour qui ?</span>
-          <h3>À qui s’adresse ce stage</h3>
-          <p id="audienceText">
+</div>
+<section>
+<div class="container split-panel">
+<div class="soft-card soft-panel">
+<span class="eyebrow">Pour qui ?</span>
+<h3>À qui s’adresse ce stage</h3>
+<p id="audienceText">
             Ce stage s’adresse aux personnes qui veulent développer des repères concrets de sécurité personnelle
             dans un cadre accessible, progressif et sérieux.
           </p>
-
-          <div class="bullet-list">
-            <div class="bullet-item"><strong>Accessible :</strong> pas besoin d’être sportif ou expérimenté.</div>
-            <div class="bullet-item"><strong>Progressif :</strong> le contenu est pensé pour être compris puis appliqué.</div>
-            <div class="bullet-item"><strong>Encadré :</strong> le cadre pédagogique et la sécurité restent prioritaires.</div>
-          </div>
-        </div>
-
-        <div class="soft-card soft-panel">
-          <span class="eyebrow">Ce que vous allez apprendre</span>
-          <h3>Des repères simples, utiles et applicables</h3>
-          <p id="objectiveText">
+<div class="bullet-list">
+<div class="bullet-item"><strong>Accessible :</strong> pas besoin d’être sportif ou expérimenté.</div>
+<div class="bullet-item"><strong>Progressif :</strong> le contenu est pensé pour être compris puis appliqué.</div>
+<div class="bullet-item"><strong>Encadré :</strong> le cadre pédagogique et la sécurité restent prioritaires.</div>
+</div>
+</div>
+<div class="soft-card soft-panel">
+<span class="eyebrow">Ce que vous allez apprendre</span>
+<h3>Des repères simples, utiles et applicables</h3>
+<p id="objectiveText">
             Ce stage s’inscrit dans la méthode Vital Protect : comprendre le risque, améliorer la lecture des situations,
             prévenir l’escalade et développer des réponses simples et réalistes.
           </p>
-
-          <div class="bullet-list">
-            <div class="bullet-item"><strong>Repérer :</strong> mieux lire les signaux et contextes à risque.</div>
-            <div class="bullet-item"><strong>Prévenir :</strong> réduire l’exposition et éviter certaines escalades.</div>
-            <div class="bullet-item"><strong>Réagir :</strong> mobiliser des réponses simples, cohérentes et accessibles.</div>
-            <div class="bullet-item"><strong>Sécuriser :</strong> savoir quoi faire après un incident ou une tension.</div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section>
-      <div class="container">
-        <div class="section-head">
-          <span class="eyebrow">Déroulé pédagogique</span>
-          <h2>Comment se déroule le stage</h2>
-          <p>
+<div class="bullet-list">
+<div class="bullet-item"><strong>Repérer :</strong> mieux lire les signaux et contextes à risque.</div>
+<div class="bullet-item"><strong>Prévenir :</strong> réduire l’exposition et éviter certaines escalades.</div>
+<div class="bullet-item"><strong>Réagir :</strong> mobiliser des réponses simples, cohérentes et accessibles.</div>
+<div class="bullet-item"><strong>Sécuriser :</strong> savoir quoi faire après un incident ou une tension.</div>
+</div>
+</div>
+</div>
+</section>
+<section>
+<div class="container">
+<div class="section-head">
+<span class="eyebrow">Déroulé pédagogique</span>
+<h2>Comment se déroule le stage</h2>
+<p>
             Chaque stage Vital Protect suit une logique pédagogique claire, conçue pour transmettre
             des repères utiles, favoriser la compréhension et sécuriser l’apprentissage.
           </p>
-        </div>
-
-        <div class="card-grid-3">
-          <article class="info-card">
-            <h3>1. Explication</h3>
-            <p>Présentation du contexte, des erreurs fréquentes, des bons repères et de la logique d’action recherchée.</p>
-          </article>
-
-          <article class="info-card">
-            <h3>2. Démonstration & pratique</h3>
-            <p>Mise en œuvre progressive, adaptée au niveau des participants et centrée sur des réponses simples.</p>
-          </article>
-
-          <article class="info-card">
-            <h3>3. Mise en situation encadrée</h3>
-            <p>Consolidation des acquis dans un cadre maîtrisé, sécurisé et cohérent avec les objectifs du stage.</p>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <section>
-      <div class="container split-panel">
-        <div class="soft-card soft-panel">
-          <span class="eyebrow">Cadre de sécurité</span>
-          <h3>La sécurité des participants passe avant tout</h3>
-          <p>
+</div>
+<div class="card-grid-3">
+<article class="info-card">
+<h3>1. Explication</h3>
+<p>Présentation du contexte, des erreurs fréquentes, des bons repères et de la logique d’action recherchée.</p>
+</article>
+<article class="info-card">
+<h3>2. Démonstration &amp; pratique</h3>
+<p>Mise en œuvre progressive, adaptée au niveau des participants et centrée sur des réponses simples.</p>
+</article>
+<article class="info-card">
+<h3>3. Mise en situation encadrée</h3>
+<p>Consolidation des acquis dans un cadre maîtrisé, sécurisé et cohérent avec les objectifs du stage.</p>
+</article>
+</div>
+</div>
+</section>
+<section>
+<div class="container split-panel">
+<div class="soft-card soft-panel">
+<span class="eyebrow">Cadre de sécurité</span>
+<h3>La sécurité des participants passe avant tout</h3>
+<p>
             Les stages Vital Protect sont conçus pour favoriser l’apprentissage, jamais la mise en danger.
             Le cadre est pensé pour rester pédagogique, progressif et contrôlé.
           </p>
-
-          <div class="bullet-list">
-            <div class="bullet-item"><strong>Consignes claires</strong> à chaque étape.</div>
-            <div class="bullet-item"><strong>Montée en intensité maîtrisée</strong> selon le niveau du groupe.</div>
-            <div class="bullet-item"><strong>Exercices adaptés</strong> à l’objectif pédagogique réel.</div>
-          </div>
-        </div>
-
-        <div class="soft-card soft-panel">
-          <span class="eyebrow">Informations pratiques</span>
-          <h3>Détails de la session</h3>
-
-          <div class="bullet-list">
-            <div class="bullet-item"><strong>Adresse :</strong> <span id="practicalAddress">—</span></div>
-            <div class="bullet-item"><strong>Heure :</strong> <span id="practicalTime">—</span></div>
-            <div class="bullet-item"><strong>Durée :</strong> <span id="practicalDuration">—</span></div>
-            <div class="bullet-item"><strong>Type :</strong> <span id="practicalType">—</span></div>
-            <div class="bullet-item"><strong>Niveau :</strong> <span id="practicalLevel">Accessible à tous</span></div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section id="reservation">
-      <div class="container">
-        <div class="section-head">
-          <span class="eyebrow">Réservation</span>
-          <h2>Réserver votre place sur ce stage</h2>
-          <p>
+<div class="bullet-list">
+<div class="bullet-item"><strong>Consignes claires</strong> à chaque étape.</div>
+<div class="bullet-item"><strong>Montée en intensité maîtrisée</strong> selon le niveau du groupe.</div>
+<div class="bullet-item"><strong>Exercices adaptés</strong> à l’objectif pédagogique réel.</div>
+</div>
+</div>
+<div class="soft-card soft-panel">
+<span class="eyebrow">Informations pratiques</span>
+<h3>Détails de la session</h3>
+<div class="bullet-list">
+<div class="bullet-item"><strong>Adresse :</strong> <span id="practicalAddress">—</span></div>
+<div class="bullet-item"><strong>Heure :</strong> <span id="practicalTime">—</span></div>
+<div class="bullet-item"><strong>Durée :</strong> <span id="practicalDuration">—</span></div>
+<div class="bullet-item"><strong>Type :</strong> <span id="practicalType">—</span></div>
+<div class="bullet-item"><strong>Niveau :</strong> <span id="practicalLevel">Accessible à tous</span></div>
+</div>
+</div>
+</div>
+</section>
+<section id="reservation">
+<div class="container">
+<div class="section-head">
+<span class="eyebrow">Réservation</span>
+<h2>Réserver votre place sur ce stage</h2>
+<p>
             Complétez vos informations uniquement lorsqu’une session complète est affichée. Le paiement est désactivé si une information essentielle manque.
           </p>
-        </div>
-
-        <div class="booking-layout">
-          <div class="card stage-summary-card">
-            <h3>Résumé de votre réservation</h3>
-
-            <div class="selected-stage-box">
-              <span class="selected-stage-label">Stage sélectionné</span>
-              <div class="selected-stage-value" id="selectedStageValue">Aucune session complète sélectionnée pour le moment.</div>
-            </div>
-
-            <div class="booking-total" id="bookingTotal">Total : en attente d’une session complète</div>
-            <div id="bookingStatus" class="booking-status"></div>
-
-            <div class="bullet-list" style="margin-top: 20px;">
-              <div class="bullet-item"><strong>Paiement :</strong> proposé uniquement si la session est complète et publiée.</div>
-              <div class="bullet-item"><strong>Réservation :</strong> votre place est enregistrée après validation du paiement.</div>
-              <div class="bullet-item"><strong>Conseil :</strong> présentez-vous quelques minutes avant le début du stage.</div>
-            </div>
-          </div>
-
-          <div class="card booking-card">
-            <form id="bookingForm">
-              <div class="form-grid">
-                <div class="form-field">
-                  <label for="firstName">Prénom</label>
-                  <input id="firstName" type="text" required />
-                </div>
-
-                <div class="form-field">
-                  <label for="lastName">Nom</label>
-                  <input id="lastName" type="text" required />
-                </div>
-
-                <div class="form-field">
-                  <label for="email">Email</label>
-                  <input id="email" type="email" required />
-                </div>
-
-                <div class="form-field">
-                  <label for="phone">Téléphone</label>
-                  <input id="phone" type="tel" required />
-                </div>
-
-                <div class="form-field">
-                  <label for="places">Nombre de places</label>
-                  <input id="places" type="number" min="1" value="1" required />
-                </div>
-
-                <div class="form-field">
-                  <label for="cityDisplay">Ville du stage</label>
-                  <input id="cityDisplay" type="text" disabled />
-                </div>
-
-                <div class="form-field full">
-                  <label for="notes">Message complémentaire</label>
-                  <textarea id="notes" placeholder="Optionnel"></textarea>
-                </div>
-              </div>
-
-              <button class="btn btn-dark" type="submit" id="bookingSubmitButton" disabled>Réservation indisponible pour le moment</button>
-              <p class="form-rgpd-note" style="margin:12px 0 0; color: var(--vp-text-soft); font-size:.86rem; line-height:1.55;">
+</div>
+<div class="booking-layout">
+<div class="card stage-summary-card">
+<h3>Résumé de votre réservation</h3>
+<div class="selected-stage-box">
+<span class="selected-stage-label">Stage sélectionné</span>
+<div class="selected-stage-value" id="selectedStageValue">Aucune session complète sélectionnée pour le moment.</div>
+</div>
+<div class="booking-total" id="bookingTotal">Total : en attente d’une session complète</div>
+<div class="booking-status" id="bookingStatus"></div>
+<div class="bullet-list" style="margin-top: 20px;">
+<div class="bullet-item"><strong>Paiement :</strong> proposé uniquement si la session est complète et publiée.</div>
+<div class="bullet-item"><strong>Réservation :</strong> votre place est enregistrée après validation du paiement.</div>
+<div class="bullet-item"><strong>Conseil :</strong> présentez-vous quelques minutes avant le début du stage.</div>
+</div>
+</div>
+<div class="card booking-card">
+<form id="bookingForm">
+<div class="form-grid">
+<div class="form-field">
+<label for="firstName">Prénom</label>
+<input id="firstName" required="" type="text"/>
+</div>
+<div class="form-field">
+<label for="lastName">Nom</label>
+<input id="lastName" required="" type="text"/>
+</div>
+<div class="form-field">
+<label for="email">Email</label>
+<input id="email" required="" type="email"/>
+</div>
+<div class="form-field">
+<label for="phone">Téléphone</label>
+<input id="phone" required="" type="tel"/>
+</div>
+<div class="form-field">
+<label for="places">Nombre de places</label>
+<input id="places" min="1" required="" type="number" value="1"/>
+</div>
+<div class="form-field">
+<label for="cityDisplay">Ville du stage</label>
+<input disabled="" id="cityDisplay" type="text"/>
+</div>
+<div class="form-field full">
+<label for="notes">Message complémentaire</label>
+<textarea id="notes" placeholder="Optionnel"></textarea>
+</div>
+</div>
+<button class="btn btn-dark" disabled="" id="bookingSubmitButton" type="submit">Réservation indisponible pour le moment</button>
+<p class="form-rgpd-note" style="margin:12px 0 0; color: var(--vp-text-soft); font-size:.86rem; line-height:1.55;">
                 Les informations transmises via ce formulaire sont utilisées uniquement pour répondre à votre demande. Vous pouvez exercer vos droits d’accès, de rectification ou de suppression en écrivant à vitalprotectformation@gmail.com. Voir notre politique de confidentialité.
               </p>
-            </form>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section>
-      <div class="container">
-        <div class="section-head">
-          <span class="eyebrow">Questions fréquentes</span>
-          <h2>Avant de réserver</h2>
-          <p>
+</form>
+</div>
+</div>
+</div>
+</section>
+<section>
+<div class="container">
+<div class="section-head">
+<span class="eyebrow">Questions fréquentes</span>
+<h2>Avant de réserver</h2>
+<p>
             Quelques réponses utiles pour clarifier le cadre de participation.
           </p>
-        </div>
+</div>
+<div class="faq-grid">
+<article class="faq-card">
+<h3>Faut-il être sportif ?</h3>
+<p>Non. Le stage est pensé pour être accessible à un large public grâce à une pédagogie progressive.</p>
+</article>
+<article class="faq-card">
+<h3>Est-ce un cours de combat ?</h3>
+<p>Non. Vital Protect privilégie la prévention, l’évitement, la compréhension des situations et des réponses réalistes.</p>
+</article>
+<article class="faq-card">
+<h3>Comment se passe la réservation ?</h3>
+<p>Vous complétez le formulaire uniquement lorsqu’une session complète est publiée. Le paiement Stripe est alors proposé et vous recevez la confirmation.</p>
+</article>
+<article class="faq-card">
+<h3>Le cadre est-il sécurisé ?</h3>
+<p>Oui. Les stages reposent sur des consignes claires, une progression contrôlée et un encadrement rigoureux.</p>
+</article>
+</div>
+</div>
+</section>
 
-        <div class="faq-grid">
-          <article class="faq-card">
-            <h3>Faut-il être sportif ?</h3>
-            <p>Non. Le stage est pensé pour être accessible à un large public grâce à une pédagogie progressive.</p>
-          </article>
+<!-- V4_EXTRA_HOMOGENEITY -->
 
-          <article class="faq-card">
-            <h3>Est-ce un cours de combat ?</h3>
-            <p>Non. Vital Protect privilégie la prévention, l’évitement, la compréhension des situations et des réponses réalistes.</p>
-          </article>
-
-          <article class="faq-card">
-            <h3>Comment se passe la réservation ?</h3>
-            <p>Vous complétez le formulaire uniquement lorsqu’une session complète est publiée. Le paiement Stripe est alors proposé et vous recevez la confirmation.</p>
-          </article>
-
-          <article class="faq-card">
-            <h3>Le cadre est-il sécurisé ?</h3>
-            <p>Oui. Les stages reposent sur des consignes claires, une progression contrôlée et un encadrement rigoureux.</p>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <section>
-      <div class="container">
-        <div class="cta-panel cta-stage">
-          <h2>Comprendre le stage avant de réserver</h2>
-          <p>
-            Cette fiche existe pour donner une vision claire du cadre, des objectifs et des informations pratiques,
-            avant toute inscription ou demande de paiement.
-          </p>
-
-          <div class="cta-actions">
-            <a href="/index.html#stages" class="btn btn-dark">Voir tous les stages</a>
-            <a href="/methode.html" class="btn btn-outline">Découvrir la méthode</a>
-          </div>
-        </div>
-      </div>
-    </section>
-
-      <!-- V4_EXTRA_HOMOGENEITY -->
-
-        <section class="vpl-section vpl-section-dark">
-          <div class="vpl-container vpl-steps">
-            <div class="vpl-section-head vpl-sticky">
-              <span class="vpl-section-kicker">Déroulé</span>
-              <h2 class="vpl-section-title">Comprendre avant d’agir.</h2>
-              <p class="vpl-section-copy">Chaque stage suit une progression lisible : contexte, démonstration, mise en pratique, retour au calme.</p>
-            </div>
-            <div class="vpl-step-list">
-              <article class="vpl-step"><b>01</b><div><h3>Briefing</h3><p>Objectifs, règles de sécurité et cadre de participation.</p></div></article>
-              <article class="vpl-step"><b>02</b><div><h3>Lecture</h3><p>Comprendre les signaux et les distances utiles.</p></div></article>
-              <article class="vpl-step"><b>03</b><div><h3>Mise en pratique</h3><p>Exercices progressifs et réalistes.</p></div></article>
-            </div>
-          </div>
-        </section>
-
-  </main>
-
-  <footer class="site-footer">
-    <div class="container site-footer__grid">
-      <div class="site-footer__brand">
-        <strong>VITAL PROTECT</strong>
-        <p>
+</main>
+<footer class="site-footer">
+<div class="container site-footer__grid">
+<div class="site-footer__brand">
+<strong>VITAL PROTECT</strong>
+<p>
           Une méthode structurée de sécurité personnelle fondée sur la prévention, l’évitement,
           la réaction réaliste, la pédagogie progressive et l’habilitation des formateurs.
         </p>
-      </div>
-
-      <div class="site-footer__links">
-        <a href="/methode.html">La méthode</a>
-        <a href="/entreprises.html">Entreprises</a>
-        <a href="/devenir-formateur.html">Devenir formateur</a>
-        <a href="/faq.html">FAQ</a>
-        <a href="/contact.html">Contact</a>
-      </div>
-    </div>
-  </footer>
-
-  <script type="module">
+</div>
+<div class="site-footer__links">
+<a href="/methode.html">La méthode</a>
+<a href="/entreprises.html">Entreprises</a>
+<a href="/devenir-formateur.html">Devenir formateur</a>
+<a href="/faq.html">FAQ</a>
+<a href="/contact.html">Contact</a>
+</div>
+</div>
+</footer>
+<script type="module">
     import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
     const supabase = createClient(
@@ -627,7 +538,6 @@
     placesInput?.addEventListener("input", updateBookingTotal);
     loadStage();
   </script>
-
-  <script src="/lusion-level.js"></script>
+<script src="/lusion-level.js"></script>
 </body>
 </html>

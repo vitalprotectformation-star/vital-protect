@@ -1,8 +1,8 @@
 <!DOCTYPE html>
+
 <html lang="fr">
 <head>
-
-  <script>
+<script>
     (function () {
       try {
         if (sessionStorage.getItem('vpl-route-transition-next') !== '1') return;
@@ -14,750 +14,480 @@
       } catch (_) {}
     })();
   </script>
-  <style>
+<style>
     html{--vpl-transition-image:url("transition-screen.png");--vpl-transition-bg-size:cover}
     html.vpl-route-preload-transition,html.vpl-route-preload-transition body{background:#2f6f9f!important}
     html.vpl-route-preload-transition::before{content:"";position:fixed;inset:0;z-index:2147482998;pointer-events:none;background-color:#2f6f9f;background-image:var(--vpl-transition-image);background-position:center;background-size:var(--vpl-transition-bg-size);background-repeat:no-repeat;opacity:1}
     @media (max-width: 768px), (pointer: coarse) and (orientation: portrait){html{--vpl-transition-image:url("transition-screen-mobile.jpg");--vpl-transition-bg-size:cover}}
   </style>
-  <link rel="preload" as="image" href="transition-screen.png" media="(min-width: 769px)" />
-  <link rel="preload" as="image" href="transition-screen-mobile.jpg" media="(max-width: 768px), (pointer: coarse) and (orientation: portrait)" />
-  <script src="/page-transition.js"></script>
-  <script>
+<link as="image" href="transition-screen.png" media="(min-width: 769px)" rel="preload"/>
+<link as="image" href="transition-screen-mobile.jpg" media="(max-width: 768px), (pointer: coarse) and (orientation: portrait)" rel="preload"/>
+<script src="/page-transition.js"></script>
+<script>
     if (!window.VitalPageTransition) {
       document.write('<script src="page-transition.js"><\/script>');
     }
   </script>
-<meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Devenir formateur Vital Protect — Intégrer un cadre de transmission encadré</title>
-  <meta
-    name="description"
-    content="Intégrez le parcours formateur Vital Protect : validation interne par module, cadre pédagogique, méthode de transmission, affiliation réseau et activation progressive."
-  />
-
-  <link rel="canonical" href="https://vital-protect.fr/devenir-formateur.html" />
-  <link rel="icon" href="/logo.png" type="image/png" />
-  <link rel="stylesheet" href="/styles/tokens.css" />
-  <link rel="stylesheet" href="/styles/base.css" />
-  <link rel="stylesheet" href="/styles/components.css" />
-  <link rel="stylesheet" href="/styles/lusion-level.css" />
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Devenir formateur Vital Protect — Intégrer un cadre de transmission encadré</title>
+<meta content="Intégrez le parcours formateur Vital Protect : validation interne par module, cadre pédagogique, méthode de transmission, affiliation réseau et activation progressive." name="description"/>
+<link href="https://vital-protect.fr/devenir-formateur.html" rel="canonical"/>
+<link href="/logo.png" rel="icon" type="image/png"/>
+<link href="/styles/tokens.css" rel="stylesheet"/>
+<link href="/styles/base.css" rel="stylesheet"/>
+<link href="/styles/components.css" rel="stylesheet"/>
+<link href="/styles/lusion-level.css" rel="stylesheet"/>
 </head>
-<body class="vpl-inner-page">
-  <canvas class="vpl-canvas" aria-hidden="true"></canvas>
-  <div class="vpl-noise" aria-hidden="true"></div>
-  <div class="vpl-scroll-ribbon" aria-hidden="true">
-    <svg class="vpl-scroll-ribbon-svg" viewBox="0 0 1000 1600" preserveAspectRatio="none">
-      <defs>
-        <linearGradient id="vplRibbonGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stop-color="#d8ecff" stop-opacity="0.96"></stop>
-          <stop offset="38%" stop-color="#6db7ff" stop-opacity="0.94"></stop>
-          <stop offset="72%" stop-color="#2f7fca" stop-opacity="0.94"></stop>
-          <stop offset="100%" stop-color="#0b3a6f" stop-opacity="0.92"></stop>
-        </linearGradient>
-      </defs>
-      <path class="vpl-ribbon-base" pathLength="1" d="M920 -80 C980 130 700 120 760 330 C820 520 990 560 860 760 C700 1010 240 930 300 1180 C360 1420 760 1350 680 1580 C640 1680 560 1710 430 1750"></path>
-      <path class="vpl-ribbon-progress" pathLength="1" d="M920 -80 C980 130 700 120 760 330 C820 520 990 560 860 760 C700 1010 240 930 300 1180 C360 1420 760 1350 680 1580 C640 1680 560 1710 430 1750"></path>
-      <circle class="vpl-ribbon-dot" cx="920" cy="-80" r="18"></circle>
-    </svg>
-  </div>
+<body class="vpl-inner-page page-editorial-light">
+<canvas aria-hidden="true" class="vpl-canvas"></canvas>
+<div aria-hidden="true" class="vpl-noise"></div>
+<div aria-hidden="true" class="vpl-scroll-ribbon">
+<svg class="vpl-scroll-ribbon-svg" preserveaspectratio="none" viewbox="0 0 1000 1600">
+<defs>
+<lineargradient id="vplRibbonGradient" x1="0%" x2="0%" y1="0%" y2="100%">
+<stop offset="0%" stop-color="#d8ecff" stop-opacity="0.96"></stop>
+<stop offset="38%" stop-color="#6db7ff" stop-opacity="0.94"></stop>
+<stop offset="72%" stop-color="#2f7fca" stop-opacity="0.94"></stop>
+<stop offset="100%" stop-color="#0b3a6f" stop-opacity="0.92"></stop>
+</lineargradient>
+</defs>
+<path class="vpl-ribbon-base" d="M920 -80 C980 130 700 120 760 330 C820 520 990 560 860 760 C700 1010 240 930 300 1180 C360 1420 760 1350 680 1580 C640 1680 560 1710 430 1750" pathlength="1"></path>
+<path class="vpl-ribbon-progress" d="M920 -80 C980 130 700 120 760 330 C820 520 990 560 860 760 C700 1010 240 930 300 1180 C360 1420 760 1350 680 1580 C640 1680 560 1710 430 1750" pathlength="1"></path>
+<circle class="vpl-ribbon-dot" cx="920" cy="-80" r="18"></circle>
+</svg>
+</div>
+<header class="vpl-nav">
+<a aria-label="Accueil Vital Protect" class="vpl-brand" href="/index.html">
+<img alt="Vital Protect" src="/logo.png"/>
+<div>
+<b>VITAL PROTECT</b>
+<span>Standard sécurité personnelle</span>
+</div>
+</a>
+<nav aria-label="Navigation principale" class="vpl-menu">
+<a data-page="index" href="/index.html">Accueil</a>
+<a data-page="methode" href="/methode.html">Standard</a>
+<a data-page="stage" href="/stage.html">Stages</a>
+<a data-page="entreprises" href="/entreprises.html">Entreprises</a>
+<a class="active" data-page="devenir-formateur" href="/devenir-formateur.html">Formateurs</a>
+<a data-page="faq" href="/faq.html">FAQ</a>
+<a data-page="contact" href="/contact.html">Contact</a>
+<a class="vpl-nav-ghost" href="/formateur-login.html">Espace</a>
+</nav>
+<a class="vpl-nav-cta" href="/stage.html">Trouver un stage</a>
+</header>
+<main>
+<section class="vpl-inner-hero">
+<div class="vpl-container vpl-inner-hero-grid">
+<div>
+<div class="vpl-eyebrow">Réseau formateur</div>
+<h1 class="vpl-inner-title">Intégrer un réseau<span>encadré.</span></h1>
+<p class="vpl-inner-lead">Devenir formateur Vital Protect, c’est rejoindre un cadre de transmission contrôlé, accompagné et maintenu à jour.</p>
+<div class="vpl-actions">
+<a class="vpl-button vpl-button-primary" href="/stage.html">Trouver un stage</a>
+<a class="vpl-button vpl-button-secondary" href="/contact.html">Nous contacter</a>
+</div>
+</div>
+<div class="vpl-inner-visual">
+<img alt="Habilité. Supervisé. Maintenu à jour." src="/formateur-devant-public-assis-salle.png"/>
+<div class="vpl-inner-stat">
+<strong>Habilité. Supervisé. Maintenu à jour.</strong>
+<span>La qualité ne dépend pas d’une personne, mais d’un standard commun.</span>
+</div>
+</div>
+</div>
+</section>
+<!-- V4_INTERNAL_EFFECTS_INSERTED -->
+<div aria-hidden="true" class="vpl-marquee">
+<div class="vpl-marquee-track">
+<span>Validation interne</span><span>Supervision</span><span>Mise à jour</span><span>Licence de marque</span><span>Publication encadrée</span>
+</div>
+<div class="vpl-marquee-track">
+<span>Validation interne</span><span>Supervision</span><span>Mise à jour</span><span>Licence de marque</span><span>Publication encadrée</span>
+</div>
+</div>
+<div class="vpl-light vpl-internal-effects">
 
 
-  <header class="vpl-nav">
-      <a href="/index.html" class="vpl-brand" aria-label="Accueil Vital Protect">
-        <img src="/logo.png" alt="Vital Protect" />
-        <div>
-          <b>VITAL PROTECT</b>
-          <span>Standard sécurité personnelle</span>
-        </div>
-      </a>
+</div>
 
-      <nav class="vpl-menu" aria-label="Navigation principale">
-        <a href="/index.html" data-page="index">Accueil</a>
-        <a href="/methode.html" data-page="methode">Standard</a>
-        <a href="/stage.html" data-page="stage">Stages</a>
-        <a href="/entreprises.html" data-page="entreprises">Entreprises</a>
-        <a href="/devenir-formateur.html" data-page="devenir-formateur" class="active">Formateurs</a>
-        <a href="/faq.html" data-page="faq">FAQ</a>
-        <a href="/contact.html" data-page="contact">Contact</a>
-        <a href="/formateur-login.html" class="vpl-nav-ghost">Espace</a>
-      </nav>
-
-      <a href="/stage.html" class="vpl-nav-cta">Trouver un stage</a>
-    </header>
-
-  <main>
-    <section class="vpl-inner-hero">
-        <div class="vpl-container vpl-inner-hero-grid">
-          <div>
-            <div class="vpl-eyebrow">Réseau formateur</div>
-            <h1 class="vpl-inner-title">Intégrer un réseau<span>encadré.</span></h1>
-            <p class="vpl-inner-lead">Devenir formateur Vital Protect, c’est rejoindre un cadre de transmission contrôlé, accompagné et maintenu à jour.</p>
-            <div class="vpl-actions">
-              <a class="vpl-button vpl-button-primary" href="/stage.html">Trouver un stage</a>
-              <a class="vpl-button vpl-button-secondary" href="/contact.html">Nous contacter</a>
-            </div>
-          </div>
-          <div class="vpl-inner-visual">
-            <img src="/formateur-devant-public-assis-salle.png" alt="Habilité. Supervisé. Maintenu à jour." />
-            <div class="vpl-inner-stat">
-              <strong>Habilité. Supervisé. Maintenu à jour.</strong>
-              <span>La qualité ne dépend pas d’une personne, mais d’un standard commun.</span>
-            </div>
-          </div>
-        </div>
-      </section>
-      <!-- V4_INTERNAL_EFFECTS_INSERTED -->
-
-      <div class="vpl-marquee" aria-hidden="true">
-        <div class="vpl-marquee-track">
-          <span>Validation interne</span><span>Supervision</span><span>Mise à jour</span><span>Licence de marque</span><span>Publication encadrée</span>
-        </div>
-        <div class="vpl-marquee-track">
-          <span>Validation interne</span><span>Supervision</span><span>Mise à jour</span><span>Licence de marque</span><span>Publication encadrée</span>
-        </div>
-      </div>
-
-      <div class="vpl-light vpl-internal-effects">
-        <section class="vpl-section">
-          <div class="vpl-container vpl-steps">
-            <div class="vpl-section-head vpl-sticky">
-              <span class="vpl-section-kicker">Réseau formateur</span>
-              <h2 class="vpl-section-title">Un parcours qui protège le standard.</h2>
-              <p class="vpl-section-copy">La valeur du réseau dépend de sa cohérence : validation par module, supervision, mise à jour et règles d’usage de la marque.</p>
-            </div>
-            <div class="vpl-step-list">
-              <article class="vpl-step"><b>01</b><div><h3>Candidature</h3><p>Le profil est étudié avant d’entrer dans le parcours.</p></div></article>
-              <article class="vpl-step"><b>02</b><div><h3>Validation interne</h3><p>Le formateur est habilité par module et sur un périmètre précis.</p></div></article>
-              <article class="vpl-step"><b>03</b><div><h3>Supervision</h3><p>Posture, pédagogie et sécurité d’animation sont observées pendant le parcours.</p></div></article>
-              <article class="vpl-step"><b>04</b><div><h3>Publication encadrée</h3><p>Les stages peuvent ensuite être publiés lorsque le cadre autorisé est complet.</p></div></article>
-            </div>
-          </div>
-        </section>
-
-        <section class="vpl-section">
-          <div class="vpl-container">
-            <div class="vpl-image-grid">
-              <a class="vpl-image-card" href="/devenir-formateur.html">
-                <img src="/formateur-devant-public-assis-salle.png" alt="Formateur Vital Protect devant un public" />
-                <div class="vpl-image-content">
-                  <span class="vpl-tag">Transmission</span>
-                  <h3>Une marque commune, un cadre commun.</h3>
-                  <p>L’enjeu n’est pas seulement d’animer : c’est de transmettre sans dénaturer le standard.</p>
-                </div>
-              </a>
-              <div style="display:grid;gap:22px;">
-                <a class="vpl-image-card small" href="/devenir-formateur.html"><img src="/1module.png" alt="Formule un module Vital Protect" /><div class="vpl-image-content"><span class="vpl-tag">Module</span><h3>Habilitation ciblée.</h3><p>Autorisation limitée au périmètre validé.</p></div></a>
-                <a class="vpl-image-card small" href="/devenir-formateur.html"><img src="/packcomplet.png" alt="Pack complet formateur Vital Protect" /><div class="vpl-image-content"><span class="vpl-tag">Pack</span><h3>Activation réseau.</h3><p>Supports, cadre, publication encadrée et suivi.</p></div></a>
-              </div>
-            </div>
-          </div>
-        </section>
-      </div>
-
-
-    <section>
-      <div class="container">
-        <div class="section-head section-head--center">
-          <span class="eyebrow">Positionnement</span>
-          <h2>Le formateur Vital Protect n’est pas un titre vague</h2>
-          <p>
-            Le parcours n’a pas vocation à distribuer une étiquette abstraite.
-            Il sert à reconnaître la capacité à transmettre des contenus précis,
-            selon une méthode précise, dans un cadre de sécurité, de pédagogie
-            et de cohérence de réseau.
-          </p>
-        </div>
-
-        <div class="soft-card" style="margin:0 auto 28px;max-width:900px;">
-          <h3>Important : validation interne Vital Protect</h3>
-          <p>
-            Les termes “habilitation”, “validation” ou “module validé” désignent un cadre interne Vital Protect.
-            Ils ne doivent pas être présentés comme une certification professionnelle reconnue par l’État, sauf enregistrement officiel ultérieur dans un répertoire compétent.
-          </p>
-        </div>
-
-        <div class="authority-grid">
-          <article class="authority-card">
-            <div class="icon-dot"></div>
-            <h3>Un périmètre défini</h3>
-            <p>
-              Le formateur Vital Protect n’est pas validé “sur tout”.
-              Il est habilité sur des modules, avec un champ de transmission clair.
-            </p>
-          </article>
-
-          <article class="authority-card">
-            <div class="icon-dot"></div>
-            <h3>Une responsabilité réelle</h3>
-            <p>
-              Transmettre au nom du standard implique de respecter le fond,
-              la progression, le cadre pédagogique et les règles de sécurité.
-            </p>
-          </article>
-
-          <article class="authority-card">
-            <div class="icon-dot"></div>
-            <h3>Une cohérence de marque</h3>
-            <p>
-              Le réseau doit donner la même impression de sérieux, de clarté
-              et de fiabilité quel que soit l’intervenant habilité.
-            </p>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <section id="modules">
-      <div class="container">
-        <div class="section-head section-head--center">
-          <span class="eyebrow">Formules formateur</span>
-          <h2>Choisissez votre rythme d’entrée dans le parcours</h2>
-          <p>
+<section id="modules">
+<div class="container">
+<div class="section-head section-head--center">
+<span class="eyebrow">Formules formateur</span>
+<h2>Choisissez votre rythme d’entrée dans le parcours</h2>
+<p>
             Choisissez votre parcours formateur selon votre niveau d’engagement : 1 module,
             2 modules ou pack complet. Vous pourrez ensuite sélectionner les modules et sessions adaptés à votre projet.
           </p>
-        </div>
-
-        <div class="offer-grid">
-          <article class="offer-card offer-card--one">
-            <span class="offer-label">Démarrage</span>
-            <h3>1 module</h3>
-            <p>La formule la plus simple pour entrer dans le réseau, tester le cadre et lancer une première spécialité habilitée.</p>
-            <div class="offer-price">
-              <strong>1 module</strong>
-              <span>à choisir au catalogue</span>
-            </div>
-            <ul class="offer-list">
-              <li>1 spécialité formateur à sélectionner</li>
-              <li>1 session de validation interne liée au module choisi</li>
-              <li>Entrée progressive dans le standard Vital Protect</li>
-            </ul>
-            <div class="timeline-cta" style="justify-content:flex-start; margin-top:auto;">
-              <a href="#catalogue-modules" class="btn btn-light">Choisir 1 module</a>
-            </div>
-          </article>
-
-          <article class="offer-card offer-card--two offer-card--featured">
-            <span class="offer-badge">Populaire</span>
-            <span class="offer-label">Accélération</span>
-            <h3>2 modules</h3>
-            <p>Le bon compromis pour monter plus vite en compétences, proposer davantage et rentabiliser plus rapidement votre parcours.</p>
-            <div class="offer-price">
-              <strong>2 modules</strong>
-              <span>parcours conseillé</span>
-            </div>
-            <ul class="offer-list">
-              <li>2 spécialisations formateur dans le même parcours</li>
-              <li>Plus de polyvalence commerciale et pédagogique</li>
-              <li>Positionnement plus solide dès le lancement</li>
-            </ul>
-            <div class="timeline-cta" style="justify-content:flex-start; margin-top:auto;">
-              <a href="#catalogue-modules" class="btn btn-light">Découvrir le pack 2 modules</a>
-            </div>
-          </article>
-
-          <article class="offer-card offer-card--full">
-            <span class="offer-label">Premium</span>
-            <h3>Pack complet</h3>
-            <p>Pour les profils qui veulent une offre complète, une vraie profondeur de catalogue et un positionnement formateur premium.</p>
-            <div class="offer-price">
-              <strong>Pack complet</strong>
-              <span>vision long terme</span>
-            </div>
-            <ul class="offer-list">
-              <li>Accès à tout le catalogue formateur disponible</li>
-              <li>Meilleure lisibilité commerciale sur votre offre</li>
-              <li>Parcours pensé pour construire une activité durable</li>
-            </ul>
-            <div class="timeline-cta" style="justify-content:flex-start; margin-top:auto;">
-              <a href="#catalogue-modules" class="btn btn-light">Voir le pack complet</a>
-            </div>
-          </article>
-        </div>
-
-        <div id="catalogue-modules" class="module-catalog-head">
-          <h3>Catalogue des modules ouverts</h3>
-          <p>
+</div>
+<div class="offer-grid">
+<article class="offer-card offer-card--one">
+<span class="offer-label">Démarrage</span>
+<h3>1 module</h3>
+<p>La formule la plus simple pour entrer dans le réseau, tester le cadre et lancer une première spécialité habilitée.</p>
+<div class="offer-price">
+<strong>1 module</strong>
+<span>à choisir au catalogue</span>
+</div>
+<ul class="offer-list">
+<li>1 spécialité formateur à sélectionner</li>
+<li>1 session de validation interne liée au module choisi</li>
+<li>Entrée progressive dans le standard Vital Protect</li>
+</ul>
+<div class="timeline-cta" style="justify-content:flex-start; margin-top:auto;">
+<a class="btn btn-light" href="#catalogue-modules">Choisir 1 module</a>
+</div>
+</article>
+<article class="offer-card offer-card--two offer-card--featured">
+<span class="offer-badge">Populaire</span>
+<span class="offer-label">Accélération</span>
+<h3>2 modules</h3>
+<p>Le bon compromis pour monter plus vite en compétences, proposer davantage et rentabiliser plus rapidement votre parcours.</p>
+<div class="offer-price">
+<strong>2 modules</strong>
+<span>parcours conseillé</span>
+</div>
+<ul class="offer-list">
+<li>2 spécialisations formateur dans le même parcours</li>
+<li>Plus de polyvalence commerciale et pédagogique</li>
+<li>Positionnement plus solide dès le lancement</li>
+</ul>
+<div class="timeline-cta" style="justify-content:flex-start; margin-top:auto;">
+<a class="btn btn-light" href="#catalogue-modules">Découvrir le pack 2 modules</a>
+</div>
+</article>
+<article class="offer-card offer-card--full">
+<span class="offer-label">Premium</span>
+<h3>Pack complet</h3>
+<p>Pour les profils qui veulent une offre complète, une vraie profondeur de catalogue et un positionnement formateur premium.</p>
+<div class="offer-price">
+<strong>Pack complet</strong>
+<span>vision long terme</span>
+</div>
+<ul class="offer-list">
+<li>Accès à tout le catalogue formateur disponible</li>
+<li>Meilleure lisibilité commerciale sur votre offre</li>
+<li>Parcours pensé pour construire une activité durable</li>
+</ul>
+<div class="timeline-cta" style="justify-content:flex-start; margin-top:auto;">
+<a class="btn btn-light" href="#catalogue-modules">Voir le pack complet</a>
+</div>
+</article>
+</div>
+<div class="module-catalog-head" id="catalogue-modules">
+<h3>Catalogue des modules ouverts</h3>
+<p>
             Une fois votre formule choisie, sélectionnez le ou les modules qui vous intéressent.
             Ensuite, seules les sessions liées à ce module s’afficheront plus bas.
           </p>
-        </div>
-
-        <div id="modulesContainer" class="module-grid" style="margin-top:24px;">
-          <div class="empty-state">Chargement des modules. Aucun paiement ne sera proposé tant qu’une session complète n’est pas sélectionnée.</div>
-        </div>
-      </div>
-    </section>
-
-    <section>
-      <div class="container">
-        <div class="section-head section-head--center">
-          <span class="eyebrow">Pour qui ?</span>
-          <h2>Le profil recherché</h2>
-          <p>
+</div>
+<div class="module-grid" id="modulesContainer" style="margin-top:24px;">
+<div class="empty-state">Chargement des modules. Aucun paiement ne sera proposé tant qu’une session complète n’est pas sélectionnée.</div>
+</div>
+</div>
+</section>
+<section>
+<div class="container">
+<div class="section-head section-head--center">
+<span class="eyebrow">Pour qui ?</span>
+<h2>Le profil recherché</h2>
+<p>
             Cette page s’adresse aux personnes qui veulent transmettre sérieusement,
             dans un cadre lisible, exigeant et plus structuré qu’un simple stage indépendant.
           </p>
-        </div>
-
-        <div class="profile-grid">
-          <article class="profile-card">
-            <div class="icon-dot"></div>
-            <h3>Pédagogie</h3>
-            <p>
+</div>
+<div class="profile-grid">
+<article class="profile-card">
+<div class="icon-dot"></div>
+<h3>Pédagogie</h3>
+<p>
               Vous aimez expliquer, guider, démontrer, faire pratiquer et corriger
               avec clarté, calme et cohérence.
             </p>
-          </article>
-
-          <article class="profile-card">
-            <div class="icon-dot"></div>
-            <h3>Posture sérieuse</h3>
-            <p>
+</article>
+<article class="profile-card">
+<div class="icon-dot"></div>
+<h3>Posture sérieuse</h3>
+<p>
               Vous cherchez un cadre crédible, une logique claire et un niveau d’exigence
               supérieur à une simple logique commerciale.
             </p>
-          </article>
-
-          <article class="profile-card">
-            <div class="icon-dot"></div>
-            <h3>Engagement de standard</h3>
-            <p>
+</article>
+<article class="profile-card">
+<div class="icon-dot"></div>
+<h3>Engagement de standard</h3>
+<p>
               Vous êtes prêt à transmettre selon un cadre commun et à ne pas transformer
               la méthode au gré des interprétations personnelles.
             </p>
-          </article>
-        </div>
-
-        <div class="timeline-cta">
-          <a href="#formulaire" class="btn btn-dark">Réserver une session</a>
-        </div>
-      </div>
-    </section>
-
-    <section>
-      <div class="container split-panel">
-        <div class="soft-card info-panel">
-          <span class="eyebrow">Ce qu’on valide</span>
-          <h3>Une capacité à transmettre, pas seulement à pratiquer</h3>
-          <p>
+</article>
+</div>
+<div class="timeline-cta">
+<a class="btn btn-dark" href="#formulaire">Réserver une session</a>
+</div>
+</div>
+</section>
+<section>
+<div class="container split-panel">
+<div class="soft-card info-panel">
+<span class="eyebrow">Ce qu’on valide</span>
+<h3>Une capacité à transmettre, pas seulement à pratiquer</h3>
+<p>
             Le parcours vise à vérifier que le candidat peut comprendre la logique Vital Protect,
             la restituer fidèlement, l’expliquer clairement, l’enseigner de manière progressive
             et la faire appliquer dans un cadre sécurisé.
           </p>
-
-          <div class="bullet-list">
-            <div class="bullet-item"><strong>Compréhension :</strong> saisir la logique de la méthode et son positionnement.</div>
-            <div class="bullet-item"><strong>Transmission :</strong> expliquer clairement et sans confusion inutile.</div>
-            <div class="bullet-item"><strong>Pédagogie :</strong> construire une progression lisible et adaptée.</div>
-            <div class="bullet-item"><strong>Sécurité :</strong> encadrer sans dérive ni mise en danger.</div>
-          </div>
-        </div>
-
-        <div class="soft-card info-panel">
-          <span class="eyebrow">Ce qu’on ne valide pas</span>
-          <h3>Pas un statut vague, pas une liberté totale d’interprétation</h3>
-          <p>
+<div class="bullet-list">
+<div class="bullet-item"><strong>Compréhension :</strong> saisir la logique de la méthode et son positionnement.</div>
+<div class="bullet-item"><strong>Transmission :</strong> expliquer clairement et sans confusion inutile.</div>
+<div class="bullet-item"><strong>Pédagogie :</strong> construire une progression lisible et adaptée.</div>
+<div class="bullet-item"><strong>Sécurité :</strong> encadrer sans dérive ni mise en danger.</div>
+</div>
+</div>
+<div class="soft-card info-panel">
+<span class="eyebrow">Ce qu’on ne valide pas</span>
+<h3>Pas un statut vague, pas une liberté totale d’interprétation</h3>
+<p>
             La validation Vital Protect ne consiste pas à reconnaître quelqu’un “dans l’absolu”.
             Elle ne donne pas un blanc-seing général. Elle reconnaît la capacité à transmettre
             des contenus déterminés dans un cadre déterminé.
           </p>
-
-          <div class="bullet-list">
-            <div class="bullet-item"><strong>Pas une validation globale :</strong> l’habilitation interne est liée à des modules précis.</div>
-            <div class="bullet-item"><strong>Pas un droit illimité :</strong> le périmètre de transmission reste défini.</div>
-            <div class="bullet-item"><strong>Pas une personnalisation libre :</strong> le standard doit rester identifiable.</div>
-            <div class="bullet-item"><strong>Pas un label figé :</strong> le maintien de qualité compte autant que l’entrée.</div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section>
-      <div class="container">
-        <div class="section-head section-head--center">
-          <span class="eyebrow">Pourquoi rejoindre le réseau</span>
-          <h2>Ce que vous obtenez vraiment</h2>
-          <p>
+<div class="bullet-list">
+<div class="bullet-item"><strong>Pas une validation globale :</strong> l’habilitation interne est liée à des modules précis.</div>
+<div class="bullet-item"><strong>Pas un droit illimité :</strong> le périmètre de transmission reste défini.</div>
+<div class="bullet-item"><strong>Pas une personnalisation libre :</strong> le standard doit rester identifiable.</div>
+<div class="bullet-item"><strong>Pas un label figé :</strong> le maintien de qualité compte autant que l’entrée.</div>
+</div>
+</div>
+</div>
+</section>
+<section>
+<div class="container">
+<div class="section-head section-head--center">
+<span class="eyebrow">Pourquoi rejoindre le réseau</span>
+<h2>Ce que vous obtenez vraiment</h2>
+<p>
             Rejoindre Vital Protect, ce n’est pas seulement suivre une formation.
             C’est intégrer un cadre de méthode, un standard de transmission
             et une logique de développement cohérente.
           </p>
-        </div>
-
-        <div class="benefit-grid">
-          <article class="benefit-card">
-            <h3>Une méthode claire</h3>
-            <p>
+</div>
+<div class="benefit-grid">
+<article class="benefit-card">
+<h3>Une méthode claire</h3>
+<p>
               Vous rejoignez une architecture pédagogique identifiable, avec un langage,
               une logique et des repères de transmission plus solides.
             </p>
-          </article>
-
-          <article class="benefit-card">
-            <h3>Une habilitation exploitable</h3>
-            <p>
+</article>
+<article class="benefit-card">
+<h3>Une habilitation exploitable</h3>
+<p>
               Votre validation ouvre un droit de transmission sur des modules définis,
               dans le cadre du standard Vital Protect.
             </p>
-          </article>
-
-          <article class="benefit-card">
-            <h3>Un cadre de réseau</h3>
-            <p>
+</article>
+<article class="benefit-card">
+<h3>Un cadre de réseau</h3>
+<p>
               Vous n’avancez pas seul : affiliation, cohérence, suivi, espace formateur,
               standards et renouvellement font partie du système.
             </p>
-          </article>
-        </div>
+</article>
+</div>
+<div class="timeline-cta">
+<a class="btn btn-outline" href="#sessions">Voir les sessions</a>
+</div>
+</div>
+</section>
 
-        <div class="timeline-cta">
-          <a href="#sessions" class="btn btn-outline">Voir les sessions</a>
-        </div>
-      </div>
-    </section>
 
-    <section>
-      <div class="container">
-        <div class="section-head section-head--center">
-          <span class="eyebrow">Affiliation & réseau</span>
-          <h2>Faire partie du réseau, ce n’est pas juste “être listé”</h2>
-          <p>
-            L’affiliation Vital Protect sert à maintenir un cadre actif, vivant et contrôlé.
-            Elle soutient la cohérence du réseau, la mise à jour du standard et la lisibilité
-            du statut du formateur dans le temps.
-          </p>
-        </div>
-
-        <div class="network-grid">
-          <article class="network-card">
-            <h3>Une appartenance lisible</h3>
-            <p>
-              Le public et les structures doivent pouvoir comprendre si un formateur
-              est réellement actif et à jour dans le cadre Vital Protect.
-            </p>
-          </article>
-
-          <article class="network-card">
-            <h3>Un maintien de cohérence</h3>
-            <p>
-              L’affiliation ne sert pas seulement à “payer une place”.
-              Elle participe à la continuité du cadre, du suivi et du standard.
-            </p>
-          </article>
-
-          <article class="network-card">
-            <h3>Une logique durable</h3>
-            <p>
-              Plus le réseau est tenu sérieusement, plus la méthode gagne en crédibilité,
-              en stabilité et en potentiel d’institutionnalisation.
-            </p>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <section>
-      <div class="container">
-        <div class="section-head section-head--center">
-          <span class="eyebrow">Étapes</span>
-          <h2>Comment se déroule le parcours</h2>
-          <p>
-            Le parcours formateur suit une logique claire pour structurer l’entrée dans le réseau
-            et protéger la qualité pédagogique du standard.
-          </p>
-        </div>
-
-        <div class="steps-grid">
-          <article class="step-card">
-            <div class="step-index">1</div>
-            <h3>Choix d’un module</h3>
-            <p>Vous commencez par choisir le module qui vous correspond.</p>
-          </article>
-
-          <article class="step-card">
-            <div class="step-index">2</div>
-            <h3>Choix d’une session</h3>
-            <p>Vous sélectionnez ensuite une session disponible liée à ce module précis.</p>
-          </article>
-
-          <article class="step-card">
-            <div class="step-index">3</div>
-            <h3>Réservation</h3>
-            <p>Vous réservez votre place avec paiement sécurisé en autorisation bancaire.</p>
-          </article>
-
-          <article class="step-card">
-            <div class="step-index">4</div>
-            <h3>Étude du dossier</h3>
-            <p>Le dossier est examiné avant validation définitive de votre entrée en parcours.</p>
-          </article>
-
-          <article class="step-card">
-            <div class="step-index">5</div>
-            <h3>Activation</h3>
-            <p>En cas de réussite, votre profil est activé avec habilitation interne sur le module concerné.</p>
-          </article>
-        </div>
-
-        <div class="timeline-cta">
-          <a href="#formulaire" class="btn btn-dark">Réserver ma place</a>
-        </div>
-      </div>
-    </section>
-
-    <section>
-      <div class="container split-panel">
-        <div class="soft-card info-panel">
-          <span class="eyebrow">Coût & logique de paiement</span>
-          <h3>Une réservation claire et sécurisée</h3>
-          <p>
+<section>
+<div class="container split-panel">
+<div class="soft-card info-panel">
+<span class="eyebrow">Coût &amp; logique de paiement</span>
+<h3>Une réservation claire et sécurisée</h3>
+<p>
             Le tarif dépend de la session choisie. Le paiement est sécurisé
             et reste en autorisation bancaire tant que le dossier n’est pas validé.
           </p>
-
-          <div class="bullet-list">
-            <div class="bullet-item"><strong>Tarif :</strong> affiché session par session.</div>
-            <div class="bullet-item"><strong>Mode :</strong> paiement sécurisé Stripe.</div>
-            <div class="bullet-item"><strong>Encaissement :</strong> capture uniquement après validation du dossier.</div>
-            <div class="bullet-item"><strong>Clarté :</strong> le parcours reste cadré du début à la fin.</div>
-          </div>
-        </div>
-
-        <div class="soft-card info-panel">
-          <span class="eyebrow">Ce que vous obtenez à la fin</span>
-          <h3>En cas de validation</h3>
-          <p>
+<div class="bullet-list">
+<div class="bullet-item"><strong>Tarif :</strong> affiché session par session.</div>
+<div class="bullet-item"><strong>Mode :</strong> paiement sécurisé Stripe.</div>
+<div class="bullet-item"><strong>Encaissement :</strong> capture uniquement après validation du dossier.</div>
+<div class="bullet-item"><strong>Clarté :</strong> le parcours reste cadré du début à la fin.</div>
+</div>
+</div>
+<div class="soft-card info-panel">
+<span class="eyebrow">Ce que vous obtenez à la fin</span>
+<h3>En cas de validation</h3>
+<p>
             Si vous validez le parcours, vous entrez dans un système précis
             avec une activation concrète dans le réseau.
           </p>
-
-          <div class="bullet-list">
-            <div class="bullet-item"><strong>Activation du profil formateur</strong> dans le système Vital Protect.</div>
-            <div class="bullet-item"><strong>Habilitation du module concerné</strong> avec enregistrement de validité.</div>
-            <div class="bullet-item"><strong>Affiliation réseau</strong> avec logique de suivi et renouvellement.</div>
-            <div class="bullet-item"><strong>Accès à l’espace formateur</strong> et au cadre d’exploitation associé.</div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section id="sessions">
-      <div class="container">
-        <div class="section-head">
-          <span class="eyebrow">Sessions disponibles</span>
-          <h2>Choisissez une session de validation interne</h2>
-          <p>
+<div class="bullet-list">
+<div class="bullet-item"><strong>Activation du profil formateur</strong> dans le système Vital Protect.</div>
+<div class="bullet-item"><strong>Habilitation du module concerné</strong> avec enregistrement de validité.</div>
+<div class="bullet-item"><strong>Affiliation réseau</strong> avec logique de suivi et renouvellement.</div>
+<div class="bullet-item"><strong>Accès à l’espace formateur</strong> et au cadre d’exploitation associé.</div>
+</div>
+</div>
+</div>
+</section>
+<section id="sessions">
+<div class="container">
+<div class="section-head">
+<span class="eyebrow">Sessions disponibles</span>
+<h2>Choisissez une session de validation interne</h2>
+<p>
             Sélectionnez d’abord un module pour afficher les sessions correspondantes, puis complétez votre demande
             de réservation.
           </p>
-        </div>
-
-        <div id="sessionsContainer" class="sessions-grid">
-          <div class="empty-state">Choisissez d’abord un module ci-dessus pour voir les sessions disponibles.</div>
-        </div>
-
-        <div class="timeline-cta">
-          <a href="#formulaire" class="btn btn-dark">Aller au formulaire</a>
-        </div>
-      </div>
-    </section>
-
-    <section id="formulaire">
-      <div class="container">
-        <div class="form-card">
-          <div class="form-head">
-            <h2>Compléter votre dossier</h2>
-            <p>
+</div>
+<div class="sessions-grid" id="sessionsContainer">
+<div class="empty-state">Choisissez d’abord un module ci-dessus pour voir les sessions disponibles.</div>
+</div>
+<div class="timeline-cta">
+<a class="btn btn-dark" href="#formulaire">Aller au formulaire</a>
+</div>
+</div>
+</section>
+<section id="formulaire">
+<div class="container">
+<div class="form-card">
+<div class="form-head">
+<h2>Compléter votre dossier</h2>
+<p>
               Une fois votre session choisie, votre module est verrouillé automatiquement pour éviter toute incohérence
               dans la réservation.
             </p>
-          </div>
-
-          <div id="checkoutFeedback"></div>
-
-          <div id="selectedSessionBox" class="selected-session-box">
-            <span class="selected-session-label">Session sélectionnée</span>
-            <div id="selectedSessionValue" class="selected-session-value">—</div>
-          </div>
-
-          <form id="trainerForm">
-            <div class="form-grid">
-              <div class="form-field">
-                <label for="firstName">Prénom</label>
-                <input type="text" id="firstName" required />
-              </div>
-
-              <div class="form-field">
-                <label for="lastName">Nom</label>
-                <input type="text" id="lastName" required />
-              </div>
-
-              <div class="form-field">
-                <label for="email">Email</label>
-                <input type="email" id="email" required />
-              </div>
-
-              <div class="form-field">
-                <label for="phone">Téléphone</label>
-                <input type="tel" id="phone" required />
-              </div>
-
-              <div class="form-field">
-                <label for="city">Ville</label>
-                <input type="text" id="city" required />
-              </div>
-
-              <div class="form-field">
-                <label for="trainingType">Module</label>
-                <select id="trainingType" required>
-                  <option value="">Choisissez d’abord un module puis une session</option>
-                </select>
-                <div class="form-note" style="margin-top:8px; color: var(--vp-text-soft); line-height:1.6; font-size:0.95rem;">
+</div>
+<div id="checkoutFeedback"></div>
+<div class="selected-session-box" id="selectedSessionBox">
+<span class="selected-session-label">Session sélectionnée</span>
+<div class="selected-session-value" id="selectedSessionValue">—</div>
+</div>
+<form id="trainerForm">
+<div class="form-grid">
+<div class="form-field">
+<label for="firstName">Prénom</label>
+<input id="firstName" required="" type="text"/>
+</div>
+<div class="form-field">
+<label for="lastName">Nom</label>
+<input id="lastName" required="" type="text"/>
+</div>
+<div class="form-field">
+<label for="email">Email</label>
+<input id="email" required="" type="email"/>
+</div>
+<div class="form-field">
+<label for="phone">Téléphone</label>
+<input id="phone" required="" type="tel"/>
+</div>
+<div class="form-field">
+<label for="city">Ville</label>
+<input id="city" required="" type="text"/>
+</div>
+<div class="form-field">
+<label for="trainingType">Module</label>
+<select id="trainingType" required="">
+<option value="">Choisissez d’abord un module puis une session</option>
+</select>
+<div class="form-note" style="margin-top:8px; color: var(--vp-text-soft); line-height:1.6; font-size:0.95rem;">
                   Le module se verrouille automatiquement quand vous sélectionnez une session.
                 </div>
-              </div>
-
-              <div class="form-field full">
-                <label for="message">Votre message</label>
-                <textarea id="message" placeholder="Présentez brièvement votre profil, votre motivation et votre intention de transmission."></textarea>
-              </div>
-            </div>
-
-            <button class="btn btn-dark" type="submit">Réserver ma place</button>
-
-            <div class="form-note" style="margin-top:10px; color: var(--vp-text-soft); line-height:1.7;">
+</div>
+<div class="form-field full">
+<label for="message">Votre message</label>
+<textarea id="message" placeholder="Présentez brièvement votre profil, votre motivation et votre intention de transmission."></textarea>
+</div>
+</div>
+<button class="btn btn-dark" type="submit">Réserver ma place</button>
+<div class="form-note" style="margin-top:10px; color: var(--vp-text-soft); line-height:1.7;">
               Réservation sécurisée — le montant est autorisé puis capturé uniquement après validation du dossier et vérification de la session.
             </div>
-            <p class="form-rgpd-note" style="margin:12px 0 0; color: var(--vp-text-soft); font-size:.86rem; line-height:1.55;">
+<p class="form-rgpd-note" style="margin:12px 0 0; color: var(--vp-text-soft); font-size:.86rem; line-height:1.55;">
               Les informations transmises via ce formulaire sont utilisées uniquement pour répondre à votre demande. Vous pouvez exercer vos droits d’accès, de rectification ou de suppression en écrivant à vitalprotectformation@gmail.com. Voir notre politique de confidentialité.
             </p>
-          </form>
-        </div>
-      </div>
-    </section>
-
-    <section>
-      <div class="container">
-        <div class="section-head section-head--center">
-          <span class="eyebrow">Questions fréquentes</span>
-          <h2>Ce qu’il faut savoir avant de candidater</h2>
-          <p>
+</form>
+</div>
+</div>
+</section>
+<section>
+<div class="container">
+<div class="section-head section-head--center">
+<span class="eyebrow">Questions fréquentes</span>
+<h2>Ce qu’il faut savoir avant de candidater</h2>
+<p>
             Quelques réponses rapides pour clarifier le fonctionnement du parcours.
           </p>
-        </div>
-
-        <div class="faq-grid">
-          <article class="faq-card">
-            <h3>Le paiement est-il encaissé immédiatement ?</h3>
-            <p>
+</div>
+<div class="faq-grid">
+<article class="faq-card">
+<h3>Le paiement est-il encaissé immédiatement ?</h3>
+<p>
               Non. Le paiement est d’abord autorisé, puis capturé uniquement après validation du dossier.
             </p>
-          </article>
-
-          <article class="faq-card">
-            <h3>Suis-je habilité “globalement” après la formation ?</h3>
-            <p>
+</article>
+<article class="faq-card">
+<h3>Suis-je habilité “globalement” après la formation ?</h3>
+<p>
               Non. L’habilitation Vital Protect est interne, liée à des modules précis et à un périmètre de transmission défini.
             </p>
-          </article>
-
-          <article class="faq-card">
-            <h3>Que se passe-t-il après validation ?</h3>
-            <p>
+</article>
+<article class="faq-card">
+<h3>Que se passe-t-il après validation ?</h3>
+<p>
               Votre profil formateur est activé, votre module est enregistré
               et votre affiliation entre dans le cadre du réseau.
             </p>
-          </article>
-
-          <article class="faq-card">
-            <h3>Le parcours est-il une simple formalité ?</h3>
-            <p>
+</article>
+<article class="faq-card">
+<h3>Le parcours est-il une simple formalité ?</h3>
+<p>
               Non. Il repose sur une logique d’exigence pédagogique,
               de cohérence de transmission et de responsabilité de standard.
             </p>
-          </article>
-        </div>
+</article>
+</div>
+<div class="timeline-cta">
+<a class="btn btn-dark" href="#formulaire">Candidater maintenant</a>
+<a class="btn btn-outline" href="/contact.html">Poser une question</a>
+</div>
+</div>
+</section>
 
-        <div class="timeline-cta">
-          <a href="#formulaire" class="btn btn-dark">Candidater maintenant</a>
-          <a href="/contact.html" class="btn btn-outline">Poser une question</a>
-        </div>
-      </div>
-    </section>
-
-    <section>
-      <div class="container">
-        <div class="cta-panel">
-          <h2>Intégrer un cadre de transmission, pas seulement suivre une formation</h2>
-          <p>
-            Vital Protect s’adresse aux personnes qui veulent transmettre une méthode cohérente,
-            pédagogique et sécurisée dans un standard de plus en plus structuré.
-          </p>
-
-          <div class="cta-actions">
-            <a href="#sessions" class="btn btn-dark">Voir les sessions</a>
-            <a href="/methode.html" class="btn btn-outline">Voir le standard</a>
-            <a href="/contact.html" class="btn btn-outline">Nous contacter</a>
-          </div>
-        </div>
-      </div>
-    </section>
-
-      <!-- V4_EXTRA_HOMOGENEITY -->
-
-        <section class="vpl-section vpl-section-dark">
-          <div class="vpl-container">
-            <div class="vpl-section-head center">
-              <span class="vpl-section-kicker">Ce que le réseau apporte</span>
-              <h2 class="vpl-section-title">Un cadre, une marque, une plateforme.</h2>
-            </div>
-            <div class="vpl-card-grid">
-              <article class="vpl-card"><div class="vpl-card-num">01</div><h3>Cadre pédagogique</h3><p>Supports, progression, sécurité et limites de transmission.</p></article>
-              <article class="vpl-card"><div class="vpl-card-num">02</div><h3>Marque commune</h3><p>Utilisation encadrée du nom, du logo et des modules Vital Protect.</p></article>
-              <article class="vpl-card"><div class="vpl-card-num">03</div><h3>Vente de stages</h3><p>Publication encadrée selon les modules autorisés, uniquement quand les informations de session sont complètes.</p></article>
-            </div>
-          </div>
-        </section>
+<!-- V4_EXTRA_HOMOGENEITY -->
 
 
-      <section class="vpl-kinetic-strip" aria-hidden="true">
-        <div class="vpl-container">
-          <div class="vpl-kinetic-row">
-            <span>Habilitation par module</span><span>Supervision pédagogique</span><span>Mise à jour régulière</span><span>Licence de marque</span><span>Publication encadrée</span><span>Habilitation par module</span><span>Supervision pédagogique</span>
-          </div>
-        </div>
-      </section>
-
-  </main>
-
-  <footer class="site-footer">
-    <div class="container site-footer__grid">
-      <div class="site-footer__brand">
-        <strong>VITAL PROTECT</strong>
-        <p>
+</main>
+<footer class="site-footer">
+<div class="container site-footer__grid">
+<div class="site-footer__brand">
+<strong>VITAL PROTECT</strong>
+<p>
           Un standard structuré de sécurité personnelle fondé sur la prévention,
           l’évitement, la réaction réaliste, la pédagogie progressive
           et la cohérence de transmission.
         </p>
-      </div>
-
-      <div class="site-footer__links">
-        <a href="/index.html">Accueil</a>
-        <a href="/methode.html">Le standard</a>
-        <a href="/entreprises.html">Entreprises</a>
-        <a href="/devenir-formateur.html">Devenir formateur</a>
-        <a href="/faq.html">FAQ</a>
-        <a href="/contact.html">Contact</a>
-        <a href="/mentions-legales.html">Mentions légales</a>
-        <a href="/politique-confidentialite.html">Confidentialité</a>
-        <a href="/cgv.html">CGV</a>
-      </div>
-    </div>
-  </footer>
-
-  <script type="module">
+</div>
+<div class="site-footer__links">
+<a href="/index.html">Accueil</a>
+<a href="/methode.html">Le standard</a>
+<a href="/entreprises.html">Entreprises</a>
+<a href="/devenir-formateur.html">Devenir formateur</a>
+<a href="/faq.html">FAQ</a>
+<a href="/contact.html">Contact</a>
+<a href="/mentions-legales.html">Mentions légales</a>
+<a href="/politique-confidentialite.html">Confidentialité</a>
+<a href="/cgv.html">CGV</a>
+</div>
+</div>
+</footer>
+<script type="module">
     import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
     const supabase = createClient(
@@ -1243,6 +973,6 @@
     await loadModules();
     await loadSessions();
   </script>
-  <script src="/lusion-level.js"></script>
+<script src="/lusion-level.js"></script>
 </body>
 </html>
