@@ -9081,3 +9081,47 @@ body.page-methode .cta-actions {
     line-height: .95 !important;
   }
 }
+
+/* =========================================================
+   Correctif global — bandeaux bleu foncé + séparateurs
+   ========================================================= */
+.vpl-marquee,
+.vpl-inner-page .vpl-marquee {
+  color: #0d2b46 !important;
+}
+
+.vpl-marquee-track {
+  gap: clamp(18px, 3vw, 42px) !important;
+}
+
+.vpl-marquee span,
+.vpl-marquee em {
+  color: #0d2b46 !important;
+  font-size: clamp(1.15rem, 2.25vw, 2.55rem) !important;
+  letter-spacing: -.035em !important;
+}
+
+.vpl-marquee span::after,
+.vpl-marquee em::after {
+  content: " —";
+  display: inline-block;
+  margin-left: clamp(14px, 2.2vw, 34px);
+  color: #0d2b46;
+  opacity: .85;
+}
+
+@media (max-width: 768px) {
+  .vpl-marquee-track {
+    gap: 20px !important;
+  }
+
+  .vpl-marquee span,
+  .vpl-marquee em {
+    font-size: clamp(1.05rem, 6.8vw, 2rem) !important;
+  }
+
+  .vpl-marquee span::after,
+  .vpl-marquee em::after {
+    margin-left: 18px;
+  }
+}
