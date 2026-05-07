@@ -13208,7 +13208,8 @@ body.page-accueil-rythme .vp-home-visual-duo figure:only-child {
 
 body.page-accueil-rythme .vp-home-visual-duo--single figure img,
 body.page-accueil-rythme .vp-home-visual-duo figure:only-child img {
-  object-position: center 48% !important;
+  /* Cadrage légèrement abaissé pour garder la tête du formateur visible. */
+  object-position: center 34% !important;
 }
 
 @media (max-width: 640px) {
