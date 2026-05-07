@@ -11710,3 +11710,53 @@ body.page-accueil-rythme .hp-band {
     font-size: clamp(2.35rem, 11vw, 3.7rem) !important;
   }
 }
+
+
+/* =========================================================
+   Correctif accueil — tiret unique + ruban sous les contenus
+   ========================================================= */
+
+/* Le bandeau contient déjà ses tirets dans le HTML : on neutralise l'ancien tiret ajouté en CSS. */
+body.page-accueil-rythme .hp-band span::after,
+body.page-accueil-rythme .hp-band span:not(:last-child)::after {
+  content: none !important;
+  display: none !important;
+}
+
+/* Le ruban doit passer au-dessus des fonds de sections, mais jamais au-dessus des textes/cartes/images. */
+body.page-accueil-rythme .vpl-page,
+body.page-accueil-rythme main {
+  position: relative !important;
+  z-index: auto !important;
+}
+
+body.page-accueil-rythme main > section,
+body.page-accueil-rythme .hp-hero,
+body.page-accueil-rythme .hp-section,
+body.page-accueil-rythme .hp-final {
+  position: relative !important;
+  z-index: auto !important;
+  isolation: auto !important;
+}
+
+body.page-accueil-rythme .vpl-scroll-ribbon {
+  z-index: 1 !important;
+  opacity: .58 !important;
+  mix-blend-mode: normal !important;
+}
+
+body.page-accueil-rythme .vpl-container,
+body.page-accueil-rythme .container,
+body.page-accueil-rythme .hp-band,
+body.page-accueil-rythme .hp-band-track {
+  position: relative !important;
+  z-index: 3 !important;
+}
+
+body.page-accueil-rythme .hp-hero::after {
+  z-index: 0 !important;
+}
+
+body.page-accueil-rythme .vpl-nav {
+  z-index: 100 !important;
+}
