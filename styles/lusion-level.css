@@ -13357,7 +13357,7 @@ body.page-methode .vp-scroll-pillars-section {
   --vp-pillars-shadow: 0 24px 70px rgba(30, 68, 104, 0.16);
   --vp-pillars-ease: cubic-bezier(.18, .9, .2, 1);
   position: relative !important;
-  min-height: 245vh !important;
+  min-height: 315vh !important;
   overflow: clip !important;
   padding: 0 !important;
   background:
@@ -13433,6 +13433,13 @@ body.page-methode .vp-scroll-pillar-card.is-visible {
   opacity: 1;
   transform: translateY(0) scale(1) rotateX(0deg);
   filter: blur(0);
+}
+
+body.page-methode .vp-scroll-pillars-section.vp-scroll-pillars-complete .vp-scroll-pillar-card {
+  opacity: 1 !important;
+  transform: none !important;
+  filter: none !important;
+  transition-duration: .01ms !important;
 }
 
 body.page-methode .vp-scroll-pillar-capital,
@@ -13660,7 +13667,7 @@ body.page-methode .vp-scroll-pillars-hint span::before {
   }
 
   body.page-methode .vp-scroll-pillars-section {
-    min-height: 290vh !important;
+    min-height: 350vh !important;
   }
 }
 
@@ -13710,5 +13717,29 @@ body.page-methode .vp-scroll-pillars-hint span::before {
   body.page-methode .vp-scroll-pillars-hint span::before {
     animation-duration: .01ms !important;
     animation-iteration-count: 1 !important;
+  }
+}
+
+
+/* =========================================================
+   Hotfix Page Standard — blocage réel de la section piliers
+   ---------------------------------------------------------
+   La section occupe un écran : le scroll est consommé par le
+   JavaScript pour afficher les 5 piliers avant de laisser la
+   page repartir vers la section suivante.
+   ========================================================= */
+@media (min-width: 721px) {
+  body.page-methode .vp-scroll-pillars-section {
+    min-height: 100vh !important;
+  }
+
+  body.page-methode .vp-scroll-pillars-sticky {
+    position: relative !important;
+    top: auto !important;
+    min-height: 100vh !important;
+  }
+
+  body.page-methode .vp-scroll-pillars-section.vp-scroll-pillars-locked {
+    cursor: ns-resize !important;
   }
 }
