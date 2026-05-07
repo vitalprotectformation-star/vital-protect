@@ -457,14 +457,41 @@
       var cards = Array.prototype.slice.call(section.querySelectorAll('.vp-scroll-pillar-card'));
       if (!cards.length) return;
 
-      var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      var desktop = window.matchMedia && window.matchMedia('(min-width: 721px)').matches;
+      var progress = 0;
+      var locked = false;
+      var complete = false;
+      var touchY = null;
+      var wheelFactor = 1750;
+      var keyStep = 0.22;
+
+      var mediaDesktop = window.matchMedia ? window.matchMedia('(min-width: 721px)') : null;
+      var mediaReduce = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : null;
+
+      function isDesktop() {
+        return !mediaDesktop || mediaDesktop.matches;
+      }
+
+      function isReduced() {
+        return mediaReduce && mediaReduce.matches;
+      }
 
       function clamp(value, min, max) {
         return Math.min(Math.max(value, min), max);
       }
 
+      function sectionTop() {
+        return window.pageYOffset + section.getBoundingClientRect().top;
+      }
+
+      function snapToSection() {
+        window.scrollTo({ top: Math.max(0, sectionTop()), behavior: 'auto' });
+      }
+
       function revealAll() {
+        complete = true;
+        progress = 1;
+        section.classList.add('vp-scroll-pillars-complete');
+        section.classList.remove('vp-scroll-pillars-locked');
         cards.forEach(function (card) {
           card.classList.add('is-visible');
           card.style.transform = '';
@@ -473,32 +500,21 @@
         });
       }
 
-      function updatePillars() {
-        if (reduceMotion || !desktop) {
+      function render() {
+        if (isReduced() || !isDesktop()) {
           revealAll();
           return;
         }
 
-        var rect = section.getBoundingClientRect();
-        var scrollable = section.offsetHeight - (window.innerHeight || document.documentElement.clientHeight);
-        var progress = scrollable > 0 ? clamp(-rect.top / scrollable, 0, 1) : 1;
-
-        /*
-          On termine l'apparition des 5 piliers avant la fin de la zone sticky.
-          Comme ça, la section suivante ne peut pas remonter à l'écran tant que
-          les piliers ne sont pas tous affichés.
-        */
-        var revealStart = 0.08;
-        var revealGap = 0.13;
-        var revealDuration = 0.14;
+        var revealStart = 0.02;
+        var revealGap = 0.18;
+        var revealDuration = 0.16;
         var completeAt = revealStart + ((cards.length - 1) * revealGap) + revealDuration;
-        var complete = progress >= completeAt;
-        section.classList.toggle('vp-scroll-pillars-complete', complete);
 
         cards.forEach(function (card, index) {
           var start = revealStart + index * revealGap;
           var end = start + revealDuration;
-          var local = complete ? 1 : clamp((progress - start) / (end - start), 0, 1);
+          var local = clamp((progress - start) / (end - start), 0, 1);
 
           card.classList.toggle('is-visible', local > 0.02);
 
@@ -515,24 +531,130 @@
             card.style.opacity = '';
           }
         });
+
+        if (progress >= completeAt) {
+          revealAll();
+        } else {
+          complete = false;
+          section.classList.remove('vp-scroll-pillars-complete');
+        }
+      }
+
+      function engageLock() {
+        if (complete || locked || isReduced() || !isDesktop()) return false;
+        locked = true;
+        section.classList.add('vp-scroll-pillars-locked');
+        snapToSection();
+        render();
+        return true;
+      }
+
+      function releaseLock() {
+        locked = false;
+        section.classList.remove('vp-scroll-pillars-locked');
+      }
+
+      function shouldCatchSection(delta) {
+        if (complete || isReduced() || !isDesktop()) return false;
+        var rect = section.getBoundingClientRect();
+        var vh = window.innerHeight || document.documentElement.clientHeight;
+        var y = window.pageYOffset || document.documentElement.scrollTop || 0;
+        var top = sectionTop();
+
+        if (delta > 0) {
+          return y >= top - 12 || (rect.top <= vh * 0.35 && rect.bottom > vh * 0.5);
+        }
+
+        return locked;
+      }
+
+      function consume(delta, event) {
+        if (complete) {
+          releaseLock();
+          return false;
+        }
+
+        if (!locked && !shouldCatchSection(delta)) return false;
+
+        if (event && event.cancelable) event.preventDefault();
+        engageLock();
+
+        if (delta < 0 && progress <= 0.001) {
+          releaseLock();
+          window.scrollTo({ top: Math.max(0, sectionTop() - 24), behavior: 'auto' });
+          return true;
+        }
+
+        progress = clamp(progress + (delta / wheelFactor), 0, 1);
+        render();
+
+        if (complete) {
+          releaseLock();
+          snapToSection();
+        }
+
+        return true;
       }
 
       var ticking = false;
+      function guardScrollPosition() {
+        if (complete || locked || isReduced() || !isDesktop()) return;
+        var y = window.pageYOffset || document.documentElement.scrollTop || 0;
+        var top = sectionTop();
+        var rect = section.getBoundingClientRect();
+        var vh = window.innerHeight || document.documentElement.clientHeight;
+
+        if (y >= top && rect.bottom > vh * 0.2) {
+          engageLock();
+        }
+      }
+
       function onScroll() {
         if (ticking) return;
         ticking = true;
         window.requestAnimationFrame(function () {
-          updatePillars();
+          guardScrollPosition();
           ticking = false;
         });
       }
 
-      updatePillars();
+      window.addEventListener('wheel', function (event) {
+        consume(event.deltaY || 0, event);
+      }, { passive: false, capture: true });
+
+      window.addEventListener('keydown', function (event) {
+        var downKeys = ['ArrowDown', 'PageDown', ' '];
+        var upKeys = ['ArrowUp', 'PageUp'];
+        if (downKeys.indexOf(event.key) !== -1) consume(keyStep * wheelFactor, event);
+        if (upKeys.indexOf(event.key) !== -1) consume(-keyStep * wheelFactor, event);
+      }, { passive: false, capture: true });
+
+      window.addEventListener('touchstart', function (event) {
+        if (event.touches && event.touches.length) touchY = event.touches[0].clientY;
+      }, { passive: true });
+
+      window.addEventListener('touchmove', function (event) {
+        if (!event.touches || !event.touches.length || touchY === null) return;
+        var currentY = event.touches[0].clientY;
+        var delta = touchY - currentY;
+        if (Math.abs(delta) > 2) {
+          consume(delta * 2.8, event);
+          touchY = currentY;
+        }
+      }, { passive: false, capture: true });
+
+      window.addEventListener('touchend', function () {
+        touchY = null;
+      }, { passive: true });
+
       window.addEventListener('scroll', onScroll, { passive: true });
       window.addEventListener('resize', function () {
-        desktop = window.matchMedia && window.matchMedia('(min-width: 721px)').matches;
-        updatePillars();
+        if (isReduced() || !isDesktop()) revealAll();
+        else render();
       });
+
+      render();
+      guardScrollPosition();
     })();
   </script>
 </body>
