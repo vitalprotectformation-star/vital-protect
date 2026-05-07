@@ -121,13 +121,19 @@
             et un retour au calme systématique après chaque séquence.
           </p>
         </div>
-        <div class="vp-visual-mosaic">
-          <figure class="vp-image-card">
-            <img src="/visuel-prevenir-proteger-agir.webp" alt="Bannière Prévenir Protéger Agir lors d’une formation" loading="lazy" />
-          </figure>
-          <figure class="vp-image-card">
-            <img src="/visuel-mise-distance.webp" alt="Démonstration de distance et de posture" loading="lazy" />
-          </figure>
+        <div class="vp-image-flip" role="group" aria-labelledby="method-visual-title" aria-describedby="method-visual-flip-hint">
+          <input class="vp-image-flip__toggle" type="checkbox" id="method-visual-flip" />
+          <label class="vp-image-flip__card" for="method-visual-flip">
+            <span class="vp-image-flip__face vp-image-flip__face--front">
+              <img src="/visuel-briefing-crossfit.webp" alt="Briefing progressif d’un groupe avant les exercices" loading="lazy" />
+              <span class="vp-image-flip__badge">Briefing</span>
+            </span>
+            <span class="vp-image-flip__face vp-image-flip__face--back">
+              <img src="/visuel-mise-distance.webp" alt="Mise en pratique de la distance et de la posture" loading="lazy" />
+              <span class="vp-image-flip__badge">Mise en pratique</span>
+            </span>
+          </label>
+          <p class="vp-image-flip__caption" id="method-visual-flip-hint">Cliquer pour retourner l’image et voir l’autre moment de formation.</p>
         </div>
       </div>
     </section>
