@@ -121,7 +121,7 @@
             et un retour au calme systématique après chaque séquence.
           </p>
         </div>
-        <div class="vp-image-flip" role="group" aria-labelledby="method-visual-title" aria-describedby="method-visual-flip-hint">
+        <div class="vp-image-flip" role="group" aria-labelledby="method-visual-title">
           <input class="vp-image-flip__toggle" type="checkbox" id="method-visual-flip" />
           <label class="vp-image-flip__card" for="method-visual-flip">
             <span class="vp-image-flip__face vp-image-flip__face--front">
@@ -133,7 +133,6 @@
               <span class="vp-image-flip__badge">Mise en pratique</span>
             </span>
           </label>
-          <p class="vp-image-flip__caption" id="method-visual-flip-hint">Cliquer pour retourner l’image et voir l’autre moment de formation.</p>
         </div>
       </div>
     </section>
@@ -327,5 +326,100 @@
   </footer>
 
   <script src="/lusion-level.js"></script>
+
+  <script>
+    (function () {
+      var section = document.querySelector('.vp-visual-story--method');
+      var toggle = document.getElementById('method-visual-flip');
+      if (!section || !toggle) return;
+
+      section.classList.add('vp-flip-scroll-section');
+
+      var lockUntil = 0;
+      var didFlipDown = toggle.checked;
+      var didFlipUp = !toggle.checked;
+      var lastTouchY = null;
+
+      function isInFlipZone() {
+        var rect = section.getBoundingClientRect();
+        var viewH = window.innerHeight || document.documentElement.clientHeight;
+        return rect.top < viewH * 0.58 && rect.bottom > viewH * 0.42;
+      }
+
+      function centerSection() {
+        var rect = section.getBoundingClientRect();
+        var viewH = window.innerHeight || document.documentElement.clientHeight;
+        var target = window.pageYOffset + rect.top - Math.max(20, (viewH - rect.height) / 2);
+        window.scrollTo({ top: Math.max(0, target), behavior: 'smooth' });
+      }
+
+      function flipWithScroll(direction, event) {
+        if (!isInFlipZone()) return false;
+        if (Date.now() < lockUntil) {
+          if (event && event.cancelable) event.preventDefault();
+          return true;
+        }
+
+        if (direction > 0 && !toggle.checked && !didFlipDown) {
+          if (event && event.cancelable) event.preventDefault();
+          centerSection();
+          toggle.checked = true;
+          didFlipDown = true;
+          didFlipUp = false;
+          lockUntil = Date.now() + 760;
+          return true;
+        }
+
+        if (direction < 0 && toggle.checked && !didFlipUp) {
+          if (event && event.cancelable) event.preventDefault();
+          centerSection();
+          toggle.checked = false;
+          didFlipUp = true;
+          didFlipDown = false;
+          lockUntil = Date.now() + 760;
+          return true;
+        }
+
+        return false;
+      }
+
+      window.addEventListener('wheel', function (event) {
+        if (Math.abs(event.deltaY) < 8) return;
+        flipWithScroll(event.deltaY > 0 ? 1 : -1, event);
+      }, { passive: false });
+
+      window.addEventListener('touchstart', function (event) {
+        if (!event.touches || !event.touches.length) return;
+        lastTouchY = event.touches[0].clientY;
+      }, { passive: true });
+
+      window.addEventListener('touchmove', function (event) {
+        if (lastTouchY === null || !event.touches || !event.touches.length) return;
+        var currentY = event.touches[0].clientY;
+        var delta = lastTouchY - currentY;
+        if (Math.abs(delta) < 12) return;
+        if (!flipWithScroll(delta > 0 ? 1 : -1, event)) {
+          lastTouchY = currentY;
+        }
+      }, { passive: false });
+
+      window.addEventListener('keydown', function (event) {
+        var downKeys = ['ArrowDown', 'PageDown', ' '];
+        var upKeys = ['ArrowUp', 'PageUp'];
+        if (downKeys.indexOf(event.key) !== -1) flipWithScroll(1, event);
+        if (upKeys.indexOf(event.key) !== -1) flipWithScroll(-1, event);
+      });
+
+      toggle.addEventListener('change', function () {
+        if (toggle.checked) {
+          didFlipDown = true;
+          didFlipUp = false;
+        } else {
+          didFlipUp = true;
+          didFlipDown = false;
+        }
+      });
+    })();
+  </script>
 </body>
 </html>
