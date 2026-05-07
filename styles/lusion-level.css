@@ -4931,7 +4931,7 @@ label {
 }
 
 .vpl-visual-card {
-  z-index: 2 !important;
+  z-index: 3 !important;
   border-color: rgba(255,255,255,.18) !important;
   box-shadow:
     0 32px 90px rgba(0,0,0,.34),
@@ -13584,34 +13584,13 @@ body.page-methode .vp-scroll-pillar-card:nth-child(4) { --delay: 240ms; }
 body.page-methode .vp-scroll-pillar-card:nth-child(5) { --delay: 320ms; }
 
 body.page-methode .vp-scroll-pillars-decor {
-  position: absolute !important;
-  inset: auto -6vw 10vh auto !important;
-  width: min(480px, 42vw) !important;
-  height: min(620px, 64vh) !important;
-  border: 54px solid var(--vp-pillars-blue-soft) !important;
-  border-left-color: transparent !important;
-  border-radius: 50% !important;
-  transform: rotate(12deg) !important;
-  z-index: 0 !important;
-  pointer-events: none !important;
-}
-
-body.page-methode .vp-scroll-pillars-decor::after {
-  content: "";
-  position: absolute !important;
-  right: 28px !important;
-  bottom: 42px !important;
-  width: 86px !important;
-  height: 20px !important;
-  border-radius: 50% !important;
-  background: rgba(93, 157, 218, .34) !important;
-  filter: blur(1px) !important;
+  display: none !important;
 }
 
 body.page-methode .vp-scroll-pillars-grain {
   position: absolute !important;
   inset: 0 !important;
-  z-index: 1 !important;
+  z-index: 2 !important;
   opacity: .35 !important;
   pointer-events: none !important;
   background-image: radial-gradient(circle, rgba(119, 175, 226, .35) 1.4px, transparent 1.6px) !important;
