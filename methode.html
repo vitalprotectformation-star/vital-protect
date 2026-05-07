@@ -483,10 +483,22 @@
         var scrollable = section.offsetHeight - (window.innerHeight || document.documentElement.clientHeight);
         var progress = scrollable > 0 ? clamp(-rect.top / scrollable, 0, 1) : 1;
 
+        /*
+          On termine l'apparition des 5 piliers avant la fin de la zone sticky.
+          Comme ça, la section suivante ne peut pas remonter à l'écran tant que
+          les piliers ne sont pas tous affichés.
+        */
+        var revealStart = 0.08;
+        var revealGap = 0.13;
+        var revealDuration = 0.14;
+        var completeAt = revealStart + ((cards.length - 1) * revealGap) + revealDuration;
+        var complete = progress >= completeAt;
+        section.classList.toggle('vp-scroll-pillars-complete', complete);
+
         cards.forEach(function (card, index) {
-          var start = 0.10 + index * 0.15;
-          var end = start + 0.16;
-          var local = clamp((progress - start) / (end - start), 0, 1);
+          var start = revealStart + index * revealGap;
+          var end = start + revealDuration;
+          var local = complete ? 1 : clamp((progress - start) / (end - start), 0, 1);
 
           card.classList.toggle('is-visible', local > 0.02);
 
