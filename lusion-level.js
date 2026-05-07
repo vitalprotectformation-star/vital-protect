@@ -962,8 +962,9 @@ window.addEventListener('DOMContentLoaded', () => {
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-      // Si l'accueil est ouvert après une transition inter-page, on évite
-      // de relancer l'intro ECG sous le masque de dépixélisation.
+      // Important : lorsqu'on arrive sur l'accueil via une transition inter-page,
+      // l'intro ECG ne doit pas se rejouer. Sinon elle se superpose au gate
+      // VITAL PROTECT et donne exactement la coupure visible dans la vidéo.
       if (shouldSkipIntroForRouteTransition()) {
         hideIntroImmediately();
         return;
