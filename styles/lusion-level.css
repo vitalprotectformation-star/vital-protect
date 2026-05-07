@@ -13341,3 +13341,374 @@ body.page-methode .vp-image-flip__face--back img {
 body.page-methode .vp-flip-scroll-section .vp-image-flip__card {
   cursor: pointer !important;
 }
+
+
+/* =========================================================
+   Page Standard — animation scroll des 5 piliers
+   ---------------------------------------------------------
+   Intégration de l'animation fournie, avec classes préfixées
+   pour éviter d'impacter les autres grilles de cartes du site.
+   ========================================================= */
+body.page-methode .vp-scroll-pillars-section {
+  --vp-pillars-ink: #0f1f31;
+  --vp-pillars-muted: #5f6d7e;
+  --vp-pillars-blue-soft: rgba(151, 206, 255, 0.32);
+  --vp-pillars-edge: #dce8f3;
+  --vp-pillars-shadow: 0 24px 70px rgba(30, 68, 104, 0.16);
+  --vp-pillars-ease: cubic-bezier(.18, .9, .2, 1);
+  position: relative !important;
+  min-height: 245vh !important;
+  overflow: clip !important;
+  padding: 0 !important;
+  background:
+    radial-gradient(circle at 28% 18%, rgba(255,255,255,.95), rgba(255,255,255,0) 28%),
+    linear-gradient(180deg, #f8fcff 0%, #eef7ff 100%) !important;
+  color: var(--vp-pillars-ink) !important;
+}
+
+body.page-methode .vp-scroll-pillars-sticky {
+  position: sticky !important;
+  top: 0 !important;
+  min-height: 100vh !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: clamp(32px, 5vw, 72px) 24px !important;
+  isolation: isolate !important;
+}
+
+body.page-methode .vp-scroll-pillars-wrap {
+  width: min(1320px, 100%) !important;
+  margin-inline: auto !important;
+  position: relative !important;
+  z-index: 2 !important;
+}
+
+body.page-methode .vp-scroll-pillars-head {
+  margin-bottom: clamp(44px, 7vh, 76px) !important;
+}
+
+body.page-methode .vp-scroll-pillars-head h2 {
+  margin: 0 !important;
+  text-align: center !important;
+  font-size: clamp(48px, 7vw, 108px) !important;
+  line-height: .9 !important;
+  letter-spacing: -0.08em !important;
+  font-weight: 900 !important;
+}
+
+body.page-methode .vp-scroll-pillars-head p {
+  max-width: 600px !important;
+  margin: 22px auto 0 !important;
+  text-align: center !important;
+  color: var(--vp-pillars-muted) !important;
+  font-size: clamp(16px, 1.35vw, 20px) !important;
+  line-height: 1.7 !important;
+}
+
+body.page-methode .vp-scroll-pillars-grid {
+  display: grid !important;
+  grid-template-columns: repeat(5, minmax(170px, 1fr)) !important;
+  align-items: end !important;
+  gap: clamp(16px, 2vw, 28px) !important;
+  perspective: 1200px !important;
+}
+
+body.page-methode .vp-scroll-pillar-card {
+  --delay: 0ms;
+  min-height: clamp(330px, 38vh, 430px) !important;
+  display: grid !important;
+  grid-template-rows: auto 1fr auto !important;
+  opacity: 0;
+  transform: translateY(42vh) scale(.9) rotateX(8deg);
+  filter: blur(8px);
+  transition:
+    opacity 720ms var(--vp-pillars-ease) var(--delay),
+    transform 1000ms var(--vp-pillars-ease) var(--delay),
+    filter 900ms var(--vp-pillars-ease) var(--delay) !important;
+  will-change: transform, opacity, filter !important;
+}
+
+body.page-methode .vp-scroll-pillar-card.is-visible {
+  opacity: 1;
+  transform: translateY(0) scale(1) rotateX(0deg);
+  filter: blur(0);
+}
+
+body.page-methode .vp-scroll-pillar-capital,
+body.page-methode .vp-scroll-pillar-base {
+  width: 86% !important;
+  margin-inline: auto !important;
+  background: linear-gradient(90deg, #edf5fc 0%, #fff 18%, #fff 50%, #eaf3fb 100%) !important;
+  border: 1px solid rgba(201, 218, 232, .9) !important;
+  box-shadow: var(--vp-pillars-shadow) !important;
+}
+
+body.page-methode .vp-scroll-pillar-capital {
+  height: 48px !important;
+  border-radius: 24px 24px 10px 10px !important;
+  position: relative !important;
+  transform-origin: bottom center !important;
+}
+
+body.page-methode .vp-scroll-pillar-capital::before,
+body.page-methode .vp-scroll-pillar-capital::after,
+body.page-methode .vp-scroll-pillar-base::before {
+  content: "";
+  position: absolute !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  background: inherit !important;
+  border: inherit !important;
+  box-shadow: 0 12px 30px rgba(30, 68, 104, .08) !important;
+}
+
+body.page-methode .vp-scroll-pillar-capital::before {
+  width: 118% !important;
+  height: 18px !important;
+  bottom: -10px !important;
+  border-radius: 999px !important;
+}
+
+body.page-methode .vp-scroll-pillar-capital::after {
+  width: 72% !important;
+  height: 13px !important;
+  top: 9px !important;
+  border-radius: 999px !important;
+  opacity: .75 !important;
+}
+
+body.page-methode .vp-scroll-pillar-shaft {
+  position: relative !important;
+  margin: 4px auto 0 !important;
+  width: 78% !important;
+  padding: 44px 24px 34px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: flex-start !important;
+  border: 1px solid var(--vp-pillars-edge) !important;
+  border-radius: 999px 999px 34px 34px / 42px 42px 34px 34px !important;
+  background:
+    linear-gradient(90deg,
+      rgba(206, 223, 238, .65) 0 4%,
+      rgba(255,255,255,0) 4% 13%,
+      rgba(206, 223, 238, .55) 13% 17%,
+      rgba(255,255,255,0) 17% 30%,
+      rgba(206, 223, 238, .45) 30% 34%,
+      rgba(255,255,255,0) 34% 47%,
+      rgba(206, 223, 238, .45) 47% 51%,
+      rgba(255,255,255,0) 51% 64%,
+      rgba(206, 223, 238, .5) 64% 68%,
+      rgba(255,255,255,0) 68% 81%,
+      rgba(206, 223, 238, .65) 81% 85%,
+      rgba(255,255,255,0) 85% 100%),
+    linear-gradient(110deg, #edf5fc 0%, #fff 22%, #fff 56%, #edf5fc 100%) !important;
+  box-shadow: var(--vp-pillars-shadow) !important;
+  overflow: hidden !important;
+}
+
+body.page-methode .vp-scroll-pillar-shaft::before {
+  content: "";
+  position: absolute !important;
+  inset: 0 !important;
+  background: linear-gradient(180deg, rgba(255,255,255,.9), rgba(255,255,255,0) 38%, rgba(151,206,255,.10)) !important;
+  pointer-events: none !important;
+}
+
+body.page-methode .vp-scroll-pillar-medallion {
+  position: relative !important;
+  z-index: 1 !important;
+  width: 46px !important;
+  height: 46px !important;
+  display: grid !important;
+  place-items: center !important;
+  margin: 0 auto 20px !important;
+  border-radius: 999px !important;
+  background: var(--vp-pillars-ink) !important;
+  color: #fff !important;
+  font-size: 18px !important;
+  font-weight: 900 !important;
+  box-shadow: 0 10px 22px rgba(15, 31, 49, .18) !important;
+}
+
+body.page-methode .vp-scroll-pillar-card h3 {
+  position: relative !important;
+  z-index: 1 !important;
+  margin: 0 0 14px !important;
+  text-align: center !important;
+  font-size: clamp(18px, 1.45vw, 24px) !important;
+  line-height: 1.08 !important;
+  letter-spacing: -0.04em !important;
+}
+
+body.page-methode .vp-scroll-pillar-card p {
+  position: relative !important;
+  z-index: 1 !important;
+  margin: 0 !important;
+  color: var(--vp-pillars-muted) !important;
+  text-align: center !important;
+  font-size: clamp(14px, 1.05vw, 17px) !important;
+  line-height: 1.55 !important;
+}
+
+body.page-methode .vp-scroll-pillar-base {
+  position: relative !important;
+  height: 54px !important;
+  margin-top: 0 !important;
+  border-radius: 12px 12px 28px 28px !important;
+}
+
+body.page-methode .vp-scroll-pillar-base::before {
+  width: 122% !important;
+  height: 18px !important;
+  top: -10px !important;
+  border-radius: 999px !important;
+}
+
+body.page-methode .vp-scroll-pillar-card:nth-child(2) { min-height: clamp(352px, 41vh, 462px) !important; }
+body.page-methode .vp-scroll-pillar-card:nth-child(3) { min-height: clamp(374px, 44vh, 492px) !important; }
+body.page-methode .vp-scroll-pillar-card:nth-child(4) { min-height: clamp(352px, 41vh, 462px) !important; }
+body.page-methode .vp-scroll-pillar-card:nth-child(5) { min-height: clamp(330px, 38vh, 430px) !important; }
+
+body.page-methode .vp-scroll-pillar-card:nth-child(1) { --delay: 0ms; }
+body.page-methode .vp-scroll-pillar-card:nth-child(2) { --delay: 80ms; }
+body.page-methode .vp-scroll-pillar-card:nth-child(3) { --delay: 160ms; }
+body.page-methode .vp-scroll-pillar-card:nth-child(4) { --delay: 240ms; }
+body.page-methode .vp-scroll-pillar-card:nth-child(5) { --delay: 320ms; }
+
+body.page-methode .vp-scroll-pillars-decor {
+  position: absolute !important;
+  inset: auto -6vw 10vh auto !important;
+  width: min(480px, 42vw) !important;
+  height: min(620px, 64vh) !important;
+  border: 54px solid var(--vp-pillars-blue-soft) !important;
+  border-left-color: transparent !important;
+  border-radius: 50% !important;
+  transform: rotate(12deg) !important;
+  z-index: 0 !important;
+  pointer-events: none !important;
+}
+
+body.page-methode .vp-scroll-pillars-decor::after {
+  content: "";
+  position: absolute !important;
+  right: 28px !important;
+  bottom: 42px !important;
+  width: 86px !important;
+  height: 20px !important;
+  border-radius: 50% !important;
+  background: rgba(93, 157, 218, .34) !important;
+  filter: blur(1px) !important;
+}
+
+body.page-methode .vp-scroll-pillars-grain {
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 1 !important;
+  opacity: .35 !important;
+  pointer-events: none !important;
+  background-image: radial-gradient(circle, rgba(119, 175, 226, .35) 1.4px, transparent 1.6px) !important;
+  background-size: 84px 84px !important;
+  mask-image: linear-gradient(180deg, transparent, #000 16%, #000 86%, transparent) !important;
+}
+
+body.page-methode .vp-scroll-pillars-hint {
+  position: absolute !important;
+  left: 50% !important;
+  bottom: 22px !important;
+  transform: translateX(-50%) !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  color: #748396 !important;
+  font-size: 13px !important;
+  z-index: 3 !important;
+  opacity: .78 !important;
+}
+
+body.page-methode .vp-scroll-pillars-hint span {
+  width: 18px !important;
+  height: 30px !important;
+  border: 1.5px solid currentColor !important;
+  border-radius: 999px !important;
+  position: relative !important;
+}
+
+body.page-methode .vp-scroll-pillars-hint span::before {
+  content: "";
+  position: absolute !important;
+  left: 50% !important;
+  top: 6px !important;
+  width: 4px !important;
+  height: 4px !important;
+  border-radius: 50% !important;
+  background: currentColor !important;
+  transform: translateX(-50%) !important;
+  animation: vp-pillars-wheel 1.5s ease-in-out infinite !important;
+}
+
+@keyframes vp-pillars-wheel {
+  0% { transform: translate(-50%, 0); opacity: 0; }
+  25% { opacity: 1; }
+  80% { transform: translate(-50%, 12px); opacity: 0; }
+  100% { opacity: 0; }
+}
+
+@media (max-width: 1060px) {
+  body.page-methode .vp-scroll-pillars-grid {
+    grid-template-columns: repeat(3, minmax(190px, 1fr)) !important;
+  }
+
+  body.page-methode .vp-scroll-pillars-section {
+    min-height: 290vh !important;
+  }
+}
+
+@media (max-width: 720px) {
+  body.page-methode .vp-scroll-pillars-sticky {
+    position: relative !important;
+    align-items: start !important;
+    min-height: auto !important;
+  }
+
+  body.page-methode .vp-scroll-pillars-section {
+    min-height: auto !important;
+  }
+
+  body.page-methode .vp-scroll-pillars-grid {
+    grid-template-columns: 1fr !important;
+    max-width: 380px !important;
+    margin-inline: auto !important;
+  }
+
+  body.page-methode .vp-scroll-pillar-card,
+  body.page-methode .vp-scroll-pillar-card:nth-child(n) {
+    min-height: 380px !important;
+    opacity: 1 !important;
+    filter: none !important;
+    transform: none !important;
+  }
+
+  body.page-methode .vp-scroll-pillars-hint {
+    display: none !important;
+  }
+
+  body.page-methode .vp-scroll-pillars-head h2 {
+    letter-spacing: -0.06em !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.page-methode .vp-scroll-pillar-card,
+  body.page-methode .vp-scroll-pillar-card:nth-child(n) {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+    transition-duration: .01ms !important;
+  }
+
+  body.page-methode .vp-scroll-pillars-hint span::before {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
