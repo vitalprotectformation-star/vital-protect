@@ -11760,3 +11760,184 @@ body.page-accueil-rythme .hp-hero::after {
 body.page-accueil-rythme .vpl-nav {
   z-index: 100 !important;
 }
+
+
+/* =========================================================
+   Correctif global — ruban bleu sous les contenus sur toutes les pages
+   ========================================================= */
+
+/* Couche de page : les contenus ne doivent pas créer un contexte qui passe sous le ruban. */
+body .vpl-page,
+body main {
+  position: relative !important;
+  z-index: auto !important;
+}
+
+/* Le ruban reste décoratif : au-dessus des fonds, sous tout le contenu utile. */
+body .vpl-scroll-ribbon {
+  display: block !important;
+  position: fixed !important;
+  top: var(--vpl-ribbon-top, 0px) !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100vw !important;
+  height: calc(100vh - var(--vpl-ribbon-top, 0px)) !important;
+  z-index: 1 !important;
+  opacity: .52 !important;
+  pointer-events: none !important;
+  mix-blend-mode: normal !important;
+  overflow: hidden !important;
+}
+
+/* On garde uniquement le tracé animé, pas le chemin fantôme. */
+body .vpl-ribbon-base {
+  opacity: 0 !important;
+  stroke: transparent !important;
+}
+
+body .vpl-ribbon-progress {
+  stroke-width: 40 !important;
+  stroke-dasharray: 1 !important;
+  stroke-dashoffset: 1;
+  opacity: .86 !important;
+  filter:
+    drop-shadow(0 0 10px rgba(255,255,255,.22))
+    drop-shadow(0 0 24px rgba(69,143,213,.28)) !important;
+}
+
+body .vpl-ribbon-dot {
+  opacity: 0;
+}
+
+body .vpl-scroll-ribbon.is-drawing .vpl-ribbon-dot {
+  opacity: .86 !important;
+}
+
+/* Toutes les zones utiles repassent au-dessus du ruban. */
+body .vpl-nav,
+body header,
+body footer,
+body main > section > .container,
+body main > section > .vpl-container,
+body .vpl-container,
+body .container,
+body .card,
+body .soft-card,
+body .info-card,
+body .stage-card,
+body .faq-card,
+body .proof-card,
+body .audience-card,
+body .pillar-card,
+body .surface-panel,
+body .glass-panel,
+body .cta-panel,
+body .hero-card,
+body .vpl-card,
+body .vpl-image-card,
+body .vpl-inner-visual,
+body .vpl-inner-stat,
+body .stage-hero-panel,
+body .stage-booking-summary,
+body .stage-booking-form-card,
+body .stage-orientation-grid,
+body .stage-learn-grid,
+body .stage-flow-list,
+body .stage-compare-grid,
+body .hp-hero-grid,
+body .hp-hero-visual,
+body .hp-band,
+body .hp-band-track,
+body .hp-problem-stack,
+body .hp-learn-grid,
+body .hp-flow-list,
+body .hp-compare,
+body form,
+body details {
+  position: relative !important;
+  z-index: 3 !important;
+}
+
+/* La navbar reste toujours au-dessus. */
+body .vpl-nav {
+  z-index: 100 !important;
+}
+
+/* Les fonds de section restent derrière le ruban. */
+body main > section,
+body .vpl-hero,
+body .vpl-inner-hero,
+body .vpl-section,
+body .vpl-section-dark,
+body .vpl-light,
+body .stage-hero-redesign,
+body .stage-problem-section,
+body .stage-learn-section,
+body .stage-flow-section,
+body .stage-compare-section,
+body .stage-reservation-section,
+body .stage-faq-section,
+body .stage-final-cta,
+body .hp-hero,
+body .hp-section,
+body .hp-final {
+  position: relative !important;
+  z-index: auto !important;
+  isolation: auto !important;
+}
+
+/* Si une page avait explicitement caché le ruban desktop, on le réactive. */
+body.page-methode .vpl-scroll-ribbon,
+body.page-stage .vpl-scroll-ribbon,
+body.page-stage-redesign .vpl-scroll-ribbon,
+body.page-accueil-rythme .vpl-scroll-ribbon {
+  display: block !important;
+}
+
+/* Sur mobile étroit, le ruban gêne plus qu'il n'aide. */
+@media (max-width: 760px) {
+  body .vpl-scroll-ribbon,
+  body.page-methode .vpl-scroll-ribbon,
+  body.page-stage .vpl-scroll-ribbon,
+  body.page-stage-redesign .vpl-scroll-ribbon,
+  body.page-accueil-rythme .vpl-scroll-ribbon {
+    display: none !important;
+  }
+}
+
+/* =========================================================
+   Correctif global — bandeaux : tiret unique seulement
+   ========================================================= */
+
+/* Les tirets présents dans le HTML suffisent : on neutralise les tirets ajoutés par CSS. */
+body .hp-band span::after,
+body .hp-band span:not(:last-child)::after,
+body .vpl-marquee span::after,
+body .vpl-marquee span:not(:last-child)::after {
+  content: none !important;
+  display: none !important;
+}
+
+/* Bandeaux lisibles et sans double séparateur. */
+body .hp-band,
+body .vpl-marquee {
+  color: #0a3153 !important;
+  background:
+    linear-gradient(135deg, rgba(255,255,255,.96), rgba(220,235,247,.92)) !important;
+  border-block: 1px solid rgba(7,17,31,.10) !important;
+}
+
+body .hp-band span,
+body .hp-band i,
+body .vpl-marquee span,
+body .vpl-marquee em {
+  color: #0a3153 !important;
+  opacity: 1 !important;
+}
+
+/* Séparateurs HTML. */
+body .hp-band i,
+body .vpl-marquee em {
+  color: rgba(10,49,83,.55) !important;
+}
