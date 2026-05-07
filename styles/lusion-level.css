@@ -12119,3 +12119,145 @@ body.page-stage-redesign .stage-final-cta .cta-panel .btn-outline {
     width: 100% !important;
   }
 }
+
+
+/* =========================================================
+   Correctif Stage V2 — vrais blocs ciblés : numéros doublés + contraste
+   ========================================================= */
+
+/* 1) Suppression des grands numéros en filigrane dans les petites cartes.
+   On garde le vrai numéro en pastille, mais on retire le second numéro décoratif. */
+body.page-stage .timeline-card::before,
+body.page-stage .timeline-card::after,
+body.page-stage-redesign .timeline-card::before,
+body.page-stage-redesign .timeline-card::after,
+body.page-stage .stage-learn-grid article::before,
+body.page-stage .stage-learn-grid article::after,
+body.page-stage-redesign .stage-learn-grid article::before,
+body.page-stage-redesign .stage-learn-grid article::after,
+body.page-stage .stage-flow-list article::before,
+body.page-stage .stage-flow-list article::after,
+body.page-stage-redesign .stage-flow-list article::before,
+body.page-stage-redesign .stage-flow-list article::after,
+body.page-stage .stage-card::before,
+body.page-stage .stage-card::after,
+body.page-stage-redesign .stage-card::before,
+body.page-stage-redesign .stage-card::after {
+  content: none !important;
+  display: none !important;
+}
+
+/* Sécurité si la page stage est encore servie avec l'ancien HTML sans classe page-stage. */
+body.vpl-inner-page .timeline-grid .timeline-card::before,
+body.vpl-inner-page .timeline-grid .timeline-card::after {
+  content: none !important;
+  display: none !important;
+}
+
+/* 2) Les cartes "déroulé / étapes" restent propres après retrait du filigrane. */
+body.page-stage .timeline-card,
+body.page-stage-redesign .timeline-card,
+body.vpl-inner-page .timeline-grid .timeline-card,
+body.page-stage .stage-learn-grid article,
+body.page-stage-redesign .stage-learn-grid article,
+body.page-stage .stage-flow-list article,
+body.page-stage-redesign .stage-flow-list article {
+  position: relative !important;
+  overflow: hidden !important;
+  background: rgba(255,255,255,.94) !important;
+  color: #07111f !important;
+}
+
+body.page-stage .timeline-card h3,
+body.page-stage-redesign .timeline-card h3,
+body.vpl-inner-page .timeline-grid .timeline-card h3,
+body.page-stage .stage-learn-grid h3,
+body.page-stage-redesign .stage-learn-grid h3,
+body.page-stage .stage-flow-list h3,
+body.page-stage-redesign .stage-flow-list h3 {
+  color: #07111f !important;
+}
+
+body.page-stage .timeline-card p,
+body.page-stage-redesign .timeline-card p,
+body.vpl-inner-page .timeline-grid .timeline-card p,
+body.page-stage .stage-learn-grid p,
+body.page-stage-redesign .stage-learn-grid p,
+body.page-stage .stage-flow-list p,
+body.page-stage-redesign .stage-flow-list p {
+  color: #40536b !important;
+}
+
+/* 3) Contraste forcé pour la carte CTA sombre de la page Stage.
+   Le texte ne doit jamais être blanc sur une carte claire/translucide. */
+body.page-stage .stage-final-cta,
+body.page-stage-redesign .stage-final-cta {
+  background: #07111f !important;
+}
+
+body.page-stage .stage-final-box,
+body.page-stage-redesign .stage-final-box,
+body.page-stage .stage-final-cta .cta-panel,
+body.page-stage-redesign .stage-final-cta .cta-panel,
+body.page-stage .cta-stage,
+body.page-stage-redesign .cta-stage {
+  background:
+    radial-gradient(circle at 78% 18%, rgba(74,184,255,.18), transparent 30%),
+    linear-gradient(135deg, #10253d 0%, #07111f 100%) !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255,255,255,.22) !important;
+  box-shadow: 0 28px 90px rgba(0,0,0,.32) !important;
+  opacity: 1 !important;
+}
+
+body.page-stage .stage-final-box *,
+body.page-stage-redesign .stage-final-box *,
+body.page-stage .stage-final-cta .cta-panel *,
+body.page-stage-redesign .stage-final-cta .cta-panel *,
+body.page-stage .cta-stage *,
+body.page-stage-redesign .cta-stage * {
+  color: #ffffff !important;
+  opacity: 1 !important;
+  text-shadow: none !important;
+}
+
+body.page-stage .stage-final-box p,
+body.page-stage-redesign .stage-final-box p,
+body.page-stage .stage-final-cta .cta-panel p,
+body.page-stage-redesign .stage-final-cta .cta-panel p,
+body.page-stage .cta-stage p,
+body.page-stage-redesign .cta-stage p {
+  color: rgba(255,255,255,.86) !important;
+}
+
+/* Les boutons secondaires dans cette carte restent visibles. */
+body.page-stage .stage-final-box .vpl-button-secondary,
+body.page-stage-redesign .stage-final-box .vpl-button-secondary,
+body.page-stage .stage-final-cta .cta-panel .btn-outline,
+body.page-stage-redesign .stage-final-cta .cta-panel .btn-outline,
+body.page-stage .cta-stage .btn-outline,
+body.page-stage-redesign .cta-stage .btn-outline {
+  color: #ffffff !important;
+  background: rgba(255,255,255,.08) !important;
+  border-color: rgba(255,255,255,.36) !important;
+}
+
+/* 4) Le ruban bleu ne doit pas passer devant ces cartes. */
+body.page-stage .timeline-grid,
+body.page-stage-redesign .timeline-grid,
+body.page-stage .stage-learn-grid,
+body.page-stage-redesign .stage-learn-grid,
+body.page-stage .stage-flow-list,
+body.page-stage-redesign .stage-flow-list,
+body.page-stage .stage-final-box,
+body.page-stage-redesign .stage-final-box,
+body.page-stage .cta-stage,
+body.page-stage-redesign .cta-stage {
+  position: relative !important;
+  z-index: 5 !important;
+}
+
+body.page-stage .vpl-scroll-ribbon,
+body.page-stage-redesign .vpl-scroll-ribbon {
+  z-index: 1 !important;
+}
