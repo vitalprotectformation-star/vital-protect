@@ -12566,3 +12566,40 @@ body.page-methode .vpl-inner-stat span,
 body.page-methode .vpl-inner-stat p {
   color: #34465d !important;
 }
+
+
+/* =========================================================
+   Correctif final — suppression de l'encart sous image hero
+   ========================================================= */
+
+/* L'encart sous les images hero crée des problèmes de contraste et de hiérarchie.
+   On le retire sur les pages internes : méthode, stage, entreprises, formateurs, etc. */
+body.vpl-inner-page .vpl-inner-visual .vpl-inner-stat,
+body.vpl-inner-page .vpl-inner-stat,
+body.page-methode .vpl-inner-visual .vpl-inner-stat,
+body.page-methode .vpl-inner-stat,
+body.page-stage .vpl-inner-visual .vpl-inner-stat,
+body.page-stage .vpl-inner-stat,
+body.page-stage-redesign .vpl-inner-visual .vpl-inner-stat,
+body.page-stage-redesign .vpl-inner-stat {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+/* L'image hero reprend une position propre quand l'encart est retiré. */
+body.vpl-inner-page .vpl-inner-visual,
+body.page-methode .vpl-inner-visual,
+body.page-stage .vpl-inner-visual,
+body.page-stage-redesign .vpl-inner-visual {
+  min-height: auto !important;
+  align-content: center !important;
+}
+
+body.vpl-inner-page .vpl-inner-visual img,
+body.page-methode .vpl-inner-visual img,
+body.page-stage .vpl-inner-visual img,
+body.page-stage-redesign .vpl-inner-visual img {
+  margin-bottom: 0 !important;
+}
