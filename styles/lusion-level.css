@@ -11537,3 +11537,47 @@ body.page-accueil-rythme .hp-final-panel p {
     border-radius: 26px;
   }
 }
+
+
+/* =========================================================
+   Correctif Stage — orientation en première section + suppression bloc ambigu
+   ========================================================= */
+body.page-stage-redesign .stage-orientation-first {
+  background:
+    radial-gradient(circle at 18% 12%, rgba(74,184,255,.12), transparent 26%),
+    linear-gradient(135deg, #edf4fa, #f8fbff);
+  padding-top: clamp(72px, 7vw, 110px);
+}
+
+body.page-stage-redesign .stage-orientation-first .section-head--center h2 {
+  max-width: 12ch;
+}
+
+body.page-stage-redesign .stage-orientation-first .section-head--center p {
+  max-width: 54ch;
+}
+
+body.page-stage-redesign .stage-orientation-first .stage-orientation-grid a {
+  min-height: 230px;
+  align-content: space-between;
+}
+
+body.page-stage-redesign .stage-orientation-first .stage-orientation-grid h3 {
+  font-size: clamp(1.2rem, 1.5vw, 1.45rem);
+  line-height: 1.15;
+}
+
+body.page-stage-redesign .stage-orientation-first .stage-orientation-grid p {
+  font-size: clamp(.96rem, 1.08vw, 1.06rem);
+}
+
+/* L'ancien bloc "Pas de fausse urgence" a été retiré du HTML.
+   On conserve ces règles neutres pour éviter tout effet si un ancien cache le sert encore. */
+body.page-stage-redesign .stage-clarity-section {
+  display: none !important;
+}
+
+/* La réservation remonte naturellement après le comparatif et garde un rôle fonctionnel. */
+body.page-stage-redesign .stage-reservation-section {
+  border-top: 1px solid rgba(7,17,31,.08);
+}
