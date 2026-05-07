@@ -12261,3 +12261,109 @@ body.page-stage .vpl-scroll-ribbon,
 body.page-stage-redesign .vpl-scroll-ribbon {
   z-index: 1 !important;
 }
+
+
+/* =========================================================
+   Correctif Stage V3 — bloc "Prévenir d’abord..." vraiment lisible
+   ========================================================= */
+
+/* Cible large mais focalisée sur le dernier bloc CTA sombre de la page stage */
+body.page-stage .stage-final-cta,
+body.page-stage-redesign .stage-final-cta,
+body.page-stage .stage-final-cta > .vpl-container,
+body.page-stage-redesign .stage-final-cta > .vpl-container,
+body.page-stage .stage-final-box,
+body.page-stage-redesign .stage-final-box,
+body.page-stage .stage-final-cta .cta-panel,
+body.page-stage-redesign .stage-final-cta .cta-panel,
+body.page-stage .cta-stage,
+body.page-stage-redesign .cta-stage {
+  background:
+    radial-gradient(circle at 78% 18%, rgba(74,184,255,.16), transparent 28%),
+    linear-gradient(135deg, #102840 0%, #07111f 100%) !important;
+  color: #ffffff !important;
+  opacity: 1 !important;
+}
+
+/* Force de contraste sur le titre et le paragraphe mentionnés par l'utilisateur */
+body.page-stage .stage-final-cta h2,
+body.page-stage-redesign .stage-final-cta h2,
+body.page-stage .stage-final-cta h3,
+body.page-stage-redesign .stage-final-cta h3,
+body.page-stage .stage-final-cta p,
+body.page-stage-redesign .stage-final-cta p,
+body.page-stage .stage-final-box h2,
+body.page-stage-redesign .stage-final-box h2,
+body.page-stage .stage-final-box h3,
+body.page-stage-redesign .stage-final-box h3,
+body.page-stage .stage-final-box p,
+body.page-stage-redesign .stage-final-box p,
+body.page-stage .cta-stage h2,
+body.page-stage-redesign .cta-stage h2,
+body.page-stage .cta-stage h3,
+body.page-stage-redesign .cta-stage h3,
+body.page-stage .cta-stage p,
+body.page-stage-redesign .cta-stage p {
+  color: #ffffff !important;
+  opacity: 1 !important;
+  text-shadow: none !important;
+}
+
+/* Si une ancienne opacité ou couleur très claire est injectée sur les descendants */
+body.page-stage .stage-final-cta *,
+body.page-stage-redesign .stage-final-cta *,
+body.page-stage .stage-final-box *,
+body.page-stage-redesign .stage-final-box *,
+body.page-stage .cta-stage *,
+body.page-stage-redesign .cta-stage * {
+  opacity: 1 !important;
+}
+
+body.page-stage .stage-final-cta p,
+body.page-stage-redesign .stage-final-cta p,
+body.page-stage .stage-final-box p,
+body.page-stage-redesign .stage-final-box p,
+body.page-stage .cta-stage p,
+body.page-stage-redesign .cta-stage p {
+  color: rgba(255,255,255,.90) !important;
+}
+
+/* Boutons dans ce bloc : visibles et cohérents */
+body.page-stage .stage-final-cta a,
+body.page-stage-redesign .stage-final-cta a,
+body.page-stage .stage-final-box a,
+body.page-stage-redesign .stage-final-box a,
+body.page-stage .cta-stage a,
+body.page-stage-redesign .cta-stage a {
+  position: relative !important;
+  z-index: 6 !important;
+}
+
+body.page-stage .stage-final-cta .vpl-button-primary,
+body.page-stage-redesign .stage-final-cta .vpl-button-primary,
+body.page-stage .stage-final-box .vpl-button-primary,
+body.page-stage-redesign .stage-final-box .vpl-button-primary,
+body.page-stage .cta-stage .vpl-button-primary,
+body.page-stage-redesign .cta-stage .vpl-button-primary {
+  background: #dff6ff !important;
+  color: #07111f !important;
+  border-color: rgba(223,246,255,.9) !important;
+}
+
+body.page-stage .stage-final-cta .vpl-button-secondary,
+body.page-stage-redesign .stage-final-cta .vpl-button-secondary,
+body.page-stage .stage-final-box .vpl-button-secondary,
+body.page-stage-redesign .stage-final-box .vpl-button-secondary,
+body.page-stage .cta-stage .vpl-button-secondary,
+body.page-stage-redesign .cta-stage .vpl-button-secondary,
+body.page-stage .stage-final-cta .btn-outline,
+body.page-stage-redesign .stage-final-cta .btn-outline,
+body.page-stage .stage-final-box .btn-outline,
+body.page-stage-redesign .stage-final-box .btn-outline,
+body.page-stage .cta-stage .btn-outline,
+body.page-stage-redesign .cta-stage .btn-outline {
+  background: rgba(255,255,255,.08) !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255,255,255,.34) !important;
+  text-decoration: none !important;
+}
