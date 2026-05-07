@@ -1,1291 +1,510 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<script>
-  (function () {
-    try {
-      if (sessionStorage.getItem('vpl-route-transition-next') !== '1') return;
-      var root = document.documentElement;
-      var origin = JSON.parse(sessionStorage.getItem('vpl-route-transition-origin') || '{}');
-      if (Number.isFinite(origin.x)) root.style.setProperty('--vpl-transition-x', (Math.max(0, Math.min(1, origin.x)) * 100) + '%');
-      if (Number.isFinite(origin.y)) root.style.setProperty('--vpl-transition-y', (Math.max(0, Math.min(1, origin.y)) * 100) + '%');
-      root.classList.add('vpl-route-preload-transition');
-    } catch (_) {}
-  })();
-</script>
-<style>
-  html{--vpl-transition-image:url("transition-screen.png");--vpl-transition-bg-size:cover}
-  html.vpl-route-preload-transition,html.vpl-route-preload-transition body{background:#2f6f9f!important}
-  html.vpl-route-preload-transition::before{content:"";position:fixed;inset:0;z-index:2147482998;pointer-events:none;background-color:#2f6f9f;background-image:var(--vpl-transition-image);background-position:center;background-size:var(--vpl-transition-bg-size);background-repeat:no-repeat;opacity:1}
-  @media (max-width: 768px), (pointer: coarse) and (orientation: portrait){html{--vpl-transition-image:url("transition-screen-mobile.jpg");--vpl-transition-bg-size:cover}}
-</style>
-<link as="image" href="transition-screen.png" media="(min-width: 769px)" rel="preload"/>
-<link as="image" href="transition-screen-mobile.jpg" media="(max-width: 768px), (pointer: coarse) and (orientation: portrait)" rel="preload"/>
-<script src="/page-transition.js"></script>
-<script>
-  if (!window.VitalPageTransition) {
-    document.write('<script src="page-transition.js"><\/script>');
-  }
-</script>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Stages Vital Protect — recevoir les prochaines dates</title>
-<meta name="description" content="Recevez les prochaines dates de stage Vital Protect. Les inscriptions ouvrent uniquement lorsqu’une session affiche clairement la ville, le lieu, la date, le tarif, l’encadrant et les conditions de participation."/>
-<link href="https://vital-protect.fr/stage.html" rel="canonical"/>
-<link href="/logo.png" rel="icon" type="image/png"/>
-<link href="/styles/tokens.css" rel="stylesheet"/>
-<link href="/styles/base.css" rel="stylesheet"/>
-<link href="/styles/components.css" rel="stylesheet"/>
-<link href="/styles/lusion-level.css" rel="stylesheet"/>
-<style>
-  :root {
-    --stage-navy: #0b1f33;
-    --stage-ink: #132335;
-    --stage-muted: #506277;
-    --stage-soft: #f5f8fb;
-    --stage-line: rgba(11,31,51,.14);
-    --stage-blue: #1d6fa5;
-    --stage-blue-dark: #12547e;
-    --stage-green: #167255;
-    --stage-amber: #8a5a00;
-    --stage-white: #ffffff;
-  }
-
-  body.page-stage {
-    background: #f6f8fb !important;
-    color: var(--stage-ink) !important;
-  }
-
-  body.page-stage .vpl-nav,
-  body.page-stage .site-footer {
-    color: #ffffff;
-  }
-
-  body.page-stage .vpl-nav-cta {
-    background: #ffffff;
-    color: var(--stage-navy) !important;
-  }
-
-  body.page-stage main {
-    overflow: hidden;
-  }
-
-  .stage-hero {
-    padding: clamp(84px, 10vw, 138px) 0 clamp(52px, 7vw, 86px);
-    background:
-      radial-gradient(circle at 82% 18%, rgba(73, 157, 220, .28), transparent 30%),
-      linear-gradient(135deg, #071827 0%, #0d2a43 48%, #103b5c 100%);
-    color: #ffffff;
-  }
-
-  .stage-hero *,
-  .stage-dark *,
-  .session-banner * {
-    color: inherit;
-  }
-
-  .stage-hero-grid {
-    display: grid;
-    grid-template-columns: minmax(0, 1.08fr) minmax(310px, .78fr);
-    gap: clamp(28px, 5vw, 58px);
-    align-items: center;
-  }
-
-  .stage-kicker,
-  .stage-eyebrow {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    width: fit-content;
-    border-radius: 999px;
-    padding: 8px 12px;
-    font-size: .78rem;
-    font-weight: 800;
-    letter-spacing: .08em;
-    text-transform: uppercase;
-  }
-
-  .stage-kicker {
-    background: rgba(255,255,255,.12);
-    border: 1px solid rgba(255,255,255,.28);
-    color: #f3f8ff;
-  }
-
-  .stage-hero h1,
-  .stage-title,
-  .section-head h2,
-  .stage-card h3,
-  .stage-panel h3,
-  .faq-card h3 {
-    color: inherit;
-    -webkit-text-fill-color: currentColor !important;
-    background: none !important;
-    opacity: 1 !important;
-  }
-
-  .stage-hero h1 {
-    margin: 18px 0 18px;
-    max-width: 880px;
-    font-size: clamp(2.6rem, 6.8vw, 5.8rem);
-    line-height: .94;
-    letter-spacing: -.07em;
-    color: #ffffff;
-  }
-
-  .stage-lead {
-    max-width: 760px;
-    margin: 0 0 28px;
-    font-size: clamp(1.06rem, 1.6vw, 1.35rem);
-    line-height: 1.62;
-    color: #dcecff;
-  }
-
-  .stage-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-    align-items: center;
-  }
-
-  .stage-btn {
-    min-height: 48px;
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 999px;
-    padding: 14px 20px;
-    font-weight: 800;
-    text-decoration: none;
-    border: 1px solid transparent;
-    transition: transform .2s ease, background .2s ease, border-color .2s ease;
-    cursor: pointer;
-  }
-
-  .stage-btn:hover { transform: translateY(-1px); }
-  .stage-btn:focus-visible,
-  .stage-form input:focus-visible,
-  .stage-form select:focus-visible,
-  .stage-form textarea:focus-visible {
-    outline: 3px solid rgba(84, 183, 255, .75);
-    outline-offset: 3px;
-  }
-
-  .stage-btn-primary {
-    background: #ffffff;
-    color: var(--stage-navy) !important;
-    box-shadow: 0 20px 42px rgba(0,0,0,.22);
-  }
-
-  .stage-btn-secondary {
-    background: rgba(255,255,255,.08);
-    color: #ffffff !important;
-    border-color: rgba(255,255,255,.32);
-  }
-
-  .stage-btn-dark {
-    background: var(--stage-navy);
-    color: #ffffff !important;
-  }
-
-  .stage-btn-blue {
-    background: var(--stage-blue);
-    color: #ffffff !important;
-  }
-
-  .stage-btn[disabled],
-  .stage-btn[aria-disabled="true"] {
-    cursor: not-allowed;
-    opacity: .68;
-    transform: none;
-  }
-
-  .stage-proof-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 9px;
-    margin-top: 20px;
-  }
-
-  .stage-proof-row span {
-    display: inline-flex;
-    align-items: center;
-    min-height: 32px;
-    border-radius: 999px;
-    padding: 7px 11px;
-    background: rgba(255,255,255,.1);
-    border: 1px solid rgba(255,255,255,.24);
-    color: #eaf4ff;
-    font-size: .9rem;
-    font-weight: 700;
-  }
-
-  .stage-hero-card {
-    background: #ffffff;
-    color: var(--stage-ink);
-    border-radius: 30px;
-    padding: clamp(22px, 3vw, 30px);
-    box-shadow: 0 28px 70px rgba(0,0,0,.28);
-    border: 1px solid rgba(255,255,255,.36);
-  }
-
-  .stage-hero-card h2 {
-    margin: 12px 0 10px;
-    color: var(--stage-ink);
-    -webkit-text-fill-color: currentColor !important;
-    background: none !important;
-    font-size: clamp(1.45rem, 2vw, 2rem);
-    letter-spacing: -.035em;
-  }
-
-  .stage-hero-card p,
-  .stage-hero-card li {
-    color: var(--stage-muted);
-    line-height: 1.62;
-  }
-
-  .stage-status {
-    display: inline-flex;
-    border-radius: 999px;
-    padding: 8px 11px;
-    font-size: .78rem;
-    font-weight: 900;
-    letter-spacing: .08em;
-    text-transform: uppercase;
-    color: #fff;
-    background: var(--stage-amber);
-  }
-
-  body.session-open .stage-status {
-    background: var(--stage-green);
-  }
-
-  .session-facts {
-    display: grid;
-    gap: 10px;
-    margin: 18px 0 0;
-  }
-
-  .session-fact {
-    display: grid;
-    grid-template-columns: 118px 1fr;
-    gap: 12px;
-    padding: 11px 0;
-    border-top: 1px solid var(--stage-line);
-    color: var(--stage-ink);
-  }
-
-  .session-fact strong {
-    color: var(--stage-ink);
-  }
-
-  .session-fact span:first-child {
-    color: var(--stage-muted);
-    font-weight: 800;
-  }
-
-  .stage-section {
-    padding: clamp(56px, 8vw, 92px) 0;
-    background: #ffffff;
-    color: var(--stage-ink);
-  }
-
-  .stage-section.stage-soft {
-    background: var(--stage-soft);
-  }
-
-  .stage-section.stage-dark {
-    background:
-      radial-gradient(circle at 15% 20%, rgba(57, 138, 204, .26), transparent 32%),
-      linear-gradient(135deg, #071827 0%, #0b2338 100%);
-    color: #ffffff;
-  }
-
-  .stage-container,
-  .container.stage-container {
-    width: min(1120px, calc(100% - 40px));
-    margin-inline: auto;
-  }
-
-  .section-head {
-    max-width: 780px;
-    margin: 0 0 30px;
-  }
-
-  .section-head.centered {
-    margin-inline: auto;
-    text-align: center;
-  }
-
-  .stage-eyebrow {
-    background: rgba(29, 111, 165, .1);
-    color: var(--stage-blue-dark);
-    border: 1px solid rgba(29, 111, 165, .18);
-  }
-
-  .stage-dark .stage-eyebrow {
-    background: rgba(255,255,255,.12);
-    color: #eaf4ff;
-    border-color: rgba(255,255,255,.26);
-  }
-
-  .section-head h2,
-  .stage-title {
-    margin: 14px 0 12px;
-    font-size: clamp(2rem, 4vw, 3.6rem);
-    line-height: 1.02;
-    letter-spacing: -.055em;
-    color: var(--stage-ink);
-  }
-
-  .section-head p {
-    color: var(--stage-muted);
-    font-size: 1.04rem;
-    line-height: 1.68;
-  }
-
-  .stage-dark .section-head p,
-  .stage-dark .stage-card p,
-  .stage-dark .stage-panel p {
-    color: #dcecff;
-  }
-
-  .stage-grid-3,
-  .stage-grid-2,
-  .stage-grid-4 {
-    display: grid;
-    gap: 18px;
-  }
-
-  .stage-grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  .stage-grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .stage-grid-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-
-  .stage-card,
-  .stage-panel,
-  .faq-card {
-    background: #ffffff;
-    border: 1px solid var(--stage-line);
-    border-radius: 24px;
-    padding: 22px;
-    color: var(--stage-ink);
-    box-shadow: 0 18px 42px rgba(13, 38, 59, .08);
-  }
-
-  .stage-dark .stage-card,
-  .stage-dark .stage-panel {
-    background: rgba(255,255,255,.08);
-    color: #ffffff;
-    border-color: rgba(255,255,255,.18);
-    box-shadow: none;
-  }
-
-  .stage-card h3,
-  .stage-panel h3,
-  .faq-card h3 {
-    margin: 10px 0 10px;
-    font-size: 1.15rem;
-    color: var(--stage-ink);
-  }
-
-  .stage-card p,
-  .stage-panel p,
-  .faq-card p,
-  .stage-card li,
-  .stage-panel li {
-    color: var(--stage-muted);
-    line-height: 1.65;
-  }
-
-  .stage-card-num {
-    width: 42px;
-    height: 42px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 14px;
-    background: rgba(29, 111, 165, .12);
-    color: var(--stage-blue-dark);
-    font-weight: 900;
-  }
-
-  .stage-example {
-    display: grid;
-    grid-template-columns: minmax(0, .85fr) minmax(0, 1fr);
-    gap: clamp(20px, 4vw, 44px);
-    align-items: stretch;
-  }
-
-  .stage-example-visual {
-    min-height: 360px;
-    border-radius: 28px;
-    background:
-      linear-gradient(rgba(7,24,39,.12), rgba(7,24,39,.42)),
-      url('/groupe-dehors-briefing-securite.png') center / cover no-repeat;
-    overflow: hidden;
-    position: relative;
-  }
-
-  .stage-example-visual::after {
-    content: "Distance · parole courte · sortie possible";
-    position: absolute;
-    left: 18px;
-    right: 18px;
-    bottom: 18px;
-    border-radius: 18px;
-    padding: 14px 16px;
-    background: rgba(255,255,255,.92);
-    color: var(--stage-navy);
-    font-weight: 900;
-  }
-
-  .stage-steps {
-    display: grid;
-    gap: 12px;
-  }
-
-  .stage-step {
-    display: grid;
-    grid-template-columns: 42px 1fr;
-    gap: 14px;
-    align-items: start;
-    padding: 16px;
-    border: 1px solid var(--stage-line);
-    border-radius: 20px;
-    background: #ffffff;
-  }
-
-  .stage-step span:first-child {
-    width: 42px;
-    height: 42px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    background: var(--stage-navy);
-    color: #ffffff;
-    font-weight: 900;
-  }
-
-  .stage-step strong {
-    display: block;
-    color: var(--stage-ink);
-    margin-bottom: 4px;
-  }
-
-  .stage-step p {
-    margin: 0;
-    color: var(--stage-muted);
-    line-height: 1.55;
-  }
-
-  .session-checklist {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 12px;
-  }
-
-  .session-checklist li,
-  .stage-list li {
-    list-style: none;
-  }
-
-  .stage-list,
-  .session-checklist {
-    padding: 0;
-    margin: 16px 0 0;
-  }
-
-  .stage-list li,
-  .session-checklist li {
-    padding: 12px 0;
-    border-top: 1px solid var(--stage-line);
-    color: var(--stage-muted);
-    line-height: 1.55;
-  }
-
-  .stage-list strong,
-  .session-checklist strong {
-    color: var(--stage-ink);
-  }
-
-  .session-checklist li {
-    padding: 14px;
-    border: 1px solid var(--stage-line);
-    border-radius: 18px;
-    background: #ffffff;
-  }
-
-  .stage-form-card {
-    background: #ffffff;
-    border: 1px solid var(--stage-line);
-    border-radius: 28px;
-    padding: clamp(22px, 4vw, 34px);
-    box-shadow: 0 24px 70px rgba(13, 38, 59, .12);
-    color: var(--stage-ink);
-  }
-
-  .stage-form {
-    display: grid;
-    gap: 16px;
-  }
-
-  .stage-form-grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 14px;
-  }
-
-  .stage-form-field.full { grid-column: 1 / -1; }
-
-  .stage-form label {
-    display: block;
-    margin: 0 0 7px;
-    color: var(--stage-ink);
-    font-weight: 850;
-  }
-
-  .stage-form input,
-  .stage-form select,
-  .stage-form textarea {
-    width: 100%;
-    min-height: 48px;
-    border-radius: 16px;
-    border: 1px solid rgba(19, 35, 53, .24);
-    background: #ffffff;
-    color: var(--stage-ink);
-    padding: 12px 14px;
-    font: inherit;
-  }
-
-  .stage-form textarea {
-    min-height: 112px;
-    resize: vertical;
-  }
-
-  .stage-form input::placeholder,
-  .stage-form textarea::placeholder {
-    color: #66778b;
-    opacity: 1;
-  }
-
-  .form-note,
-  .form-status {
-    margin: 0;
-    color: var(--stage-muted);
-    font-size: .92rem;
-    line-height: 1.58;
-  }
-
-  .form-status {
-    display: none;
-    padding: 12px 14px;
-    border-radius: 14px;
-    background: rgba(29, 111, 165, .1);
-    color: var(--stage-blue-dark);
-    font-weight: 800;
-  }
-
-  .form-status.show { display: block; }
-  .form-status.error { background: rgba(156, 38, 38, .1); color: #8f1f1f; }
-  .form-status.success { background: rgba(22, 114, 85, .12); color: #0f6147; }
-
-  .booking-shell {
-    display: none;
-  }
-
-  body.session-open .booking-shell {
-    display: block;
-  }
-
-  body.session-open .waitlist-shell {
-    display: none;
-  }
-
-  .session-banner {
-    display: none;
-    background: #0e6a4d;
-    color: #ffffff;
-    padding: 13px 0;
-    font-weight: 800;
-  }
-
-  body.session-open .session-banner {
-    display: block;
-  }
-
-  .booking-layout {
-    display: grid;
-    grid-template-columns: minmax(280px, .78fr) minmax(0, 1fr);
-    gap: 20px;
-    align-items: start;
-  }
-
-  .selected-stage-box {
-    border-radius: 18px;
-    background: var(--stage-soft);
-    border: 1px solid var(--stage-line);
-    padding: 16px;
-    margin: 16px 0;
-  }
-
-  .selected-stage-label {
-    display: block;
-    color: var(--stage-muted);
-    font-size: .82rem;
-    font-weight: 900;
-    text-transform: uppercase;
-    letter-spacing: .08em;
-    margin-bottom: 6px;
-  }
-
-  .selected-stage-value,
-  .booking-total {
-    color: var(--stage-ink);
-    font-weight: 900;
-    line-height: 1.45;
-  }
-
-  .booking-total {
-    margin-top: 8px;
-    font-size: 1.25rem;
-  }
-
-  .stage-final-cta {
-    border-radius: 34px;
-    padding: clamp(28px, 5vw, 48px);
-    background:
-      radial-gradient(circle at 80% 30%, rgba(84, 183, 255, .2), transparent 34%),
-      linear-gradient(135deg, #071827 0%, #0e2d47 100%);
-    color: #ffffff;
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    gap: 24px;
-    align-items: center;
-  }
-
-  .stage-final-cta h2 {
-    margin: 0 0 8px;
-    font-size: clamp(1.8rem, 3.6vw, 3rem);
-    color: #ffffff;
-    -webkit-text-fill-color: currentColor !important;
-    background: none !important;
-  }
-
-  .stage-final-cta p {
-    margin: 0;
-    color: #dcecff;
-    line-height: 1.62;
-  }
-
-  .stage-mobile-cta {
-    display: none;
-  }
-
-  @media (max-width: 940px) {
-    .stage-hero-grid,
-    .stage-example,
-    .booking-layout,
-    .stage-final-cta {
-      grid-template-columns: 1fr;
+  <script>
+    (function () {
+      try {
+        if (sessionStorage.getItem('vpl-route-transition-next') !== '1') return;
+        var root = document.documentElement;
+        var origin = JSON.parse(sessionStorage.getItem('vpl-route-transition-origin') || '{}');
+        if (Number.isFinite(origin.x)) root.style.setProperty('--vpl-transition-x', (Math.max(0, Math.min(1, origin.x)) * 100) + '%');
+        if (Number.isFinite(origin.y)) root.style.setProperty('--vpl-transition-y', (Math.max(0, Math.min(1, origin.y)) * 100) + '%');
+        root.classList.add('vpl-route-preload-transition');
+      } catch (_) {}
+    })();
+  </script>
+  <style>
+    html{--vpl-transition-image:url("transition-screen.png");--vpl-transition-bg-size:cover}
+    html.vpl-route-preload-transition,html.vpl-route-preload-transition body{background:#2f6f9f!important}
+    html.vpl-route-preload-transition::before{content:"";position:fixed;inset:0;z-index:2147482998;pointer-events:none;background-color:#2f6f9f;background-image:var(--vpl-transition-image);background-position:center;background-size:var(--vpl-transition-bg-size);background-repeat:no-repeat;opacity:1}
+    @media (max-width: 768px), (pointer: coarse) and (orientation: portrait){html{--vpl-transition-image:url("transition-screen-mobile.jpg");--vpl-transition-bg-size:cover}}
+  </style>
+  <link rel="preload" as="image" href="transition-screen.png" media="(min-width: 769px)" />
+  <link rel="preload" as="image" href="transition-screen-mobile.jpg" media="(max-width: 768px), (pointer: coarse) and (orientation: portrait)" />
+  <script src="/page-transition.js"></script>
+  <script>
+    if (!window.VitalPageTransition) {
+      document.write('<script src="page-transition.js"><\/script>');
     }
-
-    .stage-grid-3,
-    .stage-grid-4,
-    .session-checklist {
-      grid-template-columns: 1fr 1fr;
-    }
-  }
-
-  @media (max-width: 680px) {
-    .stage-container,
-    .container.stage-container {
-      width: min(100% - 28px, 1120px);
-    }
-
-    .stage-hero {
-      padding-top: 74px;
-    }
-
-    .stage-hero h1 {
-      font-size: clamp(2.45rem, 13vw, 4.2rem);
-    }
-
-    .stage-actions,
-    .stage-form-grid,
-    .stage-grid-2,
-    .stage-grid-3,
-    .stage-grid-4,
-    .session-checklist {
-      grid-template-columns: 1fr;
-    }
-
-    .stage-actions {
-      display: grid;
-    }
-
-    .stage-btn {
-      width: 100%;
-      min-height: 52px;
-    }
-
-    .stage-hero-card,
-    .stage-card,
-    .stage-panel,
-    .faq-card,
-    .stage-form-card {
-      border-radius: 22px;
-    }
-
-    .session-fact {
-      grid-template-columns: 1fr;
-      gap: 4px;
-    }
-
-    .stage-example-visual {
-      min-height: 260px;
-    }
-
-    .stage-mobile-cta {
-      position: fixed;
-      left: 12px;
-      right: 12px;
-      bottom: 12px;
-      z-index: 30;
-      display: block;
-      border-radius: 999px;
-      box-shadow: 0 18px 50px rgba(0,0,0,.25);
-    }
-
-    .site-footer {
-      padding-bottom: 86px;
-    }
-  }
-</style>
+  </script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Stages Vital Protect — Sécurité personnelle réaliste</title>
+  <meta name="description" content="Découvrez les stages Vital Protect : une méthode claire pour prévenir, éviter, réagir et reprendre le calme, avec des sessions publiées uniquement quand les conditions sont confirmées." />
+  <link rel="canonical" href="https://vital-protect.fr/stage.html" />
+  <link rel="icon" href="/logo.png" type="image/png" />
+  <link rel="stylesheet" href="/styles/tokens.css" />
+  <link rel="stylesheet" href="/styles/base.css" />
+  <link rel="stylesheet" href="/styles/components.css" />
+  <link rel="stylesheet" href="/styles/lusion-level.css" />
 </head>
-<body class="vpl-inner-page page-editorial-light page-stage">
-<canvas aria-hidden="true" class="vpl-canvas"></canvas>
-<div aria-hidden="true" class="vpl-noise"></div>
-<div aria-hidden="true" class="vpl-scroll-ribbon">
-  <svg class="vpl-scroll-ribbon-svg" preserveAspectRatio="none" viewBox="0 0 1000 1600">
-    <defs>
-      <linearGradient id="vplRibbonGradient" x1="0%" x2="0%" y1="0%" y2="100%">
-        <stop offset="0%" stop-color="#d8ecff" stop-opacity="0.96"></stop>
-        <stop offset="38%" stop-color="#6db7ff" stop-opacity="0.94"></stop>
-        <stop offset="72%" stop-color="#2f7fca" stop-opacity="0.94"></stop>
-        <stop offset="100%" stop-color="#0b3a6f" stop-opacity="0.92"></stop>
-      </linearGradient>
-    </defs>
-    <path class="vpl-ribbon-base" d="M920 -80 C980 130 700 120 760 330 C820 520 990 560 860 760 C700 1010 240 930 300 1180 C360 1420 760 1350 680 1580 C640 1680 560 1710 430 1750" pathLength="1"></path>
-    <path class="vpl-ribbon-progress" d="M920 -80 C980 130 700 120 760 330 C820 520 990 560 860 760 C700 1010 240 930 300 1180 C360 1420 760 1350 680 1580 C640 1680 560 1710 430 1750" pathLength="1"></path>
-    <circle class="vpl-ribbon-dot" cx="920" cy="-80" r="18"></circle>
-  </svg>
-</div>
-<header class="vpl-nav">
-  <a aria-label="Accueil Vital Protect" class="vpl-brand" href="/index.html">
-    <img alt="Vital Protect" src="/logo.png"/>
-    <div>
-      <b>VITAL PROTECT</b>
-      <span>Méthode sécurité personnelle</span>
-    </div>
-  </a>
-  <nav aria-label="Navigation principale" class="vpl-menu">
-    <a data-page="index" href="/index.html">Accueil</a>
-    <a data-page="methode" href="/methode.html">Méthode</a>
-    <a class="active" data-page="stage" href="/stage.html">Stages</a>
-    <a data-page="entreprises" href="/entreprises.html">Entreprises</a>
-    <a data-page="devenir-formateur" href="/devenir-formateur.html">Formateurs</a>
-    <a data-page="faq" href="/faq.html">FAQ</a>
-    <a data-page="contact" href="/contact.html">Contact</a>
-    <a class="vpl-nav-ghost" href="/formateur-login.html">Espace</a>
-  </nav>
-  <a class="vpl-nav-cta" href="#dates">Recevoir les dates</a>
-</header>
-<main>
-  <div class="session-banner" role="status" aria-live="polite">
-    <div class="stage-container">Session complète détectée : les informations essentielles sont affichées avant réservation.</div>
+<body class="vpl-inner-page page-editorial-light page-stage page-stage-redesign">
+  <canvas class="vpl-canvas" aria-hidden="true"></canvas>
+  <div class="vpl-noise" aria-hidden="true"></div>
+  <div class="vpl-scroll-ribbon" aria-hidden="true">
+    <svg class="vpl-scroll-ribbon-svg" viewBox="0 0 1000 1600" preserveAspectRatio="none">
+      <defs>
+        <linearGradient id="vplRibbonGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="#d8ecff" stop-opacity="0.96"></stop>
+          <stop offset="38%" stop-color="#6db7ff" stop-opacity="0.94"></stop>
+          <stop offset="72%" stop-color="#2f7fca" stop-opacity="0.94"></stop>
+          <stop offset="100%" stop-color="#0b3a6f" stop-opacity="0.92"></stop>
+        </linearGradient>
+      </defs>
+      <path class="vpl-ribbon-base" pathLength="1" d="M920 -80 C980 130 700 120 760 330 C820 520 990 560 860 760 C700 1010 240 930 300 1180 C360 1420 760 1350 680 1580 C640 1680 560 1710 430 1750"></path>
+      <path class="vpl-ribbon-progress" pathLength="1" d="M920 -80 C980 130 700 120 760 330 C820 520 990 560 860 760 C700 1010 240 930 300 1180 C360 1420 760 1350 680 1580 C640 1680 560 1710 430 1750"></path>
+      <circle class="vpl-ribbon-dot" cx="920" cy="-80" r="18"></circle>
+    </svg>
   </div>
 
-  <section class="stage-hero" id="top">
-    <div class="stage-container stage-hero-grid">
+  <header class="vpl-nav">
+    <a href="/index.html" class="vpl-brand" aria-label="Accueil Vital Protect">
+      <img src="/logo.png" alt="Vital Protect" />
       <div>
-        <div class="stage-kicker" id="heroType">Stages Vital Protect · Débutants bienvenus · Sans folklore martial</div>
-        <h1 id="heroTitle">Recevez les prochaines dates de stage Vital Protect.</h1>
-        <p class="stage-lead" id="heroDescription">Les inscriptions ouvrent uniquement lorsqu’une session affiche clairement la ville, le lieu, la date, le tarif, l’encadrant, les places et les conditions de participation.</p>
-        <div class="stage-actions" id="heroActionsWaitlist">
-          <a class="stage-btn stage-btn-primary" href="#dates">Recevoir les prochaines dates</a>
-          <a class="stage-btn stage-btn-secondary" href="#programme">Voir le déroulé d’un stage</a>
-        </div>
-        <div class="stage-actions booking-shell" id="heroActionsBooking">
-          <a class="stage-btn stage-btn-primary" href="#reservation">Réserver ma place</a>
-          <a class="stage-btn stage-btn-secondary" href="#programme">Voir le déroulé</a>
-        </div>
-        <div class="stage-proof-row" id="heroProofs">
-          <span>Aucun paiement tant qu’une session n’est pas confirmée</span>
-          <span>Approche progressive</span>
-          <span>Pas de promesse irréaliste</span>
-          <span>Encadrement pédagogique</span>
-        </div>
+        <b>VITAL PROTECT</b>
+        <span>Standard sécurité personnelle</span>
       </div>
-      <aside class="stage-hero-card" aria-labelledby="sessionStateTitle">
-        <span class="stage-status" id="sessionStatus">Aucune session ouverte</span>
-        <h2 id="sessionStateTitle">Pas de fausse réservation.</h2>
-        <p id="sessionStateDescription">Vous pouvez laisser vos coordonnées pour être prévenu lorsqu’une date réellement complète sera publiée. Aucun paiement ne vous sera demandé via ce formulaire.</p>
-        <div class="session-facts" id="sessionFacts" aria-label="Informations de session">
-          <div class="session-fact"><span>Ville</span><strong id="factCity">Publiée avec la session</strong></div>
-          <div class="session-fact"><span>Date</span><strong id="factDate">Publiée avec la session</strong></div>
-          <div class="session-fact"><span>Tarif</span><strong id="factPrice">Publiée avec la session</strong></div>
-          <div class="session-fact"><span>Encadrant</span><strong id="factTrainer">Publiée avec la session</strong></div>
-          <div class="session-fact"><span>Places</span><strong id="factPlaces">Publiée avec la session</strong></div>
-        </div>
-      </aside>
-    </div>
-  </section>
+    </a>
 
-  <section class="stage-section stage-soft waitlist-shell" id="dates">
-    <div class="stage-container stage-grid-2">
-      <div class="stage-form-card">
-        <div class="section-head">
-          <span class="stage-eyebrow">Prochaines dates</span>
-          <h2>Être prévenu d’un stage près de chez moi.</h2>
-          <p>Indiquez simplement votre ville souhaitée et votre préférence. Vous recevrez les informations confirmées avant toute réservation : lieu, date, tarif, encadrant, durée, places et conditions.</p>
+    <nav class="vpl-menu" aria-label="Navigation principale">
+      <a href="/index.html" data-page="index">Accueil</a>
+      <a href="/methode.html" data-page="methode">Standard</a>
+      <a href="/stage.html" data-page="stage" class="active">Stages</a>
+      <a href="/entreprises.html" data-page="entreprises">Entreprises</a>
+      <a href="/devenir-formateur.html" data-page="devenir-formateur">Formateurs</a>
+      <a href="/faq.html" data-page="faq">FAQ</a>
+      <a href="/contact.html" data-page="contact">Contact</a>
+      <a href="/formateur-login.html" class="vpl-nav-ghost">Espace</a>
+    </nav>
+
+    <a href="#reservation" class="vpl-nav-cta">Recevoir les dates</a>
+  </header>
+
+  <main>
+    <section class="stage-hero-redesign">
+      <div class="vpl-container stage-hero-grid">
+        <div class="stage-hero-copy">
+          <div class="stage-pill-row" aria-label="Points clés">
+            <span>Sécurité personnelle réaliste</span>
+            <span>Débutants bienvenus</span>
+            <span>Pas de folklore martial</span>
+          </div>
+          <div class="vpl-eyebrow" id="heroType">Stage Vital Protect</div>
+          <h1 id="heroTitle">Apprendre à prévenir, éviter et réagir simplement.</h1>
+          <p id="heroDescription">Vital Protect transmet des repères concrets pour lire les tensions, garder la bonne distance, désamorcer quand c’est possible et agir avec proportion.</p>
+          <div class="vpl-actions">
+            <a class="vpl-button vpl-button-primary" href="#reservation">Recevoir les dates</a>
+            <a class="vpl-button vpl-button-secondary" href="/methode.html">Découvrir la méthode</a>
+          </div>
+          <p class="stage-hero-note">Les réservations ne sont ouvertes que lorsqu’une session affiche clairement le lieu, la date, le tarif, l’encadrant et les conditions de participation.</p>
         </div>
-        <form class="stage-form" id="waitlistForm">
-          <input autocomplete="off" aria-hidden="true" name="website" tabindex="-1" style="position:absolute;left:-9999px" type="text"/>
-          <div class="stage-form-grid">
-            <div class="stage-form-field">
-              <label for="waitFirstName">Prénom</label>
-              <input id="waitFirstName" name="first_name" autocomplete="given-name" required type="text"/>
-            </div>
-            <div class="stage-form-field">
-              <label for="waitEmail">Email</label>
-              <input id="waitEmail" name="email" autocomplete="email" required type="email"/>
-            </div>
-            <div class="stage-form-field">
-              <label for="waitCity">Ville souhaitée</label>
-              <input id="waitCity" name="city" autocomplete="address-level2" required placeholder="Ex. Lyon, Bordeaux, Paris…" type="text"/>
-            </div>
-            <div class="stage-form-field">
-              <label for="waitPreference">Préférence</label>
-              <select id="waitPreference" name="preference" required>
-                <option value="">Choisir une préférence</option>
-                <option value="Week-end">Week-end</option>
-                <option value="Soirée en semaine">Soirée en semaine</option>
-                <option value="Journée en semaine">Journée en semaine</option>
-                <option value="Indifférent">Indifférent</option>
-              </select>
-            </div>
-            <div class="stage-form-field full">
-              <label for="waitMessage">Message optionnel</label>
-              <textarea id="waitMessage" name="message" placeholder="Contexte, ville secondaire, question particulière…"></textarea>
+
+        <div class="stage-hero-panel" aria-label="Aperçu du stage">
+          <img class="stage-hero-main-img" src="/groupe-dehors-briefing-securite.png" alt="Briefing de sécurité pendant un stage Vital Protect" />
+          <div class="stage-hero-mini-grid">
+            <img src="/femme-mise-a-distance-formateur-guide.png" alt="Exercice guidé de distance et de posture" />
+            <div class="stage-hero-card-dark">
+              <strong>Pas un cours de combat.</strong>
+              <span>Lucidité, distance, sortie possible et décisions simples.</span>
             </div>
           </div>
-          <button class="stage-btn stage-btn-dark" type="submit">Recevoir les prochaines dates</button>
-          <p class="form-status" id="waitlistStatus" role="status" aria-live="polite"></p>
-          <p class="form-note">Aucun paiement ne vous sera demandé. Vos informations servent uniquement à répondre à cette demande. Pour une demande entreprise, utilisez plutôt le formulaire de contact dédié.</p>
-        </form>
-      </div>
-      <div class="stage-panel">
-        <span class="stage-eyebrow">Avant ouverture</span>
-        <h3>Une session n’est publiée que si tout est vérifiable.</h3>
-        <p>Vital Protect ne pousse pas de réservation incomplète. Une inscription doit seulement être ouverte quand les éléments essentiels sont prêts.</p>
-        <ul class="stage-list">
-          <li><strong>Lieu clair :</strong> ville, adresse ou zone exacte avant paiement.</li>
-          <li><strong>Date et horaire :</strong> créneau, durée et format affichés sans ambiguïté.</li>
-          <li><strong>Tarif :</strong> prix total communiqué avant toute validation.</li>
-          <li><strong>Encadrement :</strong> intervenant ou responsable pédagogique identifié.</li>
-          <li><strong>Conditions :</strong> âge minimum, niveau, cadre de sécurité, annulation.</li>
-          <li><strong>Places :</strong> capacité réelle et disponibilité cohérente.</li>
-        </ul>
-      </div>
-    </div>
-  </section>
-
-  <section class="stage-section" id="objectifs">
-    <div class="stage-container">
-      <div class="section-head centered">
-        <span class="stage-eyebrow">Ce que vous travaillerez</span>
-        <h2>Des repères simples pour ne pas improviser sous stress.</h2>
-        <p>Le stage ne promet pas de vous rendre invincible. Il vous aide à voir plus tôt, à garder de l’espace, à éviter ce qui peut l’être et à réagir sans surjouer quand l’évitement n’est plus possible.</p>
-      </div>
-      <div class="stage-grid-3">
-        <article class="stage-card">
-          <span class="stage-card-num">01</span>
-          <h3>Lire une tension</h3>
-          <p>Repérer les signaux d’alerte : distance qui se ferme, ton qui monte, entourage, issue possible, comportement inhabituel.</p>
-        </article>
-        <article class="stage-card">
-          <span class="stage-card-num">02</span>
-          <h3>Garder une distance utile</h3>
-          <p>Travailler la posture, le placement, l’angle, la parole courte et la sortie possible avant que la situation ne se bloque.</p>
-        </article>
-        <article class="stage-card">
-          <span class="stage-card-num">03</span>
-          <h3>Réagir simplement</h3>
-          <p>Mobiliser des réponses proportionnées, courtes et réalistes lorsque la désescalade ou l’évitement ne suffisent plus.</p>
-        </article>
-      </div>
-    </div>
-  </section>
-
-  <section class="stage-section stage-soft" id="situation">
-    <div class="stage-container stage-example">
-      <div class="stage-example-visual" role="img" aria-label="Groupe en briefing de sécurité personnelle"></div>
-      <div>
-        <div class="section-head">
-          <span class="stage-eyebrow">Exemple concret</span>
-          <h2>Une tension monte : que devez-vous décider ?</h2>
-          <p>La méthode transforme une situation floue en décisions simples. L’objectif n’est pas d’avoir “la bonne technique”, mais de garder des options.</p>
-        </div>
-        <div class="stage-steps">
-          <div class="stage-step"><span>1</span><div><strong>Voir plus tôt</strong><p>Identifier le changement de ton, la distance qui se réduit et les sorties possibles.</p></div></div>
-          <div class="stage-step"><span>2</span><div><strong>Éviter l’escalade</strong><p>Se placer, parler plus court, éviter de nourrir la confrontation et créer une marge.</p></div></div>
-          <div class="stage-step"><span>3</span><div><strong>Agir si nécessaire</strong><p>Utiliser une réponse simple, proportionnée et orientée sortie, pas domination.</p></div></div>
-          <div class="stage-step"><span>4</span><div><strong>Sécuriser l’après</strong><p>S’éloigner, alerter, faire redescendre le stress et savoir quoi signaler.</p></div></div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="stage-section" id="programme">
-    <div class="stage-container">
-      <div class="section-head centered">
-        <span class="stage-eyebrow">Déroulé type</span>
-        <h2>Une progression sans mise en danger ni démonstration inutile.</h2>
-        <p>Le format exact dépend de la session publiée. La logique pédagogique reste la même : comprendre, voir, pratiquer, débriefer.</p>
-      </div>
-      <div class="stage-grid-4">
-        <article class="stage-card"><span class="stage-card-num">1</span><h3>Briefing</h3><p>Cadre, limites, objectifs et consignes de sécurité. Chacun sait ce qui sera travaillé et ce qui ne le sera pas.</p></article>
-        <article class="stage-card"><span class="stage-card-num">2</span><h3>Démonstration</h3><p>Le formateur montre les repères : distance, posture, parole courte, angle, sortie possible.</p></article>
-        <article class="stage-card"><span class="stage-card-num">3</span><h3>Pratique guidée</h3><p>Exercices progressifs, adaptés au niveau, sans recherche de performance ou de domination.</p></article>
-        <article class="stage-card"><span class="stage-card-num">4</span><h3>Débrief</h3><p>Retour au calme, points à retenir, erreurs fréquentes, conduite à tenir après une tension.</p></article>
-      </div>
-    </div>
-  </section>
-
-  <section class="stage-section stage-dark" id="securite">
-    <div class="stage-container stage-grid-2">
-      <div class="stage-panel">
-        <span class="stage-eyebrow">Cadre sécurité</span>
-        <h3>Ce stage n’est pas un combat libre.</h3>
-        <p>La sécurité des participants passe avant la démonstration. Le travail reste encadré, progressif et relié à des situations réalistes.</p>
-        <ul class="stage-list">
-          <li><strong>Pas de mise en danger volontaire.</strong></li>
-          <li><strong>Pas de promesse d’invincibilité.</strong></li>
-          <li><strong>Pas de surenchère physique.</strong></li>
-          <li><strong>Pas d’escalade inutile.</strong></li>
-        </ul>
-      </div>
-      <div class="stage-panel">
-        <span class="stage-eyebrow">Participation</span>
-        <h3>Débutants acceptés, conditions précisées avec chaque session.</h3>
-        <p>Les conditions exactes sont affichées avant ouverture : âge minimum, niveau, équipement éventuel, durée, nombre maximum de participants, politique d’annulation et contact.</p>
-        <ul class="stage-list">
-          <li><strong>Niveau :</strong> accessible sans expérience préalable.</li>
-          <li><strong>Condition physique :</strong> pas besoin d’être sportif, mais signalez toute contrainte utile.</li>
-          <li><strong>Encadrement :</strong> consignes claires et intensité maîtrisée.</li>
-          <li><strong>Paiement :</strong> seulement si une session est complète et publiée.</li>
-        </ul>
-      </div>
-    </div>
-  </section>
-
-  <section class="stage-section stage-soft" id="conditions">
-    <div class="stage-container">
-      <div class="section-head centered">
-        <span class="stage-eyebrow">Qualité opérationnelle</span>
-        <h2>Ce qui doit être affiché avant toute inscription.</h2>
-        <p>La transparence de l’ouverture fait partie du cadre Vital Protect : pas de fausse urgence, pas de réservation floue, pas de paiement sans informations essentielles.</p>
-      </div>
-      <ul class="session-checklist">
-        <li><strong>Ville et lieu</strong><br/>Pas une simple promesse géographique.</li>
-        <li><strong>Date et horaires</strong><br/>Créneau réel, durée et format.</li>
-        <li><strong>Prix total</strong><br/>Tarif clair avant paiement.</li>
-        <li><strong>Encadrant</strong><br/>Responsable ou formateur identifié.</li>
-        <li><strong>Places disponibles</strong><br/>Capacité cohérente avec la sécurité.</li>
-        <li><strong>Conditions</strong><br/>Âge, niveau, annulation, sécurité.</li>
-      </ul>
-    </div>
-  </section>
-
-  <section class="stage-section booking-shell" id="reservation" aria-label="Réservation de session confirmée">
-    <div class="stage-container">
-      <div class="section-head centered">
-        <span class="stage-eyebrow">Réservation</span>
-        <h2>Réserver une session confirmée.</h2>
-        <p>Ce formulaire apparaît uniquement lorsqu’une session complète est chargée : ville, lieu, date, tarif, places et conditions essentielles.</p>
-      </div>
-      <div class="booking-layout">
-        <aside class="stage-form-card">
-          <h3>Résumé de votre réservation</h3>
-          <div class="selected-stage-box">
-            <span class="selected-stage-label">Stage sélectionné</span>
-            <div class="selected-stage-value" id="selectedStageValue">Session en cours de chargement…</div>
+          <div class="stage-hero-status">
+            <strong>Pas de réservation floue.</strong>
+            <span>Une session incomplète ne doit pas être vendue comme disponible.</span>
           </div>
-          <div class="booking-total" id="bookingTotal">Total : en attente</div>
-          <p class="form-status" id="bookingStatus" role="status" aria-live="polite"></p>
-          <ul class="stage-list">
-            <li><strong>Paiement :</strong> redirection vers Stripe uniquement pour une session complète.</li>
-            <li><strong>Confirmation :</strong> votre place est enregistrée après validation du paiement.</li>
-            <li><strong>Avant le stage :</strong> présentez-vous quelques minutes avant le début.</li>
+        </div>
+      </div>
+    </section>
+
+    <section class="stage-problem-section">
+      <div class="vpl-container stage-asym-grid">
+        <div class="stage-section-copy compact-title">
+          <span class="eyebrow">Le problème</span>
+          <h2>Une sécurité personnelle souvent mal expliquée.</h2>
+          <p>Vital Protect prend le chemin inverse : pas de promesse d’invincibilité, pas de scénario humiliant, pas de jargon inutile. Le stage doit donner des repères concrets et mémorisables.</p>
+        </div>
+        <div class="stage-problem-stack">
+          <article>
+            <span>01</span>
+            <h3>Trop flou</h3>
+            <p>On parle de confiance sans expliquer quoi faire concrètement.</p>
+          </article>
+          <article>
+            <span>02</span>
+            <h3>Trop spectaculaire</h3>
+            <p>Des gestes impressionnants deviennent inutiles sous stress.</p>
+          </article>
+          <article>
+            <span>03</span>
+            <h3>Trop anxiogène</h3>
+            <p>La peur ne remplace pas une progression claire et calme.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="stage-learn-section">
+      <div class="vpl-container">
+        <div class="section-head section-head--center">
+          <span class="eyebrow">Ce que vous apprenez</span>
+          <h2>Des réflexes simples à retenir.</h2>
+          <p>Une progression courte : comprendre, prévenir, se positionner, réagir, sécuriser l’après.</p>
+        </div>
+        <div class="stage-learn-grid">
+          <article><b>1</b><h3>Comprendre</h3><p>Identifier les contextes sensibles et les erreurs qui aggravent une situation.</p></article>
+          <article><b>2</b><h3>Prévenir</h3><p>Anticiper les impasses et choisir une sortie quand elle existe.</p></article>
+          <article><b>3</b><h3>Se positionner</h3><p>Travailler la distance, l’angle, la posture, la voix et la place du corps.</p></article>
+          <article><b>4</b><h3>Réagir</h3><p>Utiliser des réponses simples, proportionnées et compatibles avec un public débutant.</p></article>
+          <article><b>5</b><h3>Sécuriser l’après</h3><p>Sortir de la zone, alerter, transmettre les informations utiles et retrouver du calme.</p></article>
+          <article class="accent"><b>✓</b><h3>Rester réaliste</h3><p>La méthode ne remplace ni la fuite possible, ni l’appel à l’aide, ni le cadre légal applicable.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="stage-flow-section">
+      <div class="vpl-container stage-flow-grid">
+        <div class="stage-section-copy compact-title">
+          <span class="eyebrow">Déroulé d’une séance</span>
+          <h2>Une progression encadrée, sans mise en danger.</h2>
+          <p>Une session doit rester lisible : comprendre avant de pratiquer, pratiquer avant de complexifier, débriefer avant de repartir.</p>
+          <a class="vpl-button vpl-button-secondary" href="/methode.html">Voir la méthode</a>
+        </div>
+        <div class="stage-flow-list">
+          <article><b>1</b><div><h3>Briefing</h3><p>Objectifs, règles de sécurité, contexte et niveau du groupe.</p></div></article>
+          <article><b>2</b><div><h3>Démonstration</h3><p>Les repères sont montrés simplement avant d’être pratiqués.</p></div></article>
+          <article><b>3</b><div><h3>Pratique guidée</h3><p>Distance, déplacement, parole courte et sortie possible.</p></div></article>
+          <article><b>4</b><div><h3>Mises en situation</h3><p>Exercices progressifs, encadrés, sans humiliation ni recherche de performance.</p></div></article>
+          <article><b>5</b><div><h3>Débrief</h3><p>Ce qui a été compris, ce qui reste à travailler, quoi faire après une situation réelle.</p></div></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="stage-compare-section">
+      <div class="vpl-container stage-compare-grid">
+        <article class="stage-compare-card is-not">
+          <span class="eyebrow">Ce que ce n’est pas</span>
+          <h2>Vous n’allez pas apprendre à vous prendre pour un combattant.</h2>
+          <ul>
+            <li>Pas de combat libre.</li>
+            <li>Pas de promesse d’invincibilité.</li>
+            <li>Pas de culte de la confrontation.</li>
+            <li>Pas de scénario spectaculaire ou humiliant.</li>
           </ul>
-        </aside>
-        <div class="stage-form-card">
-          <form class="stage-form" id="bookingForm">
-            <div class="stage-form-grid">
-              <div class="stage-form-field"><label for="firstName">Prénom</label><input id="firstName" required autocomplete="given-name" type="text"/></div>
-              <div class="stage-form-field"><label for="lastName">Nom</label><input id="lastName" required autocomplete="family-name" type="text"/></div>
-              <div class="stage-form-field"><label for="email">Email</label><input id="email" required autocomplete="email" type="email"/></div>
-              <div class="stage-form-field"><label for="phone">Téléphone</label><input id="phone" required autocomplete="tel" type="tel"/></div>
-              <div class="stage-form-field"><label for="places">Nombre de places</label><input id="places" min="1" required type="number" value="1"/></div>
-              <div class="stage-form-field"><label for="cityDisplay">Ville du stage</label><input disabled id="cityDisplay" type="text"/></div>
-              <div class="stage-form-field full"><label for="notes">Message complémentaire</label><textarea id="notes" placeholder="Optionnel"></textarea></div>
+        </article>
+        <article class="stage-compare-card is-yes">
+          <span class="eyebrow">Ce que c’est</span>
+          <h2>Un entraînement à la lucidité, à la distance et à la décision simple.</h2>
+          <p>La bonne réaction n’est pas toujours un geste. Souvent, c’est voir plus tôt, se placer mieux, parler plus court, sortir plus vite ou demander de l’aide au bon moment.</p>
+          <a class="vpl-button vpl-button-primary" href="#reservation">Recevoir les dates</a>
+        </article>
+      </div>
+    </section>
+
+    <section class="stage-clarity-section">
+      <div class="vpl-container stage-clarity-grid">
+        <div class="stage-session-card">
+          <span class="eyebrow">Prochaines sessions</span>
+          <h2>Pas de fausse urgence.</h2>
+          <p>Une inscription n’est ouverte que lorsque les informations essentielles sont confirmées.</p>
+          <div class="stage-meta-grid" aria-label="Informations de session">
+            <div><span>Ville</span><strong id="metaCity">À confirmer</strong><small id="metaRegion">Région à confirmer</small></div>
+            <div><span>Date</span><strong id="metaDate">Date à venir</strong><small id="metaDepartment">Département à confirmer</small></div>
+            <div><span>Prix</span><strong id="metaPrice">À confirmer</strong><small><span id="metaPlaces">—</span> place(s)</small></div>
+          </div>
+        </div>
+        <div class="stage-checklist-card">
+          <h3>Avant toute inscription, vous devez pouvoir vérifier :</h3>
+          <ul>
+            <li>la ville, l’adresse ou le lieu exact ;</li>
+            <li>la date, les horaires et la durée ;</li>
+            <li>le tarif et les conditions d’annulation ;</li>
+            <li>le nombre de places disponibles ;</li>
+            <li>le nom de l’encadrant et son périmètre d’habilitation ;</li>
+            <li>l’âge minimum, le niveau requis et les conditions physiques ;</li>
+            <li>les règles de sécurité et le cadre de responsabilité.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="reservation" class="stage-reservation-section">
+      <div class="vpl-container">
+        <div class="section-head section-head--center">
+          <span class="eyebrow">Réservation</span>
+          <h2>Réserver uniquement quand la session est complète.</h2>
+          <p>Le paiement reste désactivé si une information essentielle manque.</p>
+        </div>
+        <div class="stage-booking-grid">
+          <div class="stage-booking-summary">
+            <h3>Résumé de la session</h3>
+            <div class="selected-stage-box">
+              <span class="selected-stage-label">Stage sélectionné</span>
+              <div class="selected-stage-value" id="selectedStageValue">Aucune session complète sélectionnée pour le moment.</div>
             </div>
-            <button class="stage-btn stage-btn-blue" id="bookingSubmitButton" type="submit">Procéder au paiement</button>
-            <p class="form-note">Les informations transmises via ce formulaire sont utilisées uniquement pour gérer votre réservation. Vous pouvez exercer vos droits via la politique de confidentialité.</p>
-          </form>
+            <div class="stage-detail-list">
+              <div><strong>Adresse</strong><span id="practicalAddress">—</span></div>
+              <div><strong>Heure</strong><span id="practicalTime">—</span></div>
+              <div><strong>Durée</strong><span id="practicalDuration">—</span></div>
+              <div><strong>Type</strong><span id="practicalType">—</span></div>
+              <div><strong>Niveau</strong><span id="practicalLevel">Accessible à tous</span></div>
+            </div>
+            <div class="booking-total" id="bookingTotal">Total : en attente d’une session complète</div>
+            <div class="booking-status" id="bookingStatus"></div>
+          </div>
+
+          <div class="stage-booking-form-card">
+            <form id="bookingForm">
+              <div class="form-grid">
+                <div class="form-field">
+                  <label for="firstName">Prénom</label>
+                  <input id="firstName" type="text" required />
+                </div>
+                <div class="form-field">
+                  <label for="lastName">Nom</label>
+                  <input id="lastName" type="text" required />
+                </div>
+                <div class="form-field">
+                  <label for="email">Email</label>
+                  <input id="email" type="email" required />
+                </div>
+                <div class="form-field">
+                  <label for="phone">Téléphone</label>
+                  <input id="phone" type="tel" required />
+                </div>
+                <div class="form-field">
+                  <label for="places">Nombre de places</label>
+                  <input id="places" type="number" min="1" value="1" required />
+                </div>
+                <div class="form-field">
+                  <label for="cityDisplay">Ville du stage</label>
+                  <input id="cityDisplay" type="text" disabled />
+                </div>
+                <div class="form-field full">
+                  <label for="notes">Message complémentaire</label>
+                  <textarea id="notes" placeholder="Optionnel"></textarea>
+                </div>
+              </div>
+              <button class="vpl-button vpl-button-primary" id="bookingSubmitButton" type="submit" disabled>Réservation indisponible pour le moment</button>
+              <p class="form-rgpd-note">Les informations transmises via ce formulaire sont utilisées uniquement pour répondre à votre demande. Vous pouvez exercer vos droits en écrivant à vitalprotectformation@gmail.com.</p>
+            </form>
+          </div>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <section class="stage-section" id="faq">
-    <div class="stage-container">
-      <div class="section-head centered">
-        <span class="stage-eyebrow">Questions fréquentes</span>
-        <h2>Avant de laisser vos coordonnées ou de réserver.</h2>
-        <p>Les réponses ci-dessous traitent les principales objections avant toute inscription.</p>
-      </div>
-      <div class="stage-grid-3">
-        <article class="faq-card"><h3>Faut-il être sportif ?</h3><p>Non. Le stage est pensé pour un public débutant. L’intensité doit rester progressive et adaptée au groupe.</p></article>
-        <article class="faq-card"><h3>Est-ce un cours de combat ?</h3><p>Non. L’objectif est la prévention, la distance, la désescalade, la sortie et la réaction simple si nécessaire.</p></article>
-        <article class="faq-card"><h3>Pourquoi aucune date n’est affichée ?</h3><p>Une date n’est affichée que lorsqu’elle est confirmée avec lieu, tarif, encadrant, places et conditions.</p></article>
-        <article class="faq-card"><h3>Quand faut-il payer ?</h3><p>Jamais sur une simple demande de date. Le paiement n’est proposé que pour une session complète et publiée.</p></article>
-        <article class="faq-card"><h3>Quel âge minimum ?</h3><p>L’âge minimum doit être précisé dans chaque session avant ouverture. Il dépend du format et du cadre choisi.</p></article>
-        <article class="faq-card"><h3>Que faire si j’ai une contrainte physique ?</h3><p>Signalez-la avant la session. Le cadre doit rester pédagogique et adapté, sans mise en danger volontaire.</p></article>
-      </div>
-    </div>
-  </section>
-
-  <section class="stage-section stage-soft" id="final">
-    <div class="stage-container">
-      <div class="stage-final-cta">
-        <div>
-          <h2 id="finalTitle">Recevoir les prochaines dates, sans engagement.</h2>
-          <p id="finalText">Laissez votre ville souhaitée et votre email. Vous recevrez uniquement les informations confirmées avant toute réservation.</p>
+    <section class="stage-orientation-section">
+      <div class="vpl-container">
+        <div class="section-head section-head--center">
+          <span class="eyebrow">Pour qui ?</span>
+          <h2>Choisissez le bon parcours.</h2>
+          <p>Vous cherchez à vous former, à protéger vos équipes ou à transmettre la méthode ? Accédez directement au bon espace.</p>
         </div>
-        <a class="stage-btn stage-btn-primary" id="finalCta" href="#dates">Être prévenu</a>
+        <div class="stage-orientation-grid">
+          <a href="#reservation"><span>01</span><h3>Je veux me former</h3><p>Recevoir les prochaines dates dès qu’une session complète est publiée.</p><b>Recevoir les dates →</b></a>
+          <a href="/entreprises.html"><span>02</span><h3>Je veux former mes équipes</h3><p>Pour les collaborateurs exposés aux tensions, à l’accueil du public ou au terrain.</p><b>Demander un échange →</b></a>
+          <a href="/devenir-formateur.html"><span>03</span><h3>Je veux devenir formateur</h3><p>Comprendre le parcours d’habilitation interne par module.</p><b>Voir le parcours →</b></a>
+        </div>
+      </div>
+    </section>
+
+    <section class="stage-faq-section">
+      <div class="vpl-container">
+        <div class="section-head section-head--center">
+          <span class="eyebrow">Questions utiles</span>
+          <h2>Avant de demander une date.</h2>
+          <p>Les réponses essentielles, sans surcharge.</p>
+        </div>
+        <div class="faq-grid">
+          <article class="faq-card"><h3>Est-ce adapté aux débutants ?</h3><p>Oui. La méthode est pensée pour un public adulte non spécialiste, sans prérequis martial.</p></article>
+          <article class="faq-card"><h3>Faut-il une condition physique particulière ?</h3><p>La progression doit respecter les limites des participants. Toute contrainte physique doit être signalée avant la session.</p></article>
+          <article class="faq-card"><h3>Est-ce un cours de combat ?</h3><p>Non. Le cœur de l’approche est la prévention, la distance, la désescalade, la sortie possible et la réaction proportionnée.</p></article>
+          <article class="faq-card"><h3>Quel âge minimum ?</h3><p>Les conditions d’âge doivent être affichées sur chaque session. Tant que cette information manque, l’inscription ne doit pas être ouverte.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="stage-final-cta">
+      <div class="vpl-container">
+        <div class="stage-final-box">
+          <h2>Prévenir d’abord. Réagir seulement si nécessaire.</h2>
+          <p>Recevez les prochaines dates, demandez un échange entreprise ou découvrez le parcours formateur.</p>
+          <div class="vpl-actions">
+            <a class="vpl-button vpl-button-primary" href="#reservation">Recevoir les dates</a>
+            <a class="vpl-button vpl-button-secondary" href="/entreprises.html">Former une équipe</a>
+            <a class="vpl-button vpl-button-secondary" href="/devenir-formateur.html">Parcours formateur</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container site-footer__grid">
+      <div class="site-footer__brand">
+        <strong>VITAL PROTECT</strong>
+        <p>Une méthode structurée de sécurité personnelle fondée sur la prévention, l’évitement, la réaction réaliste, la pédagogie progressive et l’habilitation des formateurs.</p>
+      </div>
+      <div class="site-footer__links">
+        <a href="/methode.html">La méthode</a>
+        <a href="/entreprises.html">Entreprises</a>
+        <a href="/devenir-formateur.html">Devenir formateur</a>
+        <a href="/faq.html">FAQ</a>
+        <a href="/contact.html">Contact</a>
       </div>
     </div>
-  </section>
-</main>
-<footer class="site-footer">
-  <div class="container site-footer__grid">
-    <div class="site-footer__brand">
-      <strong>VITAL PROTECT</strong>
-      <p>Une méthode structurée de sécurité personnelle fondée sur la prévention, l’évitement, la réaction réaliste, la pédagogie progressive et l’habilitation des formateurs.</p>
-    </div>
-    <div class="site-footer__links">
-      <a href="/methode.html">La méthode</a>
-      <a href="/entreprises.html">Entreprises</a>
-      <a href="/devenir-formateur.html">Devenir formateur</a>
-      <a href="/faq.html">FAQ</a>
-      <a href="/contact.html">Contact</a>
-    </div>
-  </div>
-</footer>
-<a class="stage-btn stage-btn-dark stage-mobile-cta" id="mobileCta" href="#dates">Recevoir les dates</a>
+  </footer>
+
 <script type="module">
-  import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+    import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-  const supabase = createClient(
-    "https://zsraqxzneghkzaozzuci.supabase.co",
-    "sb_publishable_VlTpYjzJ3DKpFA1Un_EFHQ_FW-mYK4U"
-  );
+    const supabase = createClient(
+      "https://zsraqxzneghkzaozzuci.supabase.co",
+      "sb_publishable_VlTpYjzJ3DKpFA1Un_EFHQ_FW-mYK4U"
+    );
 
-  const params = new URLSearchParams(window.location.search);
-  const stageId = params.get("id") || "";
+    const params = new URLSearchParams(window.location.search);
+    const stageId = params.get("id") || "";
 
-  const $ = (id) => document.getElementById(id);
-  const body = document.body;
-  const heroType = $("heroType");
-  const heroTitle = $("heroTitle");
-  const heroDescription = $("heroDescription");
-  const sessionStatus = $("sessionStatus");
-  const sessionStateTitle = $("sessionStateTitle");
-  const sessionStateDescription = $("sessionStateDescription");
-  const factCity = $("factCity");
-  const factDate = $("factDate");
-  const factPrice = $("factPrice");
-  const factTrainer = $("factTrainer");
-  const factPlaces = $("factPlaces");
-  const selectedStageValue = $("selectedStageValue");
-  const cityDisplay = $("cityDisplay");
-  const bookingTotal = $("bookingTotal");
-  const bookingStatus = $("bookingStatus");
-  const placesInput = $("places");
-  const bookingForm = $("bookingForm");
-  const bookingSubmitButton = $("bookingSubmitButton");
-  const waitlistForm = $("waitlistForm");
-  const waitlistStatus = $("waitlistStatus");
-  const mobileCta = $("mobileCta");
-  const finalTitle = $("finalTitle");
-  const finalText = $("finalText");
-  const finalCta = $("finalCta");
+    const $ = (id) => document.getElementById(id);
+    const heroType = $("heroType");
+    const heroTitle = $("heroTitle");
+    const heroDescription = $("heroDescription");
+    const metaCity = $("metaCity");
+    const metaDate = $("metaDate");
+    const metaPrice = $("metaPrice");
+    const metaPlaces = $("metaPlaces");
+    const metaRegion = $("metaRegion");
+    const metaDepartment = $("metaDepartment");
+    const practicalAddress = $("practicalAddress");
+    const practicalTime = $("practicalTime");
+    const practicalDuration = $("practicalDuration");
+    const practicalType = $("practicalType");
+    const audienceText = $("audienceText");
+    const objectiveText = $("objectiveText");
+    const selectedStageValue = $("selectedStageValue");
+    const cityDisplay = $("cityDisplay");
+    const bookingTotal = $("bookingTotal");
+    const bookingStatus = $("bookingStatus");
+    const placesInput = $("places");
+    const bookingForm = $("bookingForm");
+    const bookingSubmitButton = $("bookingSubmitButton");
 
-  let stage = null;
-  let bookingEnabled = false;
+    let stage = null;
+    let bookingEnabled = false;
 
-  function setText(element, value) {
-    if (element) element.textContent = value;
-  }
-
-  function showStatus(element, message, type = "info") {
-    if (!element) return;
-    element.className = `form-status show ${type}`;
-    element.textContent = message;
-  }
-
-  function clearStatus(element) {
-    if (!element) return;
-    element.className = "form-status";
-    element.textContent = "";
-  }
-
-  function formatPrice(price) {
-    const amount = Number(price || 0);
-    if (!Number.isFinite(amount) || amount <= 0) return "Tarif non publié";
-    return `${amount.toFixed(0)} €`;
-  }
-
-  function formatDate(dateString) {
-    if (!dateString) return "Date non publiée";
-    const date = new Date(dateString);
-    if (Number.isNaN(date.getTime())) return "Date non publiée";
-    return date.toLocaleDateString("fr-FR", { day: "2-digit", month: "long", year: "numeric" });
-  }
-
-  function hasText(value) {
-    return String(value || "").trim().length > 0;
-  }
-
-  function hasCompleteSession(item) {
-    if (!item) return false;
-    const requiredText = [
-      item.id,
-      item.title,
-      item.city,
-      item.address,
-      item.stage_date,
-      item.start_time,
-      item.duration,
-      item.training_type
-    ];
-    const hasRequiredText = requiredText.every(hasText);
-    const hasPrice = Number(item.price || 0) > 0;
-    const hasPlaces = Number(item.remaining_places || 0) > 0;
-    return hasRequiredText && hasPrice && hasPlaces;
-  }
-
-  function setBookingEnabled(enabled, message = "") {
-    bookingEnabled = Boolean(enabled);
-    if (bookingForm) {
-      bookingForm.querySelectorAll("input, select, textarea").forEach((field) => {
-        if (field.id === "cityDisplay") {
-          field.disabled = true;
-        } else {
-          field.disabled = !bookingEnabled;
-        }
-      });
+    function setText(element, value) {
+      if (element) element.textContent = value;
     }
-    if (bookingSubmitButton) {
-      bookingSubmitButton.disabled = !bookingEnabled;
-      bookingSubmitButton.setAttribute("aria-disabled", String(!bookingEnabled));
-      bookingSubmitButton.textContent = bookingEnabled ? "Procéder au paiement" : "Réservation fermée";
-    }
-    if (message) showStatus(bookingStatus, message, bookingEnabled ? "success" : "error");
-  }
 
-  function updateBookingTotal() {
-    if (!stage || !hasCompleteSession(stage)) {
+    function formatPrice(price) {
+      const amount = Number(price || 0);
+      if (!Number.isFinite(amount) || amount <= 0) return "Prix à confirmer";
+      return `${amount.toFixed(0)} €`;
+    }
+
+    function formatDate(dateString) {
+      if (!dateString) return "Date non disponible";
+      const date = new Date(dateString);
+      if (Number.isNaN(date.getTime())) return "Date non disponible";
+      return date.toLocaleDateString("fr-FR", { day: "2-digit", month: "long", year: "numeric" });
+    }
+
+    function showBookingStatus(message, type = "info") {
+      if (!bookingStatus) return;
+      bookingStatus.className = `booking-status show ${type}`;
+      bookingStatus.textContent = message;
+    }
+
+    function hasCompleteSession(item) {
+      if (!item) return false;
+      const requiredText = [item.id, item.title, item.city, item.address, item.stage_date, item.start_time, item.duration, item.training_type];
+      const hasRequiredText = requiredText.every((value) => String(value || "").trim().length > 0);
+      const hasPrice = Number(item.price || 0) > 0;
+      const hasPlaces = Number(item.remaining_places || 0) > 0;
+      return hasRequiredText && hasPrice && hasPlaces;
+    }
+
+    function setBookingEnabled(enabled, message = "") {
+      bookingEnabled = Boolean(enabled);
+      if (bookingForm) {
+        bookingForm.querySelectorAll("input, select, textarea").forEach((field) => {
+          if (field.id === "cityDisplay") {
+            field.disabled = true;
+          } else {
+            field.disabled = !bookingEnabled;
+          }
+        });
+      }
+      if (bookingSubmitButton) {
+        bookingSubmitButton.disabled = !bookingEnabled;
+        bookingSubmitButton.textContent = bookingEnabled ? "Procéder au paiement" : "Réservation indisponible pour le moment";
+      }
+      if (message) showBookingStatus(message, bookingEnabled ? "success" : "info");
+    }
+
+    function updateBookingTotal() {
+      if (!stage || !hasCompleteSession(stage)) {
+        setText(bookingTotal, "Total : en attente d’une session complète");
+        return;
+      }
+      const places = Math.max(1, Number(placesInput?.value || 1));
+      setText(bookingTotal, `Total : ${formatPrice(Number(stage.price || 0) * places)}`);
+    }
+
+    function showNoSessionState(message = "Aucune session complète n’est ouverte actuellement. Revenez bientôt ou contactez l’équipe pour être prévenu.") {
+      stage = null;
+      setText(heroTitle, "Apprendre à prévenir, éviter et réagir simplement.");
+      setText(heroDescription, "Les prochaines dates seront publiées uniquement lorsqu’une session aura une date, un lieu, un tarif, des places et des conditions confirmés.");
+      setText(selectedStageValue, message);
       setText(bookingTotal, "Total : en attente d’une session complète");
-      return;
-    }
-    const places = Math.max(1, Number(placesInput?.value || 1));
-    setText(bookingTotal, `Total : ${formatPrice(Number(stage.price || 0) * places)}`);
-  }
-
-  function setNoSessionState(message = "Aucune session complète n’est ouverte actuellement. Laissez vos coordonnées pour recevoir les prochaines dates confirmées.") {
-    stage = null;
-    body.classList.remove("session-open");
-    document.title = "Stages Vital Protect — recevoir les prochaines dates";
-    setText(heroType, "Stages Vital Protect · Débutants bienvenus · Sans folklore martial");
-    setText(heroTitle, "Recevez les prochaines dates de stage Vital Protect.");
-    setText(heroDescription, "Les inscriptions ouvrent uniquement lorsqu’une session affiche clairement la ville, le lieu, la date, le tarif, l’encadrant, les places et les conditions de participation.");
-    setText(sessionStatus, "Aucune session ouverte");
-    setText(sessionStateTitle, "Pas de fausse réservation.");
-    setText(sessionStateDescription, "Vous pouvez laisser vos coordonnées pour être prévenu lorsqu’une date réellement complète sera publiée. Aucun paiement ne vous sera demandé via ce formulaire.");
-    setText(factCity, "Publiée avec la session");
-    setText(factDate, "Publiée avec la session");
-    setText(factPrice, "Publié avec la session");
-    setText(factTrainer, "Publié avec la session");
-    setText(factPlaces, "Publiées avec la session");
-    setText(finalTitle, "Recevoir les prochaines dates, sans engagement.");
-    setText(finalText, "Laissez votre ville souhaitée et votre email. Vous recevrez uniquement les informations confirmées avant toute réservation.");
-    if (finalCta) finalCta.href = "#dates";
-    if (mobileCta) {
-      mobileCta.href = "#dates";
-      mobileCta.textContent = "Recevoir les dates";
-    }
-    setBookingEnabled(false, message);
-    clearStatus(bookingStatus);
-  }
-
-  function getTrainerLabel(item) {
-    return item?.trainer_name || item?.trainer || item?.instructor_name || item?.coach_name || "Encadrant publié avec la session";
-  }
-
-  function applyStageToPage(item) {
-    if (!item || !hasCompleteSession(item)) {
-      setNoSessionState("Cette session n’est pas complète : la réservation reste fermée tant que les informations essentielles ne sont pas toutes confirmées.");
-      return;
+      setText(metaCity, "À confirmer");
+      setText(metaDate, "Date à venir");
+      setText(metaPrice, "Prix à confirmer");
+      setText(metaPlaces, "—");
+      setText(metaRegion, "Région à confirmer");
+      setText(metaDepartment, "Département à confirmer");
+      setText(practicalAddress, "Adresse publiée avec la session");
+      setText(practicalTime, "Horaires publiés avec la session");
+      setText(practicalDuration, "Durée publiée avec la session");
+      setText(practicalType, "Stage Vital Protect");
+      if (cityDisplay) cityDisplay.value = "";
+      setBookingEnabled(false, message);
     }
 
-    stage = item;
-    body.classList.add("session-open");
-    document.title = `${stage.title || "Stage Vital Protect"} — Vital Protect`;
-    setText(heroType, `${stage.city} · ${formatDate(stage.stage_date)} · Débutants`);
-    setText(heroTitle, stage.title || "Stage Vital Protect — apprendre à prévenir, éviter et réagir simplement.");
-    setText(heroDescription, stage.description || "Une session progressive pour travailler la lecture des situations, la distance, la posture, la désescalade, la réaction proportionnée et la sécurisation de l’après-situation.");
-    setText(sessionStatus, "Session ouverte");
-    setText(sessionStateTitle, "Les informations essentielles sont confirmées.");
-    setText(sessionStateDescription, "Vous pouvez vérifier les détails de la session avant de procéder au paiement. La réservation est enregistrée uniquement après validation Stripe.");
-    setText(factCity, stage.city || "Ville publiée");
-    setText(factDate, formatDate(stage.stage_date));
-    setText(factPrice, formatPrice(stage.price));
-    setText(factTrainer, getTrainerLabel(stage));
-    setText(factPlaces, `${stage.remaining_places} place(s) disponible(s)`);
-    setText(selectedStageValue, `${stage.title || "Stage Vital Protect"} — ${stage.city} — ${formatDate(stage.stage_date)} — ${stage.start_time}`);
-    if (cityDisplay) cityDisplay.value = stage.city || "";
-    setText(finalTitle, "Prêt à réserver cette session ?");
-    setText(finalText, "Vérifiez les informations affichées, choisissez le nombre de places, puis procédez au paiement sécurisé.");
-    if (finalCta) {
-      finalCta.href = "#reservation";
-      finalCta.textContent = "Réserver ma place";
-    }
-    if (mobileCta) {
-      mobileCta.href = "#reservation";
-      mobileCta.textContent = "Réserver";
-    }
-    setBookingEnabled(true, "Session complète : vous pouvez réserver votre place.");
-    updateBookingTotal();
-  }
+    function applyStageToPage() {
+      if (!stage) return;
+      document.title = `${stage.title || "Stage"} — Vital Protect`;
+      setText(heroType, stage.training_type || "Stage Vital Protect");
+      setText(heroTitle, stage.title || "Stage Vital Protect");
+      setText(heroDescription, stage.description || "Ce stage s’inscrit dans la méthode Vital Protect : compréhension du risque, prévention de l’escalade et réponses simples adaptées à la vie réelle.");
+      setText(metaCity, stage.city || "À confirmer");
+      setText(metaDate, formatDate(stage.stage_date));
+      setText(metaPrice, formatPrice(stage.price));
+      setText(metaPlaces, String(stage.remaining_places ?? "—"));
+      setText(metaRegion, stage.region || "Région à confirmer");
+      setText(metaDepartment, stage.department || "Département à confirmer");
+      setText(practicalAddress, stage.address || "Adresse à confirmer");
+      setText(practicalTime, stage.start_time || "Horaire à confirmer");
+      setText(practicalDuration, stage.duration || "Durée à confirmer");
+      setText(practicalType, stage.training_type || "Stage Vital Protect");
+      setText(selectedStageValue, `${stage.title || "Stage"} — ${stage.city || "Ville à confirmer"} — ${formatDate(stage.stage_date)}`);
+      if (cityDisplay) cityDisplay.value = stage.city || "";
+      setText(audienceText, "Ce stage s’adresse aux personnes qui veulent développer des repères concrets de sécurité personnelle dans un cadre accessible, progressif et sérieux.");
+      setText(objectiveText, stage.description || "Ce stage s’inscrit dans la méthode Vital Protect : comprendre le risque, améliorer la lecture des situations, prévenir l’escalade et développer des réponses simples et réalistes.");
 
-  async function loadStage() {
-    if (!stageId) {
-      setNoSessionState();
-      return;
+      if (!hasCompleteSession(stage)) {
+        setBookingEnabled(false, "Réservation désactivée : une ou plusieurs informations essentielles de la session sont à confirmer.");
+      } else {
+        setBookingEnabled(true, "Session complète : vous pouvez réserver votre place.");
+      }
+      updateBookingTotal();
     }
-    try {
+
+    async function loadStage() {
+      if (!stageId) {
+        showNoSessionState();
+        return;
+      }
       const { data, error } = await supabase
         .from("stages")
         .select("*")
@@ -1294,116 +513,67 @@
         .maybeSingle();
       if (error || !data) {
         console.error("Erreur chargement stage:", error);
-        setNoSessionState("La session demandée n’est pas disponible ou n’est plus publiée. Vous pouvez laisser vos coordonnées pour recevoir les prochaines dates.");
+        showNoSessionState();
         return;
       }
-      applyStageToPage(data);
-    } catch (error) {
-      console.error("Erreur chargement stage:", error);
-      setNoSessionState("Impossible de vérifier la session pour le moment. Vous pouvez laisser vos coordonnées pour recevoir les prochaines dates.");
+      stage = data;
+      applyStageToPage();
     }
-  }
 
-  if (waitlistForm) {
-    waitlistForm.addEventListener("submit", async (event) => {
-      event.preventDefault();
-      clearStatus(waitlistStatus);
-      const form = new FormData(waitlistForm);
-      const firstName = String(form.get("first_name") || "").trim();
-      const email = String(form.get("email") || "").trim();
-      const city = String(form.get("city") || "").trim();
-      const preference = String(form.get("preference") || "").trim();
-      const message = String(form.get("message") || "").trim();
-      const website = String(form.get("website") || "").trim();
-
-      if (!firstName || !email || !city || !preference) {
-        showStatus(waitlistStatus, "Merci de renseigner le prénom, l’email, la ville souhaitée et la préférence.", "error");
-        return;
-      }
-
-      showStatus(waitlistStatus, "Envoi de votre demande…", "info");
-      try {
-        const response = await fetch("/api/contact", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            first_name: firstName,
-            last_name: "Non renseigné",
-            email,
-            phone: "Non renseigné",
-            subject: "Demande prochaines dates de stage Vital Protect",
-            website,
-            message: [
-              "Je souhaite recevoir les prochaines dates de stage Vital Protect.",
-              `Ville souhaitée : ${city}`,
-              `Préférence : ${preference}`,
-              message ? `Message : ${message}` : "Message : non renseigné"
-            ].join("\n")
-          })
-        });
-        const result = await response.json().catch(() => ({}));
-        if (!response.ok) throw new Error(result.error || "Impossible d’envoyer la demande.");
-        waitlistForm.reset();
-        showStatus(waitlistStatus, "Demande envoyée. Vous serez recontacté lorsque des dates confirmées seront disponibles.", "success");
-      } catch (error) {
-        showStatus(waitlistStatus, error.message || "Impossible d’envoyer la demande pour le moment.", "error");
-      }
-    });
-  }
-
-  if (bookingForm) {
-    bookingForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      if (!stage || !bookingEnabled || !hasCompleteSession(stage)) {
-        showStatus(bookingStatus, "Impossible de réserver : la session n’est pas complète ou n’est plus disponible.", "error");
-        return;
-      }
-      const firstName = $("firstName")?.value.trim();
-      const lastName = $("lastName")?.value.trim();
-      const email = $("email")?.value.trim();
-      const phone = $("phone")?.value.trim();
-      const places = Math.max(1, Number($("places")?.value || 1));
-      if (!firstName || !lastName || !email || !phone) {
-        showStatus(bookingStatus, "Merci de remplir tous les champs obligatoires.", "error");
-        return;
-      }
-      if (places > Number(stage.remaining_places || 0)) {
-        showStatus(bookingStatus, "Le nombre de places demandé dépasse les places restantes.", "error");
-        return;
-      }
-      showStatus(bookingStatus, "Redirection vers le paiement Stripe…", "info");
-      try {
-        const res = await fetch("/api/create-checkout-session", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            stage_id: stage.id,
-            stage_title: stage.title || "",
-            first_name: firstName,
-            last_name: lastName,
-            email,
-            phone,
-            places,
-            unit_price: Number(stage.price || 0)
-          })
-        });
-        const result = await res.json();
-        if (result.url) {
-          (window.VitalPageTransition ? window.VitalPageTransition.go(result.url) : (window.location.href = result.url));
-        } else {
-          showStatus(bookingStatus, result.error || "Erreur lors de la redirection vers Stripe.", "error");
-          console.error(result);
+    if (bookingForm) {
+      bookingForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        if (!stage || !bookingEnabled || !hasCompleteSession(stage)) {
+          showBookingStatus("Impossible de réserver : la session n’est pas complète ou n’est plus disponible.", "error");
+          return;
         }
-      } catch (error) {
-        showStatus(bookingStatus, "Erreur réseau.", "error");
-        console.error(error);
-      }
-    });
-  }
+        const firstName = $("firstName")?.value.trim();
+        const lastName = $("lastName")?.value.trim();
+        const email = $("email")?.value.trim();
+        const phone = $("phone")?.value.trim();
+        const places = Math.max(1, Number($("places")?.value || 1));
+        if (!firstName || !lastName || !email || !phone) {
+          showBookingStatus("Merci de remplir tous les champs obligatoires.", "error");
+          return;
+        }
+        if (places > Number(stage.remaining_places || 0)) {
+          showBookingStatus("Le nombre de places demandé dépasse les places restantes.", "error");
+          return;
+        }
+        showBookingStatus("Redirection vers le paiement Stripe...", "info");
+        try {
+          const res = await fetch("/api/create-checkout-session", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              stage_id: stage.id,
+              stage_title: stage.title || "",
+              first_name: firstName,
+              last_name: lastName,
+              email,
+              phone,
+              places,
+              unit_price: Number(stage.price || 0)
+            })
+          });
+          const result = await res.json();
+          if (result.url) {
+            (window.VitalPageTransition ? window.VitalPageTransition.go(result.url) : (window.location.href = result.url));
+          } else {
+            showBookingStatus(result.error || "Erreur lors de la redirection vers Stripe.", "error");
+            console.error(result);
+          }
+        } catch (error) {
+          showBookingStatus("Erreur réseau.", "error");
+          console.error(error);
+        }
+      });
+    }
 
-  placesInput?.addEventListener("input", updateBookingTotal);
-  loadStage();
-</script>
+    placesInput?.addEventListener("input", updateBookingTotal);
+    loadStage();
+  </script>
 <script src="/lusion-level.js"></script>
 </body>
 </html>
+
