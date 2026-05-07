@@ -11941,3 +11941,181 @@ body .hp-band i,
 body .vpl-marquee em {
   color: rgba(10,49,83,.55) !important;
 }
+
+
+/* =========================================================
+   Correctif Stage — boutons, ruban et contraste final
+   ========================================================= */
+
+/* Le ruban reste derrière les cartes/boutons de la page Stage. */
+body.page-stage .vpl-scroll-ribbon,
+body.page-stage-redesign .vpl-scroll-ribbon {
+  z-index: 1 !important;
+  opacity: .46 !important;
+  mix-blend-mode: normal !important;
+}
+
+body.page-stage .vpl-container,
+body.page-stage-redesign .vpl-container,
+body.page-stage .container,
+body.page-stage-redesign .container,
+body.page-stage .stage-flow-section .vpl-actions,
+body.page-stage-redesign .stage-flow-section .vpl-actions,
+body.page-stage .stage-flow-section .cta-actions,
+body.page-stage-redesign .stage-flow-section .cta-actions,
+body.page-stage .stage-learn-grid,
+body.page-stage-redesign .stage-learn-grid,
+body.page-stage .stage-flow-list,
+body.page-stage-redesign .stage-flow-list,
+body.page-stage .stage-final-box,
+body.page-stage-redesign .stage-final-box {
+  position: relative !important;
+  z-index: 4 !important;
+}
+
+/* Dans les sections claires, les boutons ne doivent jamais redevenir des liens bruts. */
+body.page-stage .stage-flow-section .vpl-actions,
+body.page-stage-redesign .stage-flow-section .vpl-actions,
+body.page-stage .stage-flow-section .cta-actions,
+body.page-stage-redesign .stage-flow-section .cta-actions,
+body.page-stage .stage-learn-section .vpl-actions,
+body.page-stage-redesign .stage-learn-section .vpl-actions,
+body.page-stage .stage-learn-section .cta-actions,
+body.page-stage-redesign .stage-learn-section .cta-actions {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  justify-content: center !important;
+  align-items: center !important;
+  gap: 14px !important;
+  margin-top: 34px !important;
+}
+
+body.page-stage .stage-flow-section .vpl-actions a,
+body.page-stage-redesign .stage-flow-section .vpl-actions a,
+body.page-stage .stage-flow-section .cta-actions a,
+body.page-stage-redesign .stage-flow-section .cta-actions a,
+body.page-stage .stage-learn-section .vpl-actions a,
+body.page-stage-redesign .stage-learn-section .vpl-actions a,
+body.page-stage .stage-learn-section .cta-actions a,
+body.page-stage-redesign .stage-learn-section .cta-actions a {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-height: 48px !important;
+  max-width: 100% !important;
+  padding: 13px 22px !important;
+  border-radius: 999px !important;
+  text-decoration: none !important;
+  white-space: normal !important;
+  text-align: center !important;
+  line-height: 1.15 !important;
+  font-weight: 950 !important;
+  border: 1px solid rgba(10,49,83,.18) !important;
+  background: rgba(255,255,255,.92) !important;
+  color: #0a3153 !important;
+  box-shadow: 0 16px 42px rgba(8,14,28,.10) !important;
+}
+
+body.page-stage .stage-flow-section .vpl-actions a:first-child,
+body.page-stage-redesign .stage-flow-section .vpl-actions a:first-child,
+body.page-stage .stage-flow-section .cta-actions a:first-child,
+body.page-stage-redesign .stage-flow-section .cta-actions a:first-child,
+body.page-stage .stage-learn-section .vpl-actions a:first-child,
+body.page-stage-redesign .stage-learn-section .vpl-actions a:first-child,
+body.page-stage .stage-learn-section .cta-actions a:first-child,
+body.page-stage-redesign .stage-learn-section .cta-actions a:first-child,
+body.page-stage .stage-flow-section .vpl-button-primary,
+body.page-stage-redesign .stage-flow-section .vpl-button-primary,
+body.page-stage .stage-learn-section .vpl-button-primary,
+body.page-stage-redesign .stage-learn-section .vpl-button-primary {
+  background: #071f39 !important;
+  border-color: #071f39 !important;
+  color: #ffffff !important;
+}
+
+/* Bouton secondaire sur fond clair : lisible, pas blanc sur blanc, pas souligné. */
+body.page-stage .stage-flow-section .vpl-button-secondary,
+body.page-stage-redesign .stage-flow-section .vpl-button-secondary,
+body.page-stage .stage-learn-section .vpl-button-secondary,
+body.page-stage-redesign .stage-learn-section .vpl-button-secondary {
+  background: rgba(255,255,255,.94) !important;
+  color: #0a3153 !important;
+  border: 1px solid rgba(10,49,83,.22) !important;
+}
+
+/* CTA final Stage : carte sombre, texte lisible. */
+body.page-stage .stage-final-cta,
+body.page-stage-redesign .stage-final-cta {
+  background: #07111f !important;
+  color: #ffffff !important;
+}
+
+body.page-stage .stage-final-box,
+body.page-stage-redesign .stage-final-box,
+body.page-stage .stage-final-cta .cta-panel,
+body.page-stage-redesign .stage-final-cta .cta-panel {
+  background:
+    radial-gradient(circle at 76% 18%, rgba(90,165,230,.18), transparent 30%),
+    linear-gradient(135deg, rgba(13,31,52,.96), rgba(5,12,24,.98)) !important;
+  border: 1px solid rgba(255,255,255,.18) !important;
+  color: #ffffff !important;
+  box-shadow: 0 28px 90px rgba(0,0,0,.28) !important;
+}
+
+body.page-stage .stage-final-box h1,
+body.page-stage .stage-final-box h2,
+body.page-stage .stage-final-box h3,
+body.page-stage .stage-final-box p,
+body.page-stage .stage-final-box span,
+body.page-stage .stage-final-box strong,
+body.page-stage-redesign .stage-final-box h1,
+body.page-stage-redesign .stage-final-box h2,
+body.page-stage-redesign .stage-final-box h3,
+body.page-stage-redesign .stage-final-box p,
+body.page-stage-redesign .stage-final-box span,
+body.page-stage-redesign .stage-final-box strong,
+body.page-stage .stage-final-cta .cta-panel h1,
+body.page-stage .stage-final-cta .cta-panel h2,
+body.page-stage .stage-final-cta .cta-panel h3,
+body.page-stage .stage-final-cta .cta-panel p,
+body.page-stage-redesign .stage-final-cta .cta-panel h1,
+body.page-stage-redesign .stage-final-cta .cta-panel h2,
+body.page-stage-redesign .stage-final-cta .cta-panel h3,
+body.page-stage-redesign .stage-final-cta .cta-panel p {
+  color: #ffffff !important;
+  opacity: 1 !important;
+}
+
+body.page-stage .stage-final-box .vpl-button-secondary,
+body.page-stage-redesign .stage-final-box .vpl-button-secondary,
+body.page-stage .stage-final-cta .cta-panel .btn-outline,
+body.page-stage-redesign .stage-final-cta .cta-panel .btn-outline {
+  color: #ffffff !important;
+  border-color: rgba(255,255,255,.35) !important;
+  background: rgba(255,255,255,.08) !important;
+  text-decoration: none !important;
+}
+
+@media (max-width: 760px) {
+  body.page-stage .stage-flow-section .vpl-actions,
+  body.page-stage-redesign .stage-flow-section .vpl-actions,
+  body.page-stage .stage-flow-section .cta-actions,
+  body.page-stage-redesign .stage-flow-section .cta-actions,
+  body.page-stage .stage-learn-section .vpl-actions,
+  body.page-stage-redesign .stage-learn-section .vpl-actions,
+  body.page-stage .stage-learn-section .cta-actions,
+  body.page-stage-redesign .stage-learn-section .cta-actions {
+    justify-content: stretch !important;
+  }
+
+  body.page-stage .stage-flow-section .vpl-actions a,
+  body.page-stage-redesign .stage-flow-section .vpl-actions a,
+  body.page-stage .stage-flow-section .cta-actions a,
+  body.page-stage-redesign .stage-flow-section .cta-actions a,
+  body.page-stage .stage-learn-section .vpl-actions a,
+  body.page-stage-redesign .stage-learn-section .vpl-actions a,
+  body.page-stage .stage-learn-section .cta-actions a,
+  body.page-stage-redesign .stage-learn-section .cta-actions a {
+    width: 100% !important;
+  }
+}
