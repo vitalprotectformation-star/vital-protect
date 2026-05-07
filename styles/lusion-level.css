@@ -13222,3 +13222,95 @@ body.page-accueil-rythme .vp-home-visual-duo figure:only-child img {
     aspect-ratio: 4 / 3 !important;
   }
 }
+
+/* =========================================================
+   Hotfix Page Standard — flip photo dos-à-dos, même format
+   ---------------------------------------------------------
+   Objectif : une seule photo visible à la fois. Au clic, la
+   carte se retourne pour afficher la deuxième photo au verso,
+   dans exactement le même cadre.
+   ========================================================= */
+body.page-methode .vp-image-flip {
+  max-width: min(760px, 100%) !important;
+  perspective: 1600px !important;
+  perspective-origin: 50% 50% !important;
+}
+
+body.page-methode .vp-image-flip__card {
+  display: block !important;
+  width: 100% !important;
+  aspect-ratio: 4 / 3 !important;
+  min-height: 0 !important;
+  height: auto !important;
+  border-radius: clamp(24px, 3vw, 38px) !important;
+  transform-style: preserve-3d !important;
+  -webkit-transform-style: preserve-3d !important;
+  transition: transform .72s cubic-bezier(.16, 1, .3, 1) !important;
+  will-change: transform !important;
+  cursor: pointer !important;
+}
+
+body.page-methode .vp-image-flip__toggle:checked + .vp-image-flip__card {
+  transform: rotateY(180deg) !important;
+}
+
+body.page-methode .vp-image-flip__face {
+  position: absolute !important;
+  inset: 0 !important;
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  overflow: hidden !important;
+  border-radius: inherit !important;
+  backface-visibility: hidden !important;
+  -webkit-backface-visibility: hidden !important;
+  transform-style: preserve-3d !important;
+  -webkit-transform-style: preserve-3d !important;
+}
+
+body.page-methode .vp-image-flip__face--front {
+  transform: rotateY(0deg) translateZ(1px) !important;
+}
+
+body.page-methode .vp-image-flip__face--back {
+  transform: rotateY(180deg) translateZ(1px) !important;
+}
+
+body.page-methode .vp-image-flip__face img {
+  position: absolute !important;
+  inset: 0 !important;
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  object-fit: cover !important;
+  transform: translateZ(0) !important;
+}
+
+/* Photo briefing verticale : cadrée pour garder le formateur, le tableau et le groupe visibles. */
+body.page-methode .vp-image-flip__face--front img {
+  object-position: center 36% !important;
+}
+
+/* Photo pratique horizontale : même cadre, cadrage naturel. */
+body.page-methode .vp-image-flip__face--back img {
+  object-position: center center !important;
+}
+
+body.page-methode .vp-image-flip__badge {
+  transform: translateZ(2px) !important;
+  pointer-events: none !important;
+}
+
+body.page-methode .vp-image-flip__caption {
+  max-width: 46ch !important;
+  margin-inline: auto !important;
+}
+
+@media (max-width: 680px) {
+  body.page-methode .vp-image-flip__card {
+    aspect-ratio: 4 / 3 !important;
+    min-height: 0 !important;
+    border-radius: 24px !important;
+  }
+}
