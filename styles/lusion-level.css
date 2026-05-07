@@ -12488,3 +12488,81 @@ body.vpl-inner-page .stage-flow-list article .ghost-number,
 body.vpl-inner-page .stage-flow-list article .bg-number {
   display: none !important;
 }
+
+
+/* =========================================================
+   Correctif HERO — encart sous l'image enfin lisible
+   ========================================================= */
+
+/* Ce bloc est celui visible sous l'image du hero :
+   "Prévenir d’abord. Réagir seulement si nécessaire." */
+body .vpl-inner-visual .vpl-inner-stat,
+body.vpl-inner-page .vpl-inner-visual .vpl-inner-stat,
+body.page-methode .vpl-inner-visual .vpl-inner-stat,
+body.page-stage .vpl-inner-visual .vpl-inner-stat,
+body.page-stage-redesign .vpl-inner-visual .vpl-inner-stat {
+  background: rgba(255, 255, 255, .96) !important;
+  color: #07111f !important;
+  opacity: 1 !important;
+  border: 1px solid rgba(7, 17, 31, .12) !important;
+  box-shadow: 0 26px 70px rgba(0, 0, 0, .24) !important;
+  backdrop-filter: blur(14px) !important;
+}
+
+/* Forçage du titre et du texte dans l'encart, même si une ancienne règle les met en blanc. */
+body .vpl-inner-visual .vpl-inner-stat *,
+body.vpl-inner-page .vpl-inner-visual .vpl-inner-stat *,
+body.page-methode .vpl-inner-visual .vpl-inner-stat *,
+body.page-stage .vpl-inner-visual .vpl-inner-stat *,
+body.page-stage-redesign .vpl-inner-visual .vpl-inner-stat * {
+  opacity: 1 !important;
+  text-shadow: none !important;
+}
+
+body .vpl-inner-visual .vpl-inner-stat strong,
+body .vpl-inner-visual .vpl-inner-stat h1,
+body .vpl-inner-visual .vpl-inner-stat h2,
+body .vpl-inner-visual .vpl-inner-stat h3,
+body.vpl-inner-page .vpl-inner-visual .vpl-inner-stat strong,
+body.vpl-inner-page .vpl-inner-visual .vpl-inner-stat h1,
+body.vpl-inner-page .vpl-inner-visual .vpl-inner-stat h2,
+body.vpl-inner-page .vpl-inner-visual .vpl-inner-stat h3,
+body.page-methode .vpl-inner-visual .vpl-inner-stat strong,
+body.page-methode .vpl-inner-visual .vpl-inner-stat h1,
+body.page-methode .vpl-inner-visual .vpl-inner-stat h2,
+body.page-methode .vpl-inner-visual .vpl-inner-stat h3 {
+  color: #07111f !important;
+}
+
+body .vpl-inner-visual .vpl-inner-stat span,
+body .vpl-inner-visual .vpl-inner-stat p,
+body.vpl-inner-page .vpl-inner-visual .vpl-inner-stat span,
+body.vpl-inner-page .vpl-inner-visual .vpl-inner-stat p,
+body.page-methode .vpl-inner-visual .vpl-inner-stat span,
+body.page-methode .vpl-inner-visual .vpl-inner-stat p {
+  color: #34465d !important;
+}
+
+/* Variante si le même encart apparaît avec une autre structure dans la page méthode. */
+body.page-methode .vpl-inner-stat,
+body.page-methode .vpl-inner-stat * {
+  opacity: 1 !important;
+  text-shadow: none !important;
+}
+
+body.page-methode .vpl-inner-stat {
+  background: rgba(255, 255, 255, .96) !important;
+  color: #07111f !important;
+}
+
+body.page-methode .vpl-inner-stat strong,
+body.page-methode .vpl-inner-stat h1,
+body.page-methode .vpl-inner-stat h2,
+body.page-methode .vpl-inner-stat h3 {
+  color: #07111f !important;
+}
+
+body.page-methode .vpl-inner-stat span,
+body.page-methode .vpl-inner-stat p {
+  color: #34465d !important;
+}
