@@ -12367,3 +12367,124 @@ body.page-stage-redesign .cta-stage .btn-outline {
   border: 1px solid rgba(255,255,255,.34) !important;
   text-decoration: none !important;
 }
+
+
+/* =========================================================
+   Correctif Stage V4 — override final, même sur ancienne structure HTML
+   ========================================================= */
+
+/* Bloc CTA final de la page Stage, y compris anciennes versions :
+   - .stage-final-box
+   - .cta-panel.cta-stage
+   - dernier .cta-panel d'une page interne
+*/
+body.vpl-inner-page main > section:last-of-type .cta-panel,
+body.vpl-inner-page main > section:last-of-type .cta-stage,
+body.vpl-inner-page main > section:last-of-type .stage-final-box,
+body.vpl-inner-page .cta-panel.cta-stage,
+body.vpl-inner-page .cta-stage,
+body.page-stage .cta-panel,
+body.page-stage-redesign .cta-panel,
+body.page-stage .stage-final-box,
+body.page-stage-redesign .stage-final-box {
+  background:
+    radial-gradient(circle at 78% 18%, rgba(74,184,255,.18), transparent 30%),
+    linear-gradient(135deg, #102840 0%, #07111f 100%) !important;
+  border: 1px solid rgba(255,255,255,.24) !important;
+  color: #ffffff !important;
+  opacity: 1 !important;
+  box-shadow: 0 28px 90px rgba(0,0,0,.34) !important;
+}
+
+/* Texte du bloc CTA final : forçage absolu du contraste. */
+body.vpl-inner-page main > section:last-of-type .cta-panel h1,
+body.vpl-inner-page main > section:last-of-type .cta-panel h2,
+body.vpl-inner-page main > section:last-of-type .cta-panel h3,
+body.vpl-inner-page main > section:last-of-type .cta-panel p,
+body.vpl-inner-page main > section:last-of-type .cta-panel span,
+body.vpl-inner-page main > section:last-of-type .cta-panel strong,
+body.vpl-inner-page main > section:last-of-type .stage-final-box h1,
+body.vpl-inner-page main > section:last-of-type .stage-final-box h2,
+body.vpl-inner-page main > section:last-of-type .stage-final-box h3,
+body.vpl-inner-page main > section:last-of-type .stage-final-box p,
+body.vpl-inner-page main > section:last-of-type .stage-final-box span,
+body.vpl-inner-page main > section:last-of-type .stage-final-box strong,
+body.vpl-inner-page .cta-panel.cta-stage h1,
+body.vpl-inner-page .cta-panel.cta-stage h2,
+body.vpl-inner-page .cta-panel.cta-stage h3,
+body.vpl-inner-page .cta-panel.cta-stage p,
+body.vpl-inner-page .cta-panel.cta-stage span,
+body.vpl-inner-page .cta-panel.cta-stage strong,
+body.vpl-inner-page .cta-stage h1,
+body.vpl-inner-page .cta-stage h2,
+body.vpl-inner-page .cta-stage h3,
+body.vpl-inner-page .cta-stage p,
+body.vpl-inner-page .cta-stage span,
+body.vpl-inner-page .cta-stage strong,
+body.page-stage .stage-final-box h1,
+body.page-stage .stage-final-box h2,
+body.page-stage .stage-final-box h3,
+body.page-stage .stage-final-box p,
+body.page-stage .stage-final-box span,
+body.page-stage .stage-final-box strong,
+body.page-stage-redesign .stage-final-box h1,
+body.page-stage-redesign .stage-final-box h2,
+body.page-stage-redesign .stage-final-box h3,
+body.page-stage-redesign .stage-final-box p,
+body.page-stage-redesign .stage-final-box span,
+body.page-stage-redesign .stage-final-box strong {
+  color: #ffffff !important;
+  opacity: 1 !important;
+  text-shadow: none !important;
+}
+
+/* Paragraphes du CTA : blanc légèrement adouci, mais toujours lisible. */
+body.vpl-inner-page main > section:last-of-type .cta-panel p,
+body.vpl-inner-page main > section:last-of-type .stage-final-box p,
+body.vpl-inner-page .cta-panel.cta-stage p,
+body.vpl-inner-page .cta-stage p,
+body.page-stage .stage-final-box p,
+body.page-stage-redesign .stage-final-box p {
+  color: rgba(255,255,255,.90) !important;
+}
+
+/* Boutons du CTA final. */
+body.vpl-inner-page main > section:last-of-type .cta-panel a,
+body.vpl-inner-page main > section:last-of-type .stage-final-box a,
+body.vpl-inner-page .cta-panel.cta-stage a,
+body.vpl-inner-page .cta-stage a,
+body.page-stage .stage-final-box a,
+body.page-stage-redesign .stage-final-box a {
+  opacity: 1 !important;
+  text-decoration: none !important;
+}
+
+/* Suppression du deuxième numéro, y compris en pseudo-élément simple ":" et anciennes structures. */
+body.vpl-inner-page .timeline-card:before,
+body.vpl-inner-page .timeline-card:after,
+body.vpl-inner-page .timeline-card::before,
+body.vpl-inner-page .timeline-card::after,
+body.vpl-inner-page .stage-learn-grid article:before,
+body.vpl-inner-page .stage-learn-grid article:after,
+body.vpl-inner-page .stage-learn-grid article::before,
+body.vpl-inner-page .stage-learn-grid article::after,
+body.vpl-inner-page .stage-flow-list article:before,
+body.vpl-inner-page .stage-flow-list article:after,
+body.vpl-inner-page .stage-flow-list article::before,
+body.vpl-inner-page .stage-flow-list article::after {
+  content: none !important;
+  display: none !important;
+}
+
+/* Si le numéro décoratif est un vrai élément HTML. */
+body.vpl-inner-page .timeline-card .ghost-number,
+body.vpl-inner-page .timeline-card .bg-number,
+body.vpl-inner-page .timeline-card .card-number-bg,
+body.vpl-inner-page .timeline-card .number-bg,
+body.vpl-inner-page .timeline-card [aria-hidden="true"],
+body.vpl-inner-page .stage-learn-grid article .ghost-number,
+body.vpl-inner-page .stage-learn-grid article .bg-number,
+body.vpl-inner-page .stage-flow-list article .ghost-number,
+body.vpl-inner-page .stage-flow-list article .bg-number {
+  display: none !important;
+}
