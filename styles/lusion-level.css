@@ -12957,3 +12957,33 @@ body.page-accueil-rythme .hp-hero-photo img {
     line-height: .98;
   }
 }
+
+
+/* =========================================================
+   Correctif Standard flip V2 — affichage sûr de la deuxième image
+   ========================================================= */
+.vp-image-flip {
+  perspective: 1200px !important;
+}
+
+.vp-image-flip__card {
+  transform-style: preserve-3d !important;
+}
+
+.vp-image-flip__face {
+  display: block !important;
+  -webkit-backface-visibility: hidden !important;
+  backface-visibility: hidden !important;
+}
+
+.vp-image-flip__face--back {
+  transform: rotateY(180deg) !important;
+}
+
+.vp-image-flip__face img {
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 100% !important;
+  object-fit: cover !important;
+}
