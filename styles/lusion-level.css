@@ -13170,3 +13170,54 @@ body.page-accueil-rythme .vp-home-visual-duo figure:last-child img {
     gap: 10px !important;
   }
 }
+
+
+/* =========================================================
+   Hotfix accueil — demande 2 photos uniquement
+   ---------------------------------------------------------
+   - Supprime la photo de briefing barrée dans le HTML.
+   - Agrandit la photo d'exercice en pleine largeur basse.
+   - Recadre l'image haute vers la droite pour masquer le texte
+     imprimé dans le visuel source.
+   ========================================================= */
+body.page-accueil-rythme .vp-home-visual-main {
+  overflow: hidden !important;
+}
+
+body.page-accueil-rythme .vp-home-visual-main img {
+  object-position: 100% center !important;
+  transform: scale(1.46) !important;
+  transform-origin: right center !important;
+}
+
+body.page-accueil-rythme .vp-home-visual-duo,
+body.page-accueil-rythme .vp-home-visual-duo--single {
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: 0 !important;
+  margin: 0 !important;
+  min-height: 0 !important;
+}
+
+body.page-accueil-rythme .vp-home-visual-duo--single figure,
+body.page-accueil-rythme .vp-home-visual-duo figure:only-child {
+  aspect-ratio: 16 / 7.3 !important;
+  width: 100% !important;
+  min-height: 0 !important;
+}
+
+body.page-accueil-rythme .vp-home-visual-duo--single figure img,
+body.page-accueil-rythme .vp-home-visual-duo figure:only-child img {
+  object-position: center 48% !important;
+}
+
+@media (max-width: 640px) {
+  body.page-accueil-rythme .vp-home-visual-main img {
+    transform: scale(1.32) !important;
+  }
+
+  body.page-accueil-rythme .vp-home-visual-duo--single figure,
+  body.page-accueil-rythme .vp-home-visual-duo figure:only-child {
+    aspect-ratio: 4 / 3 !important;
+  }
+}
