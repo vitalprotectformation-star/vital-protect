@@ -12763,6 +12763,7 @@ body.page-methode .vpl-inner-visual img {
   max-height: none !important;
   aspect-ratio: 4 / 3 !important;
   object-fit: cover !important;
+  object-position: 82% center !important;
 }
 
 /* Hero accueil : la bannière large doit rester lisible dans la carte. */
