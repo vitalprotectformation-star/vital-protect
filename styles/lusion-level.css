@@ -13314,3 +13314,30 @@ body.page-methode .vp-image-flip__caption {
     border-radius: 24px !important;
   }
 }
+
+
+
+
+/* =========================================================
+   Hotfix Page Standard — flip déclenché au scroll
+   ---------------------------------------------------------
+   La carte garde le même format, sans badge ni texte sous
+   l'image. En arrivant dans la section, un scroll supplémentaire
+   retourne la photo avant de reprendre le défilement normal.
+   ========================================================= */
+body.page-methode .vp-image-flip__badge,
+body.page-methode .vp-image-flip__caption {
+  display: none !important;
+}
+
+body.page-methode .vp-image-flip__face--front img {
+  object-position: center 34% !important;
+}
+
+body.page-methode .vp-image-flip__face--back img {
+  object-position: center 46% !important;
+}
+
+body.page-methode .vp-flip-scroll-section .vp-image-flip__card {
+  cursor: pointer !important;
+}
