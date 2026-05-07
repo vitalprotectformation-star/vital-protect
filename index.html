@@ -88,6 +88,198 @@
   @media (max-width: 620px){.vp-home2026 .vp-form-grid{grid-template-columns:1fr}.vp-home2026 .vp-card-clean,.vp-home2026 .vp-session-panel{border-radius:22px;padding:22px}.vp-home2026 .vpl-actions{display:grid;width:100%}.vp-home2026 .vpl-actions a{width:100%}.vp-home2026 .vp-proof-row span,.vp-home2026 .vp-hero-badges span{width:100%;justify-content:center}.vp-home2026 .vp-timeline article{grid-template-columns:1fr}.vp-home2026 .vp-timeline article::before{width:42px;height:42px}}
   @media (prefers-reduced-motion: reduce){.vp-home2026 *{animation-duration:.001ms!important;transition-duration:.001ms!important;scroll-behavior:auto!important}}
 </style>
+
+<style>
+  /* Contrast audit hotfix — homepage only.
+     Objectif: supprimer les textes ton sur ton dus aux mélanges navy/blanc
+     entre le CSS global et les sections ajoutées dans index.html. */
+  .vp-home2026{
+    --vp-readable-ink:#06101f;
+    --vp-readable-muted:#33465d;
+    --vp-readable-soft:#52677d;
+    --vp-readable-light:#f8fbff;
+    --vp-readable-light-muted:rgba(255,255,255,.82);
+    --vp-readable-light-soft:rgba(255,255,255,.72);
+  }
+
+  /* Hero: texte clair sur fond sombre, sans texte transparent hérité des titres globaux. */
+  .vp-home2026 .vpl-hero .vpl-title,
+  .vp-home2026 .vpl-hero .vpl-title span,
+  .vp-home2026 .vpl-hero .vpl-title-line{
+    color:#ffffff!important;
+    -webkit-text-fill-color:#ffffff!important;
+    background:none!important;
+    background-image:none!important;
+    text-shadow:0 2px 22px rgba(0,0,0,.24);
+  }
+  .vp-home2026 .vpl-hero .vpl-title-accent{
+    color:#d8ecff!important;
+    -webkit-text-fill-color:#d8ecff!important;
+  }
+  .vp-home2026 .vpl-hero .vpl-lead,
+  .vp-home2026 .vpl-hero .vp-main-cta-note{
+    color:var(--vp-readable-light-muted)!important;
+  }
+  .vp-home2026 .vpl-hero .vp-main-cta-note{max-width:720px}
+  .vp-home2026 .vpl-hero .vp-hero-badges span,
+  .vp-home2026 .vpl-hero .vp-proof-row span{
+    color:#ffffff!important;
+    background:rgba(255,255,255,.12)!important;
+    border-color:rgba(255,255,255,.24)!important;
+    box-shadow:0 10px 30px rgba(0,0,0,.14);
+  }
+  .vp-home2026 .vpl-hero .vpl-button-secondary{
+    color:#ffffff!important;
+    background:rgba(255,255,255,.10)!important;
+    border-color:rgba(255,255,255,.28)!important;
+  }
+
+  /* Sections claires: fond réellement clair + textes foncés lisibles. */
+  .vp-home2026 > .vpl-light,
+  .vp-home2026 > .vpl-light .vpl-section{
+    background:#f4f8fc!important;
+    color:var(--vp-readable-ink)!important;
+  }
+  .vp-home2026 > .vpl-light .vpl-section:nth-child(even){background:#edf3f8!important}
+  .vp-home2026 > .vpl-light .vpl-section-title,
+  .vp-home2026 > .vpl-light .vpl-section-title span,
+  .vp-home2026 > .vpl-light h2,
+  .vp-home2026 > .vpl-light h2 span,
+  .vp-home2026 > .vpl-light h3,
+  .vp-home2026 > .vpl-light strong{
+    color:var(--vp-readable-ink)!important;
+    -webkit-text-fill-color:var(--vp-readable-ink)!important;
+    background:none!important;
+    background-image:none!important;
+  }
+  .vp-home2026 > .vpl-light .vpl-section-copy,
+  .vp-home2026 > .vpl-light .vp-card-clean p,
+  .vp-home2026 > .vpl-light .vp-faq-grid p,
+  .vp-home2026 > .vpl-light .vp-timeline p,
+  .vp-home2026 > .vpl-light .vp-list li,
+  .vp-home2026 > .vpl-light p{
+    color:var(--vp-readable-muted)!important;
+  }
+  .vp-home2026 > .vpl-light .vpl-section-kicker,
+  .vp-home2026 > .vpl-light .vp-kicker{
+    color:#073052!important;
+    -webkit-text-fill-color:#073052!important;
+    background:#ffffff!important;
+    border-color:rgba(7,48,82,.18)!important;
+  }
+  .vp-home2026 > .vpl-light .vp-card-clean,
+  .vp-home2026 > .vpl-light .vp-faq-grid article,
+  .vp-home2026 > .vpl-light .vp-timeline article{
+    background:#ffffff!important;
+    color:var(--vp-readable-ink)!important;
+    border-color:rgba(6,32,56,.14)!important;
+  }
+  .vp-home2026 > .vpl-light .vp-card-clean a:not(.vpl-button){color:#075b93!important}
+
+  /* Panneau sessions: tout le texte interne reste clair sur navy. */
+  .vp-home2026 #prochaines-dates .vp-session-panel,
+  .vp-home2026 #prochaines-dates .vp-session-panel *{
+    color:#ffffff!important;
+    -webkit-text-fill-color:#ffffff!important;
+  }
+  .vp-home2026 #prochaines-dates .vp-session-panel .vpl-section-title,
+  .vp-home2026 #prochaines-dates .vp-session-panel .vpl-section-title span{
+    color:#ffffff!important;
+    -webkit-text-fill-color:#ffffff!important;
+    background:none!important;
+    background-image:none!important;
+  }
+  .vp-home2026 #prochaines-dates .vp-session-panel p,
+  .vp-home2026 #prochaines-dates .vp-session-panel .vp-note{
+    color:rgba(255,255,255,.82)!important;
+    -webkit-text-fill-color:rgba(255,255,255,.82)!important;
+  }
+  .vp-home2026 #prochaines-dates .vp-session-panel input,
+  .vp-home2026 #prochaines-dates .vp-session-panel select,
+  .vp-home2026 #prochaines-dates .vp-session-panel textarea{
+    color:#06101f!important;
+    -webkit-text-fill-color:#06101f!important;
+    background:#ffffff!important;
+  }
+  .vp-home2026 #prochaines-dates .vp-session-panel input::placeholder,
+  .vp-home2026 #prochaines-dates .vp-session-panel textarea::placeholder{
+    color:#5f7184!important;
+    -webkit-text-fill-color:#5f7184!important;
+  }
+  .vp-home2026 #prochaines-dates .vp-session-panel .vpl-button-primary,
+  .vp-home2026 #prochaines-dates .vp-session-panel .vpl-button-primary *{
+    color:#06101f!important;
+    -webkit-text-fill-color:#06101f!important;
+  }
+
+  /* Section confiance: blanc lisible sur fond sombre, y compris titres et cards. */
+  .vp-home2026 .vp-proof-dark,
+  .vp-home2026 .vp-proof-dark .vp-card-clean{
+    color:#ffffff!important;
+  }
+  .vp-home2026 .vp-proof-dark .vpl-section-title,
+  .vp-home2026 .vp-proof-dark .vpl-section-title span,
+  .vp-home2026 .vp-proof-dark h2,
+  .vp-home2026 .vp-proof-dark h3{
+    color:#ffffff!important;
+    -webkit-text-fill-color:#ffffff!important;
+    background:none!important;
+    background-image:none!important;
+  }
+  .vp-home2026 .vp-proof-dark .vpl-section-copy,
+  .vp-home2026 .vp-proof-dark p,
+  .vp-home2026 .vp-proof-dark .vp-list li{
+    color:rgba(255,255,255,.80)!important;
+  }
+  .vp-home2026 .vp-proof-dark .vpl-section-kicker{
+    color:#06101f!important;
+    -webkit-text-fill-color:#06101f!important;
+    background:#ffffff!important;
+  }
+
+  /* CTA final et footer: éviter les gris trop faibles. */
+  .vp-home2026 .vpl-final-box p{color:rgba(255,255,255,.82)!important}
+  .vpl-footer,
+  .vpl-footer div{color:rgba(255,255,255,.78)!important}
+  .vpl-footer a{color:rgba(255,255,255,.86)!important}
+
+
+
+  .vp-home2026 .vpl-hero .vpl-title{
+    max-width:11ch!important;
+    font-size:clamp(3.2rem,5.6vw,5.9rem)!important;
+    line-height:1.02!important;
+    letter-spacing:-.065em!important;
+  }
+  .vp-home2026 .vpl-hero .vpl-title-line{white-space:normal!important}
+  .vp-home2026 .vpl-hero-copy{max-width:620px!important}
+
+  /* Sécurité: ne pas dépendre d'une classe JS pour afficher le hero. */
+  .js body.vpl-home .vp-home2026 .vpl-hero-copy,
+  .js body.vpl-home .vp-home2026 .vpl-visual{
+    opacity:1!important;
+    transform:none!important;
+  }
+  .vp-home2026 > .vpl-light .vpl-button-secondary{
+    color:#06101f!important;
+    -webkit-text-fill-color:#06101f!important;
+    background:#dff2ff!important;
+    border:1px solid rgba(7,48,82,.22)!important;
+    box-shadow:0 14px 34px rgba(7,48,82,.10)!important;
+  }
+  .vp-home2026 #prochaines-dates .vp-session-panel .vp-kicker{
+    color:#ffffff!important;
+    -webkit-text-fill-color:#ffffff!important;
+    background:rgba(255,255,255,.16)!important;
+    border-color:rgba(255,255,255,.34)!important;
+  }
+
+  @media (max-width:640px){
+    .vp-home2026 .vpl-hero .vp-hero-badges span,
+    .vp-home2026 .vpl-hero .vp-proof-row span{background:rgba(255,255,255,.15)!important}
+  }
+</style>
+
 </head>
 <body class="vpl-home page-editorial-light">
 <canvas aria-hidden="true" class="vpl-canvas"></canvas>
