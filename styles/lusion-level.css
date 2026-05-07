@@ -9385,35 +9385,515 @@ body.page-stage .vpl-marquee span {
   }
 }
 
-
 /* =========================================================
-   VITAL PROTECT — refonte lisibilité/conversion 2026-05
+   Correctif global — équilibre des blocs, cartes et textes
    ========================================================= */
-.vp-benefit-title{
-  max-width: 13.5ch;
-  font-size: clamp(3.2rem, 7.2vw, 6.9rem);
-  line-height: .88;
-  letter-spacing: -.075em;
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
-.vp-section-tight{padding-block:clamp(72px,8vw,104px)}
-.vp-split{display:grid;grid-template-columns:minmax(0,1fr) minmax(320px,.9fr);gap:28px;align-items:start}
-.vp-proof-panel{padding:clamp(24px,3vw,36px);border-radius:34px;background:rgba(255,255,255,.86);border:1px solid rgba(8,14,28,.09);box-shadow:0 24px 70px rgba(8,14,28,.09)}
-.vp-proof-panel h3{margin:0 0 12px;font-size:clamp(1.55rem,2.4vw,2.3rem);line-height:1;letter-spacing:-.055em;color:#07111f}
-.vp-proof-panel p{margin:0;color:#657184;line-height:1.72}
-.vp-check-list{margin:20px 0 0;padding:0;list-style:none;display:grid;gap:10px;color:#344054;line-height:1.55}
-.vp-check-list li{position:relative;padding-left:28px}
-.vp-check-list li::before{content:"";position:absolute;left:0;top:.55em;width:12px;height:12px;border-radius:999px;background:#07111f;box-shadow:inset 0 0 0 4px #dce6f1}
-.vp-card-link{position:relative;z-index:2;display:inline-flex;margin-top:22px;color:#07111f;font-weight:950;text-decoration:none;border-bottom:2px solid rgba(7,17,31,.25)}
-.vp-action-card{min-height:330px}
-.vp-mini-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px}
-.vp-mini-grid.five{grid-template-columns:repeat(5,minmax(0,1fr))}
-.vp-mini-grid article{padding:24px;border-radius:28px;background:#fff;border:1px solid rgba(8,14,28,.09);box-shadow:0 18px 50px rgba(8,14,28,.08)}
-.vp-mini-grid b{display:inline-grid;place-items:center;width:38px;height:38px;border-radius:14px;background:#07111f;color:#fff;margin-bottom:18px}
-.vp-mini-grid h3{margin:0 0 10px;font-size:1.18rem;letter-spacing:-.035em;line-height:1.08;color:#07111f}
-.vp-mini-grid p{margin:0;color:#657184;line-height:1.62}
-.vpl-marquee{display:none!important}
-.vpl-scroll{display:none!important}
-.vpl-proof{display:inline-flex;align-items:center;gap:6px}
-.vpl-proof svg{display:none}
-@media (max-width:1080px){.vp-split,.vp-mini-grid,.vp-mini-grid.five{grid-template-columns:1fr 1fr}.vp-benefit-title{font-size:clamp(3rem,10vw,5.7rem)}}
-@media (max-width:640px){.vp-split,.vp-mini-grid,.vp-mini-grid.five{grid-template-columns:1fr}.vp-proof-panel{border-radius:26px}.vp-mini-grid article{padding:22px}.vpl-inner-lead,.vpl-lead,.vpl-section-copy{line-height:1.62}.vpl-card{min-height:auto}.vpl-card-num{margin-bottom:42px}.vpl-button,.btn{width:100%;justify-content:center}.vpl-eyebrow{white-space:normal;border-radius:22px}.vpl-proof-row{gap:8px}.vpl-proof{border-radius:18px;line-height:1.25}}
+
+html,
+body {
+  overflow-x: hidden;
+}
+
+/* Aucun texte ne doit sortir de son encart, bouton ou carte. */
+.vpl-inner-page h1,
+.vpl-inner-page h2,
+.vpl-inner-page h3,
+.vpl-inner-page p,
+.vpl-inner-page a,
+.vpl-inner-page span,
+.vpl-inner-page li,
+.vpl-inner-page strong,
+.vpl-home h1,
+.vpl-home h2,
+.vpl-home h3,
+.vpl-home p,
+.vpl-home a,
+.vpl-home span,
+.vpl-home li,
+.vpl-home strong,
+.card,
+.soft-card,
+.info-card,
+.faq-card,
+.proof-card,
+.audience-card,
+.pillar-card,
+.timeline-card,
+.standard-card,
+.governance-card,
+.difference-card,
+.vpl-card,
+.vpl-step,
+.vpl-sheen-card,
+.vpl-image-card,
+.cta-panel,
+.glass-panel,
+.surface-panel,
+.stage-card,
+.booking-card,
+.stage-summary-card,
+.map-card,
+form,
+details,
+button,
+.btn,
+.vpl-button,
+.vpl-nav-cta {
+  overflow-wrap: anywhere;
+  word-break: normal;
+  hyphens: auto;
+  min-width: 0;
+}
+
+/* Titres plus maîtrisés dans les sections de contenu : l'effet reste fort,
+   mais il ne domine plus les cartes voisines. */
+.vpl-inner-page main > section:not(.vpl-inner-hero) h1,
+.vpl-inner-page main > section:not(.vpl-inner-hero) h2,
+.vpl-home main > section:not(.vpl-hero) h1,
+.vpl-home main > section:not(.vpl-hero) h2 {
+  font-size: clamp(2.45rem, 5.1vw, 5.25rem) !important;
+  line-height: .94 !important;
+  letter-spacing: -.065em !important;
+  max-width: 13.5ch;
+}
+
+.section-head--center h1,
+.section-head--center h2,
+.vpl-section-head.center h1,
+.vpl-section-head.center h2,
+.vpl-section-head[style*="center"] h1,
+.vpl-section-head[style*="center"] h2 {
+  max-width: 15ch !important;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Dans les compositions texte + carte, on réduit les titres pour éviter
+   l'effet disproportionné entre une énorme phrase et une petite carte. */
+.split-panel h1,
+.split-panel h2,
+.method-split h1,
+.method-split h2,
+.pedagogy-block h1,
+.pedagogy-block h2,
+.booking-layout h1,
+.booking-layout h2,
+.vpl-steps h1,
+.vpl-steps h2,
+.vpl-image-grid h1,
+.vpl-image-grid h2,
+[class*="split"] h1,
+[class*="split"] h2,
+[class*="two-col"] h1,
+[class*="two-col"] h2,
+[class*="duo"] h1,
+[class*="duo"] h2 {
+  font-size: clamp(2.2rem, 4.35vw, 4.55rem) !important;
+  line-height: .96 !important;
+  max-width: 11.5ch !important;
+}
+
+/* Grilles : cartes alignées et de dimensions cohérentes. */
+.vpl-card-grid,
+.card-grid-2,
+.card-grid-3,
+.card-grid-4,
+.pillars-grid,
+.timeline-grid,
+.standard-grid,
+.governance-grid,
+.difference-grid,
+.faq-grid,
+.proof-grid,
+.audience-grid,
+.stage-grid,
+.path-grid,
+.offer-grid,
+.module-grid,
+.contact-grid,
+.vpl-sheen-grid,
+[class*="grid"] {
+  align-items: stretch !important;
+}
+
+.vpl-card-grid,
+.card-grid-2,
+.card-grid-3,
+.card-grid-4,
+.pillars-grid,
+.timeline-grid,
+.standard-grid,
+.governance-grid,
+.difference-grid,
+.faq-grid,
+.proof-grid,
+.audience-grid,
+.stage-grid,
+.path-grid,
+.offer-grid,
+.module-grid {
+  grid-auto-rows: 1fr;
+}
+
+.vpl-card-grid > *,
+.card-grid-2 > *,
+.card-grid-3 > *,
+.card-grid-4 > *,
+.pillars-grid > *,
+.timeline-grid > *,
+.standard-grid > *,
+.governance-grid > *,
+.difference-grid > *,
+.faq-grid > *,
+.proof-grid > *,
+.audience-grid > *,
+.stage-grid > *,
+.path-grid > *,
+.offer-grid > *,
+.module-grid > * {
+  height: 100%;
+}
+
+.card,
+.soft-card,
+.info-card,
+.faq-card,
+.proof-card,
+.audience-card,
+.pillar-card,
+.timeline-card,
+.standard-card,
+.governance-card,
+.difference-card,
+.vpl-card,
+.vpl-step,
+.vpl-sheen-card,
+.stage-card,
+.booking-card,
+.stage-summary-card,
+.glass-panel,
+.surface-panel {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  min-height: clamp(150px, 16vw, 230px);
+  padding: clamp(20px, 2.2vw, 30px) !important;
+}
+
+.vpl-card {
+  min-height: clamp(210px, 24vw, 320px) !important;
+}
+
+.vpl-card-num,
+.pillar-number,
+.timeline-step,
+.vpl-step b,
+.eyebrow,
+.vpl-eyebrow,
+.vpl-tag {
+  flex: 0 0 auto;
+  max-width: 100%;
+  white-space: normal !important;
+  text-wrap: balance;
+}
+
+.vpl-card-num {
+  width: auto !important;
+  min-width: 52px;
+  max-width: 100%;
+  min-height: 52px;
+  height: auto !important;
+  padding: 10px 14px;
+  margin-bottom: clamp(28px, 4vw, 58px) !important;
+}
+
+.card h3,
+.soft-card h3,
+.info-card h3,
+.faq-card h3,
+.proof-card h3,
+.audience-card h3,
+.pillar-card h3,
+.timeline-card h3,
+.standard-card h3,
+.governance-card h3,
+.difference-card h3,
+.vpl-card h3,
+.vpl-step h3,
+.vpl-sheen-card h3,
+.stage-card h3,
+.booking-card h3,
+.stage-summary-card h3 {
+  font-size: clamp(1.05rem, 1.45vw, 1.42rem) !important;
+  line-height: 1.12 !important;
+  letter-spacing: -.035em !important;
+  max-width: 100% !important;
+}
+
+.card p,
+.soft-card p,
+.info-card p,
+.faq-card p,
+.proof-card p,
+.audience-card p,
+.pillar-card p,
+.timeline-card p,
+.standard-card p,
+.governance-card p,
+.difference-card p,
+.vpl-card p,
+.vpl-step p,
+.vpl-sheen-card p,
+.stage-card p,
+.booking-card p,
+.stage-summary-card p,
+.bullet-item,
+li {
+  font-size: clamp(.92rem, 1vw, 1.02rem) !important;
+  line-height: 1.58 !important;
+  max-width: 100% !important;
+}
+
+/* Les cartes composées restent proportionnées même lorsqu'un texte est court. */
+.card > :last-child,
+.soft-card > :last-child,
+.info-card > :last-child,
+.faq-card > :last-child,
+.proof-card > :last-child,
+.audience-card > :last-child,
+.pillar-card > :last-child,
+.timeline-card > :last-child,
+.standard-card > :last-child,
+.governance-card > :last-child,
+.difference-card > :last-child,
+.vpl-card > :last-child,
+.vpl-sheen-card > :last-child {
+  margin-bottom: 0 !important;
+}
+
+/* Grandes cartes côte à côte : mêmes proportions et plus d'air. */
+.split-panel,
+.method-split,
+.pedagogy-block,
+.booking-layout,
+.vpl-steps,
+.vpl-image-grid,
+[class*="split"],
+[class*="two-col"],
+[class*="duo"] {
+  align-items: stretch !important;
+  gap: clamp(22px, 3vw, 44px) !important;
+}
+
+.split-panel > *,
+.method-split > *,
+.pedagogy-block > *,
+.booking-layout > *,
+.vpl-steps > *,
+.vpl-image-grid > * {
+  min-width: 0;
+}
+
+/* Images : jamais plus hautes que le bloc voisin sans raison. */
+.vpl-inner-visual img,
+.vpl-image-card img,
+.card img,
+.soft-card img,
+.pedagogy-media img,
+.hero-card img {
+  max-width: 100%;
+}
+
+.vpl-image-grid .vpl-image-card,
+.vpl-image-card.small {
+  min-height: clamp(220px, 32vw, 430px) !important;
+}
+
+/* Formulaires et boutons : textes centrés et sans débordement. */
+button,
+.btn,
+.vpl-button,
+.vpl-nav-cta,
+input,
+select,
+textarea {
+  max-width: 100%;
+}
+
+button,
+.btn,
+.vpl-button,
+.vpl-nav-cta {
+  white-space: normal !important;
+  text-align: center;
+  line-height: 1.15 !important;
+}
+
+/* Le ruban décoratif reste derrière les contenus et ne perturbe plus les cartes. */
+.vpl-scroll-ribbon {
+  z-index: 0 !important;
+  opacity: .26 !important;
+  pointer-events: none !important;
+  mix-blend-mode: normal !important;
+}
+
+.vpl-canvas,
+.vpl-noise {
+  z-index: 0 !important;
+}
+
+.vpl-nav,
+main,
+footer,
+.vpl-inner-hero,
+.vpl-hero,
+.vpl-section,
+section,
+.container,
+.vpl-container {
+  position: relative;
+  z-index: 2;
+}
+
+@media (min-width: 1100px) {
+  .card-grid-3,
+  .faq-grid,
+  .proof-grid,
+  .audience-grid,
+  .timeline-grid,
+  .standard-grid,
+  .governance-grid,
+  .difference-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .card-grid-2,
+  .split-panel,
+  .method-split,
+  .booking-layout,
+  .pedagogy-block,
+  .vpl-steps,
+  [class*="two-col"],
+  [class*="duo"] {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+  }
+}
+
+@media (max-width: 980px) {
+  .vpl-inner-page main > section:not(.vpl-inner-hero) h1,
+  .vpl-inner-page main > section:not(.vpl-inner-hero) h2,
+  .vpl-home main > section:not(.vpl-hero) h1,
+  .vpl-home main > section:not(.vpl-hero) h2,
+  .split-panel h1,
+  .split-panel h2,
+  .method-split h1,
+  .method-split h2,
+  .pedagogy-block h1,
+  .pedagogy-block h2,
+  .booking-layout h1,
+  .booking-layout h2,
+  .vpl-steps h1,
+  .vpl-steps h2,
+  .vpl-image-grid h1,
+  .vpl-image-grid h2 {
+    font-size: clamp(2.2rem, 8.5vw, 4.25rem) !important;
+    max-width: 100% !important;
+    text-wrap: balance;
+  }
+
+  .split-panel,
+  .method-split,
+  .pedagogy-block,
+  .booking-layout,
+  .vpl-steps,
+  .vpl-image-grid,
+  [class*="split"],
+  [class*="two-col"],
+  [class*="duo"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  .card,
+  .soft-card,
+  .info-card,
+  .faq-card,
+  .proof-card,
+  .audience-card,
+  .pillar-card,
+  .timeline-card,
+  .standard-card,
+  .governance-card,
+  .difference-card,
+  .vpl-card,
+  .vpl-step,
+  .vpl-sheen-card,
+  .stage-card,
+  .booking-card,
+  .stage-summary-card {
+    min-height: auto !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .vpl-inner-page main > section:not(.vpl-inner-hero) h1,
+  .vpl-inner-page main > section:not(.vpl-inner-hero) h2,
+  .vpl-home main > section:not(.vpl-hero) h1,
+  .vpl-home main > section:not(.vpl-hero) h2 {
+    font-size: clamp(2rem, 11vw, 3.35rem) !important;
+    line-height: .98 !important;
+    letter-spacing: -.055em !important;
+  }
+
+  .card,
+  .soft-card,
+  .info-card,
+  .faq-card,
+  .proof-card,
+  .audience-card,
+  .pillar-card,
+  .timeline-card,
+  .standard-card,
+  .governance-card,
+  .difference-card,
+  .vpl-card,
+  .vpl-step,
+  .vpl-sheen-card,
+  .stage-card,
+  .booking-card,
+  .stage-summary-card,
+  .cta-panel,
+  .glass-panel,
+  .surface-panel {
+    padding: 20px !important;
+    border-radius: 24px !important;
+  }
+
+  .vpl-card-grid,
+  .card-grid-2,
+  .card-grid-3,
+  .card-grid-4,
+  .pillars-grid,
+  .timeline-grid,
+  .standard-grid,
+  .governance-grid,
+  .difference-grid,
+  .faq-grid,
+  .proof-grid,
+  .audience-grid,
+  .stage-grid,
+  .path-grid,
+  .offer-grid,
+  .module-grid {
+    grid-template-columns: 1fr !important;
+    grid-auto-rows: auto;
+  }
+
+  .vpl-scroll-ribbon {
+    display: none !important;
+  }
+}
