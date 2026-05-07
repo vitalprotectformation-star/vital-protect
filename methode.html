@@ -137,47 +137,74 @@
       </div>
     </section>
 
-    <section>
-      <div class="container">
-        <div class="section-head section-head--center">
-          <span class="eyebrow">Les 5 piliers</span>
-          <h2>Les repères à retenir</h2>
-          <p>
-            Le standard tient en cinq idées simples. Elles servent de fil conducteur pendant les stages.
-          </p>
+    <section class="vp-scroll-pillars-section" id="piliers" aria-labelledby="piliers-title">
+      <div class="vp-scroll-pillars-decor" aria-hidden="true"></div>
+      <div class="vp-scroll-pillars-grain" aria-hidden="true"></div>
+
+      <div class="vp-scroll-pillars-sticky">
+        <div class="vp-scroll-pillars-wrap">
+          <div class="section-head section-head--center vp-scroll-pillars-head">
+            <span class="eyebrow">Les 5 piliers</span>
+            <h2 id="piliers-title">Les repères à retenir</h2>
+            <p>
+              Le standard tient en cinq idées simples. Elles servent de fil conducteur pendant les stages.
+            </p>
+          </div>
+
+          <div class="vp-scroll-pillars-grid" aria-label="Les 5 piliers à retenir">
+            <article class="vp-scroll-pillar-card" data-step="0">
+              <div class="vp-scroll-pillar-capital" aria-hidden="true"></div>
+              <div class="vp-scroll-pillar-shaft">
+                <div class="vp-scroll-pillar-medallion">1</div>
+                <h3>Anticipation</h3>
+                <p>Repérer les contextes sensibles avant qu’une tension n’apparaisse.</p>
+              </div>
+              <div class="vp-scroll-pillar-base" aria-hidden="true"></div>
+            </article>
+
+            <article class="vp-scroll-pillar-card" data-step="1">
+              <div class="vp-scroll-pillar-capital" aria-hidden="true"></div>
+              <div class="vp-scroll-pillar-shaft">
+                <div class="vp-scroll-pillar-medallion">2</div>
+                <h3>Observation</h3>
+                <p>Lire l’environnement, les postures et les signaux faibles.</p>
+              </div>
+              <div class="vp-scroll-pillar-base" aria-hidden="true"></div>
+            </article>
+
+            <article class="vp-scroll-pillar-card" data-step="2">
+              <div class="vp-scroll-pillar-capital" aria-hidden="true"></div>
+              <div class="vp-scroll-pillar-shaft">
+                <div class="vp-scroll-pillar-medallion">3</div>
+                <h3>Évitement</h3>
+                <p>Garder de la distance, une sortie possible et une marge de décision.</p>
+              </div>
+              <div class="vp-scroll-pillar-base" aria-hidden="true"></div>
+            </article>
+
+            <article class="vp-scroll-pillar-card" data-step="3">
+              <div class="vp-scroll-pillar-capital" aria-hidden="true"></div>
+              <div class="vp-scroll-pillar-shaft">
+                <div class="vp-scroll-pillar-medallion">4</div>
+                <h3>Réaction</h3>
+                <p>Utiliser des réponses courtes, accessibles et proportionnées.</p>
+              </div>
+              <div class="vp-scroll-pillar-base" aria-hidden="true"></div>
+            </article>
+
+            <article class="vp-scroll-pillar-card" data-step="4">
+              <div class="vp-scroll-pillar-capital" aria-hidden="true"></div>
+              <div class="vp-scroll-pillar-shaft">
+                <div class="vp-scroll-pillar-medallion">5</div>
+                <h3>Après-situation</h3>
+                <p>Se sécuriser, alerter et retrouver rapidement sa capacité d’action.</p>
+              </div>
+              <div class="vp-scroll-pillar-base" aria-hidden="true"></div>
+            </article>
+          </div>
         </div>
 
-        <div class="pillars-grid">
-          <article class="pillar-card">
-            <div class="pillar-number">1</div>
-            <h3>Anticipation</h3>
-            <p>Repérer les contextes sensibles avant qu’une tension n’apparaisse.</p>
-          </article>
-
-          <article class="pillar-card">
-            <div class="pillar-number">2</div>
-            <h3>Observation</h3>
-            <p>Lire l’environnement, les postures et les signaux faibles.</p>
-          </article>
-
-          <article class="pillar-card">
-            <div class="pillar-number">3</div>
-            <h3>Évitement</h3>
-            <p>Garder de la distance, une sortie possible et une marge de décision.</p>
-          </article>
-
-          <article class="pillar-card">
-            <div class="pillar-number">4</div>
-            <h3>Réaction</h3>
-            <p>Utiliser des réponses courtes, accessibles et proportionnées.</p>
-          </article>
-
-          <article class="pillar-card">
-            <div class="pillar-number">5</div>
-            <h3>Après-situation</h3>
-            <p>Se sécuriser, alerter et retrouver rapidement sa capacité d’action.</p>
-          </article>
-        </div>
+        <div class="vp-scroll-pillars-hint" aria-hidden="true"><span></span>Continuez à scroller</div>
       </div>
     </section>
 
@@ -418,6 +445,81 @@
           didFlipUp = true;
           didFlipDown = false;
         }
+      });
+    })();
+  </script>
+
+  <script>
+    (function () {
+      var section = document.getElementById('piliers');
+      if (!section || !section.classList.contains('vp-scroll-pillars-section')) return;
+
+      var cards = Array.prototype.slice.call(section.querySelectorAll('.vp-scroll-pillar-card'));
+      if (!cards.length) return;
+
+      var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var desktop = window.matchMedia && window.matchMedia('(min-width: 721px)').matches;
+
+      function clamp(value, min, max) {
+        return Math.min(Math.max(value, min), max);
+      }
+
+      function revealAll() {
+        cards.forEach(function (card) {
+          card.classList.add('is-visible');
+          card.style.transform = '';
+          card.style.filter = '';
+          card.style.opacity = '';
+        });
+      }
+
+      function updatePillars() {
+        if (reduceMotion || !desktop) {
+          revealAll();
+          return;
+        }
+
+        var rect = section.getBoundingClientRect();
+        var scrollable = section.offsetHeight - (window.innerHeight || document.documentElement.clientHeight);
+        var progress = scrollable > 0 ? clamp(-rect.top / scrollable, 0, 1) : 1;
+
+        cards.forEach(function (card, index) {
+          var start = 0.10 + index * 0.15;
+          var end = start + 0.16;
+          var local = clamp((progress - start) / (end - start), 0, 1);
+
+          card.classList.toggle('is-visible', local > 0.02);
+
+          if (local < 1) {
+            var y = (1 - local) * 42;
+            var scale = 0.9 + local * 0.1;
+            var blur = (1 - local) * 8;
+            card.style.transform = 'translateY(' + y + 'vh) scale(' + scale + ') rotateX(' + ((1 - local) * 8) + 'deg)';
+            card.style.filter = 'blur(' + blur + 'px)';
+            card.style.opacity = local;
+          } else {
+            card.style.transform = '';
+            card.style.filter = '';
+            card.style.opacity = '';
+          }
+        });
+      }
+
+      var ticking = false;
+      function onScroll() {
+        if (ticking) return;
+        ticking = true;
+        window.requestAnimationFrame(function () {
+          updatePillars();
+          ticking = false;
+        });
+      }
+
+      updatePillars();
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', function () {
+        desktop = window.matchMedia && window.matchMedia('(min-width: 721px)').matches;
+        updatePillars();
       });
     })();
   </script>
