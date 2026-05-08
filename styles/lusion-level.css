@@ -14018,3 +14018,65 @@ body.page-accueil-rythme .vp-home-visual-duo figure:last-child img {
     gap: 8px !important;
   }
 }
+
+
+/* =========================================================
+   Hotfix accueil — bloc images terrain plus compact
+   ---------------------------------------------------------
+   Aligne visuellement le bloc des 3 images avec la hauteur du
+   texte à gauche, tout en gardant les trois visuels identiques.
+   ========================================================= */
+body.page-accueil-rythme .vp-home-visual-grid {
+  align-items: start !important;
+}
+
+body.page-accueil-rythme .vp-home-visual-panel {
+  width: min(520px, 100%) !important;
+  max-width: 520px !important;
+  justify-self: end !important;
+  gap: 10px !important;
+  padding: 10px !important;
+}
+
+body.page-accueil-rythme .vp-home-visual-main,
+body.page-accueil-rythme .vp-home-visual-duo figure {
+  aspect-ratio: 16 / 5.35 !important;
+  min-height: 0 !important;
+  border-radius: 20px !important;
+}
+
+body.page-accueil-rythme .vp-home-visual-main img {
+  object-position: center center !important;
+}
+
+/* Image du centre : cadrage remonté pour faire rentrer la tête du formateur. */
+body.page-accueil-rythme .vp-home-visual-duo figure:first-child img {
+  object-position: center 18% !important;
+}
+
+body.page-accueil-rythme .vp-home-visual-duo figure:last-child img {
+  object-position: center 48% !important;
+}
+
+@media (max-width: 980px) {
+  body.page-accueil-rythme .vp-home-visual-panel {
+    justify-self: center !important;
+  }
+}
+
+@media (max-width: 640px) {
+  body.page-accueil-rythme .vp-home-visual-panel {
+    gap: 8px !important;
+    padding: 10px !important;
+  }
+
+  body.page-accueil-rythme .vp-home-visual-main,
+  body.page-accueil-rythme .vp-home-visual-duo figure {
+    aspect-ratio: 16 / 6.4 !important;
+    border-radius: 18px !important;
+  }
+
+  body.page-accueil-rythme .vp-home-visual-duo figure:first-child img {
+    object-position: center 14% !important;
+  }
+}
