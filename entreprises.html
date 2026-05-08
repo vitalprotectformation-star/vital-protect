@@ -695,6 +695,424 @@
         transform: none;
       }
     }
+
+
+    /* =========================================================
+       ENTREPRISE — Animation format + déroulé
+       Remplace les sections statiques "Module entreprise" et "Déroulé".
+    ========================================================= */
+    .enterprise-flow-section {
+      position: relative;
+      z-index: 2;
+      min-height: 100vh;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      isolation: isolate;
+      padding: clamp(86px, 10vh, 120px) 0 clamp(116px, 12vh, 150px) !important;
+      background: #eef7fb !important;
+      color: #061224;
+    }
+
+    .enterprise-flow-section::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 8% 18%, rgba(255,255,255,0.98), transparent 30%),
+        radial-gradient(circle at 82% 16%, rgba(130, 207, 247, 0.14), transparent 31%),
+        radial-gradient(circle at 50% 62%, rgba(130, 207, 247, 0.10), transparent 38%),
+        linear-gradient(135deg, #edf7fb 0%, #e7f1f7 55%, #eff8fb 100%);
+    }
+
+    .enterprise-flow-section::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      opacity: 0.16;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(12, 76, 125, 0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(12, 76, 125, 0.08) 1px, transparent 1px);
+      background-size: 72px 72px;
+      -webkit-mask-image: radial-gradient(circle at 50% 50%, black, transparent 76%);
+      mask-image: radial-gradient(circle at 50% 50%, black, transparent 76%);
+    }
+
+    .enterprise-flow-orb {
+      position: absolute;
+      z-index: 0;
+      width: 440px;
+      height: 440px;
+      left: 46%;
+      top: 45%;
+      border-radius: 999px;
+      background: radial-gradient(circle, rgba(112, 202, 249, 0.25), rgba(112, 202, 249, 0.07) 48%, transparent 74%);
+      filter: blur(28px);
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+    }
+
+    .enterprise-flow-noise {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      opacity: 0.035;
+      pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140' viewBox='0 0 140 140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.7'/%3E%3C/svg%3E");
+    }
+
+    .enterprise-flow-grid {
+      position: relative;
+      z-index: 3;
+      display: grid;
+      grid-template-columns: 0.92fr 1.08fr;
+      gap: clamp(46px, 7vw, 108px);
+      align-items: center;
+      min-height: calc(100vh - 210px);
+    }
+
+    .enterprise-flow-left {
+      position: sticky;
+      top: 92px;
+      align-self: center;
+      z-index: 2;
+      padding-bottom: 14px;
+    }
+
+    .enterprise-flow-pill {
+      display: inline-flex !important;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 15px;
+      border-radius: 999px;
+      background: rgba(248, 252, 255, 0.82);
+      color: #0b3b63;
+      font-size: 13px;
+      font-weight: 850;
+      box-shadow:
+        inset 0 0 0 1px rgba(7, 18, 36, 0.08),
+        0 18px 44px rgba(8, 30, 50, 0.08);
+      backdrop-filter: blur(14px);
+    }
+
+    .enterprise-flow-pill::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: #82cff7;
+      box-shadow: 0 0 0 6px rgba(130, 207, 247, 0.16);
+    }
+
+    .enterprise-flow-title {
+      max-width: 650px;
+      margin: 24px 0 22px;
+      font-size: clamp(48px, 6.8vw, 98px);
+      line-height: .96;
+      letter-spacing: -0.075em;
+      color: #061224;
+      text-wrap: balance;
+    }
+
+    .enterprise-flow-title-mask {
+      display: block;
+      overflow: hidden;
+    }
+
+    .enterprise-flow-title-line {
+      display: block;
+      transform-origin: left bottom;
+    }
+
+    .enterprise-flow-copy {
+      display: block;
+      max-width: 610px;
+      margin: 0 0 18px;
+      overflow: visible;
+      color: #334963;
+      font-size: 16px;
+      line-height: 1.75;
+    }
+
+    .enterprise-flow-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    .enterprise-flow-button {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .enterprise-flow-button::after {
+      content: "";
+      position: absolute;
+      inset: -40% auto -40% -55%;
+      width: 48%;
+      transform: rotate(18deg);
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.78), transparent);
+      transition: left .65s ease;
+      pointer-events: none;
+    }
+
+    .enterprise-flow-button:hover::after {
+      left: 110%;
+    }
+
+    .enterprise-flow-note {
+      max-width: 610px;
+      margin-top: 18px;
+      padding: 16px 18px;
+      border: 1px solid rgba(12, 76, 125, .12);
+      border-radius: 22px;
+      background: rgba(255, 255, 255, .62);
+      color: #40546b;
+      font-size: 14px;
+      line-height: 1.62;
+      box-shadow: 0 16px 45px rgba(8, 30, 50, .08);
+      backdrop-filter: blur(14px);
+    }
+
+    .enterprise-flow-cards-wrap {
+      position: relative;
+      z-index: 2;
+      padding-top: 2px;
+    }
+
+    .enterprise-flow-step-track {
+      position: absolute;
+      top: 24px;
+      bottom: 24px;
+      left: -28px;
+      width: 2px;
+      border-radius: 999px;
+      background: rgba(12, 76, 125, 0.14);
+    }
+
+    .enterprise-flow-step-track span {
+      display: block;
+      width: 100%;
+      height: 0%;
+      border-radius: inherit;
+      background: linear-gradient(180deg, #82cff7, #0b4c7f);
+    }
+
+    .enterprise-flow-cards {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .enterprise-flow-card {
+      margin: 0;
+      overflow: hidden;
+      perspective: 900px;
+    }
+
+    .enterprise-flow-js .enterprise-flow-card {
+      height: 0;
+      opacity: 0;
+    }
+
+    .enterprise-flow-card-inner {
+      position: relative;
+      min-height: 104px;
+      display: grid;
+      grid-template-columns: 46px 1fr;
+      gap: 24px;
+      align-items: center;
+      padding: 28px 34px 28px 20px;
+      border-radius: 26px;
+      border: 1px solid rgba(255,255,255,0.72);
+      background:
+        linear-gradient(135deg, rgba(255,255,255,0.92), rgba(255,255,255,0.66)),
+        rgba(255,255,255,0.78);
+      box-shadow: 0 22px 70px rgba(8, 30, 50, 0.12);
+      backdrop-filter: blur(16px);
+      transform-origin: top center;
+      will-change: transform, box-shadow;
+    }
+
+    .enterprise-flow-card-inner::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      padding: 1px;
+      background: linear-gradient(135deg, rgba(130, 207, 247, 0.72), rgba(255,255,255,0.08), rgba(12, 76, 125, 0.18));
+      -webkit-mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor;
+      mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+      mask-composite: exclude;
+      opacity: 0;
+      transition: opacity .35s ease;
+      pointer-events: none;
+    }
+
+    .enterprise-flow-card.is-active .enterprise-flow-card-inner::before {
+      opacity: 1;
+    }
+
+    .enterprise-flow-card.is-active .enterprise-flow-card-inner {
+      box-shadow:
+        0 26px 90px rgba(8, 30, 50, 0.17),
+        0 0 0 8px rgba(130, 207, 247, 0.08);
+    }
+
+    .enterprise-flow-card-inner > span {
+      position: relative;
+      width: 42px;
+      height: 42px;
+      border-radius: 13px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(145deg, #0f5d96, #0b4c7f);
+      color: white;
+      font-size: 19px;
+      font-weight: 850;
+      box-shadow: 0 14px 30px rgba(12, 76, 125, 0.28);
+    }
+
+    .enterprise-flow-card-inner > span::after {
+      content: "";
+      position: absolute;
+      inset: -7px;
+      border-radius: 18px;
+      border: 1px solid rgba(12, 76, 125, 0.2);
+      opacity: 0;
+      transform: scale(0.82);
+    }
+
+    .enterprise-flow-card.is-active .enterprise-flow-card-inner > span::after {
+      animation: enterpriseFlowPulse .8s ease forwards;
+    }
+
+    @keyframes enterpriseFlowPulse {
+      0% { opacity: 0; transform: scale(0.82); }
+      45% { opacity: 1; }
+      100% { opacity: 0; transform: scale(1.22); }
+    }
+
+    .enterprise-flow-card-inner strong {
+      display: block;
+      margin: 0 0 8px;
+      font-size: 16px;
+      line-height: 1.2;
+      color: #061224;
+    }
+
+    .enterprise-flow-card-inner p {
+      margin: 0;
+      color: #4a5d75;
+      font-size: 16px;
+      line-height: 1.5;
+    }
+
+    .enterprise-flow-progress {
+      position: absolute;
+      left: 50%;
+      bottom: 36px;
+      width: min(420px, calc(100% - 48px));
+      height: 7px;
+      transform: translateX(-50%);
+      border-radius: 999px;
+      background: rgba(12, 76, 125, 0.1);
+      overflow: hidden;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.45);
+      z-index: 3;
+    }
+
+    .enterprise-flow-progress span {
+      display: block;
+      width: 0%;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #82cff7, #0b4c7f);
+      box-shadow: 0 0 22px rgba(76, 158, 224, 0.7);
+    }
+
+    @media (max-width: 900px) {
+      .enterprise-flow-section {
+        min-height: auto;
+        padding: 78px 0 88px !important;
+      }
+
+      .enterprise-flow-grid {
+        grid-template-columns: 1fr;
+        min-height: auto;
+      }
+
+      .enterprise-flow-left {
+        position: relative;
+        top: auto;
+      }
+
+      .enterprise-flow-title {
+        font-size: clamp(42px, 13vw, 72px);
+      }
+
+      .enterprise-flow-card-inner {
+        grid-template-columns: 42px 1fr;
+        padding: 24px 22px;
+      }
+
+      .enterprise-flow-step-track {
+        display: none;
+      }
+
+      .enterprise-flow-progress {
+        position: relative;
+        left: auto;
+        bottom: auto;
+        transform: none;
+        grid-column: 1 / -1;
+        margin: 10px auto 0;
+      }
+    }
+
+    @media (max-height: 760px) and (min-width: 901px) {
+      .enterprise-flow-section {
+        padding: 72px 0 106px !important;
+      }
+
+      .enterprise-flow-title {
+        font-size: clamp(42px, 5.6vw, 80px);
+        line-height: 1;
+      }
+
+      .enterprise-flow-copy,
+      .enterprise-flow-card-inner p {
+        font-size: 15px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .enterprise-flow-card {
+        height: auto !important;
+        opacity: 1 !important;
+      }
+
+      .enterprise-flow-card-inner,
+      .enterprise-flow-title-line,
+      .enterprise-flow-left {
+        transform: none !important;
+        opacity: 1 !important;
+      }
+    }
+
   </style>
 
   <link href="/styles/tokens.css" rel="stylesheet" />
@@ -1162,104 +1580,96 @@
       </div>
     </section>
 
-    <section>
-      <div class="container">
-        <div class="section-head section-head--center">
-          <span class="eyebrow">Module entreprise</span>
-          <h2>Un format unique, clair et directement exploitable</h2>
-          <p>
-            L’offre entreprise Vital Protect repose sur un module de 3 heures.
-            Il est conçu pour transmettre des repères concrets, sans multiplier les formats
-            ni diluer le contenu.
+    <section class="enterprise-flow-section" id="module-entreprise" aria-labelledby="enterprise-flow-title" data-enterprise-flow>
+      <div class="enterprise-flow-orb" aria-hidden="true"></div>
+      <div class="enterprise-flow-noise" aria-hidden="true"></div>
+
+      <div class="container enterprise-flow-grid">
+        <div class="enterprise-flow-left">
+          <span class="eyebrow enterprise-flow-pill">Module entreprise</span>
+
+          <h2 id="enterprise-flow-title" class="enterprise-flow-title">
+            <span class="enterprise-flow-title-mask"><span class="enterprise-flow-title-line">Un format</span></span>
+            <span class="enterprise-flow-title-mask"><span class="enterprise-flow-title-line">clair, cadré</span></span>
+            <span class="enterprise-flow-title-mask"><span class="enterprise-flow-title-line">et directement</span></span>
+            <span class="enterprise-flow-title-mask"><span class="enterprise-flow-title-line">exploitable.</span></span>
+          </h2>
+
+          <p class="enterprise-flow-copy">
+            Le module entreprise Vital Protect dure 3 heures, jusqu’à 20 personnes maximum.
+            Il garde une structure fixe, puis contextualise les exemples à votre environnement :
+            accueil, terrain, management, santé, social, collectivité, retail ou service usager.
           </p>
+
+          <div class="enterprise-flow-note">
+            Ce n’est pas une formation combat ni une formation de sécurité privée : l’objectif est
+            de renforcer la prévention, la posture professionnelle, la distance, la désescalade
+            et la cohérence de réaction face aux situations difficiles.
+          </div>
+
+          <div class="enterprise-flow-actions">
+            <a class="vpl-button vpl-button-primary enterprise-flow-button" href="#contact-entreprise">Demander un devis</a>
+            <a class="vpl-button vpl-button-secondary" href="/contact.html">Nous contacter</a>
+          </div>
         </div>
 
-        <div class="format-grid">
-          <article class="format-card">
-            <div class="icon-dot"></div>
-            <h3>Durée : 3 heures</h3>
-            <p>
-              Un temps suffisant pour poser les bases, travailler les situations fréquentes,
-              clarifier les postures utiles et donner des repères immédiatement applicables.
-            </p>
-          </article>
+        <div class="enterprise-flow-cards-wrap">
+          <div class="enterprise-flow-step-track" aria-hidden="true"><span></span></div>
 
-          <article class="format-card">
-            <div class="icon-dot"></div>
-            <h3>Groupe : 20 personnes maximum</h3>
-            <p>
-              Le nombre de participants est limité afin de conserver une qualité d’échange,
-              une bonne dynamique de groupe et une transmission claire pour chacun.
-            </p>
-          </article>
+          <ol class="enterprise-flow-cards" aria-label="Déroulé du module entreprise Vital Protect">
+            <li class="enterprise-flow-card">
+              <div class="enterprise-flow-card-inner">
+                <span>1</span>
+                <div>
+                  <strong>Échange préalable</strong>
+                  <p>Nous clarifions votre contexte, les équipes concernées, les situations fréquentes et vos contraintes d’accueil.</p>
+                </div>
+              </div>
+            </li>
 
-          <article class="format-card">
-            <div class="icon-dot"></div>
-            <h3>Contenu contextualisé</h3>
-            <p>
-              Le module garde sa structure fixe, mais les exemples, situations et échanges
-              peuvent être adaptés à votre environnement : accueil, terrain, management,
-              service usager, retail, santé, social ou collectivité.
-            </p>
-          </article>
+            <li class="enterprise-flow-card">
+              <div class="enterprise-flow-card-inner">
+                <span>2</span>
+                <div>
+                  <strong>Cadrage du module</strong>
+                  <p>Nous confirmons le format unique : 3 heures d’intervention, groupe de 20 personnes maximum et objectifs terrain.</p>
+                </div>
+              </div>
+            </li>
+
+            <li class="enterprise-flow-card">
+              <div class="enterprise-flow-card-inner">
+                <span>3</span>
+                <div>
+                  <strong>Prévention, posture et distance</strong>
+                  <p>Les participants travaillent la lecture des tensions, le placement, la posture professionnelle et la qualité d’intervention.</p>
+                </div>
+              </div>
+            </li>
+
+            <li class="enterprise-flow-card">
+              <div class="enterprise-flow-card-inner">
+                <span>4</span>
+                <div>
+                  <strong>Mises en situation progressives</strong>
+                  <p>La session reste guidée, encadrée et adaptée au terrain réel, sans humiliation ni recherche de performance.</p>
+                </div>
+              </div>
+            </li>
+
+            <li class="enterprise-flow-card">
+              <div class="enterprise-flow-card-inner">
+                <span>5</span>
+                <div>
+                  <strong>Repères immédiatement réutilisables</strong>
+                  <p>Les équipes repartent avec des réponses simples sur la posture, la distance, la désescalade et le retour au calme.</p>
+                </div>
+              </div>
+            </li>
+          </ol>
         </div>
 
-        <div class="soft-card" style="margin-top: 28px;">
-          <h3>Cadre de l’intervention</h3>
-          <p>
-            Le module entreprise n’est pas une formation de sécurité privée, pas un cours de combat
-            et ne garantit pas l’absence d’incident. Il vise à améliorer la prévention,
-            la posture professionnelle, la lecture des tensions, la distance, la désescalade
-            et la cohérence de réaction face à une situation difficile.
-          </p>
-        </div>
-
-        <div class="timeline-cta" style="justify-content: center;">
-          <a class="btn btn-dark" href="#contact-entreprise">Demander un devis</a>
-        </div>
-      </div>
-    </section>
-
-    <section>
-      <div class="container">
-        <div class="section-head section-head--center">
-          <span class="eyebrow">Déroulé</span>
-          <h2>Un cadrage simple avant l’intervention</h2>
-          <p>
-            Le module reste fixe dans sa durée et sa structure, mais l’échange préalable permet
-            d’adapter les exemples à votre réalité terrain.
-          </p>
-        </div>
-
-        <div class="process-grid">
-          <article class="process-card">
-            <div class="process-step">1</div>
-            <h3>Échange</h3>
-            <p>Nous clarifions votre contexte, vos équipes, vos situations fréquentes et vos contraintes.</p>
-          </article>
-
-          <article class="process-card">
-            <div class="process-step">2</div>
-            <h3>Cadrage</h3>
-            <p>Nous confirmons le module de 3h, le public concerné et le groupe de 20 personnes maximum.</p>
-          </article>
-
-          <article class="process-card">
-            <div class="process-step">3</div>
-            <h3>Intervention</h3>
-            <p>La session est animée dans un cadre clair, progressif et adapté au terrain réel des équipes.</p>
-          </article>
-
-          <article class="process-card">
-            <div class="process-step">4</div>
-            <h3>Repères</h3>
-            <p>Les participants repartent avec des repères simples sur la posture, la distance et la désescalade.</p>
-          </article>
-        </div>
-
-        <div class="timeline-cta" style="justify-content: center;">
-          <a class="btn btn-outline" href="#contact-entreprise">Parler de votre besoin</a>
-        </div>
+        <div class="enterprise-flow-progress" aria-hidden="true"><span></span></div>
       </div>
     </section>
 
@@ -1526,6 +1936,187 @@ ${payload.message}`
         showStatus("Erreur réseau lors de l’envoi.", "error");
       }
     });
+  </script>
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+  <script>
+    (function () {
+      var section = document.querySelector('[data-enterprise-flow]');
+      if (!section) return;
+
+      var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var cards = Array.prototype.slice.call(section.querySelectorAll('.enterprise-flow-card'));
+      var cardInners = Array.prototype.slice.call(section.querySelectorAll('.enterprise-flow-card-inner'));
+      var titleLines = Array.prototype.slice.call(section.querySelectorAll('.enterprise-flow-title-line'));
+      var progressBar = section.querySelector('.enterprise-flow-progress span');
+      var trackFill = section.querySelector('.enterprise-flow-step-track span');
+      var orb = section.querySelector('.enterprise-flow-orb');
+      var timelineHasPlayed = false;
+
+      function setProgress(value) {
+        if (progressBar) progressBar.style.width = value;
+        if (trackFill) trackFill.style.height = value;
+      }
+
+      function setActiveCard(activeIndex) {
+        cards.forEach(function (card, index) {
+          card.classList.toggle('is-active', index === activeIndex);
+        });
+      }
+
+      function revealAllCards() {
+        cards.forEach(function (card) {
+          card.style.height = 'auto';
+          card.style.opacity = '1';
+        });
+
+        if (window.gsap) {
+          gsap.set(cardInners, {
+            x: 0,
+            y: 0,
+            rotateX: 0,
+            rotateZ: 0,
+            scale: 1,
+            filter: 'brightness(1)'
+          });
+
+          gsap.set(titleLines, { y: 0, rotate: 0, opacity: 1 });
+          gsap.set(orb, { scale: 1, opacity: 1 });
+        }
+
+        setProgress('100%');
+        setActiveCard(cards.length - 1);
+      }
+
+      function lockScroll() {
+        document.body.style.overflow = 'hidden';
+        document.documentElement.style.overflow = 'hidden';
+      }
+
+      function unlockScroll() {
+        document.body.style.overflow = '';
+        document.documentElement.style.overflow = '';
+      }
+
+      if (!window.gsap || !window.ScrollTrigger || reduceMotion) {
+        revealAllCards();
+        return;
+      }
+
+      gsap.registerPlugin(ScrollTrigger);
+      section.classList.add('enterprise-flow-js');
+
+      gsap.set(titleLines, { y: 24, rotate: .4, opacity: 0 });
+      gsap.set(cardInners, {
+        x: 72,
+        y: 34,
+        rotateX: -8,
+        rotateZ: 1.2,
+        scale: .96
+      });
+      gsap.set(orb, { scale: .92, opacity: .75 });
+
+      cards.forEach(function (card) {
+        card.style.height = '0px';
+        card.style.opacity = '0';
+      });
+
+      setProgress('0%');
+
+      var timeline = gsap.timeline({
+        paused: true,
+        defaults: { ease: 'power3.out' },
+        onStart: lockScroll,
+        onUpdate: function () {
+          var progress = timeline.progress() * 100 + '%';
+          if (progressBar) gsap.set(progressBar, { width: progress });
+          if (trackFill) gsap.set(trackFill, { height: progress });
+        },
+        onComplete: function () {
+          setActiveCard(cards.length - 1);
+          unlockScroll();
+        }
+      });
+
+      timeline.to(titleLines, {
+        y: 0,
+        rotate: 0,
+        opacity: 1,
+        duration: .62,
+        stagger: .07
+      });
+
+      timeline.to({}, { duration: .22 });
+
+      cards.forEach(function (card, index) {
+        var inner = card.querySelector('.enterprise-flow-card-inner');
+
+        timeline
+          .call(function () {
+            setActiveCard(index);
+          }, null, '>-0.04')
+          .to(card, {
+            height: function () {
+              return inner.offsetHeight;
+            },
+            opacity: 1,
+            duration: .42
+          }, '>')
+          .to(inner, {
+            x: 0,
+            y: 0,
+            rotateX: 0,
+            rotateZ: 0,
+            scale: 1,
+            duration: .58
+          }, '<')
+          .fromTo(inner, {
+            filter: 'brightness(1.08)'
+          }, {
+            filter: 'brightness(1)',
+            duration: .35
+          }, '<0.05')
+          .to(inner, {
+            y: -6,
+            duration: .15,
+            ease: 'power1.out'
+          }, '>-0.10')
+          .to(inner, {
+            y: 0,
+            duration: .18,
+            ease: 'power1.out'
+          }, '>');
+      });
+
+      ScrollTrigger.create({
+        trigger: section,
+        start: 'top top',
+        end: '+=1',
+        pin: true,
+        anticipatePin: 1,
+        onEnter: function () {
+          if (!timelineHasPlayed) {
+            timelineHasPlayed = true;
+            timeline.play();
+          }
+        },
+        onEnterBack: function () {
+          if (timeline.progress() === 1) revealAllCards();
+        }
+      });
+
+      gsap.to(orb, {
+        x: 18,
+        y: -12,
+        duration: 3.2,
+        repeat: -1,
+        yoyo: true,
+        ease: 'sine.inOut'
+      });
+    })();
   </script>
 
   <script src="/lusion-level.js"></script>
