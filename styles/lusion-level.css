@@ -13741,25 +13741,25 @@ body.page-accueil-rythme .hp-hero-photo {
 }
 
 body.page-accueil-rythme .hp-hero-photo img {
-  width: 136% !important;
+  width: 178% !important;
   max-width: none !important;
   height: 100% !important;
   object-fit: cover !important;
-  object-position: 98% center !important;
-  transform: scale(1.035) !important;
+  object-position: 100% center !important;
+  transform: scale(1.02) !important;
   transform-origin: center center !important;
 }
 
 @media (max-width: 980px) {
   body.page-accueil-rythme .hp-hero-photo img {
-    width: 142% !important;
+    width: 190% !important;
     object-position: 100% center !important;
   }
 }
 
 @media (max-width: 640px) {
   body.page-accueil-rythme .hp-hero-photo img {
-    width: 150% !important;
+    width: 205% !important;
     object-position: 100% center !important;
   }
 }
