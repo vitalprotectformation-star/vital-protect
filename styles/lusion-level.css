@@ -15098,3 +15098,63 @@ body.page-formateur-redesign #formulaire .form-rgpd-note {
     justify-content: center !important;
   }
 }
+
+/* =========================================================
+   Correctif marge menu / début de page — uniformisation
+   =========================================================
+   Toutes les pages publiques avec le menu flottant utilisent maintenant
+   le même dégagement vertical avant le premier bloc de contenu.
+*/
+:root {
+  --vpl-first-screen-top: clamp(126px, 10vw, 148px);
+  --vpl-first-screen-scroll-offset: 92px;
+}
+
+html {
+  scroll-padding-top: var(--vpl-first-screen-scroll-offset) !important;
+}
+
+/* Le menu doit rester au-dessus des sections, quelle que soit la page. */
+.vpl-nav {
+  z-index: 1000 !important;
+}
+
+/* Héros standards / pages éditoriales. */
+body.vpl-inner-page main > .vpl-inner-hero:first-child,
+body.page-methode main > .vpl-inner-hero:first-child,
+body.page-formateur-redesign main > .vpl-inner-hero:first-child,
+body.page-legal-clean main > .vpl-inner-hero:first-child,
+body.page-legal-clean > .vpl-inner-hero:first-of-type {
+  margin-top: 0 !important;
+  padding-top: var(--vpl-first-screen-top) !important;
+}
+
+/* Héros spécifiques : accueil, stage, entreprise et contact. */
+body.vpl-home main > .hp-hero:first-child,
+body.page-accueil-rythme main > .hp-hero:first-child,
+body.page-stage-redesign main > .stage-hero-redesign:first-child,
+body.page-editorial-light main > .vp-visual-story:first-child,
+body.page-editorial-light main > .vpw-contact-wow:first-child {
+  margin-top: 0 !important;
+  padding-top: var(--vpl-first-screen-top) !important;
+}
+
+/* Si le premier bloc n'est pas un hero classique, il reçoit quand même le dégagement. */
+body.vpl-inner-page main > section:first-child:not(.vpl-inner-hero):not(.stage-hero-redesign):not(.hp-hero):not(.vpw-contact-wow):not(.vp-visual-story) {
+  margin-top: 0 !important;
+  padding-top: var(--vpl-first-screen-top) !important;
+}
+
+@media (max-width: 980px) {
+  :root {
+    --vpl-first-screen-top: 112px;
+    --vpl-first-screen-scroll-offset: 86px;
+  }
+}
+
+@media (max-width: 640px) {
+  :root {
+    --vpl-first-screen-top: 88px;
+    --vpl-first-screen-scroll-offset: 74px;
+  }
+}
