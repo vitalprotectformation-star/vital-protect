@@ -13957,3 +13957,64 @@ body.page-accueil-rythme .hp-hero-mosaic article p {
     min-height: 180px !important;
   }
 }
+
+
+/* =========================================================
+   Hotfix accueil — 3 visuels terrain de même taille
+   ---------------------------------------------------------
+   Les trois photos de la section "Sur le terrain" sont
+   empilées avec le même format et le même espacement.
+   ========================================================= */
+body.page-accueil-rythme .vp-home-visual-panel {
+  gap: 10px !important;
+  padding: 12px !important;
+}
+
+body.page-accueil-rythme .vp-home-visual-main,
+body.page-accueil-rythme .vp-home-visual-duo figure {
+  width: 100% !important;
+  aspect-ratio: 16 / 7.6 !important;
+  min-height: 0 !important;
+  border-radius: 22px !important;
+}
+
+body.page-accueil-rythme .vp-home-visual-duo {
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: 10px !important;
+}
+
+body.page-accueil-rythme .vp-home-visual-panel img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+}
+
+body.page-accueil-rythme .vp-home-visual-main img {
+  object-position: center center !important;
+}
+
+body.page-accueil-rythme .vp-home-visual-duo figure:first-child img {
+  object-position: center 46% !important;
+}
+
+body.page-accueil-rythme .vp-home-visual-duo figure:last-child img {
+  object-position: center 50% !important;
+}
+
+@media (max-width: 640px) {
+  body.page-accueil-rythme .vp-home-visual-panel {
+    gap: 8px !important;
+    padding: 10px !important;
+  }
+
+  body.page-accueil-rythme .vp-home-visual-main,
+  body.page-accueil-rythme .vp-home-visual-duo figure {
+    aspect-ratio: 16 / 8.4 !important;
+    border-radius: 18px !important;
+  }
+
+  body.page-accueil-rythme .vp-home-visual-duo {
+    gap: 8px !important;
+  }
+}
