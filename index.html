@@ -28,6 +28,30 @@
     html.vpl-route-preload-transition,html.vpl-route-preload-transition body{background:#2f6f9f!important}
     html.vpl-route-preload-transition::before{content:"";position:fixed;inset:0;z-index:2147482998;pointer-events:none;background-color:#2f6f9f;background-image:var(--vpl-transition-image);background-position:center;background-size:var(--vpl-transition-bg-size);background-repeat:no-repeat;opacity:1}
     @media (max-width: 768px), (pointer: coarse) and (orientation: portrait){html{--vpl-transition-image:url("transition-screen-mobile.jpg");--vpl-transition-bg-size:cover}}
+
+    /* Correctif ruban : on ne le cache plus.
+       La section Standard passe au-dessus du ruban avec un fond opaque,
+       donc le ruban continue d'exister mais reste derrière le fond. */
+    body.hp-standard-ribbon-hidden .vpl-scroll-ribbon {
+      display: block !important;
+      opacity: 0.38 !important;
+      visibility: visible !important;
+    }
+
+    .hp-standard-premium {
+      z-index: 2 !important;
+      background: #eef7fb !important;
+    }
+
+    .hp-standard-premium::before {
+      background:
+        radial-gradient(circle at 8% 20%, rgba(255,255,255,1), transparent 28%),
+        radial-gradient(circle at 78% 18%, rgba(130, 207, 247, 0.06), transparent 30%),
+        radial-gradient(circle at 52% 58%, rgba(130, 207, 247, 0.05), transparent 36%),
+        linear-gradient(135deg, #edf7fb 0%, #e7f1f7 55%, #eff8fb 100%) !important;
+      opacity: 1 !important;
+    }
+
   </style>
 
   <link as="image" href="transition-screen.png" media="(min-width: 769px)" rel="preload"/>
@@ -92,19 +116,12 @@
     }
 
 
-
-    /* Sur la section Standard animée, le ruban global est masqué derrière le fond. */
-    body.hp-standard-ribbon-hidden .vpl-scroll-ribbon {
-      display: none !important;
-      opacity: 0 !important;
-      visibility: hidden !important;
-    }
-
     /* =========================================================
        SECTION STANDARD PREMIUM
     ========================================================= */
     .hp-standard-premium {
       position: relative;
+      z-index: 2;
       min-height: 100vh;
       overflow: hidden;
       display: flex;
@@ -878,20 +895,6 @@
       var section = document.querySelector('#methodSection.hp-standard-premium');
       if (!section) return;
 
-      function setStandardRibbonHidden(hidden) {
-        document.body.classList.toggle('hp-standard-ribbon-hidden', !!hidden);
-      }
-
-      if ('IntersectionObserver' in window) {
-        var ribbonObserver = new IntersectionObserver(function (entries) {
-          entries.forEach(function (entry) {
-            if (entry.target === section) {
-              setStandardRibbonHidden(entry.isIntersecting && entry.intersectionRatio > 0.05);
-            }
-          });
-        }, { threshold: [0, 0.05, 0.35, 1] });
-        ribbonObserver.observe(section);
-      }
 
       var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       var cards = Array.prototype.slice.call(section.querySelectorAll('.hp-standard-card'));
