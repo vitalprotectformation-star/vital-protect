@@ -1121,14 +1121,17 @@
   <link href="/styles/lusion-level.css" rel="stylesheet" />
 
   <style>
-    /* Correctif Entreprises — respiration sous le menu fixe */
-    .vp-visual-story--enterprise {
-      padding-top: clamp(104px, 8vw, 124px) !important;
+    /* Correctif Entreprises — respiration réelle sous le menu fixe.
+       Doublé dans /styles/lusion-level.css pour éviter tout verrouillage CSS. */
+    body.page-entreprises main > .vp-visual-story.vp-visual-story--enterprise:first-child,
+    body.page-editorial-light main > .vp-visual-story.vp-visual-story--enterprise:first-child {
+      padding-top: calc(var(--vpl-nav-offset, 92px) + clamp(32px, 4vw, 56px)) !important;
     }
 
     @media (max-width: 680px) {
-      .vp-visual-story--enterprise {
-        padding-top: 96px !important;
+      body.page-entreprises main > .vp-visual-story.vp-visual-story--enterprise:first-child,
+      body.page-editorial-light main > .vp-visual-story.vp-visual-story--enterprise:first-child {
+        padding-top: calc(var(--vpl-nav-offset, 70px) + 28px) !important;
       }
     }
   </style>
@@ -1142,7 +1145,7 @@
   </script>
 </head>
 
-<body class="vpl-inner-page page-editorial-light">
+<body class="vpl-inner-page page-editorial-light page-entreprises">
   <canvas aria-hidden="true" class="vpl-canvas"></canvas>
   <div aria-hidden="true" class="vpl-noise"></div>
 
