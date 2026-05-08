@@ -14759,76 +14759,46 @@ body.page-accueil-rythme .hp-standard-premium .hp-standard-progress {
   z-index: 3 !important;
 }
 
+
 /* =========================================================
-   Correctif accueil — texte coupé section "Le standard"
-   ---------------------------------------------------------
-   Évite que le bloc de gauche passe sous la section suivante
-   sur les écrans desktop moins hauts.
+   Correctif propre Formateur — ruban arrière-plan, photo unique,
+   cartes conservées
    ========================================================= */
-body.page-accueil-rythme .hp-standard-premium {
-  min-height: auto !important;
-  padding: clamp(88px, 10vh, 120px) 0 clamp(124px, 14vh, 164px) !important;
-}
 
-body.page-accueil-rythme .hp-standard-premium .hp-standard-grid {
-  align-items: center !important;
-}
-
-body.page-accueil-rythme .hp-standard-left {
+/* Le ruban reste décoratif et passe derrière les zones de contenu, sans modifier les fonds des cards. */
+body.page-formateur-redesign {
   position: relative !important;
-  top: auto !important;
-  align-self: center !important;
-  padding-bottom: 18px !important;
+  isolation: isolate !important;
 }
 
-body.page-accueil-rythme .hp-standard-title {
-  max-width: 610px !important;
-  margin: 22px 0 20px !important;
-  font-size: clamp(46px, 6.2vw, 92px) !important;
-  line-height: .98 !important;
+body.page-formateur-redesign > .vpl-scroll-ribbon,
+body.page-formateur-redesign .vpl-scroll-ribbon {
+  z-index: 0 !important;
+  pointer-events: none !important;
+  opacity: .26 !important;
+  mix-blend-mode: normal !important;
 }
 
-body.page-accueil-rythme .hp-standard-copy {
-  display: block !important;
-  overflow: visible !important;
-  max-width: 620px !important;
-  margin: 0 0 24px !important;
-  line-height: 1.75 !important;
+body.page-formateur-redesign > main,
+body.page-formateur-redesign main > section,
+body.page-formateur-redesign > footer,
+body.page-formateur-redesign .vpl-marquee,
+body.page-formateur-redesign .vptr-background-orbs {
+  position: relative !important;
 }
 
-body.page-accueil-rythme .hp-standard-progress {
-  bottom: 34px !important;
+body.page-formateur-redesign > main,
+body.page-formateur-redesign main > section,
+body.page-formateur-redesign > footer,
+body.page-formateur-redesign .vpl-marquee {
+  z-index: 2 !important;
 }
 
-@media (max-height: 760px) and (min-width: 901px) {
-  body.page-accueil-rythme .hp-standard-premium {
-    padding: 72px 0 110px !important;
-  }
-
-  body.page-accueil-rythme .hp-standard-title {
-    font-size: clamp(42px, 5.4vw, 78px) !important;
-    line-height: 1 !important;
-  }
+body.page-formateur-redesign .vpl-nav {
+  z-index: 100 !important;
 }
 
-/* =========================================================
-   Correctif Entreprises — espace sous le menu fixe
-   ========================================================= */
-body.page-entreprises main > .vp-visual-story.vp-visual-story--enterprise:first-child,
-body.page-editorial-light main > .vp-visual-story.vp-visual-story--enterprise:first-child {
-  padding-top: calc(var(--vpl-nav-offset, 92px) + clamp(32px, 4vw, 56px)) !important;
-}
-
-@media (max-width: 680px) {
-  body.page-entreprises main > .vp-visual-story.vp-visual-story--enterprise:first-child,
-  body.page-editorial-light main > .vp-visual-story.vp-visual-story--enterprise:first-child {
-    padding-top: calc(var(--vpl-nav-offset, 70px) + 28px) !important;
-  }
-}
-
-/* =========================================================
-   Page Formateurs — section Transmission alignée sur le rendu Stage
-   ========================================================= */
+/* Section Transmission : même mise en page sombre, mais avec une seule photo agrandie. */
 body.page-formateur-redesign .vp-visual-story--trainer-dark {
   padding: clamp(84px, 9vw, 136px) 0 !important;
   background:
@@ -14838,7 +14808,7 @@ body.page-formateur-redesign .vp-visual-story--trainer-dark {
 }
 
 body.page-formateur-redesign .vp-visual-story--trainer-dark .vp-visual-story-grid {
-  grid-template-columns: minmax(520px, 1fr) minmax(0, .86fr) !important;
+  grid-template-columns: minmax(500px, .92fr) minmax(0, 1fr) !important;
   gap: clamp(44px, 6vw, 88px) !important;
   align-items: center !important;
 }
@@ -14853,204 +14823,143 @@ body.page-formateur-redesign .vp-visual-story--trainer-dark .vp-visual-copy p {
   color: rgba(255, 255, 255, .78) !important;
 }
 
-body.page-formateur-redesign .vp-visual-story--trainer-dark .eyebrow {
+body.page-formateur-redesign .vp-visual-story--trainer-dark .eyebrow,
+body.page-formateur-redesign .vp-visual-story--trainer-dark .vp-mini-proof span {
   color: #fff !important;
 }
 
-body.page-formateur-redesign .vp-visual-mosaic--trainer-duo {
+body.page-formateur-redesign .vp-visual-story--trainer-dark .vp-mini-proof span {
+  background: rgba(255,255,255,.10) !important;
+  border-color: rgba(255,255,255,.22) !important;
+}
+
+body.page-formateur-redesign .vp-visual-mosaic--trainer-single {
   display: grid !important;
-  grid-template-columns: minmax(230px, 1.05fr) minmax(220px, .95fr) !important;
-  gap: clamp(18px, 2vw, 28px) !important;
+  grid-template-columns: 1fr !important;
+  width: 100% !important;
+  max-width: 650px !important;
+  justify-self: center !important;
   align-items: center !important;
 }
 
-body.page-formateur-redesign .vp-visual-mosaic--trainer-duo .vp-image-card {
+body.page-formateur-redesign .vp-visual-mosaic--trainer-single .vp-image-card--trainer-large {
   width: 100% !important;
+  min-height: clamp(480px, 43vw, 650px) !important;
+  aspect-ratio: 4 / 5 !important;
+  margin: 0 !important;
   border-color: rgba(255, 255, 255, .22) !important;
   background: rgba(255, 255, 255, .08) !important;
   box-shadow: 0 28px 90px rgba(0, 0, 0, .24) !important;
 }
 
-body.page-formateur-redesign .vp-image-card--trainer-main {
-  min-height: clamp(390px, 34vw, 500px) !important;
-}
-
-body.page-formateur-redesign .vp-image-card--trainer-side {
-  min-height: clamp(320px, 27vw, 410px) !important;
-  margin-top: clamp(36px, 5vw, 76px) !important;
-}
-
-/* Formateur — une seule image Transmission, agrandie à la place du duo */
-body.page-formateur-redesign .vp-visual-mosaic--trainer-single {
-  grid-template-columns: 1fr !important;
-  width: 100% !important;
-  max-width: 660px !important;
-  justify-self: center !important;
-}
-
-body.page-formateur-redesign .vp-visual-mosaic--trainer-single .vp-image-card--trainer-large {
-  min-height: clamp(480px, 44vw, 660px) !important;
-  aspect-ratio: 4 / 5 !important;
-}
-
 body.page-formateur-redesign .vp-visual-mosaic--trainer-single .vp-image-card--trainer-large img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
   object-position: center !important;
 }
 
-body.page-formateur-redesign .vp-visual-story--trainer-dark .vp-mini-proof span {
+/* Formules formateur : on restaure les fonds spécifiques par card. */
+body.page-formateur-redesign .vptr-catalogue-section .offer-card {
+  position: relative !important;
+  overflow: hidden !important;
+  background-size: cover !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
   color: #fff !important;
-  background: rgba(255, 255, 255, .10) !important;
-  border-color: rgba(255, 255, 255, .22) !important;
+}
+
+body.page-formateur-redesign .vptr-catalogue-section .offer-card--one {
+  background-image:
+    linear-gradient(180deg, rgba(11, 20, 32, .18) 0%, rgba(11, 20, 32, .54) 58%, rgba(11, 20, 32, .86) 100%),
+    url('/1module.png') !important;
+}
+
+body.page-formateur-redesign .vptr-catalogue-section .offer-card--two {
+  background-image:
+    linear-gradient(180deg, rgba(11, 20, 32, .16) 0%, rgba(11, 20, 32, .52) 58%, rgba(11, 20, 32, .86) 100%),
+    url('/2modules.png') !important;
+}
+
+body.page-formateur-redesign .vptr-catalogue-section .offer-card--full {
+  background-image:
+    linear-gradient(180deg, rgba(11, 20, 32, .16) 0%, rgba(11, 20, 32, .52) 58%, rgba(11, 20, 32, .86) 100%),
+    url('/packcomplet.png') !important;
+}
+
+body.page-formateur-redesign .vptr-catalogue-section .offer-card > * {
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+body.page-formateur-redesign .vptr-catalogue-section .offer-card p,
+body.page-formateur-redesign .vptr-catalogue-section .offer-card li,
+body.page-formateur-redesign .vptr-catalogue-section .offer-card span,
+body.page-formateur-redesign .vptr-catalogue-section .offer-card strong,
+body.page-formateur-redesign .vptr-catalogue-section .offer-card h3 {
+  color: #fff !important;
+}
+
+/* Catalogue : grille régulière, sans grand trou entre les lignes. */
+body.page-formateur-redesign .vptr-catalogue-section #modulesContainer.module-grid {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 22px !important;
+  align-items: stretch !important;
+  margin-top: 34px !important;
+}
+
+body.page-formateur-redesign .vptr-catalogue-section #modulesContainer .module-card,
+body.page-formateur-redesign .vptr-catalogue-section #modulesContainer .module-flip-inner {
+  min-height: 236px !important;
+}
+
+body.page-formateur-redesign .vptr-catalogue-section #modulesContainer .module-card {
+  align-self: stretch !important;
+}
+
+/* FAQ : texte réintégré avec de l'air dans les cartes. */
+body.page-formateur-redesign .vptr-faq-section .faq-grid {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 22px !important;
+  align-items: stretch !important;
+}
+
+body.page-formateur-redesign .vptr-faq-section .faq-grid .faq-card {
+  padding: clamp(22px, 2vw, 28px) !important;
+  min-height: 176px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: flex-start !important;
+}
+
+body.page-formateur-redesign .vptr-faq-section .faq-card h3 {
+  margin: 0 0 12px !important;
+  font-size: clamp(1rem, 1.4vw, 1.25rem) !important;
+  line-height: 1.12 !important;
+  letter-spacing: -.04em !important;
+}
+
+body.page-formateur-redesign .vptr-faq-section .faq-card p {
+  margin: 0 !important;
+  line-height: 1.72 !important;
 }
 
 @media (max-width: 980px) {
-  body.page-formateur-redesign .vp-visual-story--trainer-dark .vp-visual-story-grid {
+  body.page-formateur-redesign .vp-visual-story--trainer-dark .vp-visual-story-grid,
+  body.page-formateur-redesign .vptr-catalogue-section #modulesContainer.module-grid,
+  body.page-formateur-redesign .vptr-faq-section .faq-grid {
     grid-template-columns: 1fr !important;
   }
 
-  body.page-formateur-redesign .vp-visual-story--trainer-dark .vp-visual-copy,
-  body.page-formateur-redesign .vp-visual-story--trainer-dark .vp-visual-mosaic {
-    order: initial !important;
-  }
-
-  body.page-formateur-redesign .vp-visual-story--trainer-dark .vp-visual-copy h2 {
-    max-width: 11.5ch !important;
-  }
-}
-
-@media (max-width: 680px) {
-  body.page-formateur-redesign .vp-visual-mosaic--trainer-duo {
-    grid-template-columns: 1fr !important;
-  }
-
-  body.page-formateur-redesign .vp-image-card--trainer-main,
-  body.page-formateur-redesign .vp-image-card--trainer-side {
-    min-height: 280px !important;
-    margin-top: 0 !important;
-  }
-}
-
-
-@media (max-width: 680px) {
   body.page-formateur-redesign .vp-visual-mosaic--trainer-single {
     max-width: 100% !important;
   }
+}
 
+@media (max-width: 680px) {
   body.page-formateur-redesign .vp-visual-mosaic--trainer-single .vp-image-card--trainer-large {
     min-height: 390px !important;
-    aspect-ratio: 4 / 5 !important;
   }
-}
-
-
-/* =========================================================
-   Correctif Formateur — ruban vraiment en arrière-plan
-   ---------------------------------------------------------
-   Le ruban reste décoratif : il passe derrière les modules,
-   cartes, images, textes, formulaires et boutons.
-   ========================================================= */
-body.page-formateur-redesign {
-  position: relative !important;
-  isolation: isolate !important;
-}
-
-body.page-formateur-redesign .vpl-scroll-ribbon {
-  z-index: 0 !important;
-  opacity: .34 !important;
-  pointer-events: none !important;
-  mix-blend-mode: normal !important;
-}
-
-body.page-formateur-redesign main,
-body.page-formateur-redesign main > section,
-body.page-formateur-redesign .vpl-inner-hero,
-body.page-formateur-redesign .vp-visual-story,
-body.page-formateur-redesign .vptr-section,
-body.page-formateur-redesign #sessions,
-body.page-formateur-redesign #formulaire {
-  position: relative !important;
-  z-index: 2 !important;
-}
-
-body.page-formateur-redesign .vpl-container,
-body.page-formateur-redesign .container,
-body.page-formateur-redesign .vpl-inner-hero-grid,
-body.page-formateur-redesign .vp-visual-story-grid,
-body.page-formateur-redesign .vp-visual-copy,
-body.page-formateur-redesign .vp-visual-mosaic,
-body.page-formateur-redesign .section-head,
-body.page-formateur-redesign .module-catalog-head,
-body.page-formateur-redesign .offer-grid,
-body.page-formateur-redesign .module-grid,
-body.page-formateur-redesign .profile-grid,
-body.page-formateur-redesign .benefit-grid,
-body.page-formateur-redesign .split-panel,
-body.page-formateur-redesign .sessions-grid,
-body.page-formateur-redesign .faq-grid,
-body.page-formateur-redesign .form-grid,
-body.page-formateur-redesign .vpl-actions {
-  position: relative !important;
-  z-index: 4 !important;
-}
-
-body.page-formateur-redesign .vpl-inner-visual,
-body.page-formateur-redesign .vpl-inner-stat,
-body.page-formateur-redesign .vp-image-card,
-body.page-formateur-redesign .offer-card,
-body.page-formateur-redesign .module-card,
-body.page-formateur-redesign .module-flip-inner,
-body.page-formateur-redesign .module-flip-face,
-body.page-formateur-redesign .profile-card,
-body.page-formateur-redesign .benefit-card,
-body.page-formateur-redesign .info-panel,
-body.page-formateur-redesign .session-card,
-body.page-formateur-redesign .faq-card,
-body.page-formateur-redesign .form-card,
-body.page-formateur-redesign .bullet-item,
-body.page-formateur-redesign .empty-state,
-body.page-formateur-redesign .btn,
-body.page-formateur-redesign .vpl-button,
-body.page-formateur-redesign .eyebrow,
-body.page-formateur-redesign h1,
-body.page-formateur-redesign h2,
-body.page-formateur-redesign h3,
-body.page-formateur-redesign p,
-body.page-formateur-redesign ul,
-body.page-formateur-redesign form,
-body.page-formateur-redesign input,
-body.page-formateur-redesign select,
-body.page-formateur-redesign textarea,
-body.page-formateur-redesign label {
-  position: relative !important;
-  z-index: 6 !important;
-}
-
-body.page-formateur-redesign .module-flip-face,
-body.page-formateur-redesign .profile-card,
-body.page-formateur-redesign .benefit-card,
-body.page-formateur-redesign .info-panel,
-body.page-formateur-redesign .session-card,
-body.page-formateur-redesign .faq-card,
-body.page-formateur-redesign .form-card,
-body.page-formateur-redesign .empty-state,
-body.page-formateur-redesign .offer-card {
-  background: rgba(255,255,255,.94) !important;
-  isolation: isolate !important;
-}
-
-body.page-formateur-redesign .module-flip-face.back {
-  background: linear-gradient(135deg, rgba(255,255,255,.98), rgba(225,239,250,.96)) !important;
-}
-
-body.page-formateur-redesign .vp-visual-story--trainer-dark .vpl-container,
-body.page-formateur-redesign .vp-visual-story--trainer-dark .vp-visual-story-grid,
-body.page-formateur-redesign .vp-visual-story--trainer-dark .vp-visual-copy,
-body.page-formateur-redesign .vp-visual-story--trainer-dark .vp-visual-mosaic,
-body.page-formateur-redesign .vp-visual-story--trainer-dark .vp-image-card {
-  position: relative !important;
-  z-index: 6 !important;
-}
-
-body.page-formateur-redesign .vpl-nav {
-  z-index: 100 !important;
 }
