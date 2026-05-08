@@ -1319,7 +1319,7 @@
 
       select.innerHTML = `
         <option value="">Choisir un module</option>
-        ${options.map(module => `<option value="${module.name}">${module.name}</option>`).join("")}
+        ${options.map(module => `<option value="${escapeAttr(module.name)}">${escapeHtml(module.name)}</option>`).join("")}
       `;
     }
 
@@ -1334,8 +1334,8 @@
             return aName.localeCompare(bName);
           })
           .map(trainer => `
-            <option value="${trainer.id}">
-              ${(trainer.last_name || "").toUpperCase()} ${trainer.first_name || ""} — ${trainer.email || ""}
+            <option value="${escapeAttr(trainer.id)}">
+              ${escapeHtml((trainer.last_name || "").toUpperCase())} ${escapeHtml(trainer.first_name || "")} — ${escapeHtml(trainer.email || "")}
             </option>
           `)
           .join("")}
@@ -1347,7 +1347,7 @@
 
       trainerModuleNameInput.innerHTML = `
         <option value="">Choisir un module</option>
-        ${options.map(module => `<option value="${module.name}">${module.name}</option>`).join("")}
+        ${options.map(module => `<option value="${escapeAttr(module.name)}">${escapeHtml(module.name)}</option>`).join("")}
       `;
     }
 
@@ -1387,16 +1387,16 @@
           <tbody>
             ${rows.map(row => `
               <tr>
-                <td><strong>${row.name || "—"}</strong><span>${row.short_description || "—"}</span></td>
-                <td>${row.slug || "—"}</td>
-                <td><span class="badge ${normalize(row.status) === "active" ? "badge-success" : "badge-warning"}">${row.status || (row.is_active ? "active" : "inactive")}</span></td>
+                <td><strong>${escapeHtml(row.name || "—")}</strong><span>${escapeHtml(row.short_description || "—")}</span></td>
+                <td>${escapeHtml(row.slug || "—")}</td>
+                <td><span class="badge ${normalize(row.status) === "active" ? "badge-success" : "badge-warning"}">${escapeHtml(row.status || (row.is_active ? "active" : "inactive"))}</span></td>
                 <td>${row.public_visible ? "Oui" : "Non"}</td>
                 <td>${row.sort_order ?? 0}</td>
-                <td>${row.category || "—"}</td>
+                <td>${escapeHtml(row.category || "—")}</td>
                 <td>
                   <div class="action-stack">
-                    <button class="btn btn-secondary" type="button" onclick="window.editModuleCatalog('${row.id}')">Modifier</button>
-                    <button class="btn btn-danger" type="button" onclick="window.deleteModuleCatalog('${row.id}', '${(row.name || "").replace(/'/g, "\'")}')">Supprimer</button>
+                    <button class="btn btn-secondary" type="button" onclick="window.editModuleCatalog('${jsArg(row.id)}')">Modifier</button>
+                    <button class="btn btn-danger" type="button" onclick="window.deleteModuleCatalog('${jsArg(row.id)}', '${jsArg(row.name || "")}')">Supprimer</button>
                   </div>
                 </td>
               </tr>
@@ -1645,6 +1645,28 @@
       return String(value || "").trim().toLowerCase();
     }
 
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function escapeAttr(value) {
+      return escapeHtml(value).replace(/`/g, "&#096;");
+    }
+
+    function jsArg(value) {
+      return escapeAttr(String(value ?? "")
+        .replace(/\\/g, "\\\\")
+        .replace(/'/g, "\\'")
+        .replace(/\r/g, "\\r")
+        .replace(/\n/g, "\\n")
+        .replace(/</g, "\\x3C"));
+    }
+
     function getToday() {
       const today = new Date();
       today.setHours(0, 0, 0, 0);
@@ -1724,15 +1746,15 @@
           <tbody>
             ${rows.map(row => `
               <tr>
-                <td><strong>${row.first_name || ""} ${row.last_name || ""}</strong></td>
+                <td><strong>${escapeHtml(row.first_name || "")} ${escapeHtml(row.last_name || "")}</strong></td>
                 <td>
-                  <strong>${row.email || "—"}</strong>
-                  <span>${row.phone || "—"}</span>
+                  <strong>${escapeHtml(row.email || "—")}</strong>
+                  <span>${escapeHtml(row.phone || "—")}</span>
                 </td>
-                <td><strong>${row.stage_title || row.stage_id || "Stage"}</strong></td>
+                <td><strong>${escapeHtml(row.stage_title || row.stage_id || "Stage")}</strong></td>
                 <td>${row.places || 0}</td>
                 <td>${formatPrice(row.total_amount)}</td>
-                <td><span class="badge badge-success">${row.payment_status || "paid"}</span></td>
+                <td><span class="badge ${normalize(row.payment_status || "paid") === "paid" ? "badge-success" : "badge-warning"}">${escapeHtml(row.payment_status || "paid")}</span></td>
                 <td>${formatDate(row.created_at)}</td>
               </tr>
             `).join("")}
@@ -1771,24 +1793,24 @@
           <tbody>
             ${rows.map(row => `
               <tr>
-                <td><strong>${row.title || "—"}</strong><span>${row.training_type || "—"}</span></td>
-                <td>${row.city || "—"}</td>
+                <td><strong>${escapeHtml(row.title || "—")}</strong><span>${escapeHtml(row.training_type || "—")}</span></td>
+                <td>${escapeHtml(row.city || "—")}</td>
                 <td>${formatStageDate(row.stage_date)}</td>
                 <td>${formatPrice(row.price)}</td>
                 <td>${row.remaining_places ?? 0}</td>
                 <td>
                   <span class="badge ${normalize(row.status) === "published" ? "badge-success" : "badge-warning"}">
-                    ${row.status || "published"}
+                    ${escapeHtml(row.status || "published")}
                   </span>
                 </td>
-                <td>${row.trainer_id || "—"}</td>
+                <td>${escapeHtml(row.trainer_id || "—")}</td>
                 <td>${getStageReservationCount(row.id)}</td>
                 <td>
                   <div class="action-stack">
-                    <button class="btn btn-secondary" type="button" onclick="window.contactStageRegistrants('${row.id}', '${(row.title || "").replace(/'/g, "\\'")}')">
+                    <button class="btn btn-secondary" type="button" onclick="window.contactStageRegistrants('${jsArg(row.id)}', '${jsArg(row.title || "")}')">
                       Contacter les inscrits
                     </button>
-                    <button class="btn btn-danger" type="button" onclick="window.deleteStage('${row.id}', '${(row.title || "").replace(/'/g, "\\'")}')">
+                    <button class="btn btn-danger" type="button" onclick="window.deleteStage('${jsArg(row.id)}', '${jsArg(row.title || "")}')">
                       Supprimer le stage
                     </button>
                   </div>
@@ -1816,13 +1838,13 @@
 
       if (isAuthorized && isPendingValidation) {
         actions.push(`
-          <button class="btn btn-primary" onclick="window.captureTrainerPayment('${row.id}', '${row.stripe_payment_intent_id || ""}')">
+          <button class="btn btn-primary" onclick="window.captureTrainerPayment('${jsArg(row.id)}', '${jsArg(row.stripe_payment_intent_id || "")}')">
             Accepter dossier et encaisser
           </button>
         `);
 
         actions.push(`
-          <button class="btn btn-danger" onclick="window.rejectTrainerCandidate('${row.id}')">
+          <button class="btn btn-danger" onclick="window.rejectTrainerCandidate('${jsArg(row.id)}')">
             Refuser dossier
           </button>
         `);
@@ -1830,19 +1852,19 @@
 
       if (isCaptured && isValidated && result === "pending") {
         actions.push(`
-          <button class="btn btn-success" onclick="window.updateTrainingResult('${row.id}', 'passed')">
+          <button class="btn btn-success" onclick="window.updateTrainingResult('${jsArg(row.id)}', 'passed')">
             Marquer réussi
           </button>
         `);
 
         actions.push(`
-          <button class="btn btn-warning" onclick="window.updateTrainingResult('${row.id}', 'resit')">
+          <button class="btn btn-warning" onclick="window.updateTrainingResult('${jsArg(row.id)}', 'resit')">
             Marquer rattrapage
           </button>
         `);
 
         actions.push(`
-          <button class="btn btn-danger" onclick="window.updateTrainingResult('${row.id}', 'failed')">
+          <button class="btn btn-danger" onclick="window.updateTrainingResult('${jsArg(row.id)}', 'failed')">
             Marquer recalé
           </button>
         `);
@@ -1850,13 +1872,13 @@
 
       if (isCaptured && isValidated && result === "resit") {
         actions.push(`
-          <button class="btn btn-success" onclick="window.updateTrainingResult('${row.id}', 'passed')">
+          <button class="btn btn-success" onclick="window.updateTrainingResult('${jsArg(row.id)}', 'passed')">
             Valider après rattrapage
           </button>
         `);
 
         actions.push(`
-          <button class="btn btn-danger" onclick="window.updateTrainingResult('${row.id}', 'failed')">
+          <button class="btn btn-danger" onclick="window.updateTrainingResult('${jsArg(row.id)}', 'failed')">
             Recaler après rattrapage
           </button>
         `);
@@ -1864,7 +1886,7 @@
 
       if (isCaptured && isValidated && result === "passed" && !existsAsTrainer) {
         actions.push(`
-          <button class="btn btn-primary" onclick="window.finalizeTrainer('${row.id}')">
+          <button class="btn btn-primary" onclick="window.finalizeTrainer('${jsArg(row.id)}')">
             Activer formateur
           </button>
         `);
@@ -1923,16 +1945,16 @@
 
               return `
                 <tr>
-                  <td><strong>${row.first_name || ""} ${row.last_name || ""}</strong></td>
+                  <td><strong>${escapeHtml(row.first_name || "")} ${escapeHtml(row.last_name || "")}</strong></td>
                   <td>
-                    <strong>${row.email || "—"}</strong>
-                    <span>${row.phone || "—"}</span><br />
-                    <span>${row.city || "—"}</span>
+                    <strong>${escapeHtml(row.email || "—")}</strong>
+                    <span>${escapeHtml(row.phone || "—")}</span><br />
+                    <span>${escapeHtml(row.city || "—")}</span>
                   </td>
-                  <td><strong>${row.session_id || "—"}</strong></td>
-                  <td><span class="badge ${paymentBadgeClass}">${row.payment_status || "—"}</span></td>
-                  <td><span class="badge ${validationBadgeClass}">${row.validation_status || "—"}</span></td>
-                  <td><span class="badge ${resultBadgeClass}">${resultValue}</span></td>
+                  <td><strong>${escapeHtml(row.session_id || "—")}</strong></td>
+                  <td><span class="badge ${paymentBadgeClass}">${escapeHtml(row.payment_status || "—")}</span></td>
+                  <td><span class="badge ${validationBadgeClass}">${escapeHtml(row.validation_status || "—")}</span></td>
+                  <td><span class="badge ${resultBadgeClass}">${escapeHtml(resultValue)}</span></td>
                   <td>${formatDate(row.created_at)}</td>
                   <td>${buildCandidateActions(row)}</td>
                 </tr>
@@ -1986,17 +2008,17 @@
 
               return `
                 <tr>
-                  <td><strong>${row.first_name || ""} ${row.last_name || ""}</strong></td>
+                  <td><strong>${escapeHtml(row.first_name || "")} ${escapeHtml(row.last_name || "")}</strong></td>
                   <td>
-                    <strong>${row.email || "—"}</strong>
-                    <span>${row.phone || "—"}</span><br />
-                    <span>${row.city || "—"}</span>
+                    <strong>${escapeHtml(row.email || "—")}</strong>
+                    <span>${escapeHtml(row.phone || "—")}</span><br />
+                    <span>${escapeHtml(row.city || "—")}</span>
                   </td>
-                  <td><strong>${row.session_id || "—"}</strong></td>
-                  <td><span class="badge ${paymentBadgeClass}">${row.payment_status || "—"}</span></td>
-                  <td><span class="badge ${validationBadgeClass}">${row.validation_status || "—"}</span></td>
-                  <td><span class="badge ${resultBadgeClass}">${resultValue}</span></td>
-                  <td><span class="badge badge-warning">${archiveReasonLabel(row.archive_reason)}</span></td>
+                  <td><strong>${escapeHtml(row.session_id || "—")}</strong></td>
+                  <td><span class="badge ${paymentBadgeClass}">${escapeHtml(row.payment_status || "—")}</span></td>
+                  <td><span class="badge ${validationBadgeClass}">${escapeHtml(row.validation_status || "—")}</span></td>
+                  <td><span class="badge ${resultBadgeClass}">${escapeHtml(resultValue)}</span></td>
+                  <td><span class="badge badge-warning">${escapeHtml(archiveReasonLabel(row.archive_reason))}</span></td>
                   <td>${formatDate(row.archived_at)}</td>
                 </tr>
               `;
@@ -2063,11 +2085,11 @@
 
               return `
                 <tr>
-                  <td><strong>${row.first_name || ""} ${row.last_name || ""}</strong></td>
-                  <td>${row.email || "—"}</td>
-                  <td>${row.city || "—"}</td>
-                  <td>${row.department || "—"}</td>
-                  <td>${row.region || "—"}</td>
+                  <td><strong>${escapeHtml(row.first_name || "")} ${escapeHtml(row.last_name || "")}</strong></td>
+                  <td>${escapeHtml(row.email || "—")}</td>
+                  <td>${escapeHtml(row.city || "—")}</td>
+                  <td>${escapeHtml(row.department || "—")}</td>
+                  <td>${escapeHtml(row.region || "—")}</td>
                   <td>${formatShortDate(row.certification_expiry)}</td>
                   <td>${formatShortDate(row.affiliation_end)}</td>
                   <td><span class="badge ${certValid ? "badge-success" : "badge-danger"}">${certValid ? "Valide" : "Expirée"}</span></td>
@@ -2113,26 +2135,26 @@
               return `
                 <tr>
                   <td>
-                    <strong>${trainer ? `${trainer.first_name || ""} ${trainer.last_name || ""}`.trim() : "Formateur inconnu"}</strong>
-                    <span>${trainer?.city || "—"}</span>
+                    <strong>${escapeHtml(trainer ? `${trainer.first_name || ""} ${trainer.last_name || ""}`.trim() : "Formateur inconnu")}</strong>
+                    <span>${escapeHtml(trainer?.city || "—")}</span>
                   </td>
                   <td>
-                    <strong>${trainer?.email || "—"}</strong>
-                    <span>${trainer?.phone || "—"}</span>
+                    <strong>${escapeHtml(trainer?.email || "—")}</strong>
+                    <span>${escapeHtml(trainer?.phone || "—")}</span>
                   </td>
-                  <td><strong>${row.module_name || "—"}</strong></td>
-                  <td><span class="badge ${badgeClass}">${displayStatus}</span></td>
+                  <td><strong>${escapeHtml(row.module_name || "—")}</strong></td>
+                  <td><span class="badge ${badgeClass}">${escapeHtml(displayStatus)}</span></td>
                   <td>${formatShortDate(row.validated_at)}</td>
                   <td>${formatShortDate(row.expires_at)}</td>
                   <td>
                     <div class="action-stack">
-                      <button class="btn btn-success" type="button" onclick="window.updateTrainerModuleAction('${row.id}', 'extend_2_years')">
+                      <button class="btn btn-success" type="button" onclick="window.updateTrainerModuleAction('${jsArg(row.id)}', 'extend_2_years')">
                         Prolonger 2 ans
                       </button>
-                      <button class="btn btn-warning" type="button" onclick="window.updateTrainerModuleAction('${row.id}', 'reactivate_2_years')">
+                      <button class="btn btn-warning" type="button" onclick="window.updateTrainerModuleAction('${jsArg(row.id)}', 'reactivate_2_years')">
                         Réactiver 2 ans
                       </button>
-                      <button class="btn btn-danger" type="button" onclick="window.updateTrainerModuleAction('${row.id}', 'mark_expired')">
+                      <button class="btn btn-danger" type="button" onclick="window.updateTrainerModuleAction('${jsArg(row.id)}', 'mark_expired')">
                         Marquer expiré
                       </button>
                     </div>
@@ -2170,16 +2192,16 @@
           <tbody>
             ${rows.map(row => `
               <tr>
-                <td><strong>${row.module_name || "—"}</strong></td>
-                <td>${row.title || "—"}</td>
-                <td>${row.city || "—"}</td>
-                <td>${row.department || "—"}</td>
-                <td>${row.address || "—"}</td>
+                <td><strong>${escapeHtml(row.module_name || "—")}</strong></td>
+                <td>${escapeHtml(row.title || "—")}</td>
+                <td>${escapeHtml(row.city || "—")}</td>
+                <td>${escapeHtml(row.department || "—")}</td>
+                <td>${escapeHtml(row.address || "—")}</td>
                 <td>${formatShortDate(row.start_date)}</td>
                 <td>${formatShortDate(row.end_date)}</td>
                 <td>${formatPrice(row.launch_price || row.standard_price || 0)}</td>
                 <td>${row.remaining_places ?? 0}</td>
-                <td><span class="badge ${row.status === "open" ? "badge-success" : "badge-warning"}">${row.status || "—"}</span></td>
+                <td><span class="badge ${row.status === "open" ? "badge-success" : "badge-warning"}">${escapeHtml(row.status || "—")}</span></td>
               </tr>
             `).join("")}
           </tbody>
