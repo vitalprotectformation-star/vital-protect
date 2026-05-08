@@ -14761,340 +14761,108 @@ body.page-accueil-rythme .hp-standard-premium .hp-standard-progress {
 
 
 /* =========================================================
-   Correctif propre Formateur — ruban arrière-plan, photo unique,
-   cartes conservées
+   Correctif Formateur — textes cadrés dans le formulaire
    ========================================================= */
-
-/* Le ruban reste décoratif et passe derrière les zones de contenu, sans modifier les fonds des cards. */
-body.page-formateur-redesign {
-  position: relative !important;
-  isolation: isolate !important;
-}
-
-body.page-formateur-redesign > .vpl-scroll-ribbon,
-body.page-formateur-redesign .vpl-scroll-ribbon {
-  z-index: 0 !important;
-  pointer-events: none !important;
-  opacity: .26 !important;
-  mix-blend-mode: normal !important;
-}
-
-body.page-formateur-redesign > main,
-body.page-formateur-redesign main > section,
-body.page-formateur-redesign > footer,
-body.page-formateur-redesign .vpl-marquee,
-body.page-formateur-redesign .vptr-background-orbs {
-  position: relative !important;
-}
-
-body.page-formateur-redesign > main,
-body.page-formateur-redesign main > section,
-body.page-formateur-redesign > footer,
-body.page-formateur-redesign .vpl-marquee {
-  z-index: 2 !important;
-}
-
-body.page-formateur-redesign .vpl-nav {
-  z-index: 100 !important;
-}
-
-/* Section Transmission : même mise en page sombre, mais avec une seule photo agrandie. */
-body.page-formateur-redesign .vp-visual-story--trainer-dark {
-  padding: clamp(84px, 9vw, 136px) 0 !important;
-  background:
-    radial-gradient(circle at 18% 20%, rgba(74, 184, 255, .12), transparent 24%),
-    linear-gradient(135deg, #07111f 0%, #0d2943 100%) !important;
-  color: #fff !important;
-}
-
-body.page-formateur-redesign .vp-visual-story--trainer-dark .vp-visual-story-grid {
-  grid-template-columns: minmax(500px, .92fr) minmax(0, 1fr) !important;
-  gap: clamp(44px, 6vw, 88px) !important;
-  align-items: center !important;
-}
-
-body.page-formateur-redesign .vp-visual-story--trainer-dark .vp-visual-copy h2 {
-  max-width: 10.8ch !important;
-  color: #fff !important;
-}
-
-body.page-formateur-redesign .vp-visual-story--trainer-dark .vp-visual-copy p {
-  max-width: 58ch !important;
-  color: rgba(255, 255, 255, .78) !important;
-}
-
-body.page-formateur-redesign .vp-visual-story--trainer-dark .eyebrow,
-body.page-formateur-redesign .vp-visual-story--trainer-dark .vp-mini-proof span {
-  color: #fff !important;
-}
-
-body.page-formateur-redesign .vp-visual-story--trainer-dark .vp-mini-proof span {
-  background: rgba(255,255,255,.10) !important;
-  border-color: rgba(255,255,255,.22) !important;
-}
-
-body.page-formateur-redesign .vp-visual-mosaic--trainer-single {
-  display: grid !important;
-  grid-template-columns: 1fr !important;
-  width: 100% !important;
-  max-width: 650px !important;
-  justify-self: center !important;
-  align-items: center !important;
-}
-
-body.page-formateur-redesign .vp-visual-mosaic--trainer-single .vp-image-card--trainer-large {
-  width: 100% !important;
-  min-height: clamp(480px, 43vw, 650px) !important;
-  aspect-ratio: 4 / 5 !important;
-  margin: 0 !important;
-  border-color: rgba(255, 255, 255, .22) !important;
-  background: rgba(255, 255, 255, .08) !important;
-  box-shadow: 0 28px 90px rgba(0, 0, 0, .24) !important;
-}
-
-body.page-formateur-redesign .vp-visual-mosaic--trainer-single .vp-image-card--trainer-large img {
-  width: 100% !important;
-  height: 100% !important;
-  object-fit: cover !important;
-  object-position: center !important;
-}
-
-/* Formules formateur : on restaure les fonds spécifiques par card. */
-body.page-formateur-redesign .vptr-catalogue-section .offer-card {
-  position: relative !important;
-  overflow: hidden !important;
-  background-size: cover !important;
-  background-position: center !important;
-  background-repeat: no-repeat !important;
-  color: #fff !important;
-}
-
-body.page-formateur-redesign .vptr-catalogue-section .offer-card--one {
-  background-image:
-    linear-gradient(180deg, rgba(11, 20, 32, .18) 0%, rgba(11, 20, 32, .54) 58%, rgba(11, 20, 32, .86) 100%),
-    url('/1module.png') !important;
-}
-
-body.page-formateur-redesign .vptr-catalogue-section .offer-card--two {
-  background-image:
-    linear-gradient(180deg, rgba(11, 20, 32, .16) 0%, rgba(11, 20, 32, .52) 58%, rgba(11, 20, 32, .86) 100%),
-    url('/2modules.png') !important;
-}
-
-body.page-formateur-redesign .vptr-catalogue-section .offer-card--full {
-  background-image:
-    linear-gradient(180deg, rgba(11, 20, 32, .16) 0%, rgba(11, 20, 32, .52) 58%, rgba(11, 20, 32, .86) 100%),
-    url('/packcomplet.png') !important;
-}
-
-body.page-formateur-redesign .vptr-catalogue-section .offer-card > * {
-  position: relative !important;
-  z-index: 1 !important;
-}
-
-body.page-formateur-redesign .vptr-catalogue-section .offer-card p,
-body.page-formateur-redesign .vptr-catalogue-section .offer-card li,
-body.page-formateur-redesign .vptr-catalogue-section .offer-card span,
-body.page-formateur-redesign .vptr-catalogue-section .offer-card strong,
-body.page-formateur-redesign .vptr-catalogue-section .offer-card h3 {
-  color: #fff !important;
-}
-
-/* Catalogue : grille régulière, sans grand trou entre les lignes. */
-body.page-formateur-redesign .vptr-catalogue-section #modulesContainer.module-grid {
-  display: grid !important;
-  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-  gap: 22px !important;
-  align-items: stretch !important;
-  margin-top: 34px !important;
-}
-
-body.page-formateur-redesign .vptr-catalogue-section #modulesContainer .module-card,
-body.page-formateur-redesign .vptr-catalogue-section #modulesContainer .module-flip-inner {
-  min-height: 236px !important;
-}
-
-body.page-formateur-redesign .vptr-catalogue-section #modulesContainer .module-card {
-  align-self: stretch !important;
-}
-
-/* FAQ : texte réintégré avec de l'air dans les cartes. */
-body.page-formateur-redesign .vptr-faq-section .faq-grid {
-  display: grid !important;
-  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-  gap: 22px !important;
-  align-items: stretch !important;
-}
-
-body.page-formateur-redesign .vptr-faq-section .faq-grid .faq-card {
-  padding: clamp(22px, 2vw, 28px) !important;
-  min-height: 176px !important;
-  display: flex !important;
-  flex-direction: column !important;
-  justify-content: flex-start !important;
-}
-
-body.page-formateur-redesign .vptr-faq-section .faq-card h3 {
-  margin: 0 0 12px !important;
-  font-size: clamp(1rem, 1.4vw, 1.25rem) !important;
-  line-height: 1.12 !important;
-  letter-spacing: -.04em !important;
-}
-
-body.page-formateur-redesign .vptr-faq-section .faq-card p {
-  margin: 0 !important;
-  line-height: 1.72 !important;
-}
-
-@media (max-width: 980px) {
-  body.page-formateur-redesign .vp-visual-story--trainer-dark .vp-visual-story-grid,
-  body.page-formateur-redesign .vptr-catalogue-section #modulesContainer.module-grid,
-  body.page-formateur-redesign .vptr-faq-section .faq-grid {
-    grid-template-columns: 1fr !important;
-  }
-
-  body.page-formateur-redesign .vp-visual-mosaic--trainer-single {
-    max-width: 100% !important;
-  }
-}
-
-@media (max-width: 680px) {
-  body.page-formateur-redesign .vp-visual-mosaic--trainer-single .vp-image-card--trainer-large {
-    min-height: 390px !important;
-  }
-}
-
-
-/* =========================================================
-   Correctif Formateur — formulaire plus lisible
-   ========================================================= */
-body.page-formateur-redesign #formulaire {
-  padding: clamp(86px, 9vw, 124px) 0 clamp(82px, 8vw, 110px) !important;
-}
-
 body.page-formateur-redesign #formulaire > .container {
-  width: min(980px, calc(100% - 44px)) !important;
+  width: min(620px, calc(100% - 32px)) !important;
 }
 
 body.page-formateur-redesign #formulaire .form-card {
-  width: 100% !important;
-  padding: clamp(34px, 4.8vw, 58px) !important;
-  border-radius: 34px !important;
-  background: rgba(255, 255, 255, .90) !important;
-  box-shadow: 0 34px 90px rgba(7, 24, 44, .16) !important;
+  padding: clamp(24px, 4vw, 34px) !important;
 }
 
-body.page-formateur-redesign #formulaire .form-head {
-  max-width: 780px !important;
-  margin-bottom: 26px !important;
+body.page-formateur-redesign #formulaire .form-card,
+body.page-formateur-redesign #formulaire .form-card * {
+  box-sizing: border-box !important;
 }
 
 body.page-formateur-redesign #formulaire .form-head h2 {
-  max-width: 740px !important;
-  font-size: clamp(3.2rem, 5.8vw, 6.3rem) !important;
+  font-size: clamp(3rem, 9.2vw, 4.6rem) !important;
   line-height: .88 !important;
-  letter-spacing: -.085em !important;
-  margin-bottom: 18px !important;
+  max-width: 100% !important;
+  overflow-wrap: normal !important;
 }
 
-body.page-formateur-redesign #formulaire .form-head p {
-  max-width: 680px !important;
-  font-size: 1rem !important;
-  line-height: 1.72 !important;
+body.page-formateur-redesign #formulaire .form-head p,
+body.page-formateur-redesign #formulaire .form-note,
+body.page-formateur-redesign #formulaire .form-rgpd-note {
+  max-width: 100% !important;
+  overflow-wrap: anywhere !important;
+  word-break: normal !important;
+  hyphens: auto !important;
 }
 
 body.page-formateur-redesign #formulaire .form-grid {
   display: grid !important;
   grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-  column-gap: 22px !important;
-  row-gap: 18px !important;
+  gap: 16px 14px !important;
   align-items: start !important;
+}
+
+body.page-formateur-redesign #formulaire .form-field {
+  min-width: 0 !important;
+  width: 100% !important;
+}
+
+body.page-formateur-redesign #formulaire .form-field.full {
+  grid-column: 1 / -1 !important;
 }
 
 body.page-formateur-redesign #formulaire input,
 body.page-formateur-redesign #formulaire select,
 body.page-formateur-redesign #formulaire textarea {
-  min-height: 52px !important;
-  border-radius: 12px !important;
-  font-size: .98rem !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  display: block !important;
+  font-size: .95rem !important;
+  line-height: 1.35 !important;
 }
 
 body.page-formateur-redesign #formulaire select {
+  white-space: nowrap !important;
   text-overflow: ellipsis !important;
-}
-
-body.page-formateur-redesign #formulaire .form-field.full,
-body.page-formateur-redesign #formulaire .form-field.full textarea {
-  grid-column: 1 / -1 !important;
+  overflow: hidden !important;
+  padding-right: 2.2rem !important;
 }
 
 body.page-formateur-redesign #formulaire textarea {
-  min-height: 150px !important;
+  min-height: 120px !important;
   resize: vertical !important;
+  overflow-wrap: anywhere !important;
+}
+
+body.page-formateur-redesign #formulaire textarea::placeholder,
+body.page-formateur-redesign #formulaire input::placeholder {
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
 }
 
 body.page-formateur-redesign #formulaire .btn[type="submit"] {
-  margin-top: 20px !important;
+  max-width: 100% !important;
+  white-space: normal !important;
+  text-align: center !important;
 }
 
-body.page-formateur-redesign #formulaire .form-rgpd-note {
-  max-width: 820px !important;
-  font-size: .82rem !important;
-  line-height: 1.7 !important;
-}
-
-@media (min-width: 1040px) {
-  body.page-formateur-redesign #formulaire .form-card {
-    display: grid !important;
-    grid-template-columns: .82fr 1.18fr !important;
-    gap: clamp(34px, 4vw, 56px) !important;
-    align-items: start !important;
-  }
-
-  body.page-formateur-redesign #formulaire .form-head,
-  body.page-formateur-redesign #checkoutFeedback,
-  body.page-formateur-redesign #selectedSessionBox {
-    grid-column: 1 !important;
-  }
-
-  body.page-formateur-redesign #formulaire form {
-    grid-column: 2 !important;
-    grid-row: 1 / span 5 !important;
-  }
-
-  body.page-formateur-redesign #formulaire .form-head h2 {
-    font-size: clamp(4rem, 5.1vw, 5.6rem) !important;
-  }
-}
-
-@media (max-width: 760px) {
+@media (max-width: 620px) {
   body.page-formateur-redesign #formulaire > .container {
-    width: min(100% - 28px, 620px) !important;
+    width: min(100% - 24px, 520px) !important;
   }
 
   body.page-formateur-redesign #formulaire .form-card {
-    padding: 28px 22px !important;
-    border-radius: 26px !important;
-  }
-
-  body.page-formateur-redesign #formulaire .form-head h2 {
-    font-size: clamp(2.75rem, 14vw, 4.2rem) !important;
-    line-height: .92 !important;
-    letter-spacing: -.075em !important;
+    padding: 22px !important;
+    border-radius: 24px !important;
   }
 
   body.page-formateur-redesign #formulaire .form-grid {
     grid-template-columns: 1fr !important;
-    gap: 16px !important;
   }
 
-  body.page-formateur-redesign #formulaire .form-field.full,
-  body.page-formateur-redesign #formulaire .form-field.full textarea {
+  body.page-formateur-redesign #formulaire .form-field.full {
     grid-column: auto !important;
   }
 
-  body.page-formateur-redesign #formulaire .btn[type="submit"] {
-    width: 100% !important;
-    justify-content: center !important;
+  body.page-formateur-redesign #formulaire .form-head h2 {
+    font-size: clamp(2.65rem, 14vw, 3.7rem) !important;
   }
 }
