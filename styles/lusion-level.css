@@ -14810,3 +14810,18 @@ body.page-accueil-rythme .hp-standard-progress {
     line-height: 1 !important;
   }
 }
+
+/* =========================================================
+   Correctif Entreprises — espace sous le menu fixe
+   ========================================================= */
+body.page-entreprises main > .vp-visual-story.vp-visual-story--enterprise:first-child,
+body.page-editorial-light main > .vp-visual-story.vp-visual-story--enterprise:first-child {
+  padding-top: calc(var(--vpl-nav-offset, 92px) + clamp(32px, 4vw, 56px)) !important;
+}
+
+@media (max-width: 680px) {
+  body.page-entreprises main > .vp-visual-story.vp-visual-story--enterprise:first-child,
+  body.page-editorial-light main > .vp-visual-story.vp-visual-story--enterprise:first-child {
+    padding-top: calc(var(--vpl-nav-offset, 70px) + 28px) !important;
+  }
+}
