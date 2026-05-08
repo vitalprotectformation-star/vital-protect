@@ -14713,18 +14713,48 @@ body.page-accueil-rythme .hp-standard-premium .hp-standard-progress span {
 }
 
 
+
+
 /* =========================================================
-   Hotfix accueil — masquer le ruban sur la section Standard animée
+   Correctif accueil — ruban derrière le fond Standard
    ---------------------------------------------------------
-   Le ruban global est en position fixed et peut repasser au-dessus
-   malgré le fond de section. Cette classe est activée par index.html
-   uniquement pendant cette section.
+   Le ruban n'est pas masqué au scroll. La section Standard
+   possède un fond opaque au-dessus du ruban, ce qui évite
+   l'apparition/disparition brutale avant la section.
    ========================================================= */
 body.hp-standard-ribbon-hidden .vpl-scroll-ribbon,
 body.hp-standard-ribbon-hidden .vpl-ribbon-base,
 body.hp-standard-ribbon-hidden .vpl-ribbon-progress,
 body.hp-standard-ribbon-hidden .vpl-ribbon-dot {
-  display: none !important;
-  opacity: 0 !important;
-  visibility: hidden !important;
+  display: block !important;
+  visibility: visible !important;
+}
+
+body.page-accueil-rythme .hp-standard-premium {
+  position: relative !important;
+  z-index: 2 !important;
+  background: #eef7fb !important;
+  isolation: isolate !important;
+}
+
+body.page-accueil-rythme .hp-standard-premium::before {
+  z-index: 0 !important;
+  opacity: 1 !important;
+  background:
+    radial-gradient(circle at 8% 20%, rgba(255,255,255,1), transparent 28%),
+    radial-gradient(circle at 78% 18%, rgba(130, 207, 247, 0.06), transparent 30%),
+    radial-gradient(circle at 52% 58%, rgba(130, 207, 247, 0.05), transparent 36%),
+    linear-gradient(135deg, #edf7fb 0%, #e7f1f7 55%, #eff8fb 100%) !important;
+}
+
+body.page-accueil-rythme .hp-standard-premium .hp-standard-grid,
+body.page-accueil-rythme .hp-standard-premium .hp-standard-orb,
+body.page-accueil-rythme .hp-standard-premium .hp-standard-noise,
+body.page-accueil-rythme .hp-standard-premium .hp-standard-progress {
+  position: relative !important;
+}
+
+body.page-accueil-rythme .hp-standard-premium .hp-standard-grid,
+body.page-accueil-rythme .hp-standard-premium .hp-standard-progress {
+  z-index: 3 !important;
 }
