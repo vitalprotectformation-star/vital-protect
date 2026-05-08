@@ -15158,3 +15158,29 @@ body.vpl-inner-page main > section:first-child:not(.vpl-inner-hero):not(.stage-h
     --vpl-first-screen-scroll-offset: 74px;
   }
 }
+
+/* =========================================================
+   Correctif Page Standard — ruban derrière les piliers
+   ---------------------------------------------------------
+   Le ruban décoratif reste en arrière-plan pendant la section
+   des 5 piliers : les piliers et leurs éléments passent au-dessus.
+   ========================================================= */
+body.page-methode .vp-scroll-pillars-sticky,
+body.page-methode .vp-scroll-pillars-wrap,
+body.page-methode .vp-scroll-pillars-grid,
+body.page-methode .vp-scroll-pillar-card,
+body.page-methode .vp-scroll-pillar-capital,
+body.page-methode .vp-scroll-pillar-shaft,
+body.page-methode .vp-scroll-pillar-base {
+  position: relative !important;
+  z-index: 6 !important;
+}
+
+body.page-methode .vp-scroll-pillars-grain,
+body.page-methode .vp-scroll-pillars-hint {
+  z-index: 1 !important;
+}
+
+body.page-methode .vpl-scroll-ribbon {
+  z-index: 0 !important;
+}
