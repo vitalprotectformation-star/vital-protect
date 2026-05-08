@@ -1136,35 +1136,102 @@
 
 
   <style>
-    /* Correctif page Entreprises : le ruban bleu reste en arrière-plan. */
-    body.page-editorial-light .vpl-scroll-ribbon {
-      z-index: 0 !important;
+    /* Correctif page Entreprises V2 : le ruban bleu ne passe jamais devant le contenu. */
+    body.page-entreprise-ribbon-back {
+      position: relative;
+      isolation: isolate;
+      background: #eef7fb;
     }
 
-    body.page-editorial-light main,
-    body.page-editorial-light main > section,
-    body.page-editorial-light main > section > .container,
-    body.page-editorial-light .vp-visual-story-grid,
-    body.page-editorial-light .vp-visual-copy,
-    body.page-editorial-light .vp-image-card,
-    body.page-editorial-light .intervention-section .section-shell,
-    body.page-editorial-light .intervention-section .hero-block,
-    body.page-editorial-light .intervention-section .cards-grid,
-    body.page-editorial-light .intervention-section .bottom-grid,
-    body.page-editorial-light .intervention-section .premium-strip,
-    body.page-editorial-light .enterprise-flow-grid,
-    body.page-editorial-light .enterprise-flow-left,
-    body.page-editorial-light .enterprise-flow-cards-wrap,
-    body.page-editorial-light .enterprise-flow-card,
-    body.page-editorial-light .enterprise-flow-card-inner,
-    body.page-editorial-light .contact-layout,
-    body.page-editorial-light footer {
+    body.page-entreprise-ribbon-back > .vpl-scroll-ribbon,
+    body.page-entreprise-ribbon-back > .vpl-scroll-ribbon.is-drawing,
+    body.page-entreprise-ribbon-back > .vpl-scroll-ribbon.is-on-light,
+    body.page-entreprise-ribbon-back > .vpl-scroll-ribbon.is-on-dark,
+    body.page-entreprise-ribbon-back > .vpl-scroll-ribbon.is-on-hero,
+    body.page-entreprise-ribbon-back > .vpl-scroll-ribbon.is-on-final {
+      z-index: 0 !important;
+      opacity: 0.28 !important;
+      mix-blend-mode: normal !important;
+      pointer-events: none !important;
+    }
+
+    body.page-entreprise-ribbon-back > .vpl-canvas,
+    body.page-entreprise-ribbon-back > .vpl-noise {
+      z-index: 0 !important;
+      pointer-events: none !important;
+    }
+
+    body.page-entreprise-ribbon-back > .vpl-nav,
+    body.page-entreprise-ribbon-back > header,
+    body.page-entreprise-ribbon-back > main,
+    body.page-entreprise-ribbon-back > footer {
+      position: relative !important;
+      z-index: 4 !important;
+      isolation: isolate !important;
+    }
+
+    body.page-entreprise-ribbon-back > .vpl-nav,
+    body.page-entreprise-ribbon-back > header {
+      z-index: 1000 !important;
+    }
+
+    body.page-entreprise-ribbon-back > main {
+      background: #f8fbff;
+    }
+
+    body.page-entreprise-ribbon-back main > section {
+      position: relative !important;
+      z-index: 1 !important;
+      isolation: isolate !important;
+    }
+
+    body.page-entreprise-ribbon-back .vp-visual-story--enterprise,
+    body.page-entreprise-ribbon-back .intervention-section,
+    body.page-entreprise-ribbon-back .enterprise-flow-section,
+    body.page-entreprise-ribbon-back #contact-entreprise,
+    body.page-entreprise-ribbon-back main > section:last-of-type {
+      position: relative !important;
+      z-index: 1 !important;
+      isolation: isolate !important;
+      background-clip: border-box !important;
+    }
+
+    body.page-entreprise-ribbon-back #contact-entreprise,
+    body.page-entreprise-ribbon-back main > section:last-of-type {
+      background: #f8fbff !important;
+    }
+
+    body.page-entreprise-ribbon-back .vp-visual-story-grid,
+    body.page-entreprise-ribbon-back .vp-visual-copy,
+    body.page-entreprise-ribbon-back .vp-image-card,
+    body.page-entreprise-ribbon-back .intervention-section .section-shell,
+    body.page-entreprise-ribbon-back .intervention-section .hero-block,
+    body.page-entreprise-ribbon-back .intervention-section .cards-grid,
+    body.page-entreprise-ribbon-back .intervention-section .glass-card,
+    body.page-entreprise-ribbon-back .intervention-section .bottom-grid,
+    body.page-entreprise-ribbon-back .intervention-section .panel,
+    body.page-entreprise-ribbon-back .intervention-section .premium-strip,
+    body.page-entreprise-ribbon-back .enterprise-flow-grid,
+    body.page-entreprise-ribbon-back .enterprise-flow-left,
+    body.page-entreprise-ribbon-back .enterprise-flow-cards-wrap,
+    body.page-entreprise-ribbon-back .enterprise-flow-card,
+    body.page-entreprise-ribbon-back .enterprise-flow-card-inner,
+    body.page-entreprise-ribbon-back .enterprise-flow-progress,
+    body.page-entreprise-ribbon-back .contact-layout,
+    body.page-entreprise-ribbon-back .contact-layout > *,
+    body.page-entreprise-ribbon-back .contact-form,
+    body.page-entreprise-ribbon-back .form-card,
+    body.page-entreprise-ribbon-back .soft-card,
+    body.page-entreprise-ribbon-back .site-footer,
+    body.page-entreprise-ribbon-back .site-footer__grid {
       position: relative !important;
       z-index: 6 !important;
     }
 
-    body.page-editorial-light .vpl-nav {
-      z-index: 1000 !important;
+    @media (max-width: 760px) {
+      body.page-entreprise-ribbon-back > .vpl-scroll-ribbon {
+        display: none !important;
+      }
     }
   </style>
 
@@ -1177,7 +1244,7 @@
   </script>
 </head>
 
-<body class="vpl-inner-page page-editorial-light">
+<body class="vpl-inner-page page-editorial-light page-entreprise-ribbon-back">
   <canvas aria-hidden="true" class="vpl-canvas"></canvas>
   <div aria-hidden="true" class="vpl-noise"></div>
 
