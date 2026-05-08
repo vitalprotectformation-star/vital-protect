@@ -1,0 +1,137 @@
+/* =========================================================
+   PATCH UNIQUEMENT FORMULAIRE — page devenir-formateur
+   À charger APRÈS /styles/lusion-level.css ou à coller tout en bas.
+   Ne touche aucune autre section.
+   ========================================================= */
+
+body.page-formateur-redesign #formulaire,
+body.page-formateur-redesign #formulaire * {
+  box-sizing: border-box;
+}
+
+body.page-formateur-redesign #formulaire > .container {
+  width: min(600px, calc(100% - 32px)) !important;
+}
+
+body.page-formateur-redesign #formulaire .form-card {
+  overflow: hidden !important;
+  padding: clamp(24px, 4vw, 34px) !important;
+}
+
+body.page-formateur-redesign #formulaire .form-head,
+body.page-formateur-redesign #formulaire .form-head p,
+body.page-formateur-redesign #formulaire .form-note,
+body.page-formateur-redesign #formulaire .form-rgpd-note {
+  max-width: 100% !important;
+  min-width: 0 !important;
+}
+
+body.page-formateur-redesign #formulaire .form-head h2 {
+  max-width: 100% !important;
+  font-size: clamp(2.75rem, 8.5vw, 4.3rem) !important;
+  line-height: .9 !important;
+  letter-spacing: -.08em !important;
+  overflow-wrap: normal !important;
+  word-break: normal !important;
+}
+
+body.page-formateur-redesign #formulaire .form-head p,
+body.page-formateur-redesign #formulaire .form-note,
+body.page-formateur-redesign #formulaire .form-rgpd-note {
+  line-height: 1.65 !important;
+  overflow-wrap: anywhere !important;
+  word-break: normal !important;
+  hyphens: auto !important;
+}
+
+body.page-formateur-redesign #formulaire .form-grid {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 16px 14px !important;
+  align-items: start !important;
+}
+
+body.page-formateur-redesign #formulaire .form-field {
+  min-width: 0 !important;
+  width: 100% !important;
+}
+
+body.page-formateur-redesign #formulaire .form-field.full {
+  grid-column: 1 / -1 !important;
+}
+
+body.page-formateur-redesign #formulaire .form-field label {
+  display: grid !important;
+  gap: 7px !important;
+  min-width: 0 !important;
+}
+
+body.page-formateur-redesign #formulaire input,
+body.page-formateur-redesign #formulaire select,
+body.page-formateur-redesign #formulaire textarea {
+  display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  min-height: 48px !important;
+  padding: 12px 14px !important;
+  font-size: .94rem !important;
+  line-height: 1.35 !important;
+}
+
+body.page-formateur-redesign #formulaire select {
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  padding-right: 2.35rem !important;
+}
+
+body.page-formateur-redesign #formulaire textarea {
+  min-height: 124px !important;
+  resize: vertical !important;
+  overflow-wrap: anywhere !important;
+  white-space: pre-wrap !important;
+}
+
+body.page-formateur-redesign #formulaire input::placeholder,
+body.page-formateur-redesign #formulaire textarea::placeholder {
+  opacity: .72 !important;
+  line-height: 1.25 !important;
+  overflow-wrap: anywhere !important;
+}
+
+body.page-formateur-redesign #formulaire .btn[type="submit"] {
+  max-width: 100% !important;
+  white-space: normal !important;
+  text-align: center !important;
+}
+
+@media (max-width: 760px) {
+  body.page-formateur-redesign #formulaire > .container {
+    width: min(100% - 28px, 560px) !important;
+  }
+
+  body.page-formateur-redesign #formulaire .form-card {
+    padding: 24px 22px !important;
+    border-radius: 24px !important;
+  }
+
+  body.page-formateur-redesign #formulaire .form-grid {
+    grid-template-columns: 1fr !important;
+    gap: 15px !important;
+  }
+
+  body.page-formateur-redesign #formulaire .form-field.full {
+    grid-column: auto !important;
+  }
+
+  body.page-formateur-redesign #formulaire .form-head h2 {
+    font-size: clamp(2.55rem, 13vw, 3.65rem) !important;
+    line-height: .92 !important;
+  }
+
+  body.page-formateur-redesign #formulaire .btn[type="submit"] {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+}
