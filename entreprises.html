@@ -1120,6 +1120,19 @@
   <link href="/styles/components.css" rel="stylesheet" />
   <link href="/styles/lusion-level.css" rel="stylesheet" />
 
+  <style>
+    /* Correctif : ajoute une légère marge sous le menu sur la section d'ouverture */
+    .vp-visual-story.vp-visual-story--enterprise {
+      padding-top: clamp(92px, 8vw, 120px) !important;
+    }
+
+    @media (max-width: 768px) {
+      .vp-visual-story.vp-visual-story--enterprise {
+        padding-top: 88px !important;
+      }
+    }
+  </style>
+
   <script src="/page-transition.js"></script>
 
   <script>
