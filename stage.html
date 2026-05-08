@@ -38,607 +38,98 @@
   <link rel="stylesheet" href="/styles/components.css" />
   <link rel="stylesheet" href="/styles/lusion-level.css" />
 
-  <!-- Animations et mise en page premium des sections stage -->
-  <style id="stage-animated-layout">
-    :root {
-      --vp-anim-navy: #061a2f;
-      --vp-anim-blue: #0b4a8b;
-      --vp-anim-blue-2: #2f7fca;
-      --vp-anim-ice: #edf6ff;
-      --vp-anim-card: rgba(255, 255, 255, .86);
-      --vp-anim-border: rgba(6, 26, 47, .09);
-      --vp-anim-muted: #50647a;
-      --vp-anim-shadow: 0 26px 80px rgba(6, 26, 47, .12);
-      --vp-anim-ease: cubic-bezier(.2, .8, .2, 1);
-    }
-
-    .page-stage-redesign main {
-      overflow: clip;
-    }
-
-    .page-stage-redesign .stage-orientation-section,
-    .page-stage-redesign .stage-problem-section,
-    .page-stage-redesign .stage-learn-section,
-    .page-stage-redesign .stage-flow-section,
-    .page-stage-redesign .stage-compare-section {
-      position: relative;
-      isolation: isolate;
-    }
-
-    .page-stage-redesign .stage-orientation-section::before,
-    .page-stage-redesign .stage-problem-section::before,
-    .page-stage-redesign .stage-learn-section::before,
-    .page-stage-redesign .stage-flow-section::before,
-    .page-stage-redesign .stage-compare-section::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      z-index: -2;
-      pointer-events: none;
-      background:
-        radial-gradient(circle at 18% 8%, rgba(109, 183, 255, .22), transparent 30rem),
-        radial-gradient(circle at 84% 50%, rgba(11, 74, 139, .10), transparent 28rem);
-      opacity: .9;
-    }
-
-    .page-stage-redesign .section-head,
-    .page-stage-redesign .stage-section-copy,
-    .page-stage-redesign .vp-visual-copy,
-    .page-stage-redesign .stage-final-box {
-      opacity: 0;
-      transform: translateY(38px);
-      transition: opacity .9s var(--vp-anim-ease), transform .9s var(--vp-anim-ease);
-    }
-
-    .page-stage-redesign .is-visible.section-head,
-    .page-stage-redesign .is-visible.stage-section-copy,
-    .page-stage-redesign .is-visible.vp-visual-copy,
-    .page-stage-redesign .is-visible.stage-final-box {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    .page-stage-redesign .stage-orientation-grid > *,
-    .page-stage-redesign .stage-problem-stack > *,
-    .page-stage-redesign .stage-learn-grid > *,
-    .page-stage-redesign .stage-flow-list > *,
-    .page-stage-redesign .vp-image-card,
-    .page-stage-redesign .stage-compare-card,
-    .page-stage-redesign .faq-card {
-      opacity: 0;
-      transform: translateY(34px) scale(.985);
-      transition:
-        opacity .82s var(--vp-anim-ease),
-        transform .82s var(--vp-anim-ease),
-        box-shadow .45s var(--vp-anim-ease),
-        border-color .45s var(--vp-anim-ease),
-        background .45s var(--vp-anim-ease);
-      transition-delay: calc(var(--vp-i, 0) * 95ms);
-    }
-
-    .page-stage-redesign .is-visible.stage-orientation-grid > *,
-    .page-stage-redesign .is-visible.stage-problem-stack > *,
-    .page-stage-redesign .is-visible.stage-learn-grid > *,
-    .page-stage-redesign .is-visible.stage-flow-list > *,
-    .page-stage-redesign .is-visible.vp-visual-mosaic .vp-image-card,
-    .page-stage-redesign .is-visible.stage-compare-grid .stage-compare-card,
-    .page-stage-redesign .is-visible.faq-grid .faq-card {
-      opacity: 1;
-      transform: translateY(0) scale(1);
-    }
-
-    .page-stage-redesign .stage-orientation-grid > :nth-child(1),
-    .page-stage-redesign .stage-problem-stack > :nth-child(1),
-    .page-stage-redesign .stage-learn-grid > :nth-child(1),
-    .page-stage-redesign .stage-flow-list > :nth-child(1),
-    .page-stage-redesign .vp-image-card:nth-child(1),
-    .page-stage-redesign .stage-compare-card:nth-child(1),
-    .page-stage-redesign .faq-card:nth-child(1) { --vp-i: 0; }
-
-    .page-stage-redesign .stage-orientation-grid > :nth-child(2),
-    .page-stage-redesign .stage-problem-stack > :nth-child(2),
-    .page-stage-redesign .stage-learn-grid > :nth-child(2),
-    .page-stage-redesign .stage-flow-list > :nth-child(2),
-    .page-stage-redesign .vp-image-card:nth-child(2),
-    .page-stage-redesign .stage-compare-card:nth-child(2),
-    .page-stage-redesign .faq-card:nth-child(2) { --vp-i: 1; }
-
-    .page-stage-redesign .stage-orientation-grid > :nth-child(3),
-    .page-stage-redesign .stage-problem-stack > :nth-child(3),
-    .page-stage-redesign .stage-learn-grid > :nth-child(3),
-    .page-stage-redesign .stage-flow-list > :nth-child(3),
-    .page-stage-redesign .faq-card:nth-child(3) { --vp-i: 2; }
-
-    .page-stage-redesign .stage-learn-grid > :nth-child(4),
-    .page-stage-redesign .stage-flow-list > :nth-child(4),
-    .page-stage-redesign .faq-card:nth-child(4) { --vp-i: 3; }
-
-    .page-stage-redesign .stage-learn-grid > :nth-child(5),
-    .page-stage-redesign .stage-flow-list > :nth-child(5) { --vp-i: 4; }
-
-    .page-stage-redesign .stage-learn-grid > :nth-child(6) { --vp-i: 5; }
-
-    /* Parcours */
-    .page-stage-redesign .stage-orientation-first {
-      padding-top: clamp(80px, 9vw, 130px);
-      padding-bottom: clamp(76px, 8vw, 120px);
-    }
-
-    .page-stage-redesign .stage-orientation-grid {
-      position: relative;
-      margin-top: clamp(34px, 5vw, 62px);
-      perspective: 1100px;
-    }
-
-    .page-stage-redesign .stage-orientation-grid::before {
-      content: "";
-      position: absolute;
-      left: -8%;
-      right: -8%;
-      top: -42px;
-      height: 260px;
-      z-index: -1;
-      pointer-events: none;
-      background:
-        radial-gradient(circle, rgba(47, 127, 202, .22) 0 5px, transparent 6px) 14% 41% / 100% 100% no-repeat,
-        radial-gradient(circle, rgba(47, 127, 202, .25) 0 5px, transparent 6px) 52% 75% / 100% 100% no-repeat,
-        radial-gradient(circle, rgba(47, 127, 202, .20) 0 5px, transparent 6px) 83% 30% / 100% 100% no-repeat;
-      filter: drop-shadow(0 0 18px rgba(47, 127, 202, .23));
-    }
-
-    .page-stage-redesign .stage-orientation-grid::after {
-      content: "";
-      position: absolute;
-      left: -6%;
-      right: -6%;
-      top: -22px;
-      height: 300px;
-      z-index: -2;
-      pointer-events: none;
-      border: 1px solid rgba(47, 127, 202, .17);
-      border-left-color: transparent;
-      border-right-color: transparent;
-      border-radius: 50%;
-      transform: rotate(-4deg);
-      animation: vp-orbit-drift 9s ease-in-out infinite alternate;
-    }
-
-    @keyframes vp-orbit-drift {
-      from { transform: translateY(0) rotate(-4deg); }
-      to { transform: translateY(18px) rotate(-2deg); }
-    }
-
-    .page-stage-redesign .stage-orientation-grid a {
-      position: relative;
-      overflow: hidden;
-      background: var(--vp-anim-card);
-      border: 1px solid var(--vp-anim-border);
-      box-shadow: 0 20px 60px rgba(6, 26, 47, .10);
-      backdrop-filter: blur(16px);
-      transform-style: preserve-3d;
-      will-change: transform;
-    }
-
-    .page-stage-redesign .stage-orientation-grid a::before,
-    .page-stage-redesign .stage-learn-grid article::before,
-    .page-stage-redesign .stage-flow-list article::before,
-    .page-stage-redesign .stage-compare-card::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-      background: radial-gradient(circle at var(--mx, 50%) var(--my, 50%), rgba(47, 127, 202, .17), transparent 16rem);
-      opacity: 0;
-      transition: opacity .35s var(--vp-anim-ease);
-    }
-
-    .page-stage-redesign .stage-orientation-grid a:hover,
-    .page-stage-redesign .stage-learn-grid article:hover,
-    .page-stage-redesign .stage-flow-list article:hover,
-    .page-stage-redesign .stage-compare-card:hover,
-    .page-stage-redesign .faq-card:hover {
-      transform: translateY(-10px) scale(1.01);
-      border-color: rgba(47, 127, 202, .28);
-      box-shadow: var(--vp-anim-shadow);
-    }
-
-    .page-stage-redesign .stage-orientation-grid a:hover::before,
-    .page-stage-redesign .stage-learn-grid article:hover::before,
-    .page-stage-redesign .stage-flow-list article:hover::before,
-    .page-stage-redesign .stage-compare-card:hover::before {
-      opacity: 1;
-    }
-
-    .page-stage-redesign .stage-orientation-grid a:nth-child(2) {
-      margin-top: -22px;
-    }
-
-    .page-stage-redesign .stage-orientation-grid a:nth-child(3) {
-      margin-top: -48px;
-    }
-
-    .page-stage-redesign .stage-orientation-grid a span,
-    .page-stage-redesign .stage-problem-stack article span,
-    .page-stage-redesign .stage-learn-grid article b,
-    .page-stage-redesign .stage-flow-list article b {
-      display: inline-grid;
-      place-items: center;
-      min-width: 40px;
-      height: 40px;
-      border-radius: 12px;
-      color: #fff;
-      background: linear-gradient(135deg, #07366b, #0a58a5);
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.22), 0 12px 26px rgba(11,74,139,.22);
-    }
-
-    .page-stage-redesign .stage-orientation-grid a b,
-    .page-stage-redesign .vpl-button,
-    .page-stage-redesign .vpl-nav-cta {
-      transition: transform .34s var(--vp-anim-ease), box-shadow .34s var(--vp-anim-ease), background .34s var(--vp-anim-ease);
-    }
-
-    .page-stage-redesign .stage-orientation-grid a:hover b,
-    .page-stage-redesign .vpl-button:hover,
-    .page-stage-redesign .vpl-nav-cta:hover {
-      transform: translateY(-2px) translateX(4px);
-    }
-
-    /* Problème */
-    .page-stage-redesign .stage-problem-section {
-      padding-top: clamp(76px, 8vw, 124px);
-      padding-bottom: clamp(76px, 8vw, 124px);
-    }
-
-    .page-stage-redesign .stage-problem-stack {
-      position: relative;
-      padding-left: 68px;
-    }
-
-    .page-stage-redesign .stage-problem-stack::before {
-      content: "";
-      position: absolute;
-      left: 24px;
-      top: 18px;
-      bottom: 18px;
-      width: 2px;
-      border-radius: 999px;
-      background: linear-gradient(180deg, transparent, rgba(47, 127, 202, .42), rgba(47, 127, 202, .08));
-      transform-origin: top;
-      transform: scaleY(0);
-      transition: transform 1.1s var(--vp-anim-ease);
-    }
-
-    .page-stage-redesign .stage-problem-stack.is-visible::before {
-      transform: scaleY(1);
-    }
-
-    .page-stage-redesign .stage-problem-stack article {
-      position: relative;
-      background: rgba(255,255,255,.86);
-      border: 1px solid rgba(6,26,47,.08);
-      box-shadow: 0 18px 58px rgba(6,26,47,.09);
-      backdrop-filter: blur(16px);
-    }
-
-    .page-stage-redesign .stage-problem-stack article::after {
-      content: "";
-      position: absolute;
-      left: -52px;
-      top: 50%;
-      width: 15px;
-      height: 15px;
-      border-radius: 999px;
-      transform: translateY(-50%);
-      background: #fff;
-      border: 3px solid #7db8ff;
-      box-shadow: 0 0 0 8px rgba(125,184,255,.16), 0 0 30px rgba(47,127,202,.28);
-    }
-
-    .page-stage-redesign .stage-problem-stack article:nth-child(2) {
-      margin-left: 34px;
-    }
-
-    .page-stage-redesign .stage-problem-stack article:nth-child(3) {
-      margin-left: 68px;
-    }
-
-    /* Apprentissage */
-    .page-stage-redesign .stage-learn-section {
-      padding-top: clamp(78px, 8vw, 122px);
-      padding-bottom: clamp(78px, 8vw, 122px);
-      background: linear-gradient(180deg, rgba(255,255,255,.48), rgba(237,246,255,.58));
-    }
-
-    .page-stage-redesign .stage-learn-grid {
-      margin-top: clamp(34px, 4.6vw, 56px);
-    }
-
-    .page-stage-redesign .stage-learn-grid article {
-      position: relative;
-      overflow: hidden;
-      background: rgba(255,255,255,.86);
-      border: 1px solid rgba(6,26,47,.08);
-      box-shadow: 0 16px 48px rgba(6,26,47,.08);
-      backdrop-filter: blur(14px);
-    }
-
-    .page-stage-redesign .stage-learn-grid article b {
-      min-width: 34px;
-      height: 34px;
-      border-radius: 10px;
-      font-size: 13px;
-    }
-
-    .page-stage-redesign .stage-learn-grid article.accent b {
-      background: linear-gradient(135deg, #1f977b, #4fc3a4);
-    }
-
-    /* Déroulé */
-    .page-stage-redesign .stage-flow-section {
-      padding-top: clamp(78px, 8vw, 122px);
-      padding-bottom: clamp(78px, 8vw, 122px);
-    }
-
-    .page-stage-redesign .stage-flow-list {
-      position: relative;
-      padding-left: 24px;
-    }
-
-    .page-stage-redesign .stage-flow-list::before {
-      content: "";
-      position: absolute;
-      left: 43px;
-      top: 28px;
-      bottom: 28px;
-      width: 2px;
-      z-index: -1;
-      background: linear-gradient(180deg, rgba(47,127,202,.10), rgba(47,127,202,.42), rgba(47,127,202,.10));
-      background-size: 100% 180%;
-      animation: vp-flow-line 3.8s linear infinite;
-    }
-
-    @keyframes vp-flow-line {
-      from { background-position: 0 180%; }
-      to { background-position: 0 0; }
-    }
-
-    .page-stage-redesign .stage-flow-list article {
-      position: relative;
-      overflow: hidden;
-      background: rgba(255,255,255,.88);
-      border: 1px solid rgba(6,26,47,.08);
-      box-shadow: 0 16px 54px rgba(6,26,47,.09);
-      backdrop-filter: blur(15px);
-    }
-
-    .page-stage-redesign .stage-flow-list article b {
-      position: relative;
-      z-index: 2;
-      min-width: 38px;
-      height: 38px;
-      border-radius: 999px;
-    }
-
-    .page-stage-redesign .stage-flow-list article b::after {
-      content: "";
-      position: absolute;
-      inset: -8px;
-      border-radius: inherit;
-      border: 1px dashed rgba(47,127,202,.28);
-      animation: vp-spin 10s linear infinite;
-    }
-
-    @keyframes vp-spin {
-      to { transform: rotate(360deg); }
-    }
-
-    /* Ambiance de stage */
-    .page-stage-redesign .vp-visual-story--stage {
-      position: relative;
-      isolation: isolate;
-      overflow: hidden;
-      background:
-        radial-gradient(circle at 78% 18%, rgba(47, 127, 202, .30), transparent 32rem),
-        linear-gradient(135deg, #06182a 0%, #071f36 48%, #04111f 100%);
-      color: #fff;
-    }
-
-    .page-stage-redesign .vp-visual-story--stage::before {
-      content: "";
-      position: absolute;
-      right: clamp(20px, 8vw, 120px);
-      bottom: clamp(30px, 7vw, 96px);
-      width: 170px;
-      height: 170px;
-      opacity: .32;
-      background-image: radial-gradient(rgba(255,255,255,.72) 1px, transparent 1px);
-      background-size: 15px 15px;
-      animation: vp-dots-float 8s ease-in-out infinite;
-      pointer-events: none;
-    }
-
-    @keyframes vp-dots-float {
-      0%,100% { transform: translateY(0); }
-      50% { transform: translateY(-16px); }
-    }
-
-    .page-stage-redesign .vp-visual-story--stage .eyebrow {
-      color: #cfe5ff;
-      background: rgba(255,255,255,.12);
-      border-color: rgba(255,255,255,.18);
-    }
-
-    .page-stage-redesign .vp-visual-story--stage p {
-      color: rgba(255,255,255,.76);
-    }
-
-    .page-stage-redesign .vp-image-card {
-      position: relative;
-      overflow: hidden;
-      border: 1px solid rgba(255,255,255,.18);
-      box-shadow: 0 36px 90px rgba(0,0,0,.34);
-      transform: translateY(var(--vp-parallax, 0px));
-      transition:
-        opacity .82s var(--vp-anim-ease),
-        transform .2s linear,
-        box-shadow .45s var(--vp-anim-ease),
-        border-color .45s var(--vp-anim-ease);
-    }
-
-    .page-stage-redesign .vp-image-card::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(180deg, transparent 40%, rgba(6,26,47,.42));
-      opacity: .85;
-      pointer-events: none;
-    }
-
-    .page-stage-redesign .vp-image-card:hover {
-      border-color: rgba(255,255,255,.32);
-      box-shadow: 0 44px 110px rgba(0,0,0,.42);
-    }
-
-    .page-stage-redesign .vp-image-card img {
-      transform: scale(1.045);
-      transition: transform 1.1s var(--vp-anim-ease), filter .6s var(--vp-anim-ease);
-    }
-
-    .page-stage-redesign .vp-image-card:hover img {
-      transform: scale(1.085);
-      filter: saturate(1.06) contrast(1.03);
-    }
-
-    .page-stage-redesign .vp-mini-proof span {
-      border: 1px solid rgba(255,255,255,.25);
-      background: rgba(255,255,255,.08);
-      color: rgba(255,255,255,.92);
-      backdrop-filter: blur(10px);
-      transition: transform .35s var(--vp-anim-ease), background .35s var(--vp-anim-ease);
-    }
-
-    .page-stage-redesign .vp-mini-proof span:hover {
-      transform: translateY(-3px);
-      background: rgba(255,255,255,.14);
-    }
-
-    /* Comparaison */
-    .page-stage-redesign .stage-compare-section {
-      padding-top: clamp(78px, 8vw, 122px);
-      padding-bottom: clamp(78px, 8vw, 122px);
-    }
-
-    .page-stage-redesign .stage-compare-card {
-      position: relative;
-      overflow: hidden;
-      background: rgba(255,255,255,.88);
-      border: 1px solid rgba(6,26,47,.08);
-      box-shadow: 0 22px 72px rgba(6,26,47,.10);
-      backdrop-filter: blur(16px);
-    }
-
-    .page-stage-redesign .stage-compare-card.is-not::after,
-    .page-stage-redesign .stage-compare-card.is-yes::after {
-      position: absolute;
-      right: 32px;
-      bottom: 28px;
-      display: grid;
-      place-items: center;
-      width: 82px;
-      height: 82px;
-      border-radius: 999px;
-      font-size: 42px;
-      font-weight: 900;
-      opacity: .7;
-      pointer-events: none;
-    }
-
-    .page-stage-redesign .stage-compare-card.is-not::after {
-      content: "×";
-      color: #db684b;
-      background: rgba(219,104,75,.11);
-    }
-
-    .page-stage-redesign .stage-compare-card.is-yes::after {
-      content: "✓";
-      color: #1f977b;
-      background: rgba(31,151,123,.12);
-    }
-
-    /* CTA et FAQ : animation cohérente */
-    .page-stage-redesign .stage-final-cta,
-    .page-stage-redesign .stage-faq-section,
-    .page-stage-redesign .stage-reservation-section {
-      position: relative;
-      isolation: isolate;
-    }
-
-    .page-stage-redesign .stage-final-box {
-      overflow: hidden;
-      position: relative;
-    }
-
-    .page-stage-redesign .stage-final-box::before {
-      content: "";
-      position: absolute;
-      inset: -40% -20%;
-      background: radial-gradient(circle at 50% 50%, rgba(109,183,255,.22), transparent 28rem);
-      opacity: .85;
-      animation: vp-cta-glow 7s ease-in-out infinite alternate;
-      pointer-events: none;
-    }
-
-    @keyframes vp-cta-glow {
-      from { transform: translateX(-4%) translateY(0); }
-      to { transform: translateX(4%) translateY(-3%); }
-    }
-
-    /* Respect accessibilité */
-    @media (prefers-reduced-motion: reduce) {
-      .page-stage-redesign *,
-      .page-stage-redesign *::before,
-      .page-stage-redesign *::after {
-        animation-duration: .001ms !important;
-        animation-iteration-count: 1 !important;
-        scroll-behavior: auto !important;
-        transition-duration: .001ms !important;
-      }
-
-      .page-stage-redesign .section-head,
-      .page-stage-redesign .stage-section-copy,
-      .page-stage-redesign .vp-visual-copy,
-      .page-stage-redesign .stage-final-box,
-      .page-stage-redesign .stage-orientation-grid > *,
-      .page-stage-redesign .stage-problem-stack > *,
-      .page-stage-redesign .stage-learn-grid > *,
-      .page-stage-redesign .stage-flow-list > *,
-      .page-stage-redesign .vp-image-card,
-      .page-stage-redesign .stage-compare-card,
-      .page-stage-redesign .faq-card {
-        opacity: 1 !important;
-        transform: none !important;
-      }
-    }
-
-    @media (max-width: 900px) {
-      .page-stage-redesign .stage-orientation-grid a:nth-child(2),
-      .page-stage-redesign .stage-orientation-grid a:nth-child(3),
-      .page-stage-redesign .stage-problem-stack article:nth-child(2),
-      .page-stage-redesign .stage-problem-stack article:nth-child(3) {
-        margin-top: 0;
-        margin-left: 0;
-      }
-
-      .page-stage-redesign .stage-problem-stack {
-        padding-left: 0;
-      }
-
-      .page-stage-redesign .stage-problem-stack::before,
-      .page-stage-redesign .stage-problem-stack article::after,
-      .page-stage-redesign .stage-flow-list::before {
-        display: none;
-      }
-    }
+  <style id="vp-stage-animated-replacement">
+    :root{
+      --vp-stage-navy:#061a2f;--vp-stage-blue:#0b4a8b;--vp-stage-card:rgba(255,255,255,.88);
+      --vp-stage-border:rgba(6,26,47,.09);--vp-stage-muted:#50647a;
+      --vp-stage-shadow:0 26px 80px rgba(6,26,47,.12);--vp-stage-ease:cubic-bezier(.2,.8,.2,1);
+      --vp-stage-radius:26px;
+    }
+    .page-stage-redesign main{overflow:clip;background:radial-gradient(circle at 14% 8%,rgba(109,183,255,.18),transparent 32rem),linear-gradient(180deg,#f5faff 0%,#edf6fc 44%,#f7fbff 100%)}
+    .vp-stage-modern{position:relative;isolation:isolate;padding:clamp(78px,8vw,124px) 0;color:var(--vp-stage-navy)}
+    .vp-stage-modern *{box-sizing:border-box}
+    .vp-stage-modern::before{content:"";position:absolute;inset:0;z-index:-2;pointer-events:none;background:radial-gradient(circle at 18% 10%,rgba(109,183,255,.18),transparent 26rem),radial-gradient(circle at 84% 48%,rgba(11,74,139,.10),transparent 30rem)}
+    .vp-stage-kicker{display:inline-flex;align-items:center;gap:8px;width:fit-content;padding:7px 12px;border-radius:999px;background:rgba(11,74,139,.10);color:var(--vp-stage-blue);border:1px solid rgba(11,74,139,.08);font-size:12px;font-weight:850;letter-spacing:-.01em}
+    .vp-stage-head{max-width:720px}.vp-stage-head.center{margin-inline:auto;text-align:center}
+    .vp-stage-title{margin:14px 0 0;font-size:clamp(42px,5.8vw,82px);line-height:.88;letter-spacing:-.075em;font-weight:950;color:var(--vp-stage-navy)}
+    .vp-stage-title.medium{font-size:clamp(36px,4.6vw,64px);line-height:.92}
+    .vp-stage-lead{margin:18px 0 0;max-width:640px;color:var(--vp-stage-muted);font-size:16px;line-height:1.68}
+    .vp-stage-head.center .vp-stage-lead{margin-inline:auto}
+    .vp-stage-card{position:relative;overflow:hidden;background:var(--vp-stage-card);border:1px solid var(--vp-stage-border);border-radius:var(--vp-stage-radius);box-shadow:0 18px 58px rgba(6,26,47,.09);backdrop-filter:blur(16px);transition:transform .55s var(--vp-stage-ease),box-shadow .55s var(--vp-stage-ease),border-color .55s var(--vp-stage-ease),background .55s var(--vp-stage-ease);will-change:transform}
+    .vp-stage-card::before{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(circle at var(--mx,50%) var(--my,50%),rgba(47,127,202,.18),transparent 16rem);opacity:0;transition:opacity .35s var(--vp-stage-ease)}
+    .vp-stage-card:hover{transform:translateY(-10px) scale(1.01);border-color:rgba(47,127,202,.30);box-shadow:var(--vp-stage-shadow)}
+    .vp-stage-card:hover::before{opacity:1}
+    .vp-stage-num{display:inline-grid;place-items:center;min-width:42px;height:42px;padding-inline:11px;border-radius:12px;color:#fff;background:linear-gradient(135deg,#07366b,#0a58a5);box-shadow:inset 0 1px 0 rgba(255,255,255,.24),0 12px 26px rgba(11,74,139,.24);font-size:14px;font-weight:950}
+    .vp-stage-icon{display:grid;place-items:center;width:48px;height:48px;border-radius:999px;background:rgba(11,74,139,.08);color:var(--vp-stage-blue);font-weight:900;transition:transform .35s var(--vp-stage-ease),background .35s var(--vp-stage-ease)}
+    .vp-stage-card:hover .vp-stage-icon{transform:scale(1.08) rotate(4deg);background:rgba(11,74,139,.13)}
+    .vp-stage-link{display:inline-flex;align-items:center;gap:10px;margin-top:24px;color:var(--vp-stage-blue);font-size:14px;font-weight:900;text-decoration:none}
+    .vp-stage-link span{display:inline-block;transition:transform .32s var(--vp-stage-ease)}.vp-stage-link:hover span{transform:translateX(6px)}
+    .vp-reveal,.vp-stagger>*{opacity:0;transform:translateY(36px) scale(.985);transition:opacity .84s var(--vp-stage-ease),transform .84s var(--vp-stage-ease);transition-delay:calc(var(--vp-i,0)*110ms)}
+    .vp-reveal.is-visible,.vp-stagger.is-visible>*{opacity:1;transform:translateY(0) scale(1)}
+    .vp-motion-chip{display:inline-flex;align-items:center;gap:8px;padding:8px 11px;border-radius:999px;background:rgba(255,255,255,.72);border:1px solid rgba(11,74,139,.12);color:rgba(11,74,139,.78);font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.05em;box-shadow:0 12px 35px rgba(6,26,47,.08)}
+    .vp-motion-chip::before{content:"";width:7px;height:7px;border-radius:999px;background:#2d8cff;box-shadow:0 0 0 6px rgba(45,140,255,.12);animation:vp-stage-pulse 1.8s infinite}
+    @keyframes vp-stage-pulse{0%,100%{transform:scale(.9);opacity:.9}50%{transform:scale(1.2);opacity:.55}}
+    .vp-stage-access{padding-top:clamp(90px,9vw,140px);min-height:680px}
+    .vp-stage-access-orbit{position:absolute;inset:clamp(150px,16vw,220px) -8% auto 18%;height:350px;z-index:-1;pointer-events:none;opacity:.92}
+    .vp-stage-access-orbit svg{width:100%;height:100%;overflow:visible}.vp-stage-orbit-line{stroke-dasharray:8 14;animation:vp-stage-dash 20s linear infinite}
+    @keyframes vp-stage-dash{to{stroke-dashoffset:-220}}
+    .vp-stage-access-top{position:relative;display:flex;justify-content:space-between;gap:24px;align-items:flex-start;margin-bottom:clamp(36px,5vw,70px)}
+    .vp-stage-access-top .vp-motion-chip{margin-top:40px;flex:0 0 auto}
+    .vp-stage-access-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(18px,3vw,34px);perspective:1100px}
+    .vp-stage-access-card{min-height:260px;padding:clamp(24px,3vw,34px);text-decoration:none;color:inherit}
+    .vp-stage-access-card:nth-child(2){margin-top:-28px}.vp-stage-access-card:nth-child(3){margin-top:-66px}
+    .vp-stage-access-card-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:44px}
+    .vp-stage-access-card h3,.vp-stage-problem-card h3,.vp-stage-reflex-card h3,.vp-stage-step h3{margin:0 0 10px;color:var(--vp-stage-navy);font-size:21px;line-height:1.08;letter-spacing:-.035em;font-weight:950}
+    .vp-stage-access-card p,.vp-stage-problem-card p,.vp-stage-reflex-card p,.vp-stage-step p{margin:0;color:var(--vp-stage-muted);font-size:14.5px;line-height:1.55}
+    .vp-stage-problem{border-top:1px solid rgba(6,26,47,.06)}
+    .vp-stage-problem-layout{display:grid;grid-template-columns:.92fr 1.08fr;gap:clamp(44px,7vw,96px);align-items:center}
+    .vp-stage-problem-stack{position:relative;display:grid;gap:24px;padding-left:72px}
+    .vp-stage-problem-stack::before{content:"";position:absolute;left:26px;top:20px;bottom:20px;width:2px;border-radius:999px;background:linear-gradient(180deg,transparent,rgba(47,127,202,.42),rgba(47,127,202,.08));transform:scaleY(0);transform-origin:top;transition:transform 1.1s var(--vp-stage-ease)}
+    .vp-stage-problem-stack.is-visible::before{transform:scaleY(1)}
+    .vp-stage-problem-card{display:grid;grid-template-columns:auto 1fr auto;gap:20px;align-items:center;min-height:118px;padding:24px}
+    .vp-stage-problem-card::after{content:"";position:absolute;left:-53px;top:50%;width:15px;height:15px;border-radius:999px;transform:translateY(-50%);background:#fff;border:3px solid #7db8ff;box-shadow:0 0 0 8px rgba(125,184,255,.16),0 0 30px rgba(47,127,202,.28)}
+    .vp-stage-problem-card:nth-child(2){margin-left:38px}.vp-stage-problem-card:nth-child(3){margin-left:76px}
+    .vp-stage-reflexes{background:linear-gradient(180deg,rgba(255,255,255,.50),rgba(237,246,255,.64));border-top:1px solid rgba(6,26,47,.06);border-bottom:1px solid rgba(6,26,47,.06)}
+    .vp-stage-reflex-wrap{position:relative}.vp-stage-hover-chip{position:absolute;right:0;top:32px}
+    .vp-stage-reflex-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px;margin-top:clamp(34px,4.8vw,56px)}
+    .vp-stage-reflex-card{display:grid;grid-template-columns:auto 1fr auto;gap:18px;align-items:start;min-height:164px;padding:25px}
+    .vp-stage-reflex-card .vp-stage-num{min-width:34px;height:34px;border-radius:10px;font-size:13px}.vp-stage-reflex-card.accent .vp-stage-num{background:linear-gradient(135deg,#1f977b,#4fc3a4)}
+    .vp-stage-process-layout{display:grid;grid-template-columns:.72fr 1.28fr;gap:clamp(40px,6vw,84px);align-items:center}
+    .vp-stage-process-list{position:relative;display:grid;gap:16px;padding-left:26px}
+    .vp-stage-process-list::before{content:"";position:absolute;left:45px;top:30px;bottom:30px;width:2px;z-index:-1;background:linear-gradient(180deg,rgba(47,127,202,.10),rgba(47,127,202,.45),rgba(47,127,202,.10));background-size:100% 180%;animation:vp-stage-flow-line 3.8s linear infinite}
+    @keyframes vp-stage-flow-line{from{background-position:0 180%}to{background-position:0 0}}
+    .vp-stage-step{display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:center;padding:21px 24px}
+    .vp-stage-step .vp-stage-num{position:relative;border-radius:999px;min-width:40px;height:40px}
+    .vp-stage-step .vp-stage-num::after{content:"";position:absolute;inset:-8px;border-radius:inherit;border:1px dashed rgba(47,127,202,.28);animation:vp-stage-spin 10s linear infinite}
+    @keyframes vp-stage-spin{to{transform:rotate(360deg)}}.vp-stage-process-actions{margin-top:28px}
+    .vp-stage-visual{position:relative;isolation:isolate;overflow:hidden;padding:clamp(80px,9vw,132px) 0;background:radial-gradient(circle at 78% 18%,rgba(47,127,202,.30),transparent 32rem),linear-gradient(135deg,#06182a 0%,#071f36 48%,#04111f 100%);color:#fff}
+    .vp-stage-visual::before{content:"";position:absolute;right:clamp(20px,8vw,120px);bottom:clamp(30px,7vw,96px);width:170px;height:170px;opacity:.32;background-image:radial-gradient(rgba(255,255,255,.72) 1px,transparent 1px);background-size:15px 15px;animation:vp-stage-dots-float 8s ease-in-out infinite;pointer-events:none}
+    @keyframes vp-stage-dots-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-16px)}}
+    .vp-stage-visual-grid{display:grid;grid-template-columns:1.04fr .96fr;gap:clamp(38px,6vw,78px);align-items:center}
+    .vp-stage-photo-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;min-height:430px}
+    .vp-stage-photo{position:relative;min-height:360px;margin:0;overflow:hidden;border-radius:28px;border:1px solid rgba(255,255,255,.18);box-shadow:0 36px 90px rgba(0,0,0,.34);transform:translateY(var(--vp-parallax,0px));transition:opacity .82s var(--vp-stage-ease),transform .2s linear,box-shadow .45s var(--vp-stage-ease),border-color .45s var(--vp-stage-ease)}
+    .vp-stage-photo:nth-child(2){margin-top:82px}.vp-stage-photo::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 42%,rgba(6,26,47,.50));pointer-events:none}
+    .vp-stage-photo img{width:100%;height:100%;min-height:inherit;object-fit:cover;transform:scale(1.045);transition:transform 1.1s var(--vp-stage-ease),filter .6s var(--vp-stage-ease)}
+    .vp-stage-photo:hover{border-color:rgba(255,255,255,.34);box-shadow:0 44px 110px rgba(0,0,0,.42)}.vp-stage-photo:hover img{transform:scale(1.085);filter:saturate(1.06) contrast(1.03)}
+    .vp-stage-photo-label{position:absolute;left:18px;bottom:18px;z-index:2;padding:8px 12px;border-radius:999px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.24);backdrop-filter:blur(12px);color:#fff;font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.04em}
+    .vp-stage-visual .vp-stage-kicker{color:#cfe5ff;background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.18)}
+    .vp-stage-visual .vp-stage-title{color:#fff}.vp-stage-visual .vp-stage-lead{color:rgba(255,255,255,.76)}
+    .vp-stage-proof{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}.vp-stage-proof span{padding:9px 13px;border-radius:999px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:rgba(255,255,255,.92);backdrop-filter:blur(10px);font-size:13px;font-weight:850;transition:transform .35s var(--vp-stage-ease),background .35s var(--vp-stage-ease)}.vp-stage-proof span:hover{transform:translateY(-3px);background:rgba(255,255,255,.14)}
+    .vp-stage-compare{padding-top:clamp(78px,8vw,122px);padding-bottom:clamp(78px,8vw,122px)}
+    .vp-stage-compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:28px}.vp-stage-compare-card{min-height:430px;padding:clamp(32px,4vw,54px)}
+    .vp-stage-compare-card h2{margin:14px 0 0;font-size:clamp(34px,4.1vw,58px);line-height:.92;letter-spacing:-.065em;font-weight:950;color:var(--vp-stage-navy)}
+    .vp-stage-compare-card p{margin:22px 0 0;max-width:610px;color:var(--vp-stage-muted);line-height:1.68}
+    .vp-stage-compare-card ul{list-style:none;padding:0;margin:30px 0 0;display:grid;gap:13px;color:var(--vp-stage-muted);font-weight:650}
+    .vp-stage-compare-card li{display:flex;gap:12px;align-items:flex-start}.vp-stage-compare-card li::before{content:"—";color:#db684b;font-weight:950}
+    .vp-stage-compare-card.is-not::after,.vp-stage-compare-card.is-yes::after{position:absolute;right:32px;bottom:28px;display:grid;place-items:center;width:82px;height:82px;border-radius:999px;font-size:42px;font-weight:900;opacity:.72;pointer-events:none}
+    .vp-stage-compare-card.is-not::after{content:"×";color:#db684b;background:rgba(219,104,75,.11)}.vp-stage-compare-card.is-yes::after{content:"✓";color:#1f977b;background:rgba(31,151,123,.12)}
+    .vp-stage-compare-card .vpl-button{margin-top:28px}
+    .page-stage-redesign .stage-reservation-section .section-head,.page-stage-redesign .stage-faq-section .section-head,.page-stage-redesign .stage-final-box,.page-stage-redesign .faq-grid>*{opacity:0;transform:translateY(34px);transition:opacity .84s var(--vp-stage-ease),transform .84s var(--vp-stage-ease)}
+    .page-stage-redesign .stage-reservation-section .section-head.is-visible,.page-stage-redesign .stage-faq-section .section-head.is-visible,.page-stage-redesign .stage-final-box.is-visible,.page-stage-redesign .faq-grid.is-visible>*{opacity:1;transform:translateY(0)}
+    .page-stage-redesign .faq-grid>*{transition-delay:calc(var(--vp-i,0)*100ms)}.page-stage-redesign .faq-grid>:nth-child(1){--vp-i:0}.page-stage-redesign .faq-grid>:nth-child(2){--vp-i:1}.page-stage-redesign .faq-grid>:nth-child(3){--vp-i:2}.page-stage-redesign .faq-grid>:nth-child(4){--vp-i:3}
+    @media (max-width:980px){.vp-stage-access-top,.vp-stage-problem-layout,.vp-stage-process-layout,.vp-stage-visual-grid,.vp-stage-compare-grid{grid-template-columns:1fr;display:grid}.vp-stage-access-top{display:block}.vp-stage-access-top .vp-motion-chip{margin-top:24px}.vp-stage-access-grid,.vp-stage-reflex-grid{grid-template-columns:1fr 1fr}.vp-stage-access-card:nth-child(2),.vp-stage-access-card:nth-child(3),.vp-stage-problem-card:nth-child(2),.vp-stage-problem-card:nth-child(3){margin-top:0;margin-left:0}.vp-stage-problem-stack{padding-left:0}.vp-stage-problem-stack::before,.vp-stage-problem-card::after{display:none}}
+    @media (max-width:700px){.vp-stage-modern{padding:64px 0}.vp-stage-title,.vp-stage-title.medium,.vp-stage-compare-card h2{letter-spacing:-.052em}.vp-stage-access-grid,.vp-stage-reflex-grid,.vp-stage-photo-grid{grid-template-columns:1fr}.vp-stage-photo:nth-child(2){margin-top:0}.vp-stage-photo{min-height:280px}.vp-stage-problem-card,.vp-stage-reflex-card{grid-template-columns:auto 1fr}.vp-stage-problem-card .vp-stage-icon,.vp-stage-reflex-card .vp-stage-icon,.vp-stage-access-orbit,.vp-stage-hover-chip,.vp-stage-process-list::before{display:none}.vp-stage-process-list{padding-left:0}.vp-stage-step{align-items:start}}
+    @media (prefers-reduced-motion:reduce){.page-stage-redesign *,.page-stage-redesign *::before,.page-stage-redesign *::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}.vp-reveal,.vp-stagger>*,.page-stage-redesign .stage-reservation-section .section-head,.page-stage-redesign .stage-faq-section .section-head,.page-stage-redesign .stage-final-box,.page-stage-redesign .faq-grid>*{opacity:1!important;transform:none!important}}
   </style>
 </head>
 <body class="vpl-inner-page page-editorial-light page-stage page-stage-redesign">
@@ -646,14 +137,7 @@
   <div class="vpl-noise" aria-hidden="true"></div>
   <div class="vpl-scroll-ribbon" aria-hidden="true">
     <svg class="vpl-scroll-ribbon-svg" viewBox="0 0 1000 1600" preserveAspectRatio="none">
-      <defs>
-        <linearGradient id="vplRibbonGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stop-color="#d8ecff" stop-opacity="0.96"></stop>
-          <stop offset="38%" stop-color="#6db7ff" stop-opacity="0.94"></stop>
-          <stop offset="72%" stop-color="#2f7fca" stop-opacity="0.94"></stop>
-          <stop offset="100%" stop-color="#0b3a6f" stop-opacity="0.92"></stop>
-        </linearGradient>
-      </defs>
+      <defs><linearGradient id="vplRibbonGradient" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#d8ecff" stop-opacity="0.96"></stop><stop offset="38%" stop-color="#6db7ff" stop-opacity="0.94"></stop><stop offset="72%" stop-color="#2f7fca" stop-opacity="0.94"></stop><stop offset="100%" stop-color="#0b3a6f" stop-opacity="0.92"></stop></linearGradient></defs>
       <path class="vpl-ribbon-base" pathLength="1" d="M920 -80 C980 130 700 120 760 330 C820 520 990 560 860 760 C700 1010 240 930 300 1180 C360 1420 760 1350 680 1580 C640 1680 560 1710 430 1750"></path>
       <path class="vpl-ribbon-progress" pathLength="1" d="M920 -80 C980 130 700 120 760 330 C820 520 990 560 860 760 C700 1010 240 930 300 1180 C360 1420 760 1350 680 1580 C640 1680 560 1710 430 1750"></path>
       <circle class="vpl-ribbon-dot" cx="920" cy="-80" r="18"></circle>
@@ -663,12 +147,8 @@
   <header class="vpl-nav">
     <a href="/index.html" class="vpl-brand" aria-label="Accueil Vital Protect">
       <img src="/logo.png" alt="Vital Protect" />
-      <div>
-        <b>VITAL PROTECT</b>
-        <span>Standard sécurité personnelle</span>
-      </div>
+      <div><b>VITAL PROTECT</b><span>Standard sécurité personnelle</span></div>
     </a>
-
     <nav class="vpl-menu" aria-label="Navigation principale">
       <a href="/index.html" data-page="index">Accueil</a>
       <a href="/methode.html" data-page="methode">Standard</a>
@@ -679,7 +159,6 @@
       <a href="/contact.html" data-page="contact">Contact</a>
       <a href="/formateur-login.html" class="vpl-nav-ghost">Espace</a>
     </nav>
-
     <a href="#reservation" class="vpl-nav-cta">Recevoir les dates</a>
   </header>
 
@@ -687,222 +166,111 @@
     <section class="stage-hero-redesign">
       <div class="vpl-container stage-hero-grid">
         <div class="stage-hero-copy">
-          <div class="stage-pill-row" aria-label="Points clés">
-            <span>Sécurité personnelle réaliste</span>
-            <span>Débutants bienvenus</span>
-            <span>Pas de folklore martial</span>
-          </div>
+          <div class="stage-pill-row" aria-label="Points clés"><span>Sécurité personnelle réaliste</span><span>Débutants bienvenus</span><span>Pas de folklore martial</span></div>
           <div class="vpl-eyebrow" id="heroType">Stage Vital Protect</div>
           <h1 id="heroTitle">Apprendre à prévenir, éviter et réagir simplement.</h1>
           <p id="heroDescription">Vital Protect transmet des repères concrets pour lire les tensions, garder la bonne distance, désamorcer quand c’est possible et agir avec proportion.</p>
-          <div class="vpl-actions">
-            <a class="vpl-button vpl-button-primary" href="#parcours">Choisir mon parcours</a>
-            <a class="vpl-button vpl-button-secondary" href="/methode.html">Découvrir la méthode</a>
-          </div>
+          <div class="vpl-actions"><a class="vpl-button vpl-button-primary" href="#parcours">Choisir mon parcours</a><a class="vpl-button vpl-button-secondary" href="/methode.html">Découvrir la méthode</a></div>
           <p class="stage-hero-note">Les réservations ne sont ouvertes que lorsqu’une session affiche clairement le lieu, la date, le tarif, l’encadrant et les conditions de participation.</p>
         </div>
-
         <div class="stage-hero-panel" aria-label="Aperçu du stage">
           <img class="stage-hero-main-img" src="/visuel-mise-distance.webp" alt="Exercice de mise à distance dans un stage Vital Protect" />
-          <div class="stage-hero-mini-grid">
-            <img src="/visuel-massage-cardiaque.webp" alt="Atelier de sécurité et assistance pendant une formation Vital Protect" />
-            <div class="stage-hero-card-dark">
-              <strong>Pas un cours de combat.</strong>
-              <span>Lucidité, distance, sortie possible et décisions simples.</span>
-            </div>
-          </div>
-          <div class="stage-hero-status">
-            <strong>Pas de réservation floue.</strong>
-            <span>Une session incomplète ne doit pas être vendue comme disponible.</span>
-          </div>
+          <div class="stage-hero-mini-grid"><img src="/visuel-massage-cardiaque.webp" alt="Atelier de sécurité et assistance pendant une formation Vital Protect" /><div class="stage-hero-card-dark"><strong>Pas un cours de combat.</strong><span>Lucidité, distance, sortie possible et décisions simples.</span></div></div>
+          <div class="stage-hero-status"><strong>Pas de réservation floue.</strong><span>Une session incomplète ne doit pas être vendue comme disponible.</span></div>
         </div>
       </div>
     </section>
 
-    <section id="parcours" class="stage-orientation-section stage-orientation-first">
+    <section id="parcours" class="vp-stage-modern vp-stage-access">
+      <div class="vp-stage-access-orbit" aria-hidden="true"><svg viewBox="0 0 1100 360" fill="none"><path class="vp-stage-orbit-line" d="M14 240 C 240 22, 420 380, 632 108 S 1000 90, 1110 250" stroke="rgba(11,74,139,.24)" stroke-width="2"></path><path d="M80 300 C 310 110, 460 420, 720 170 S 1030 120, 1160 300" stroke="rgba(11,74,139,.10)" stroke-width="2"></path><g fill="#fff" stroke="#7db8ff" stroke-width="4"><circle cx="348" cy="111" r="8"></circle><circle cx="560" cy="281" r="8"></circle><circle cx="760" cy="72" r="8"></circle></g></svg></div>
       <div class="vpl-container">
-        <div class="section-head section-head--center">
-          <span class="eyebrow">Choisir le bon accès</span>
-          <h2>Quel parcours vous correspond&nbsp;?</h2>
-          <p>Avant de parler date ou réservation, orientez-vous vers l’espace adapté à votre besoin.</p>
-        </div>
-        <div class="stage-orientation-grid">
-          <a href="#reservation"><span>01</span><h3>Stage particulier</h3><p>Recevoir les prochaines dates pour participer à une session ouverte au public.</p><b>Recevoir les dates →</b></a>
-          <a href="/entreprises.html"><span>02</span><h3>Intervention entreprise</h3><p>Adapter le contenu à vos équipes, à votre métier et à vos situations de terrain.</p><b>Demander un échange →</b></a>
-          <a href="/devenir-formateur.html"><span>03</span><h3>Parcours formateur</h3><p>Comprendre l’habilitation interne pour transmettre la méthode dans un cadre défini.</p><b>Voir le parcours →</b></a>
+        <div class="vp-stage-access-top"><div class="vp-stage-head vp-reveal"><span class="vp-stage-kicker">Choisir le bon accès</span><h2 class="vp-stage-title">Quel parcours<br>vous correspond&nbsp;?</h2><p class="vp-stage-lead">Avant de parler date ou réservation, orientez-vous vers l’espace adapté à votre besoin.</p></div><span class="vp-motion-chip" aria-hidden="true">Stagger reveal</span></div>
+        <div class="vp-stage-access-grid vp-stagger">
+          <a href="#reservation" class="vp-stage-card vp-stage-access-card vp-tilt" style="--vp-i:0"><div class="vp-stage-access-card-top"><span class="vp-stage-num">01</span><span class="vp-stage-icon" aria-hidden="true">▣</span></div><h3>Stage particulier</h3><p>Recevoir les prochaines dates pour participer à une session ouverte au public.</p><b class="vp-stage-link">Recevoir les dates <span>→</span></b></a>
+          <a href="/entreprises.html" class="vp-stage-card vp-stage-access-card vp-tilt" style="--vp-i:1"><div class="vp-stage-access-card-top"><span class="vp-stage-num">02</span><span class="vp-stage-icon" aria-hidden="true">✉</span></div><h3>Intervention entreprise</h3><p>Adapter le contenu à vos équipes, à votre métier et à vos situations de terrain.</p><b class="vp-stage-link">Demander un échange <span>→</span></b></a>
+          <a href="/devenir-formateur.html" class="vp-stage-card vp-stage-access-card vp-tilt" style="--vp-i:2"><div class="vp-stage-access-card-top"><span class="vp-stage-num">03</span><span class="vp-stage-icon" aria-hidden="true">◌</span></div><h3>Parcours formateur</h3><p>Comprendre l’habilitation interne pour transmettre la méthode dans un cadre défini.</p><b class="vp-stage-link">Voir le parcours <span>→</span></b></a>
         </div>
       </div>
     </section>
 
-    <section class="stage-problem-section">
-      <div class="vpl-container stage-asym-grid">
-        <div class="stage-section-copy compact-title">
-          <span class="eyebrow">Le problème</span>
-          <h2>Une sécurité personnelle souvent mal expliquée.</h2>
-          <p>Vital Protect prend le chemin inverse : pas de promesse d’invincibilité, pas de scénario humiliant, pas de jargon inutile. Le stage doit donner des repères concrets et mémorisables.</p>
-        </div>
-        <div class="stage-problem-stack">
-          <article>
-            <span>01</span>
-            <h3>Trop flou</h3>
-            <p>On parle de confiance sans expliquer quoi faire concrètement.</p>
-          </article>
-          <article>
-            <span>02</span>
-            <h3>Trop spectaculaire</h3>
-            <p>Des gestes impressionnants deviennent inutiles sous stress.</p>
-          </article>
-          <article>
-            <span>03</span>
-            <h3>Trop anxiogène</h3>
-            <p>La peur ne remplace pas une progression claire et calme.</p>
-          </article>
+    <section class="vp-stage-modern vp-stage-problem">
+      <div class="vpl-container vp-stage-problem-layout">
+        <div class="vp-stage-head vp-reveal"><span class="vp-stage-kicker">Le problème</span><h2 class="vp-stage-title medium">Une sécurité personnelle souvent mal expliquée.</h2><p class="vp-stage-lead">Vital Protect prend le chemin inverse : pas de promesse d’invincibilité, pas de scénario humiliant, pas de jargon inutile. Le stage doit donner des repères concrets et mémorisables.</p></div>
+        <div class="vp-stage-problem-stack vp-stagger">
+          <article class="vp-stage-card vp-stage-problem-card vp-tilt" style="--vp-i:0"><span class="vp-stage-num">01</span><div><h3>Trop flou</h3><p>On parle de confiance sans expliquer quoi faire concrètement.</p></div><span class="vp-stage-icon" aria-hidden="true">♢</span></article>
+          <article class="vp-stage-card vp-stage-problem-card vp-tilt" style="--vp-i:1"><span class="vp-stage-num">02</span><div><h3>Trop spectaculaire</h3><p>Des gestes impressionnants deviennent inutiles sous stress.</p></div><span class="vp-stage-icon" aria-hidden="true">✦</span></article>
+          <article class="vp-stage-card vp-stage-problem-card vp-tilt" style="--vp-i:2"><span class="vp-stage-num">03</span><div><h3>Trop anxiogène</h3><p>La peur ne remplace pas une progression claire et calme.</p></div><span class="vp-stage-icon" aria-hidden="true">◡</span></article>
         </div>
       </div>
     </section>
 
-    <section class="stage-learn-section">
-      <div class="vpl-container">
-        <div class="section-head section-head--center">
-          <span class="eyebrow">Ce que vous apprenez</span>
-          <h2>Des réflexes simples à retenir.</h2>
-          <p>Une progression courte : comprendre, prévenir, se positionner, réagir, sécuriser l’après.</p>
-        </div>
-        <div class="stage-learn-grid">
-          <article><b>1</b><h3>Comprendre</h3><p>Identifier les contextes sensibles et les erreurs qui aggravent une situation.</p></article>
-          <article><b>2</b><h3>Prévenir</h3><p>Anticiper les impasses et choisir une sortie quand elle existe.</p></article>
-          <article><b>3</b><h3>Se positionner</h3><p>Travailler la distance, l’angle, la posture, la voix et la place du corps.</p></article>
-          <article><b>4</b><h3>Réagir</h3><p>Utiliser des réponses simples, proportionnées et compatibles avec un public débutant.</p></article>
-          <article><b>5</b><h3>Sécuriser l’après</h3><p>Sortir de la zone, alerter, transmettre les informations utiles et retrouver du calme.</p></article>
-          <article class="accent"><b>✓</b><h3>Rester réaliste</h3><p>La méthode ne remplace ni la fuite possible, ni l’appel à l’aide, ni le cadre légal applicable.</p></article>
+    <section class="vp-stage-modern vp-stage-reflexes">
+      <div class="vpl-container vp-stage-reflex-wrap">
+        <div class="vp-stage-head center vp-reveal"><span class="vp-stage-kicker">Ce que vous apprenez</span><h2 class="vp-stage-title medium">Des réflexes simples à retenir.</h2><p class="vp-stage-lead">Une progression courte : comprendre, prévenir, se positionner, réagir, sécuriser l’après.</p></div>
+        <span class="vp-motion-chip vp-stage-hover-chip" aria-hidden="true">Hover lift</span>
+        <div class="vp-stage-reflex-grid vp-stagger">
+          <article class="vp-stage-card vp-stage-reflex-card vp-tilt" style="--vp-i:0"><span class="vp-stage-num">1</span><div><h3>Comprendre</h3><p>Identifier les contextes sensibles et les erreurs qui aggravent une situation.</p></div><span class="vp-stage-icon" aria-hidden="true">⌕</span></article>
+          <article class="vp-stage-card vp-stage-reflex-card vp-tilt" style="--vp-i:1"><span class="vp-stage-num">2</span><div><h3>Prévenir</h3><p>Anticiper les impasses et choisir une sortie quand elle existe.</p></div><span class="vp-stage-icon" aria-hidden="true">◈</span></article>
+          <article class="vp-stage-card vp-stage-reflex-card vp-tilt" style="--vp-i:2"><span class="vp-stage-num">3</span><div><h3>Se positionner</h3><p>Travailler la distance, l’angle, la posture, la voix et la place du corps.</p></div><span class="vp-stage-icon" aria-hidden="true">♙</span></article>
+          <article class="vp-stage-card vp-stage-reflex-card vp-tilt" style="--vp-i:3"><span class="vp-stage-num">4</span><div><h3>Réagir</h3><p>Utiliser des réponses simples, proportionnées et compatibles avec un public débutant.</p></div><span class="vp-stage-icon" aria-hidden="true">ϟ</span></article>
+          <article class="vp-stage-card vp-stage-reflex-card vp-tilt" style="--vp-i:4"><span class="vp-stage-num">5</span><div><h3>Sécuriser l’après</h3><p>Sortir de la zone, alerter, transmettre les informations utiles et retrouver du calme.</p></div><span class="vp-stage-icon" aria-hidden="true">✓</span></article>
+          <article class="vp-stage-card vp-stage-reflex-card vp-tilt accent" style="--vp-i:5"><span class="vp-stage-num">✓</span><div><h3>Rester réaliste</h3><p>La méthode ne remplace ni la fuite possible, ni l’appel à l’aide, ni le cadre légal applicable.</p></div><span class="vp-stage-icon" aria-hidden="true">⚖</span></article>
         </div>
       </div>
     </section>
 
-    <section class="stage-flow-section">
-      <div class="vpl-container stage-flow-grid">
-        <div class="stage-section-copy compact-title">
-          <span class="eyebrow">Déroulé d’une séance</span>
-          <h2>Une progression encadrée, sans mise en danger.</h2>
-          <p>Une session doit rester lisible : comprendre avant de pratiquer, pratiquer avant de complexifier, débriefer avant de repartir.</p>
-          <a class="vpl-button vpl-button-secondary" href="/methode.html">Voir la méthode</a>
-        </div>
-        <div class="stage-flow-list">
-          <article><b>1</b><div><h3>Briefing</h3><p>Objectifs, règles de sécurité, contexte et niveau du groupe.</p></div></article>
-          <article><b>2</b><div><h3>Démonstration</h3><p>Les repères sont montrés simplement avant d’être pratiqués.</p></div></article>
-          <article><b>3</b><div><h3>Pratique guidée</h3><p>Distance, déplacement, parole courte et sortie possible.</p></div></article>
-          <article><b>4</b><div><h3>Mises en situation</h3><p>Exercices progressifs, encadrés, sans humiliation ni recherche de performance.</p></div></article>
-          <article><b>5</b><div><h3>Débrief</h3><p>Ce qui a été compris, ce qui reste à travailler, quoi faire après une situation réelle.</p></div></article>
+    <section class="vp-stage-modern vp-stage-process">
+      <div class="vpl-container vp-stage-process-layout">
+        <div class="vp-stage-head vp-reveal"><span class="vp-stage-kicker">Déroulé d’une séance</span><h2 class="vp-stage-title medium">Une progression encadrée, sans mise en danger.</h2><p class="vp-stage-lead">Une session doit rester lisible : comprendre avant de pratiquer, pratiquer avant de complexifier, débriefer avant de repartir.</p><div class="vp-stage-process-actions"><a class="vpl-button vpl-button-secondary" href="/methode.html">Voir la méthode</a></div></div>
+        <div class="vp-stage-process-list vp-stagger">
+          <article class="vp-stage-card vp-stage-step vp-tilt" style="--vp-i:0"><span class="vp-stage-num">1</span><div><h3>Briefing</h3><p>Objectifs, règles de sécurité, contexte et niveau du groupe.</p></div></article>
+          <article class="vp-stage-card vp-stage-step vp-tilt" style="--vp-i:1"><span class="vp-stage-num">2</span><div><h3>Démonstration</h3><p>Les repères sont montrés simplement avant d’être pratiqués.</p></div></article>
+          <article class="vp-stage-card vp-stage-step vp-tilt" style="--vp-i:2"><span class="vp-stage-num">3</span><div><h3>Pratique guidée</h3><p>Distance, déplacement, parole courte et sortie possible.</p></div></article>
+          <article class="vp-stage-card vp-stage-step vp-tilt" style="--vp-i:3"><span class="vp-stage-num">4</span><div><h3>Mises en situation</h3><p>Exercices progressifs, encadrés, sans humiliation ni recherche de performance.</p></div></article>
+          <article class="vp-stage-card vp-stage-step vp-tilt" style="--vp-i:4"><span class="vp-stage-num">5</span><div><h3>Débrief</h3><p>Ce qui a été compris, ce qui reste à travailler, quoi faire après une situation réelle.</p></div></article>
         </div>
       </div>
     </section>
 
-
-    <section class="vp-visual-story vp-visual-story--stage" aria-labelledby="stage-visual-title">
-      <div class="vpl-container vp-visual-story-grid vp-visual-story-grid--reverse">
-        <div class="vp-visual-copy">
-          <span class="eyebrow">Ambiance de stage</span>
-          <h2 id="stage-visual-title">Voir, pratiquer, puis revenir au calme.</h2>
-          <p>
-            Une session doit rester progressive : explication, pratique guidée, situation simple,
-            puis débrief. Le but est de créer des repères, pas une démonstration de force.
-          </p>
-          <div class="vp-mini-proof">
-            <span>Progression</span>
-            <span>Sécurité</span>
-            <span>Lucidité</span>
-          </div>
+    <section class="vp-stage-visual" aria-labelledby="stage-visual-title">
+      <div class="vpl-container vp-stage-visual-grid">
+        <div class="vp-stage-photo-grid vp-stagger">
+          <figure class="vp-stage-photo" data-vp-parallax="-18" style="--vp-i:0"><img src="/visuel-briefing-crossfit.webp" alt="Briefing avec un groupe assis pendant une formation Vital Protect" loading="lazy" /><figcaption class="vp-stage-photo-label">Parallax</figcaption></figure>
+          <figure class="vp-stage-photo" data-vp-parallax="18" style="--vp-i:1"><img src="/visuel-massage-cardiaque.webp" alt="Atelier d'assistance et de mise en sécurité pendant une formation" loading="lazy" /><figcaption class="vp-stage-photo-label">Image reveal</figcaption></figure>
         </div>
-        <div class="vp-visual-mosaic vp-visual-mosaic--wide">
-          <figure class="vp-image-card vp-image-card--wide" data-parallax="-18">
-            <img src="/visuel-briefing-crossfit.webp" alt="Briefing avec un groupe assis pendant une formation Vital Protect" loading="lazy" />
-          </figure>
-          <figure class="vp-image-card" data-parallax="18">
-            <img src="/visuel-massage-cardiaque.webp" alt="Atelier d'assistance et de mise en sécurité pendant une formation" loading="lazy" />
-          </figure>
-        </div>
+        <div class="vp-stage-head vp-reveal"><span class="vp-stage-kicker">Ambiance de stage</span><h2 id="stage-visual-title" class="vp-stage-title medium">Voir, pratiquer, puis revenir au calme.</h2><p class="vp-stage-lead">Une session doit rester progressive : explication, pratique guidée, situation simple, puis débrief. Le but est de créer des repères, pas une démonstration de force.</p><div class="vp-stage-proof"><span>Progression</span><span>Sécurité</span><span>Lucidité</span></div></div>
       </div>
     </section>
 
-    <section class="stage-compare-section">
-      <div class="vpl-container stage-compare-grid">
-        <article class="stage-compare-card is-not">
-          <span class="eyebrow">Ce que ce n’est pas</span>
-          <h2>Vous n’allez pas apprendre à vous prendre pour un combattant.</h2>
-          <ul>
-            <li>Pas de combat libre.</li>
-            <li>Pas de promesse d’invincibilité.</li>
-            <li>Pas de culte de la confrontation.</li>
-            <li>Pas de scénario spectaculaire ou humiliant.</li>
-          </ul>
-        </article>
-        <article class="stage-compare-card is-yes">
-          <span class="eyebrow">Ce que c’est</span>
-          <h2>Un entraînement à la lucidité, à la distance et à la décision simple.</h2>
-          <p>La bonne réaction n’est pas toujours un geste. Souvent, c’est voir plus tôt, se placer mieux, parler plus court, sortir plus vite ou demander de l’aide au bon moment.</p>
-          <a class="vpl-button vpl-button-primary" href="#reservation">Recevoir les dates</a>
-        </article>
+    <section class="vp-stage-modern vp-stage-compare">
+      <div class="vpl-container vp-stage-compare-grid vp-stagger">
+        <article class="vp-stage-card vp-stage-compare-card vp-tilt is-not" style="--vp-i:0"><span class="vp-stage-kicker">Ce que ce n’est pas</span><h2>Vous n’allez pas apprendre à vous prendre pour un combattant.</h2><ul><li>Pas de combat libre.</li><li>Pas de promesse d’invincibilité.</li><li>Pas de culte de la confrontation.</li><li>Pas de scénario spectaculaire ou humiliant.</li></ul></article>
+        <article class="vp-stage-card vp-stage-compare-card vp-tilt is-yes" style="--vp-i:1"><span class="vp-stage-kicker">Ce que c’est</span><h2>Un entraînement à la lucidité, à la distance et à la décision simple.</h2><p>La bonne réaction n’est pas toujours un geste. Souvent, c’est voir plus tôt, se placer mieux, parler plus court, sortir plus vite ou demander de l’aide au bon moment.</p><a class="vpl-button vpl-button-primary" href="#reservation">Recevoir les dates</a></article>
       </div>
     </section>
-
-
 
     <section id="reservation" class="stage-reservation-section">
       <div class="vpl-container">
-        <div class="section-head section-head--center">
-          <span class="eyebrow">Réservation</span>
-          <h2>Réserver uniquement quand la session est complète.</h2>
-          <p>Le paiement reste désactivé si une information essentielle manque.</p>
-        </div>
+        <div class="section-head section-head--center"><span class="eyebrow">Réservation</span><h2>Réserver uniquement quand la session est complète.</h2><p>Le paiement reste désactivé si une information essentielle manque.</p></div>
         <div class="stage-booking-grid">
           <div class="stage-booking-summary">
             <h3>Résumé de la session</h3>
-            <div class="selected-stage-box">
-              <span class="selected-stage-label">Stage sélectionné</span>
-              <div class="selected-stage-value" id="selectedStageValue">Aucune session complète sélectionnée pour le moment.</div>
-            </div>
+            <div class="selected-stage-box"><span class="selected-stage-label">Stage sélectionné</span><div class="selected-stage-value" id="selectedStageValue">Aucune session complète sélectionnée pour le moment.</div></div>
             <div class="stage-detail-list">
-              <div><strong>Adresse</strong><span id="practicalAddress">—</span></div>
-              <div><strong>Heure</strong><span id="practicalTime">—</span></div>
-              <div><strong>Durée</strong><span id="practicalDuration">—</span></div>
-              <div><strong>Type</strong><span id="practicalType">—</span></div>
-              <div><strong>Niveau</strong><span id="practicalLevel">Accessible à tous</span></div>
+              <div><strong>Adresse</strong><span id="practicalAddress">—</span></div><div><strong>Heure</strong><span id="practicalTime">—</span></div><div><strong>Durée</strong><span id="practicalDuration">—</span></div><div><strong>Type</strong><span id="practicalType">—</span></div><div><strong>Niveau</strong><span id="practicalLevel">Accessible à tous</span></div>
             </div>
-            <div class="booking-total" id="bookingTotal">Total : en attente d’une session complète</div>
-            <div class="booking-status" id="bookingStatus"></div>
+            <div class="booking-total" id="bookingTotal">Total : en attente d’une session complète</div><div class="booking-status" id="bookingStatus"></div>
           </div>
-
           <div class="stage-booking-form-card">
             <form id="bookingForm">
               <div class="form-grid">
-                <div class="form-field">
-                  <label for="firstName">Prénom</label>
-                  <input id="firstName" type="text" required />
-                </div>
-                <div class="form-field">
-                  <label for="lastName">Nom</label>
-                  <input id="lastName" type="text" required />
-                </div>
-                <div class="form-field">
-                  <label for="email">Email</label>
-                  <input id="email" type="email" required />
-                </div>
-                <div class="form-field">
-                  <label for="phone">Téléphone</label>
-                  <input id="phone" type="tel" required />
-                </div>
-                <div class="form-field">
-                  <label for="places">Nombre de places</label>
-                  <input id="places" type="number" min="1" value="1" required />
-                </div>
-                <div class="form-field">
-                  <label for="cityDisplay">Ville du stage</label>
-                  <input id="cityDisplay" type="text" disabled />
-                </div>
-                <div class="form-field full">
-                  <label for="notes">Message complémentaire</label>
-                  <textarea id="notes" placeholder="Optionnel"></textarea>
-                </div>
+                <div class="form-field"><label for="firstName">Prénom</label><input id="firstName" type="text" required /></div>
+                <div class="form-field"><label for="lastName">Nom</label><input id="lastName" type="text" required /></div>
+                <div class="form-field"><label for="email">Email</label><input id="email" type="email" required /></div>
+                <div class="form-field"><label for="phone">Téléphone</label><input id="phone" type="tel" required /></div>
+                <div class="form-field"><label for="places">Nombre de places</label><input id="places" type="number" min="1" value="1" required /></div>
+                <div class="form-field"><label for="cityDisplay">Ville du stage</label><input id="cityDisplay" type="text" disabled /></div>
+                <div class="form-field full"><label for="notes">Message complémentaire</label><textarea id="notes" placeholder="Optionnel"></textarea></div>
               </div>
               <button class="vpl-button vpl-button-primary" id="bookingSubmitButton" type="submit" disabled>Réservation indisponible pour le moment</button>
               <p class="form-rgpd-note">Les informations transmises via ce formulaire sont utilisées uniquement pour répondre à votre demande. Vous pouvez exercer vos droits en écrivant à vitalprotectformation@gmail.com.</p>
@@ -912,15 +280,9 @@
       </div>
     </section>
 
-
-
     <section class="stage-faq-section">
       <div class="vpl-container">
-        <div class="section-head section-head--center">
-          <span class="eyebrow">Questions utiles</span>
-          <h2>Avant de demander une date.</h2>
-          <p>Les réponses essentielles, sans surcharge.</p>
-        </div>
+        <div class="section-head section-head--center"><span class="eyebrow">Questions utiles</span><h2>Avant de demander une date.</h2><p>Les réponses essentielles, sans surcharge.</p></div>
         <div class="faq-grid">
           <article class="faq-card"><h3>Est-ce adapté aux débutants ?</h3><p>Oui. La méthode est pensée pour un public adulte non spécialiste, sans prérequis martial.</p></article>
           <article class="faq-card"><h3>Faut-il une condition physique particulière ?</h3><p>La progression doit respecter les limites des participants. Toute contrainte physique doit être signalée avant la session.</p></article>
@@ -935,11 +297,7 @@
         <div class="stage-final-box">
           <h2>Prévenir d’abord. Réagir seulement si nécessaire.</h2>
           <p>Recevez les prochaines dates, demandez un échange entreprise ou découvrez le parcours formateur.</p>
-          <div class="vpl-actions">
-            <a class="vpl-button vpl-button-primary" href="#reservation">Recevoir les dates</a>
-            <a class="vpl-button vpl-button-secondary" href="/entreprises.html">Former une équipe</a>
-            <a class="vpl-button vpl-button-secondary" href="/devenir-formateur.html">Parcours formateur</a>
-          </div>
+          <div class="vpl-actions"><a class="vpl-button vpl-button-primary" href="#reservation">Recevoir les dates</a><a class="vpl-button vpl-button-secondary" href="/entreprises.html">Former une équipe</a><a class="vpl-button vpl-button-secondary" href="/devenir-formateur.html">Parcours formateur</a></div>
         </div>
       </div>
     </section>
@@ -947,38 +305,15 @@
 
   <footer class="site-footer">
     <div class="container site-footer__grid">
-      <div class="site-footer__brand">
-        <strong>VITAL PROTECT</strong>
-        <p>Une méthode structurée de sécurité personnelle fondée sur la prévention, l’évitement, la réaction réaliste, la pédagogie progressive et l’habilitation des formateurs.</p>
-      </div>
-      <div class="site-footer__links">
-        <a href="/methode.html">La méthode</a>
-        <a href="/entreprises.html">Entreprises</a>
-        <a href="/devenir-formateur.html">Devenir formateur</a>
-        <a href="/faq.html">FAQ</a>
-        <a href="/contact.html">Contact</a>
-      </div>
+      <div class="site-footer__brand"><strong>VITAL PROTECT</strong><p>Une méthode structurée de sécurité personnelle fondée sur la prévention, l’évitement, la réaction réaliste, la pédagogie progressive et l’habilitation des formateurs.</p></div>
+      <div class="site-footer__links"><a href="/methode.html">La méthode</a><a href="/entreprises.html">Entreprises</a><a href="/devenir-formateur.html">Devenir formateur</a><a href="/faq.html">FAQ</a><a href="/contact.html">Contact</a></div>
     </div>
   </footer>
 
 <script>
   (function () {
-    const revealSelector = [
-      '.section-head',
-      '.stage-section-copy',
-      '.stage-orientation-grid',
-      '.stage-problem-stack',
-      '.stage-learn-grid',
-      '.stage-flow-list',
-      '.vp-visual-copy',
-      '.vp-visual-mosaic',
-      '.stage-compare-grid',
-      '.faq-grid',
-      '.stage-final-box'
-    ].join(',');
-
+    const revealSelector = ['.vp-reveal','.vp-stagger','.stage-reservation-section .section-head','.stage-faq-section .section-head','.faq-grid','.stage-final-box'].join(',');
     const revealElements = document.querySelectorAll(revealSelector);
-
     if ('IntersectionObserver' in window) {
       const observer = new IntersectionObserver((entries) => {
         entries.forEach((entry) => {
@@ -986,24 +321,13 @@
           entry.target.classList.add('is-visible');
           observer.unobserve(entry.target);
         });
-      }, {
-        threshold: 0.16,
-        rootMargin: '0px 0px -8% 0px'
-      });
-
+      }, { threshold: 0.16, rootMargin: '0px 0px -8% 0px' });
       revealElements.forEach((element) => observer.observe(element));
     } else {
       revealElements.forEach((element) => element.classList.add('is-visible'));
     }
 
-    const interactiveCards = document.querySelectorAll([
-      '.stage-orientation-grid a',
-      '.stage-learn-grid article',
-      '.stage-flow-list article',
-      '.stage-compare-card'
-    ].join(','));
-
-    interactiveCards.forEach((card) => {
+    document.querySelectorAll('.vp-tilt').forEach((card) => {
       card.addEventListener('pointermove', (event) => {
         const rect = card.getBoundingClientRect();
         card.style.setProperty('--mx', `${event.clientX - rect.left}px`);
@@ -1011,20 +335,18 @@
       });
     });
 
-    const parallaxImages = document.querySelectorAll('[data-parallax]');
+    const parallaxImages = document.querySelectorAll('[data-vp-parallax]');
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
     function updateParallax() {
       if (reducedMotion) return;
       const viewportHeight = window.innerHeight || 1;
       parallaxImages.forEach((element) => {
         const rect = element.getBoundingClientRect();
         const centerDelta = (rect.top + rect.height / 2 - viewportHeight / 2) / viewportHeight;
-        const strength = Number(element.dataset.parallax || 0);
+        const strength = Number(element.dataset.vpParallax || 0);
         element.style.setProperty('--vp-parallax', `${centerDelta * strength}px`);
       });
     }
-
     window.addEventListener('scroll', updateParallax, { passive: true });
     window.addEventListener('resize', updateParallax);
     updateParallax();
