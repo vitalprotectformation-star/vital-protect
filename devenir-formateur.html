@@ -206,6 +206,117 @@
   }
 </style>
 
+
+<!-- Correctif Formateur — ruban en arrière-plan -->
+<style id="vptr-ribbon-background-fix">
+  body.page-formateur-redesign {
+    position: relative !important;
+    isolation: isolate !important;
+  }
+
+  body.page-formateur-redesign .vpl-scroll-ribbon {
+    z-index: 0 !important;
+    opacity: .34 !important;
+    pointer-events: none !important;
+    mix-blend-mode: normal !important;
+  }
+
+  body.page-formateur-redesign main,
+  body.page-formateur-redesign main > section,
+  body.page-formateur-redesign .vpl-inner-hero,
+  body.page-formateur-redesign .vp-visual-story,
+  body.page-formateur-redesign .vptr-section,
+  body.page-formateur-redesign #sessions,
+  body.page-formateur-redesign #formulaire {
+    position: relative !important;
+    z-index: 2 !important;
+  }
+
+  body.page-formateur-redesign .vpl-container,
+  body.page-formateur-redesign .container,
+  body.page-formateur-redesign .vpl-inner-hero-grid,
+  body.page-formateur-redesign .vp-visual-story-grid,
+  body.page-formateur-redesign .vp-visual-copy,
+  body.page-formateur-redesign .vp-visual-mosaic,
+  body.page-formateur-redesign .section-head,
+  body.page-formateur-redesign .module-catalog-head,
+  body.page-formateur-redesign .offer-grid,
+  body.page-formateur-redesign .module-grid,
+  body.page-formateur-redesign .profile-grid,
+  body.page-formateur-redesign .benefit-grid,
+  body.page-formateur-redesign .split-panel,
+  body.page-formateur-redesign .sessions-grid,
+  body.page-formateur-redesign .faq-grid,
+  body.page-formateur-redesign .form-grid,
+  body.page-formateur-redesign .vpl-actions {
+    position: relative !important;
+    z-index: 4 !important;
+  }
+
+  body.page-formateur-redesign .vpl-inner-visual,
+  body.page-formateur-redesign .vpl-inner-stat,
+  body.page-formateur-redesign .vp-image-card,
+  body.page-formateur-redesign .offer-card,
+  body.page-formateur-redesign .module-card,
+  body.page-formateur-redesign .module-flip-inner,
+  body.page-formateur-redesign .module-flip-face,
+  body.page-formateur-redesign .profile-card,
+  body.page-formateur-redesign .benefit-card,
+  body.page-formateur-redesign .info-panel,
+  body.page-formateur-redesign .session-card,
+  body.page-formateur-redesign .faq-card,
+  body.page-formateur-redesign .form-card,
+  body.page-formateur-redesign .bullet-item,
+  body.page-formateur-redesign .empty-state,
+  body.page-formateur-redesign .btn,
+  body.page-formateur-redesign .vpl-button,
+  body.page-formateur-redesign .eyebrow,
+  body.page-formateur-redesign h1,
+  body.page-formateur-redesign h2,
+  body.page-formateur-redesign h3,
+  body.page-formateur-redesign p,
+  body.page-formateur-redesign ul,
+  body.page-formateur-redesign form,
+  body.page-formateur-redesign input,
+  body.page-formateur-redesign select,
+  body.page-formateur-redesign textarea,
+  body.page-formateur-redesign label {
+    position: relative !important;
+    z-index: 6 !important;
+  }
+
+  body.page-formateur-redesign .module-flip-face,
+  body.page-formateur-redesign .profile-card,
+  body.page-formateur-redesign .benefit-card,
+  body.page-formateur-redesign .info-panel,
+  body.page-formateur-redesign .session-card,
+  body.page-formateur-redesign .faq-card,
+  body.page-formateur-redesign .form-card,
+  body.page-formateur-redesign .empty-state,
+  body.page-formateur-redesign .offer-card {
+    background: rgba(255,255,255,.94) !important;
+    isolation: isolate !important;
+  }
+
+  body.page-formateur-redesign .module-flip-face.back {
+    background: linear-gradient(135deg, rgba(255,255,255,.98), rgba(225,239,250,.96)) !important;
+  }
+
+  body.page-formateur-redesign .vp-visual-story--trainer-dark .vpl-container,
+  body.page-formateur-redesign .vp-visual-story--trainer-dark .vp-visual-story-grid,
+  body.page-formateur-redesign .vp-visual-story--trainer-dark .vp-visual-copy,
+  body.page-formateur-redesign .vp-visual-story--trainer-dark .vp-visual-mosaic,
+  body.page-formateur-redesign .vp-visual-story--trainer-dark .vp-image-card {
+    position: relative !important;
+    z-index: 6 !important;
+  }
+
+  body.page-formateur-redesign .vpl-nav {
+    position: fixed !important;
+    z-index: 100 !important;
+  }
+</style>
+
 </head>
 <body class="vpl-inner-page page-editorial-light page-formateur-redesign">
 <div class="vptr-background-orbs" aria-hidden="true"><span class="vptr-orb vptr-orb-one"></span><span class="vptr-orb vptr-orb-two"></span><span class="vptr-orb vptr-orb-three"></span></div>
@@ -297,11 +408,8 @@
         <span>Progression</span>
       </div>
     </div>
-    <div class="vp-visual-mosaic vp-visual-mosaic--trainer-duo">
-      <figure class="vp-image-card vp-image-card--trainer-main">
-        <img src="/visuel-briefing-crossfit.webp" alt="Groupe en briefing dans une salle de formation" loading="lazy" />
-      </figure>
-      <figure class="vp-image-card vp-image-card--trainer-side">
+    <div class="vp-visual-mosaic vp-visual-mosaic--trainer-duo vp-visual-mosaic--trainer-single">
+      <figure class="vp-image-card vp-image-card--trainer-main vp-image-card--trainer-large">
         <img src="/visuel-mise-distance.webp" alt="Correction de distance pendant une formation Vital Protect" loading="lazy" />
       </figure>
     </div>
