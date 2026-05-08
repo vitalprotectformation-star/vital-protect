@@ -1133,6 +1133,41 @@
     }
   </style>
 
+
+
+  <style>
+    /* Correctif page Entreprises : le ruban bleu reste en arrière-plan. */
+    body.page-editorial-light .vpl-scroll-ribbon {
+      z-index: 0 !important;
+    }
+
+    body.page-editorial-light main,
+    body.page-editorial-light main > section,
+    body.page-editorial-light main > section > .container,
+    body.page-editorial-light .vp-visual-story-grid,
+    body.page-editorial-light .vp-visual-copy,
+    body.page-editorial-light .vp-image-card,
+    body.page-editorial-light .intervention-section .section-shell,
+    body.page-editorial-light .intervention-section .hero-block,
+    body.page-editorial-light .intervention-section .cards-grid,
+    body.page-editorial-light .intervention-section .bottom-grid,
+    body.page-editorial-light .intervention-section .premium-strip,
+    body.page-editorial-light .enterprise-flow-grid,
+    body.page-editorial-light .enterprise-flow-left,
+    body.page-editorial-light .enterprise-flow-cards-wrap,
+    body.page-editorial-light .enterprise-flow-card,
+    body.page-editorial-light .enterprise-flow-card-inner,
+    body.page-editorial-light .contact-layout,
+    body.page-editorial-light footer {
+      position: relative !important;
+      z-index: 6 !important;
+    }
+
+    body.page-editorial-light .vpl-nav {
+      z-index: 1000 !important;
+    }
+  </style>
+
   <script src="/page-transition.js"></script>
 
   <script>
