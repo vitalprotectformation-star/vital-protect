@@ -250,28 +250,66 @@
   </section>
 
 
-  <section class="hp-standard hp-section" aria-labelledby="hp-standard-title">
+  <section class="hp-standard hp-section hp-standard-premium" id="methodSection" aria-labelledby="hp-standard-title">
+    <div class="hp-standard-orb" aria-hidden="true"></div>
+    <div class="hp-standard-noise" aria-hidden="true"></div>
+
     <div class="vpl-container hp-standard-grid">
-      <div>
-        <span class="hp-kicker">Le standard</span>
-        <h2 id="hp-standard-title">Une progression simple, encadrée et sans mise en danger.</h2>
-        <p>
+      <div class="hp-standard-left">
+        <span class="hp-kicker hp-standard-pill">Le standard</span>
+        <h2 id="hp-standard-title" class="hp-standard-title">
+          <span class="hp-standard-title-mask"><span class="hp-standard-title-line">Une progression</span></span>
+          <span class="hp-standard-title-mask"><span class="hp-standard-title-line">simple, encadrée</span></span>
+          <span class="hp-standard-title-mask"><span class="hp-standard-title-line">et sans mise</span></span>
+          <span class="hp-standard-title-mask"><span class="hp-standard-title-line">en danger.</span></span>
+        </h2>
+        <p class="hp-standard-copy">
           Une session Vital Protect doit rester lisible : comprendre avant de pratiquer,
           pratiquer avant de complexifier, débriefer avant de repartir.
         </p>
-        <a class="vpl-button vpl-button-primary" href="/methode.html">Voir la méthode</a>
+        <a class="vpl-button vpl-button-primary hp-standard-button" href="/methode.html">Voir la méthode</a>
       </div>
 
-      <ol class="hp-timeline">
-        <li><span>1</span><div><strong>Briefing</strong><p>Objectifs, règles de sécurité, limites physiques, contexte et niveau du groupe.</p></div></li>
-        <li><span>2</span><div><strong>Démonstration</strong><p>Les repères sont montrés simplement avant d’être pratiqués.</p></div></li>
-        <li><span>3</span><div><strong>Pratique guidée</strong><p>Posture, distance, déplacement, parole courte et sortie possible.</p></div></li>
-        <li><span>4</span><div><strong>Mises en situation</strong><p>Situations progressives, encadrées, sans humiliation ni recherche de performance.</p></div></li>
-        <li><span>5</span><div><strong>Débrief</strong><p>Ce qui a été compris, ce qui reste à travailler, quoi faire après une situation réelle.</p></div></li>
-      </ol>
+      <div class="hp-standard-cards-wrap">
+        <div class="hp-standard-step-track" aria-hidden="true"><span></span></div>
+
+        <ol class="hp-timeline hp-standard-cards" aria-label="Étapes de la méthode">
+          <li class="hp-standard-card">
+            <div class="hp-standard-card-inner">
+              <span>1</span>
+              <div><strong>Briefing</strong><p>Objectifs, règles de sécurité, limites physiques, contexte et niveau du groupe.</p></div>
+            </div>
+          </li>
+          <li class="hp-standard-card">
+            <div class="hp-standard-card-inner">
+              <span>2</span>
+              <div><strong>Démonstration</strong><p>Les repères sont montrés simplement avant d’être pratiqués.</p></div>
+            </div>
+          </li>
+          <li class="hp-standard-card">
+            <div class="hp-standard-card-inner">
+              <span>3</span>
+              <div><strong>Pratique guidée</strong><p>Posture, distance, déplacement, parole courte et sortie possible.</p></div>
+            </div>
+          </li>
+          <li class="hp-standard-card">
+            <div class="hp-standard-card-inner">
+              <span>4</span>
+              <div><strong>Mises en situation</strong><p>Situations progressives, encadrées, sans humiliation ni recherche de performance.</p></div>
+            </div>
+          </li>
+          <li class="hp-standard-card">
+            <div class="hp-standard-card-inner">
+              <span>5</span>
+              <div><strong>Débrief</strong><p>Ce qui a été compris, ce qui reste à travailler, quoi faire après une situation réelle.</p></div>
+            </div>
+          </li>
+        </ol>
+      </div>
+
+      <div class="hp-standard-progress" aria-hidden="true"><span></span></div>
     </div>
   </section>
-
   <section class="vp-visual-story vp-visual-story--home hp-section vp-home-visual-clean" aria-labelledby="home-visual-title">
     <div class="vpl-container vp-home-visual-grid">
       <div class="vp-visual-copy">
@@ -365,5 +403,259 @@
 </footer>
 </div>
 <script src="/lusion-level.js"></script>
+<script>
+  (function () {
+    var section = document.querySelector('.hp-standard-premium');
+    if (!section) return;
+
+    var cards = Array.prototype.slice.call(section.querySelectorAll('.hp-standard-card'));
+    var cardInners = Array.prototype.slice.call(section.querySelectorAll('.hp-standard-card-inner'));
+    var titleLines = Array.prototype.slice.call(section.querySelectorAll('.hp-standard-title-line'));
+    var pill = section.querySelector('.hp-standard-pill');
+    var copy = section.querySelector('.hp-standard-copy');
+    var button = section.querySelector('.hp-standard-button');
+    var progressBar = section.querySelector('.hp-standard-progress span');
+    var trackFill = section.querySelector('.hp-standard-step-track span');
+    var orb = section.querySelector('.hp-standard-orb');
+    var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var mobileQuery = window.matchMedia('(max-width: 900px)');
+    var hasPlayed = false;
+    var isPlaying = false;
+    var scrollLockY = 0;
+
+    function clamp(value, min, max) {
+      return Math.min(Math.max(value, min), max);
+    }
+
+    function easeOutCubic(t) {
+      t = clamp(t, 0, 1);
+      return 1 - Math.pow(1 - t, 3);
+    }
+
+    function local(progress, start, end) {
+      return clamp((progress - start) / Math.max(0.001, end - start), 0, 1);
+    }
+
+    function setActiveCard(activeIndex) {
+      cards.forEach(function (card, index) {
+        card.classList.toggle('is-active', index === activeIndex);
+      });
+    }
+
+    function setElementReveal(element, amount, offset) {
+      if (!element) return;
+      var eased = easeOutCubic(amount);
+      element.style.opacity = eased;
+      element.style.transform = 'translateY(' + ((1 - eased) * offset) + 'px)';
+    }
+
+    function revealAll() {
+      section.classList.add('hp-standard-complete');
+      section.classList.remove('hp-standard-playing');
+      if (pill) {
+        pill.style.opacity = '1';
+        pill.style.transform = 'none';
+      }
+      if (copy) {
+        copy.style.opacity = '1';
+        copy.style.transform = 'none';
+      }
+      if (button) {
+        button.style.opacity = '1';
+        button.style.transform = 'none';
+      }
+      titleLines.forEach(function (line) {
+        line.style.opacity = '1';
+        line.style.transform = 'none';
+      });
+      cards.forEach(function (card) {
+        card.style.height = 'auto';
+        card.style.opacity = '1';
+      });
+      cardInners.forEach(function (inner) {
+        inner.style.transform = 'none';
+        inner.style.filter = 'none';
+      });
+      if (progressBar) progressBar.style.width = '100%';
+      if (trackFill) trackFill.style.height = '100%';
+      if (orb) {
+        orb.style.opacity = '1';
+        orb.style.transform = 'translate(-50%, -50%) scale(1.08)';
+      }
+      setActiveCard(cards.length - 1);
+    }
+
+    function resetInitial() {
+      if (reduceMotion || mobileQuery.matches) {
+        revealAll();
+        return;
+      }
+
+      section.classList.remove('hp-standard-complete');
+      section.classList.add('hp-standard-js');
+
+      [pill, copy, button].forEach(function (element) {
+        if (!element) return;
+        element.style.opacity = '0';
+        element.style.transform = 'translateY(18px)';
+      });
+
+      titleLines.forEach(function (line) {
+        line.style.opacity = '0';
+        line.style.transform = 'translateY(108%) rotate(2deg)';
+      });
+
+      cards.forEach(function (card) {
+        card.style.height = '0px';
+        card.style.opacity = '0';
+      });
+
+      cardInners.forEach(function (inner) {
+        inner.style.transform = 'translate(92px, 44px) rotateX(-10deg) rotateZ(1.8deg) scale(.94)';
+        inner.style.filter = 'brightness(1.08)';
+      });
+
+      if (progressBar) progressBar.style.width = '0%';
+      if (trackFill) trackFill.style.height = '0%';
+      if (orb) {
+        orb.style.opacity = '0';
+        orb.style.transform = 'translate(-50%, -50%) scale(.5)';
+      }
+      setActiveCard(-1);
+    }
+
+    function update(progress) {
+      var percent = (progress * 100) + '%';
+      section.classList.add('hp-standard-playing');
+
+      if (orb) {
+        var orbLocal = easeOutCubic(local(progress, 0.00, 0.18));
+        var drift = easeOutCubic(local(progress, 0.88, 1));
+        orb.style.opacity = orbLocal;
+        orb.style.transform =
+          'translate(calc(-50% + ' + (drift * 40) + 'px), calc(-50% - ' + (drift * 16) + 'px)) scale(' + (0.5 + orbLocal * 0.58) + ')';
+      }
+
+      setElementReveal(pill, local(progress, 0.04, 0.16), 18);
+
+      titleLines.forEach(function (line, index) {
+        var amount = easeOutCubic(local(progress, 0.08 + index * 0.035, 0.24 + index * 0.035));
+        line.style.opacity = amount;
+        line.style.transform = 'translateY(' + ((1 - amount) * 108) + '%) rotate(' + ((1 - amount) * 2) + 'deg)';
+      });
+
+      setElementReveal(copy, local(progress, 0.24, 0.36), 18);
+      setElementReveal(button, local(progress, 0.28, 0.40), 18);
+
+      var activeIndex = -1;
+
+      cards.forEach(function (card, index) {
+        var inner = card.querySelector('.hp-standard-card-inner');
+        var start = 0.38 + index * 0.10;
+        var end = start + 0.125;
+        var amount = easeOutCubic(local(progress, start, end));
+        var targetHeight = inner ? inner.offsetHeight : 104;
+
+        card.style.height = amount >= 0.995 ? 'auto' : (targetHeight * amount) + 'px';
+        card.style.opacity = amount;
+
+        if (inner) {
+          inner.style.transform =
+            'translate(' + ((1 - amount) * 92) + 'px, ' + ((1 - amount) * 44) + 'px) rotateX(' + ((1 - amount) * -10) + 'deg) rotateZ(' + ((1 - amount) * 1.8) + 'deg) scale(' + (0.94 + amount * 0.06) + ')';
+          inner.style.filter = 'brightness(' + (1 + (1 - amount) * 0.08) + ')';
+        }
+
+        if (amount > 0.08) activeIndex = index;
+      });
+
+      if (progressBar) progressBar.style.width = percent;
+      if (trackFill) trackFill.style.height = percent;
+      setActiveCard(activeIndex);
+    }
+
+    function lockScroll() {
+      scrollLockY = window.scrollY || window.pageYOffset;
+      document.documentElement.style.scrollBehavior = 'auto';
+      document.body.style.position = 'fixed';
+      document.body.style.top = '-' + scrollLockY + 'px';
+      document.body.style.left = '0';
+      document.body.style.right = '0';
+      document.body.style.width = '100%';
+    }
+
+    function unlockScroll() {
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.left = '';
+      document.body.style.right = '';
+      document.body.style.width = '';
+      window.scrollTo(0, scrollLockY);
+      document.documentElement.style.scrollBehavior = '';
+    }
+
+    function playSequence() {
+      if (hasPlayed || isPlaying || reduceMotion || mobileQuery.matches) return;
+      hasPlayed = true;
+      isPlaying = true;
+      section.classList.add('hp-standard-playing');
+
+      var targetTop = section.getBoundingClientRect().top + (window.scrollY || window.pageYOffset);
+      window.scrollTo(0, targetTop);
+      lockScroll();
+
+      var duration = 3550;
+      var start = performance.now();
+
+      function frame(now) {
+        var progress = clamp((now - start) / duration, 0, 1);
+        update(progress);
+
+        if (progress < 1) {
+          requestAnimationFrame(frame);
+        } else {
+          update(1);
+          revealAll();
+          isPlaying = false;
+          unlockScroll();
+        }
+      }
+
+      requestAnimationFrame(frame);
+    }
+
+    function checkEnter() {
+      if (hasPlayed || isPlaying || reduceMotion || mobileQuery.matches) return;
+      var rect = section.getBoundingClientRect();
+      if (rect.top <= 80 && rect.bottom >= window.innerHeight * 0.55) {
+        playSequence();
+      }
+    }
+
+    function handleModeChange() {
+      hasPlayed = false;
+      isPlaying = false;
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.left = '';
+      document.body.style.right = '';
+      document.body.style.width = '';
+      resetInitial();
+      checkEnter();
+    }
+
+    resetInitial();
+    window.addEventListener('scroll', checkEnter, { passive: true });
+    window.addEventListener('resize', checkEnter);
+
+    if (mobileQuery.addEventListener) {
+      mobileQuery.addEventListener('change', handleModeChange);
+    } else if (mobileQuery.addListener) {
+      mobileQuery.addListener(handleModeChange);
+    }
+
+    checkEnter();
+  })();
+</script>
+
 </body>
 </html>
