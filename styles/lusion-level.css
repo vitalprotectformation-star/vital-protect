@@ -14825,3 +14825,90 @@ body.page-editorial-light main > .vp-visual-story.vp-visual-story--enterprise:fi
     padding-top: calc(var(--vpl-nav-offset, 70px) + 28px) !important;
   }
 }
+
+/* =========================================================
+   Page Formateurs — section Transmission alignée sur le rendu Stage
+   ========================================================= */
+body.page-formateur-redesign .vp-visual-story--trainer-dark {
+  padding: clamp(84px, 9vw, 136px) 0 !important;
+  background:
+    radial-gradient(circle at 18% 20%, rgba(74, 184, 255, .12), transparent 24%),
+    linear-gradient(135deg, #07111f 0%, #0d2943 100%) !important;
+  color: #fff !important;
+}
+
+body.page-formateur-redesign .vp-visual-story--trainer-dark .vp-visual-story-grid {
+  grid-template-columns: minmax(520px, 1fr) minmax(0, .86fr) !important;
+  gap: clamp(44px, 6vw, 88px) !important;
+  align-items: center !important;
+}
+
+body.page-formateur-redesign .vp-visual-story--trainer-dark .vp-visual-copy h2 {
+  max-width: 10.8ch !important;
+  color: #fff !important;
+}
+
+body.page-formateur-redesign .vp-visual-story--trainer-dark .vp-visual-copy p {
+  max-width: 58ch !important;
+  color: rgba(255, 255, 255, .78) !important;
+}
+
+body.page-formateur-redesign .vp-visual-story--trainer-dark .eyebrow {
+  color: #fff !important;
+}
+
+body.page-formateur-redesign .vp-visual-mosaic--trainer-duo {
+  display: grid !important;
+  grid-template-columns: minmax(230px, 1.05fr) minmax(220px, .95fr) !important;
+  gap: clamp(18px, 2vw, 28px) !important;
+  align-items: center !important;
+}
+
+body.page-formateur-redesign .vp-visual-mosaic--trainer-duo .vp-image-card {
+  width: 100% !important;
+  border-color: rgba(255, 255, 255, .22) !important;
+  background: rgba(255, 255, 255, .08) !important;
+  box-shadow: 0 28px 90px rgba(0, 0, 0, .24) !important;
+}
+
+body.page-formateur-redesign .vp-image-card--trainer-main {
+  min-height: clamp(390px, 34vw, 500px) !important;
+}
+
+body.page-formateur-redesign .vp-image-card--trainer-side {
+  min-height: clamp(320px, 27vw, 410px) !important;
+  margin-top: clamp(36px, 5vw, 76px) !important;
+}
+
+body.page-formateur-redesign .vp-visual-story--trainer-dark .vp-mini-proof span {
+  color: #fff !important;
+  background: rgba(255, 255, 255, .10) !important;
+  border-color: rgba(255, 255, 255, .22) !important;
+}
+
+@media (max-width: 980px) {
+  body.page-formateur-redesign .vp-visual-story--trainer-dark .vp-visual-story-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  body.page-formateur-redesign .vp-visual-story--trainer-dark .vp-visual-copy,
+  body.page-formateur-redesign .vp-visual-story--trainer-dark .vp-visual-mosaic {
+    order: initial !important;
+  }
+
+  body.page-formateur-redesign .vp-visual-story--trainer-dark .vp-visual-copy h2 {
+    max-width: 11.5ch !important;
+  }
+}
+
+@media (max-width: 680px) {
+  body.page-formateur-redesign .vp-visual-mosaic--trainer-duo {
+    grid-template-columns: 1fr !important;
+  }
+
+  body.page-formateur-redesign .vp-image-card--trainer-main,
+  body.page-formateur-redesign .vp-image-card--trainer-side {
+    min-height: 280px !important;
+    margin-top: 0 !important;
+  }
+}
