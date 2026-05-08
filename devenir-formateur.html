@@ -252,8 +252,79 @@
     align-items: start !important;
   }
 
+  body.page-formateur-redesign #formulaire .form-field {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+    min-width: 0 !important;
+  }
+
   body.page-formateur-redesign #formulaire .form-field label {
-    gap: 9px !important;
+    display: block !important;
+    gap: 0 !important;
+    color: #1f3147 !important;
+    font-size: .75rem !important;
+    line-height: 1.2 !important;
+    letter-spacing: .075em !important;
+    text-transform: uppercase !important;
+  }
+
+  body.page-formateur-redesign #formulaire .field-help,
+  body.page-formateur-redesign #formulaire .form-submit-note,
+  body.page-formateur-redesign #formulaire .form-rgpd-note {
+    position: relative !important;
+    z-index: 1 !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    color: #66768a !important;
+    font-size: .88rem !important;
+    line-height: 1.62 !important;
+  }
+
+  body.page-formateur-redesign #formulaire .field-help {
+    padding: 0 2px !important;
+    font-size: .82rem !important;
+  }
+
+  body.page-formateur-redesign #formulaire .form-submit-note {
+    margin-top: 14px !important;
+    padding: 14px 16px !important;
+    border: 1px solid rgba(200, 215, 228, .72) !important;
+    border-radius: 16px !important;
+    background: rgba(237, 246, 253, .72) !important;
+  }
+
+  body.page-formateur-redesign #formulaire .form-rgpd-note {
+    margin-top: 12px !important;
+    font-size: .78rem !important;
+    line-height: 1.58 !important;
+  }
+
+  body.page-formateur-redesign #formulaire .selected-session-box {
+    position: relative !important;
+    z-index: 1 !important;
+    display: grid !important;
+    gap: 8px !important;
+    margin: 18px 0 0 !important;
+    padding: 16px 18px !important;
+    border: 1px solid rgba(200, 215, 228, .85) !important;
+    border-radius: 18px !important;
+    background: rgba(237, 246, 253, .72) !important;
+  }
+
+  body.page-formateur-redesign #formulaire .selected-session-label {
+    color: #1f3147 !important;
+    font-size: .72rem !important;
+    font-weight: 850 !important;
+    letter-spacing: .075em !important;
+    text-transform: uppercase !important;
+  }
+
+  body.page-formateur-redesign #formulaire .selected-session-value {
+    color: #33465d !important;
+    font-size: .96rem !important;
+    line-height: 1.5 !important;
+    word-break: break-word !important;
   }
 
   body.page-formateur-redesign #formulaire input,
@@ -707,36 +778,36 @@
 <span class="selected-session-label">Session sélectionnée</span>
 <div class="selected-session-value" id="selectedSessionValue">—</div>
 </div>
-<form id="trainerForm">
+<form id="trainerForm" class="trainer-candidate-form">
 <div class="form-grid">
 <div class="form-field">
 <label for="firstName">Prénom</label>
-<input id="firstName" required="" type="text"/>
+<input id="firstName" required="" type="text" autocomplete="given-name" placeholder="Votre prénom"/>
 </div>
 <div class="form-field">
 <label for="lastName">Nom</label>
-<input id="lastName" required="" type="text"/>
+<input id="lastName" required="" type="text" autocomplete="family-name" placeholder="Votre nom"/>
 </div>
 <div class="form-field">
 <label for="email">Email</label>
-<input id="email" required="" type="email"/>
+<input id="email" required="" type="email" autocomplete="email" placeholder="nom@exemple.fr"/>
 </div>
 <div class="form-field">
 <label for="phone">Téléphone</label>
-<input id="phone" required="" type="tel"/>
+<input id="phone" required="" type="tel" autocomplete="tel" placeholder="06 00 00 00 00"/>
 </div>
 <div class="form-field">
 <label for="city">Ville</label>
-<input id="city" required="" type="text"/>
+<input id="city" required="" type="text" autocomplete="address-level2" placeholder="Votre ville"/>
 </div>
 <div class="form-field">
 <label for="trainingType">Module</label>
 <select id="trainingType" required="">
 <option value="">Choisissez un module</option>
 </select>
-<div class="form-note" style="margin-top:8px; color: var(--vp-text-soft); line-height:1.6; font-size:0.95rem;">
+<p class="field-help">
                   Le module se verrouille automatiquement quand vous sélectionnez une session.
-                </div>
+                </p>
 </div>
 <div class="form-field full">
 <label for="message">Votre message</label>
@@ -744,11 +815,11 @@
 </div>
 </div>
 <button class="btn btn-dark" type="submit">Réserver ma place</button>
-<div class="form-note" style="margin-top:10px; color: var(--vp-text-soft); line-height:1.7;">
-              Réservation sécurisée — le montant est autorisé puis capturé uniquement après validation du dossier et vérification de la session.
-            </div>
-<p class="form-rgpd-note" style="margin:12px 0 0; color: var(--vp-text-soft); font-size:.86rem; line-height:1.55;">
-              Les informations transmises via ce formulaire sont utilisées uniquement pour répondre à votre demande. Vous pouvez exercer vos droits d’accès, de rectification ou de suppression en écrivant à vitalprotectformation@gmail.com. Voir notre politique de confidentialité.
+<p class="form-submit-note">
+              Réservation sécurisée : le montant est autorisé puis capturé uniquement après validation du dossier et vérification de la session.
+            </p>
+<p class="form-rgpd-note">
+              Les informations transmises via ce formulaire servent uniquement à traiter votre demande. Vous pouvez exercer vos droits d’accès, de rectification ou de suppression en écrivant à vitalprotectformation@gmail.com. Voir notre politique de confidentialité.
             </p>
 </form>
 </div>
@@ -932,6 +1003,28 @@
         .replaceAll(">", "&gt;")
         .replaceAll('"', "&quot;")
         .replaceAll("'", "&#39;");
+    }
+
+    function normalizeModuleSearch(value) {
+      return String(value || "")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, " ")
+        .trim();
+    }
+
+    function isHiddenTrainerModule(moduleOrName) {
+      const values = typeof moduleOrName === "object" && moduleOrName !== null
+        ? [moduleOrName.name, moduleOrName.slug, moduleOrName.module_name, moduleOrName.title]
+        : [moduleOrName];
+
+      return values.some((value) => {
+        const normalized = normalizeModuleSearch(value);
+        if (!normalized) return false;
+        const tokens = normalized.split(/\s+/);
+        return normalized === "ads" || tokens.includes("ads");
+      });
     }
 
     function getAvailabilityClass(remainingPlaces) {
@@ -1247,7 +1340,14 @@
         return;
       }
 
-      modulesData = data || [];
+      modulesData = (data || []).filter((module) => !isHiddenTrainerModule(module));
+
+      if (isHiddenTrainerModule(selectedTrainingType)) {
+        selectedTrainingType = "";
+        selectedSessionId = "";
+        trainingTypeSelect.value = "";
+      }
+
       renderModules();
       populateTrainingTypeSelect();
     }
@@ -1270,7 +1370,7 @@
         return;
       }
 
-      sessionsData = data || [];
+      sessionsData = (data || []).filter((session) => !isHiddenTrainerModule(session.module_name));
 
       if (selectedSessionId) {
         const preselected = sessionsData.find((item) => item.id === selectedSessionId);
