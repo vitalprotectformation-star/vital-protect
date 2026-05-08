@@ -39,6 +39,304 @@
 <link href="/styles/base.css" rel="stylesheet"/>
 <link href="/styles/components.css" rel="stylesheet"/>
 <link href="/styles/lusion-level.css" rel="stylesheet"/>
+<style id="vptr-hero-animation">
+    :root {
+      --vptr-hero-ease: cubic-bezier(.22, 1, .36, 1);
+      --vptr-hero-navy-950: #071421;
+      --vptr-hero-navy-900: #0b1725;
+      --vptr-hero-navy-700: #18314d;
+      --vptr-hero-text: #f8fafc;
+      --vptr-hero-muted: rgba(255, 255, 255, .68);
+      --vptr-hero-line: rgba(255, 255, 255, .14);
+    }
+
+    .vptr-nav-animated {
+      opacity: 0;
+      transform: translateY(-18px);
+      animation: vptrNavIn .82s var(--vptr-hero-ease) .08s forwards;
+    }
+
+    .vptr-hero-animated {
+      position: relative;
+      min-height: 720px;
+      overflow: hidden;
+      isolation: isolate;
+      color: var(--vptr-hero-text);
+      background:
+        radial-gradient(circle at 100% 0%, rgba(72, 105, 134, .55), transparent 28%),
+        linear-gradient(135deg, var(--vptr-hero-navy-950) 0%, var(--vptr-hero-navy-900) 46%, var(--vptr-hero-navy-700) 100%);
+    }
+
+    .vptr-hero-animated::before,
+    .vptr-hero-animated::after {
+      content: "";
+      position: absolute;
+      border-radius: 999px;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .vptr-hero-animated::before {
+      width: 560px;
+      height: 560px;
+      top: -380px;
+      right: -110px;
+      background: rgba(137, 160, 181, .16);
+      animation: vptrOrbitBlob 9s var(--vptr-hero-ease) infinite alternate;
+    }
+
+    .vptr-hero-animated::after {
+      width: 420px;
+      height: 420px;
+      left: -180px;
+      bottom: -210px;
+      background: rgba(36, 82, 122, .23);
+      filter: blur(8px);
+      animation: vptrBreatheBlob 7s ease-in-out infinite;
+    }
+
+    .vptr-hero-grid {
+      position: relative;
+      z-index: 1;
+      align-items: center;
+    }
+
+    .vptr-hero-content {
+      position: relative;
+      z-index: 2;
+    }
+
+    .vptr-eyebrow {
+      width: fit-content;
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      padding: 10px 18px 10px 10px;
+      border: 1px solid rgba(255, 255, 255, .17);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, .08);
+      color: rgba(255, 255, 255, .76);
+      font-size: 16px;
+      font-weight: 850;
+      backdrop-filter: blur(15px);
+      opacity: 0;
+      transform: translateY(22px);
+      animation: vptrRiseIn .85s var(--vptr-hero-ease) .25s forwards;
+    }
+
+    .vptr-eyebrow-dot {
+      position: relative;
+      flex: 0 0 auto;
+      width: 21px;
+      height: 21px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, .18);
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .08);
+    }
+
+    .vptr-eyebrow-dot::after {
+      content: "";
+      position: absolute;
+      inset: 6px;
+      border-radius: inherit;
+      background: #fff;
+      animation: vptrPulseDot 1.8s ease-in-out infinite;
+    }
+
+    .vptr-inner-title {
+      max-width: 705px;
+      margin: 26px 0 30px;
+      color: #fff;
+      font-size: clamp(72px, 8.2vw, 126px);
+      line-height: .94;
+      letter-spacing: -.085em;
+      font-weight: 950;
+    }
+
+    .vptr-title-line {
+      display: block;
+      overflow: hidden;
+    }
+
+    .vptr-title-line > span {
+      display: inline-block;
+      transform: translateY(112%);
+      animation: vptrTextReveal .95s var(--vptr-hero-ease) forwards;
+    }
+
+    .vptr-title-line:nth-child(1) > span { animation-delay: .38s; }
+    .vptr-title-line:nth-child(2) > span { animation-delay: .52s; }
+    .vptr-title-line:nth-child(3) > span { animation-delay: .66s; }
+
+    .vptr-copy {
+      max-width: 650px;
+      color: var(--vptr-hero-muted);
+      opacity: 0;
+      transform: translateY(24px);
+      animation: vptrRiseIn .85s var(--vptr-hero-ease) .86s forwards;
+    }
+
+    .vptr-actions {
+      opacity: 0;
+      transform: translateY(24px);
+      animation: vptrRiseIn .85s var(--vptr-hero-ease) 1.02s forwards;
+    }
+
+    .vptr-visual {
+      position: relative;
+      opacity: 0;
+      transform: translateX(34px) scale(.98);
+      animation: vptrMediaIn 1s var(--vptr-hero-ease) .58s forwards;
+      perspective: 1100px;
+    }
+
+    .vptr-photo-wrap {
+      position: relative;
+      display: block;
+      width: 100%;
+      overflow: hidden;
+      border-radius: 34px;
+      border: 1px solid rgba(255, 255, 255, .15);
+      box-shadow: 0 28px 80px rgba(0, 0, 0, .45);
+      transform-style: preserve-3d;
+      will-change: transform;
+      transition: transform .35s var(--vptr-hero-ease), box-shadow .35s var(--vptr-hero-ease);
+    }
+
+    .vptr-photo-wrap img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: inherit;
+    }
+
+    .vptr-photo-wrap::after {
+      content: "";
+      position: absolute;
+      inset: -40% -70%;
+      background: linear-gradient(110deg, transparent 35%, rgba(255, 255, 255, .34), transparent 64%);
+      transform: translateX(-45%) rotate(8deg);
+      animation: vptrShine 3.8s ease-in-out 1.25s infinite;
+      pointer-events: none;
+    }
+
+    .vptr-info-card {
+      opacity: 0;
+      transform: translateY(26px);
+      animation: vptrCardFloatIn .9s var(--vptr-hero-ease) 1.08s forwards, vptrFloating 5s ease-in-out 2s infinite;
+    }
+
+    .vptr-hero-animated .vpl-button,
+    .vptr-hero-animated .vpl-button-primary,
+    .vptr-hero-animated .vpl-button-secondary {
+      transition: transform .25s var(--vptr-hero-ease), box-shadow .25s var(--vptr-hero-ease), background .25s ease, color .25s ease;
+    }
+
+    .vptr-hero-animated .vpl-button:hover,
+    .vptr-hero-animated .vpl-button-primary:hover,
+    .vptr-hero-animated .vpl-button-secondary:hover {
+      transform: translateY(-3px);
+    }
+
+    @keyframes vptrNavIn {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes vptrRiseIn {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes vptrTextReveal {
+      to { transform: translateY(0); }
+    }
+
+    @keyframes vptrMediaIn {
+      to { opacity: 1; transform: translateX(0) scale(1); }
+    }
+
+    @keyframes vptrCardFloatIn {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes vptrFloating {
+      0%, 100% { translate: 0 0; }
+      50% { translate: 0 -10px; }
+    }
+
+    @keyframes vptrShine {
+      0%, 45% { transform: translateX(-50%) rotate(8deg); opacity: 0; }
+      56% { opacity: .55; }
+      72%, 100% { transform: translateX(50%) rotate(8deg); opacity: 0; }
+    }
+
+    @keyframes vptrPulseDot {
+      0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 255, 255, .5); }
+      50% { transform: scale(.82); box-shadow: 0 0 0 8px rgba(255, 255, 255, 0); }
+    }
+
+    @keyframes vptrOrbitBlob {
+      to { transform: translate(-40px, 32px) scale(1.08); }
+    }
+
+    @keyframes vptrBreatheBlob {
+      0%, 100% { transform: scale(1); opacity: .65; }
+      50% { transform: scale(1.18); opacity: .35; }
+    }
+
+    @media (hover: hover) {
+      .vptr-photo-wrap:hover {
+        box-shadow: 0 36px 90px rgba(0, 0, 0, .5);
+      }
+    }
+
+    @media (max-width: 1040px) {
+      .vptr-hero-animated {
+        min-height: auto;
+      }
+
+      .vptr-visual {
+        transform: translateY(26px) scale(.98);
+      }
+
+      .vptr-inner-title {
+        font-size: clamp(62px, 12vw, 96px);
+      }
+    }
+
+    @media (max-width: 640px) {
+      .vptr-inner-title {
+        font-size: clamp(54px, 16vw, 86px);
+      }
+
+      .vptr-eyebrow {
+        font-size: 14px;
+      }
+
+      .vptr-photo-wrap {
+        border-radius: 26px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .vptr-nav-animated,
+      .vptr-hero-animated::before,
+      .vptr-hero-animated::after,
+      .vptr-eyebrow,
+      .vptr-eyebrow-dot::after,
+      .vptr-title-line > span,
+      .vptr-copy,
+      .vptr-actions,
+      .vptr-visual,
+      .vptr-photo-wrap::after,
+      .vptr-info-card {
+        animation: none !important;
+        opacity: 1 !important;
+        transform: none !important;
+        translate: none !important;
+      }
+    }
+  </style>
 </head>
 <body class="vpl-inner-page page-editorial-light">
 <canvas aria-hidden="true" class="vpl-canvas"></canvas>
@@ -58,7 +356,7 @@
 <circle class="vpl-ribbon-dot" cx="920" cy="-80" r="18"></circle>
 </svg>
 </div>
-<header class="vpl-nav">
+<header class="vpl-nav vptr-nav-animated">
 <a aria-label="Accueil Vital Protect" class="vpl-brand" href="/index.html">
 <img alt="Vital Protect" src="/logo.png"/>
 <div>
@@ -79,20 +377,26 @@
 <a class="vpl-nav-cta" href="/stage.html">Trouver un stage</a>
 </header>
 <main>
-<section class="vpl-inner-hero">
-<div class="vpl-container vpl-inner-hero-grid">
-<div>
-<div class="vpl-eyebrow">Réseau formateur</div>
-<h1 class="vpl-inner-title">Intégrer un réseau<span>encadré.</span></h1>
-<p class="vpl-inner-lead">Devenir formateur Vital Protect, c’est rejoindre un cadre de transmission contrôlé, accompagné et maintenu à jour.</p>
-<div class="vpl-actions">
+<section class="vpl-inner-hero vptr-hero-animated" data-vptr-hero>
+<div class="vpl-container vpl-inner-hero-grid vptr-hero-grid">
+<div class="vptr-hero-content">
+<div class="vpl-eyebrow vptr-eyebrow"><span class="vptr-eyebrow-dot" aria-hidden="true"></span>Réseau formateur</div>
+<h1 class="vpl-inner-title vptr-inner-title" aria-label="Intégrer un réseau encadré.">
+<span class="vptr-title-line"><span>Intégrer un</span></span>
+<span class="vptr-title-line"><span>réseau</span></span>
+<span class="vptr-title-line"><span>encadré.</span></span>
+</h1>
+<p class="vpl-inner-lead vptr-copy">Devenir formateur Vital Protect, c’est rejoindre un cadre de transmission contrôlé, accompagné et maintenu à jour.</p>
+<div class="vpl-actions vptr-actions">
 <a class="vpl-button vpl-button-primary" href="/stage.html">Trouver un stage</a>
 <a class="vpl-button vpl-button-secondary" href="/contact.html">Nous contacter</a>
 </div>
 </div>
-<div class="vpl-inner-visual">
+<div class="vpl-inner-visual vptr-visual">
+<div class="vptr-photo-wrap" data-vptr-tilt>
 <img alt="Formateur Vital Protect guidant un groupe pendant un briefing pédagogique" src="/hero-formateur-reseau.webp"/>
-<div class="vpl-inner-stat">
+</div>
+<div class="vpl-inner-stat vptr-info-card">
 <strong>Habilité. Supervisé. Maintenu à jour.</strong>
 <span>La qualité ne dépend pas d’une personne, mais d’un standard commun.</span>
 </div>
@@ -510,6 +814,32 @@
 </div>
 </div>
 </footer>
+<script>
+    (function () {
+      var hero = document.querySelector('[data-vptr-hero]');
+      if (!hero) return;
+
+      var card = hero.querySelector('[data-vptr-tilt]');
+      var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var canHover = window.matchMedia('(hover: hover)').matches;
+
+      if (card && !reduceMotion && canHover) {
+        card.addEventListener('mousemove', function (event) {
+          var rect = card.getBoundingClientRect();
+          var x = event.clientX - rect.left;
+          var y = event.clientY - rect.top;
+          var rotateY = ((x / rect.width) - .5) * 10;
+          var rotateX = (.5 - (y / rect.height)) * 10;
+
+          card.style.transform = 'rotateX(' + rotateX + 'deg) rotateY(' + rotateY + 'deg) translateY(-4px)';
+        });
+
+        card.addEventListener('mouseleave', function () {
+          card.style.transform = 'rotateX(0deg) rotateY(0deg) translateY(0)';
+        });
+      }
+    })();
+  </script>
 <script type="module">
     import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
