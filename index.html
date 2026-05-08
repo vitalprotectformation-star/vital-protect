@@ -91,6 +91,15 @@
       background: transparent !important;
     }
 
+
+
+    /* Sur la section Standard animée, le ruban global est masqué derrière le fond. */
+    body.hp-standard-ribbon-hidden .vpl-scroll-ribbon {
+      display: none !important;
+      opacity: 0 !important;
+      visibility: hidden !important;
+    }
+
     /* =========================================================
        SECTION STANDARD PREMIUM
     ========================================================= */
@@ -102,11 +111,10 @@
       align-items: center;
       padding: 90px 0 !important;
       isolation: isolate;
-      /* Fond opaque : le ruban global passe derrière cette section et ne traverse plus le contenu. */
-      background: #edf7fb !important;
+      background: #eef7fb !important;
     }
 
-    /* Fond opaque de la section : le ruban global reste derrière le fond, donc invisible ici. */
+    /* Fond opaque de la section : le ruban ne doit pas traverser */
     .hp-standard-premium::before {
       content: "";
       position: absolute;
@@ -114,16 +122,10 @@
       z-index: 0;
       pointer-events: none;
       background:
-        radial-gradient(circle at 8% 20%, rgba(255,255,255,0.92), transparent 28%),
-        radial-gradient(circle at 78% 18%, rgba(130, 207, 247, 0.10), transparent 30%),
-        radial-gradient(circle at 52% 58%, rgba(130, 207, 247, 0.08), transparent 36%),
-        linear-gradient(
-          135deg,
-          #edf7fb 0%,
-          #e7f1f7 55%,
-          #eff8fb 100%
-        ) !important;
-      opacity: 1 !important;
+        radial-gradient(circle at 8% 20%, rgba(255,255,255,0.98), transparent 28%),
+        radial-gradient(circle at 78% 18%, rgba(130, 207, 247, 0.08), transparent 30%),
+        radial-gradient(circle at 52% 58%, rgba(130, 207, 247, 0.06), transparent 36%),
+        linear-gradient(135deg, #edf7fb 0%, #e7f1f7 55%, #eff8fb 100%);
     }
 
     .hp-standard-premium::after {
@@ -314,10 +316,10 @@
       border-radius: 26px;
       border: 1px solid rgba(255,255,255,0.72);
       background:
-        linear-gradient(135deg, rgba(255,255,255,0.98), rgba(255,255,255,0.95)),
-        rgba(255,255,255,0.97);
+        linear-gradient(135deg, rgba(255,255,255,0.92), rgba(255,255,255,0.66)),
+        rgba(255,255,255,0.78);
       box-shadow: 0 22px 70px rgba(8, 30, 50, 0.12);
-      backdrop-filter: blur(10px);
+      backdrop-filter: blur(16px);
       transform-origin: top center;
       will-change: transform, box-shadow;
     }
@@ -427,14 +429,6 @@
       border-radius: inherit;
       background: linear-gradient(90deg, #82cff7, #0b4c7f);
       box-shadow: 0 0 22px rgba(76, 158, 224, 0.7);
-    }
-
-
-
-    /* Sécurité : aucun élément de la section Standard ne doit laisser voir le ruban global. */
-    .hp-standard-premium,
-    .hp-standard-premium::before {
-      background-color: #edf7fb !important;
     }
 
     @media (max-width: 900px) {
@@ -884,6 +878,21 @@
       var section = document.querySelector('#methodSection.hp-standard-premium');
       if (!section) return;
 
+      function setStandardRibbonHidden(hidden) {
+        document.body.classList.toggle('hp-standard-ribbon-hidden', !!hidden);
+      }
+
+      if ('IntersectionObserver' in window) {
+        var ribbonObserver = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.target === section) {
+              setStandardRibbonHidden(entry.isIntersecting && entry.intersectionRatio > 0.05);
+            }
+          });
+        }, { threshold: [0, 0.05, 0.35, 1] });
+        ribbonObserver.observe(section);
+      }
+
       var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       var cards = Array.prototype.slice.call(section.querySelectorAll('.hp-standard-card'));
       var cardInners = Array.prototype.slice.call(section.querySelectorAll('.hp-standard-card-inner'));
@@ -1035,12 +1044,20 @@
         pin: true,
         anticipatePin: 1,
         onEnter: function () {
+          setStandardRibbonHidden(true);
           if (!timelineHasPlayed) {
             timelineHasPlayed = true;
             timeline.play();
           }
         },
+        onLeave: function () {
+          setStandardRibbonHidden(false);
+        },
+        onLeaveBack: function () {
+          setStandardRibbonHidden(false);
+        },
         onEnterBack: function () {
+          setStandardRibbonHidden(true);
           if (timeline.progress() === 1) {
             revealAllCards();
           }
