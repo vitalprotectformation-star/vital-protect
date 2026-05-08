@@ -429,6 +429,19 @@
       return String(value || "").trim().toLowerCase();
     }
 
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function escapeAttr(value) {
+      return escapeHtml(value).replace(/`/g, "&#096;");
+    }
+
     function formatDate(dateString) {
       if (!dateString) return "—";
       const date = new Date(dateString);
@@ -485,11 +498,10 @@
 
     async function payAffiliation(email) {
       try {
+        const headers = await getTrainerAuthHeaders();
         const res = await fetch("/api/create-affiliation-checkout", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
+          headers,
           body: JSON.stringify({ email })
         });
 
@@ -607,7 +619,7 @@
               <label for="stageTrainingType">Module habilité</label>
               <select id="stageTrainingType" required>
                 <option value="">Choisir un module</option>
-                ${certifiedModules.map(module => `<option value="${module}">${module}</option>`).join("")}
+                ${certifiedModules.map(module => `<option value="${escapeAttr(module)}">${escapeHtml(module)}</option>`).join("")}
               </select>
             </div>
 
@@ -748,7 +760,7 @@
           form.reset();
         } catch (error) {
           console.error("Erreur création stage:", error);
-          statusBox.textContent = `Erreur : ${error.message}`;
+          statusBox.textContent = `Erreur : ${escapeHtml(error.message)}`;
         }
       });
     }
@@ -771,11 +783,11 @@
         <div class="grid" style="margin-top:18px;">
           <div class="info-box">
             <span class="label">Formateur</span>
-            <div class="value">${trainer.first_name || ""} ${trainer.last_name || ""}</div>
+            <div class="value">${escapeHtml(trainer.first_name || "")} ${escapeHtml(trainer.last_name || "")}</div>
           </div>
           <div class="info-box">
             <span class="label">Email</span>
-            <div class="value">${trainer.email || "—"}</div>
+            <div class="value">${escapeHtml(trainer.email || "—")}</div>
           </div>
           <div class="info-box">
             <span class="label">Habilitation</span>
@@ -806,12 +818,12 @@
 
         ${buildCreateStageSection(trainer)}
 
-        <div class="debug">Email session : ${sessionEmail}
+        <div class="debug">Email session : ${escapeHtml(sessionEmail)}
 Email trouvé : ${trainer.email}
-ID formateur : ${trainer.id}
+ID formateur : ${escapeHtml(trainer.id)}
 Habilitation valide : ${certValid}
 Affiliation valide : ${affiliationValid}
-Modules habilités valides : ${certifiedModules.join(", ") || "aucun"}</div>
+Modules habilités valides : ${escapeHtml(certifiedModules.join(", ") || "aucun")}</div>
       `;
 
       attachLogoutButtons();
@@ -844,11 +856,11 @@ Modules habilités valides : ${certifiedModules.join(", ") || "aucun"}</div>
             <div class="grid">
               <div class="info-box">
                 <span class="label">Formateur</span>
-                <div class="value">${trainer.first_name || ""} ${trainer.last_name || ""}</div>
+                <div class="value">${escapeHtml(trainer.first_name || "")} ${escapeHtml(trainer.last_name || "")}</div>
               </div>
               <div class="info-box">
                 <span class="label">Email</span>
-                <div class="value">${trainer.email || "—"}</div>
+                <div class="value">${escapeHtml(trainer.email || "—")}</div>
               </div>
               <div class="info-box">
                 <span class="label">Affiliation</span>
@@ -883,13 +895,13 @@ Modules habilités valides : ${certifiedModules.join(", ") || "aucun"}</div>
             </div>
           </div>
 
-          <div class="debug">Email session : ${sessionEmail}
+          <div class="debug">Email session : ${escapeHtml(sessionEmail)}
 Email trouvé : ${trainer.email}
-ID formateur : ${trainer.id}
+ID formateur : ${escapeHtml(trainer.id)}
 Habilitation valide : ${certValid}
 Affiliation valide : ${affiliationValid}
-Affiliation status : ${trainer.affiliation_status || "—"}
-Affiliation end : ${trainer.affiliation_end || "—"}</div>
+Affiliation status : ${escapeHtml(trainer.affiliation_status || "—")}
+Affiliation end : ${escapeHtml(trainer.affiliation_end || "—")}</div>
         `;
 
         document
@@ -920,11 +932,11 @@ Affiliation end : ${trainer.affiliation_end || "—"}</div>
           <div class="grid" style="margin-top:18px;">
             <div class="info-box">
               <span class="label">Formateur</span>
-              <div class="value">${trainer.first_name || ""} ${trainer.last_name || ""}</div>
+              <div class="value">${escapeHtml(trainer.first_name || "")} ${escapeHtml(trainer.last_name || "")}</div>
             </div>
             <div class="info-box">
               <span class="label">Email</span>
-              <div class="value">${trainer.email || "—"}</div>
+              <div class="value">${escapeHtml(trainer.email || "—")}</div>
             </div>
             <div class="info-box">
               <span class="label">Habilitation</span>
@@ -949,12 +961,12 @@ Affiliation end : ${trainer.affiliation_end || "—"}</div>
             <button id="logoutBtn" class="btn btn-secondary" type="button">Déconnexion</button>
           </div>
 
-          <div class="debug">Email session : ${sessionEmail}
+          <div class="debug">Email session : ${escapeHtml(sessionEmail)}
 Email trouvé : ${trainer.email}
-ID formateur : ${trainer.id}
+ID formateur : ${escapeHtml(trainer.id)}
 Habilitation valide : ${certValid}
 Affiliation valide : ${affiliationValid}
-Date fin habilitation : ${trainer.certification_expiry || "—"}</div>
+Date fin habilitation : ${escapeHtml(trainer.certification_expiry || "—")}</div>
         `;
 
         attachLogoutButtons();
@@ -995,7 +1007,7 @@ Date fin habilitation : ${trainer.certification_expiry || "—"}</div>
         app.innerHTML = `
           <h1>Erreur de chargement</h1>
           <p class="muted">Impossible de charger les données du formateur.</p>
-          <div class="debug">${error.message}</div>
+          <div class="debug">${escapeHtml(error.message)}</div>
         `;
         attachLogoutButtons();
         return;
@@ -1006,7 +1018,7 @@ Date fin habilitation : ${trainer.certification_expiry || "—"}</div>
         app.innerHTML = `
           <h1>Profil formateur introuvable</h1>
           <p class="muted">Aucun profil formateur ne correspond à votre session.</p>
-          <div class="debug">Email session : ${sessionEmail}</div>
+          <div class="debug">Email session : ${escapeHtml(sessionEmail)}</div>
         `;
         attachLogoutButtons();
         setTimeout(() => {
