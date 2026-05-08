@@ -13763,3 +13763,43 @@ body.page-accueil-rythme .hp-hero-photo img {
     object-position: 100% center !important;
   }
 }
+
+
+/* =========================================================
+   Hotfix accueil — nouvelle image hero fournie par le client
+   ---------------------------------------------------------
+   Remplace l'ancien visuel et rétablit un cadrage normal,
+   car le zoom agressif n'est plus nécessaire.
+   ========================================================= */
+body.page-accueil-rythme .hp-hero-note {
+  display: none !important;
+}
+
+body.page-accueil-rythme .hp-hero-photo {
+  aspect-ratio: 16 / 8.2 !important;
+  overflow: hidden !important;
+}
+
+body.page-accueil-rythme .hp-hero-photo img {
+  width: 100% !important;
+  max-width: none !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  object-position: center center !important;
+  transform: none !important;
+  transform-origin: center center !important;
+}
+
+@media (max-width: 980px) {
+  body.page-accueil-rythme .hp-hero-photo img {
+    width: 100% !important;
+    object-position: center center !important;
+  }
+}
+
+@media (max-width: 640px) {
+  body.page-accueil-rythme .hp-hero-photo img {
+    width: 100% !important;
+    object-position: center center !important;
+  }
+}
