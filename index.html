@@ -250,29 +250,66 @@
   </section>
 
 
-  <section class="hp-standard hp-section" aria-labelledby="hp-standard-title">
+  <section class="hp-standard hp-section hp-standard-premium" id="methodSection" aria-labelledby="hp-standard-title">
+    <div class="hp-standard-orb" aria-hidden="true"></div>
+    <div class="hp-standard-noise" aria-hidden="true"></div>
+
     <div class="vpl-container hp-standard-grid">
-      <div>
-        <span class="hp-kicker">Le standard</span>
-        <h2 id="hp-standard-title">Une progression simple, encadrée et sans mise en danger.</h2>
-        <p>
+      <div class="hp-standard-left">
+        <span class="hp-kicker hp-standard-pill">Le standard</span>
+        <h2 id="hp-standard-title" class="hp-standard-title">
+          <span class="hp-standard-title-mask"><span class="hp-standard-title-line">Une progression</span></span>
+          <span class="hp-standard-title-mask"><span class="hp-standard-title-line">simple, encadrée</span></span>
+          <span class="hp-standard-title-mask"><span class="hp-standard-title-line">et sans mise</span></span>
+          <span class="hp-standard-title-mask"><span class="hp-standard-title-line">en danger.</span></span>
+        </h2>
+        <p class="hp-standard-copy">
           Une session Vital Protect doit rester lisible : comprendre avant de pratiquer,
           pratiquer avant de complexifier, débriefer avant de repartir.
         </p>
-        <a class="vpl-button vpl-button-primary" href="/methode.html">Voir la méthode</a>
+        <a class="vpl-button vpl-button-primary hp-standard-button" href="/methode.html">Voir la méthode</a>
       </div>
 
-      <ol class="hp-timeline">
-        <li><span>1</span><div><strong>Briefing</strong><p>Objectifs, règles de sécurité, limites physiques, contexte et niveau du groupe.</p></div></li>
-        <li><span>2</span><div><strong>Démonstration</strong><p>Les repères sont montrés simplement avant d’être pratiqués.</p></div></li>
-        <li><span>3</span><div><strong>Pratique guidée</strong><p>Posture, distance, déplacement, parole courte et sortie possible.</p></div></li>
-        <li><span>4</span><div><strong>Mises en situation</strong><p>Situations progressives, encadrées, sans humiliation ni recherche de performance.</p></div></li>
-        <li><span>5</span><div><strong>Débrief</strong><p>Ce qui a été compris, ce qui reste à travailler, quoi faire après une situation réelle.</p></div></li>
-      </ol>
+      <div class="hp-standard-cards-wrap">
+        <div class="hp-standard-step-track" aria-hidden="true"><span></span></div>
+
+        <ol class="hp-timeline hp-standard-cards" aria-label="Étapes de la méthode">
+          <li class="hp-standard-card">
+            <div class="hp-standard-card-inner">
+              <span>1</span>
+              <div><strong>Briefing</strong><p>Objectifs, règles de sécurité, limites physiques, contexte et niveau du groupe.</p></div>
+            </div>
+          </li>
+          <li class="hp-standard-card">
+            <div class="hp-standard-card-inner">
+              <span>2</span>
+              <div><strong>Démonstration</strong><p>Les repères sont montrés simplement avant d’être pratiqués.</p></div>
+            </div>
+          </li>
+          <li class="hp-standard-card">
+            <div class="hp-standard-card-inner">
+              <span>3</span>
+              <div><strong>Pratique guidée</strong><p>Posture, distance, déplacement, parole courte et sortie possible.</p></div>
+            </div>
+          </li>
+          <li class="hp-standard-card">
+            <div class="hp-standard-card-inner">
+              <span>4</span>
+              <div><strong>Mises en situation</strong><p>Situations progressives, encadrées, sans humiliation ni recherche de performance.</p></div>
+            </div>
+          </li>
+          <li class="hp-standard-card">
+            <div class="hp-standard-card-inner">
+              <span>5</span>
+              <div><strong>Débrief</strong><p>Ce qui a été compris, ce qui reste à travailler, quoi faire après une situation réelle.</p></div>
+            </div>
+          </li>
+        </ol>
+      </div>
+
       <div class="hp-standard-progress" aria-hidden="true"><span></span></div>
     </div>
   </section>
-
   <section class="vp-visual-story vp-visual-story--home hp-section vp-home-visual-clean" aria-labelledby="home-visual-title">
     <div class="vpl-container vp-home-visual-grid">
       <div class="vp-visual-copy">
@@ -366,106 +403,214 @@
 </footer>
 </div>
 <script src="/lusion-level.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script>
   (function () {
-    var section = document.querySelector('.hp-standard');
+    var section = document.querySelector('#methodSection.hp-standard-premium');
     if (!section) return;
 
-    var cards = Array.prototype.slice.call(section.querySelectorAll('.hp-timeline li'));
-    var copy = section.querySelector('.hp-standard-grid > div');
-    var progressBar = section.querySelector('.hp-standard-progress span');
     var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    var mobileQuery = window.matchMedia('(max-width: 900px)');
+    var cards = window.gsap ? gsap.utils.toArray('.hp-standard-card') : Array.prototype.slice.call(document.querySelectorAll('.hp-standard-card'));
+    var progressBar = document.querySelector('.hp-standard-progress span');
+    var trackFill = document.querySelector('.hp-standard-step-track span');
 
-    function clamp(value, min, max) {
-      return Math.min(Math.max(value, min), max);
-    }
-
-    function revealAll() {
-      section.classList.add('hp-standard-complete');
+    function revealAllCards() {
       cards.forEach(function (card) {
         card.style.height = 'auto';
         card.style.opacity = '1';
-        card.style.transform = 'none';
       });
-      if (copy) {
-        copy.style.opacity = '1';
-        copy.style.transform = 'none';
+
+      if (window.gsap) {
+        gsap.set('.hp-standard-card-inner', {
+          y: 0,
+          x: 0,
+          rotateX: 0,
+          rotateZ: 0,
+          scale: 1,
+          filter: 'brightness(1)'
+        });
+
+        gsap.set(['.hp-standard-left', '.hp-standard-title-line', '.hp-standard-pill', '.hp-standard-copy', '.hp-standard-button'], {
+          y: 0,
+          yPercent: 0,
+          rotate: 0,
+          opacity: 1
+        });
+
+        gsap.set(progressBar, { width: '100%' });
+        gsap.set(trackFill, { height: '100%' });
       }
-      if (progressBar) progressBar.style.width = '100%';
     }
 
-    function resetInline() {
-      section.classList.remove('hp-standard-complete');
-      cards.forEach(function (card) {
-        card.style.height = '';
-        card.style.opacity = '';
-        card.style.transform = '';
-      });
-      if (copy) {
-        copy.style.opacity = '';
-        copy.style.transform = '';
-      }
-      if (progressBar) progressBar.style.width = '';
+    function lockScroll() {
+      document.body.style.overflow = 'hidden';
+      document.documentElement.style.overflow = 'hidden';
     }
 
-    function updateStandardAnimation() {
-      if (reduceMotion || mobileQuery.matches) {
-        revealAll();
-        return;
-      }
+    function unlockScroll() {
+      document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
+    }
 
-      section.classList.add('hp-standard-scroll-ready');
-
-      var rect = section.getBoundingClientRect();
-      var scrollable = Math.max(1, section.offsetHeight - window.innerHeight);
-      var progress = clamp(-rect.top / scrollable, 0, 1);
-      var revealProgress = clamp((progress - 0.04) / 0.86, 0, 1);
-
-      if (copy) {
-        var copyLocal = clamp(progress / 0.18, 0, 1);
-        copy.style.opacity = copyLocal;
-        copy.style.transform = 'translateY(' + ((1 - copyLocal) * 24) + 'px)';
-      }
-
+    function setActiveCard(activeIndex) {
       cards.forEach(function (card, index) {
-        var start = 0.10 + index * 0.16;
-        var end = start + 0.17;
-        var local = clamp((progress - start) / (end - start), 0, 1);
-        var targetHeight = card.scrollHeight || 104;
-
-        card.style.height = local >= 0.995 ? 'auto' : (targetHeight * local) + 'px';
-        card.style.opacity = local;
-        card.style.transform = 'translateY(' + ((1 - local) * 42) + 'px) scale(' + (0.94 + local * 0.06) + ')';
-      });
-
-      if (progressBar) progressBar.style.width = (revealProgress * 100) + '%';
-      section.classList.toggle('hp-standard-complete', progress >= 0.96);
-    }
-
-    var ticking = false;
-    function requestUpdate() {
-      if (ticking) return;
-      ticking = true;
-      requestAnimationFrame(function () {
-        updateStandardAnimation();
-        ticking = false;
+        card.classList.toggle('is-active', index === activeIndex);
       });
     }
 
-    function handleModeChange() {
-      resetInline();
-      updateStandardAnimation();
+    if (!window.gsap || !window.ScrollTrigger || reduceMotion) {
+      revealAllCards();
+      return;
     }
 
-    updateStandardAnimation();
-    window.addEventListener('scroll', requestUpdate, { passive: true });
-    window.addEventListener('resize', requestUpdate);
-    if (mobileQuery.addEventListener) {
-      mobileQuery.addEventListener('change', handleModeChange);
-    } else if (mobileQuery.addListener) {
-      mobileQuery.addListener(handleModeChange);
-    }
+    gsap.registerPlugin(ScrollTrigger);
+    section.classList.add('hp-standard-js');
+
+    gsap.set(['.hp-standard-pill', '.hp-standard-copy', '.hp-standard-button'], {
+      y: 18,
+      opacity: 0
+    });
+
+    gsap.set('.hp-standard-title-line', {
+      yPercent: 108,
+      rotate: 2,
+      opacity: 0
+    });
+
+    gsap.set('.hp-standard-card-inner', {
+      x: 92,
+      y: 44,
+      rotateX: -10,
+      rotateZ: 1.8,
+      scale: 0.94
+    });
+
+    gsap.set('.hp-standard-orb', {
+      scale: 0.5,
+      opacity: 0
+    });
+
+    cards.forEach(function (card) {
+      card.style.height = '0px';
+      card.style.opacity = '0';
+    });
+
+    const timeline = gsap.timeline({
+      paused: true,
+      defaults: {
+        ease: 'power3.out'
+      },
+      onStart: lockScroll,
+      onUpdate: function () {
+        const progress = timeline.progress() * 100 + '%';
+        gsap.set(progressBar, { width: progress });
+        gsap.set(trackFill, { height: progress });
+      },
+      onComplete: function () {
+        setActiveCard(cards.length - 1);
+        unlockScroll();
+      },
+      onReverseComplete: unlockScroll
+    });
+
+    timeline
+      .to('.hp-standard-orb', {
+        scale: 1,
+        opacity: 1,
+        duration: 0.85
+      })
+      .to('.hp-standard-pill', {
+        y: 0,
+        opacity: 1,
+        duration: 0.45
+      }, '<0.05')
+      .to('.hp-standard-title-line', {
+        yPercent: 0,
+        rotate: 0,
+        opacity: 1,
+        duration: 0.72,
+        stagger: 0.08
+      }, '<0.1')
+      .to(['.hp-standard-copy', '.hp-standard-button'], {
+        y: 0,
+        opacity: 1,
+        duration: 0.5,
+        stagger: 0.08
+      }, '<-0.08');
+
+    cards.forEach(function (card, index) {
+      const inner = card.querySelector('.hp-standard-card-inner');
+
+      timeline
+        .call(function () { setActiveCard(index); }, null, '>-0.08')
+        .to(card, {
+          height: function () { return inner.offsetHeight; },
+          opacity: 1,
+          duration: 0.5
+        }, '>-0.02')
+        .to(inner, {
+          x: 0,
+          y: 0,
+          rotateX: 0,
+          rotateZ: 0,
+          scale: 1,
+          duration: 0.62
+        }, '<')
+        .fromTo(inner, {
+          filter: 'brightness(1.08)'
+        }, {
+          filter: 'brightness(1)',
+          duration: 0.45
+        }, '<0.1')
+        .to(inner, {
+          y: -6,
+          duration: 0.16,
+          ease: 'power1.out'
+        }, '>-0.14')
+        .to(inner, {
+          y: 0,
+          duration: 0.18,
+          ease: 'power1.out'
+        }, '>');
+    });
+
+    timeline.to('.hp-standard-orb', {
+      x: 40,
+      y: -16,
+      scale: 1.08,
+      duration: 0.55,
+      ease: 'sine.inOut'
+    });
+
+    ScrollTrigger.create({
+      trigger: section,
+      start: 'top top',
+      end: '+=1',
+      pin: true,
+      anticipatePin: 1,
+      onEnter: function () {
+        if (timeline.progress() === 0) {
+          timeline.play();
+        }
+      },
+      onEnterBack: function () {
+        if (timeline.progress() === 1) {
+          revealAllCards();
+          gsap.set(progressBar, { width: '100%' });
+          gsap.set(trackFill, { height: '100%' });
+        }
+      }
+    });
+
+    gsap.to('.hp-standard-orb', {
+      x: 22,
+      y: -18,
+      duration: 3.2,
+      repeat: -1,
+      yoyo: true,
+      ease: 'sine.inOut'
+    });
   })();
 </script>
 
