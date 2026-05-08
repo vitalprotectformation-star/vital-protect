@@ -13723,3 +13723,43 @@ body.page-methode .vp-scroll-pillars-hint span::before {
     cursor: ns-resize !important;
   }
 }
+
+
+/* =========================================================
+   Hotfix accueil — suppression de l'encart bas + recadrage hero
+   ---------------------------------------------------------
+   - supprime l'encart "Pas de réservation floue"
+   - accentue le recadrage de l'image haute pour ne plus voir
+     le texte intégré sur la gauche
+   ========================================================= */
+body.page-accueil-rythme .hp-hero-note {
+  display: none !important;
+}
+
+body.page-accueil-rythme .hp-hero-photo {
+  aspect-ratio: 16 / 8.1 !important;
+}
+
+body.page-accueil-rythme .hp-hero-photo img {
+  width: 136% !important;
+  max-width: none !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  object-position: 98% center !important;
+  transform: scale(1.035) !important;
+  transform-origin: center center !important;
+}
+
+@media (max-width: 980px) {
+  body.page-accueil-rythme .hp-hero-photo img {
+    width: 142% !important;
+    object-position: 100% center !important;
+  }
+}
+
+@media (max-width: 640px) {
+  body.page-accueil-rythme .hp-hero-photo img {
+    width: 150% !important;
+    object-position: 100% center !important;
+  }
+}
