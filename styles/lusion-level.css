@@ -14880,6 +14880,23 @@ body.page-formateur-redesign .vp-image-card--trainer-side {
   margin-top: clamp(36px, 5vw, 76px) !important;
 }
 
+/* Formateur — une seule image Transmission, agrandie à la place du duo */
+body.page-formateur-redesign .vp-visual-mosaic--trainer-single {
+  grid-template-columns: 1fr !important;
+  width: 100% !important;
+  max-width: 660px !important;
+  justify-self: center !important;
+}
+
+body.page-formateur-redesign .vp-visual-mosaic--trainer-single .vp-image-card--trainer-large {
+  min-height: clamp(480px, 44vw, 660px) !important;
+  aspect-ratio: 4 / 5 !important;
+}
+
+body.page-formateur-redesign .vp-visual-mosaic--trainer-single .vp-image-card--trainer-large img {
+  object-position: center !important;
+}
+
 body.page-formateur-redesign .vp-visual-story--trainer-dark .vp-mini-proof span {
   color: #fff !important;
   background: rgba(255, 255, 255, .10) !important;
@@ -14911,4 +14928,129 @@ body.page-formateur-redesign .vp-visual-story--trainer-dark .vp-mini-proof span 
     min-height: 280px !important;
     margin-top: 0 !important;
   }
+}
+
+
+@media (max-width: 680px) {
+  body.page-formateur-redesign .vp-visual-mosaic--trainer-single {
+    max-width: 100% !important;
+  }
+
+  body.page-formateur-redesign .vp-visual-mosaic--trainer-single .vp-image-card--trainer-large {
+    min-height: 390px !important;
+    aspect-ratio: 4 / 5 !important;
+  }
+}
+
+
+/* =========================================================
+   Correctif Formateur — ruban vraiment en arrière-plan
+   ---------------------------------------------------------
+   Le ruban reste décoratif : il passe derrière les modules,
+   cartes, images, textes, formulaires et boutons.
+   ========================================================= */
+body.page-formateur-redesign {
+  position: relative !important;
+  isolation: isolate !important;
+}
+
+body.page-formateur-redesign .vpl-scroll-ribbon {
+  z-index: 0 !important;
+  opacity: .34 !important;
+  pointer-events: none !important;
+  mix-blend-mode: normal !important;
+}
+
+body.page-formateur-redesign main,
+body.page-formateur-redesign main > section,
+body.page-formateur-redesign .vpl-inner-hero,
+body.page-formateur-redesign .vp-visual-story,
+body.page-formateur-redesign .vptr-section,
+body.page-formateur-redesign #sessions,
+body.page-formateur-redesign #formulaire {
+  position: relative !important;
+  z-index: 2 !important;
+}
+
+body.page-formateur-redesign .vpl-container,
+body.page-formateur-redesign .container,
+body.page-formateur-redesign .vpl-inner-hero-grid,
+body.page-formateur-redesign .vp-visual-story-grid,
+body.page-formateur-redesign .vp-visual-copy,
+body.page-formateur-redesign .vp-visual-mosaic,
+body.page-formateur-redesign .section-head,
+body.page-formateur-redesign .module-catalog-head,
+body.page-formateur-redesign .offer-grid,
+body.page-formateur-redesign .module-grid,
+body.page-formateur-redesign .profile-grid,
+body.page-formateur-redesign .benefit-grid,
+body.page-formateur-redesign .split-panel,
+body.page-formateur-redesign .sessions-grid,
+body.page-formateur-redesign .faq-grid,
+body.page-formateur-redesign .form-grid,
+body.page-formateur-redesign .vpl-actions {
+  position: relative !important;
+  z-index: 4 !important;
+}
+
+body.page-formateur-redesign .vpl-inner-visual,
+body.page-formateur-redesign .vpl-inner-stat,
+body.page-formateur-redesign .vp-image-card,
+body.page-formateur-redesign .offer-card,
+body.page-formateur-redesign .module-card,
+body.page-formateur-redesign .module-flip-inner,
+body.page-formateur-redesign .module-flip-face,
+body.page-formateur-redesign .profile-card,
+body.page-formateur-redesign .benefit-card,
+body.page-formateur-redesign .info-panel,
+body.page-formateur-redesign .session-card,
+body.page-formateur-redesign .faq-card,
+body.page-formateur-redesign .form-card,
+body.page-formateur-redesign .bullet-item,
+body.page-formateur-redesign .empty-state,
+body.page-formateur-redesign .btn,
+body.page-formateur-redesign .vpl-button,
+body.page-formateur-redesign .eyebrow,
+body.page-formateur-redesign h1,
+body.page-formateur-redesign h2,
+body.page-formateur-redesign h3,
+body.page-formateur-redesign p,
+body.page-formateur-redesign ul,
+body.page-formateur-redesign form,
+body.page-formateur-redesign input,
+body.page-formateur-redesign select,
+body.page-formateur-redesign textarea,
+body.page-formateur-redesign label {
+  position: relative !important;
+  z-index: 6 !important;
+}
+
+body.page-formateur-redesign .module-flip-face,
+body.page-formateur-redesign .profile-card,
+body.page-formateur-redesign .benefit-card,
+body.page-formateur-redesign .info-panel,
+body.page-formateur-redesign .session-card,
+body.page-formateur-redesign .faq-card,
+body.page-formateur-redesign .form-card,
+body.page-formateur-redesign .empty-state,
+body.page-formateur-redesign .offer-card {
+  background: rgba(255,255,255,.94) !important;
+  isolation: isolate !important;
+}
+
+body.page-formateur-redesign .module-flip-face.back {
+  background: linear-gradient(135deg, rgba(255,255,255,.98), rgba(225,239,250,.96)) !important;
+}
+
+body.page-formateur-redesign .vp-visual-story--trainer-dark .vpl-container,
+body.page-formateur-redesign .vp-visual-story--trainer-dark .vp-visual-story-grid,
+body.page-formateur-redesign .vp-visual-story--trainer-dark .vp-visual-copy,
+body.page-formateur-redesign .vp-visual-story--trainer-dark .vp-visual-mosaic,
+body.page-formateur-redesign .vp-visual-story--trainer-dark .vp-image-card {
+  position: relative !important;
+  z-index: 6 !important;
+}
+
+body.page-formateur-redesign .vpl-nav {
+  z-index: 100 !important;
 }
