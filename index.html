@@ -489,6 +489,55 @@
       z-index: 3 !important;
     }
 
+
+
+    /* Correctif accueil — texte coupé section "Le standard" */
+    body.page-accueil-rythme .hp-standard-premium {
+      min-height: auto !important;
+      padding: clamp(88px, 10vh, 120px) 0 clamp(124px, 14vh, 164px) !important;
+    }
+
+    body.page-accueil-rythme .hp-standard-premium .hp-standard-grid {
+      align-items: center !important;
+    }
+
+    body.page-accueil-rythme .hp-standard-left {
+      position: relative !important;
+      top: auto !important;
+      align-self: center !important;
+      padding-bottom: 18px !important;
+    }
+
+    body.page-accueil-rythme .hp-standard-title {
+      max-width: 610px !important;
+      margin: 22px 0 20px !important;
+      font-size: clamp(46px, 6.2vw, 92px) !important;
+      line-height: .98 !important;
+    }
+
+    body.page-accueil-rythme .hp-standard-copy {
+      display: block !important;
+      overflow: visible !important;
+      max-width: 620px !important;
+      margin: 0 0 24px !important;
+      line-height: 1.75 !important;
+    }
+
+    body.page-accueil-rythme .hp-standard-progress {
+      bottom: 34px !important;
+    }
+
+    @media (max-height: 760px) and (min-width: 901px) {
+      body.page-accueil-rythme .hp-standard-premium {
+        padding: 72px 0 110px !important;
+      }
+
+      body.page-accueil-rythme .hp-standard-title {
+        font-size: clamp(42px, 5.4vw, 78px) !important;
+        line-height: 1 !important;
+      }
+    }
+
     @media (prefers-reduced-motion: reduce) {
       .hp-standard-card {
         height: auto !important;
