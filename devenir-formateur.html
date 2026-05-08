@@ -39,559 +39,176 @@
 <link href="/styles/base.css" rel="stylesheet"/>
 <link href="/styles/components.css" rel="stylesheet"/>
 <link href="/styles/lusion-level.css" rel="stylesheet"/>
-<style id="vptr-hero-animation">
-    :root {
-      --vptr-hero-ease: cubic-bezier(.22, 1, .36, 1);
-      --vptr-hero-navy-950: #071421;
-      --vptr-hero-navy-900: #0b1725;
-      --vptr-hero-navy-700: #18314d;
-      --vptr-hero-text: #f8fafc;
-      --vptr-hero-muted: rgba(255, 255, 255, .68);
-      --vptr-hero-line: rgba(255, 255, 255, .14);
-    }
 
-    .vptr-nav-animated {
-      opacity: 0;
-      transform: translateY(-18px);
-      animation: vptrNavIn .82s var(--vptr-hero-ease) .08s forwards;
-    }
-
-    .vptr-hero-animated {
-      position: relative;
-      min-height: 720px;
-      overflow: hidden;
-      isolation: isolate;
-      color: var(--vptr-hero-text);
-      background:
-        radial-gradient(circle at 100% 0%, rgba(72, 105, 134, .55), transparent 28%),
-        linear-gradient(135deg, var(--vptr-hero-navy-950) 0%, var(--vptr-hero-navy-900) 46%, var(--vptr-hero-navy-700) 100%);
-    }
-
-    .vptr-hero-animated::before,
-    .vptr-hero-animated::after {
-      content: "";
-      position: absolute;
-      border-radius: 999px;
-      pointer-events: none;
-      z-index: -1;
-    }
-
-    .vptr-hero-animated::before {
-      width: 560px;
-      height: 560px;
-      top: -380px;
-      right: -110px;
-      background: rgba(137, 160, 181, .16);
-      animation: vptrOrbitBlob 9s var(--vptr-hero-ease) infinite alternate;
-    }
-
-    .vptr-hero-animated::after {
-      width: 420px;
-      height: 420px;
-      left: -180px;
-      bottom: -210px;
-      background: rgba(36, 82, 122, .23);
-      filter: blur(8px);
-      animation: vptrBreatheBlob 7s ease-in-out infinite;
-    }
-
-    .vptr-hero-grid {
-      position: relative;
-      z-index: 1;
-      align-items: center;
-    }
-
-    .vptr-hero-content {
-      position: relative;
-      z-index: 2;
-    }
-
-    .vptr-eyebrow {
-      width: fit-content;
-      display: inline-flex;
-      align-items: center;
-      gap: 9px;
-      padding: 10px 18px 10px 10px;
-      border: 1px solid rgba(255, 255, 255, .17);
-      border-radius: 999px;
-      background: rgba(255, 255, 255, .08);
-      color: rgba(255, 255, 255, .76);
-      font-size: 16px;
-      font-weight: 850;
-      backdrop-filter: blur(15px);
-      opacity: 0;
-      transform: translateY(22px);
-      animation: vptrRiseIn .85s var(--vptr-hero-ease) .25s forwards;
-    }
-
-    .vptr-eyebrow-dot {
-      position: relative;
-      flex: 0 0 auto;
-      width: 21px;
-      height: 21px;
-      border-radius: 999px;
-      background: rgba(255, 255, 255, .18);
-      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .08);
-    }
-
-    .vptr-eyebrow-dot::after {
-      content: "";
-      position: absolute;
-      inset: 6px;
-      border-radius: inherit;
-      background: #fff;
-      animation: vptrPulseDot 1.8s ease-in-out infinite;
-    }
-
-    .vptr-inner-title {
-      max-width: 705px;
-      margin: 26px 0 30px;
-      color: #fff;
-      font-size: clamp(72px, 8.2vw, 126px);
-      line-height: .94;
-      letter-spacing: -.085em;
-      font-weight: 950;
-    }
-
-    .vptr-title-line {
-      display: block;
-      overflow: hidden;
-    }
-
-    .vptr-title-line > span {
-      display: inline-block;
-      transform: translateY(112%);
-      animation: vptrTextReveal .95s var(--vptr-hero-ease) forwards;
-    }
-
-    .vptr-title-line:nth-child(1) > span { animation-delay: .38s; }
-    .vptr-title-line:nth-child(2) > span { animation-delay: .52s; }
-    .vptr-title-line:nth-child(3) > span { animation-delay: .66s; }
-
-    .vptr-copy {
-      max-width: 650px;
-      color: var(--vptr-hero-muted);
-      opacity: 0;
-      transform: translateY(24px);
-      animation: vptrRiseIn .85s var(--vptr-hero-ease) .86s forwards;
-    }
-
-    .vptr-actions {
-      opacity: 0;
-      transform: translateY(24px);
-      animation: vptrRiseIn .85s var(--vptr-hero-ease) 1.02s forwards;
-    }
-
-    .vptr-visual {
-      position: relative;
-      opacity: 0;
-      transform: translateX(34px) scale(.98);
-      animation: vptrMediaIn 1s var(--vptr-hero-ease) .58s forwards;
-      perspective: 1100px;
-    }
-
-    .vptr-photo-wrap {
-      position: relative;
-      display: block;
-      width: 100%;
-      overflow: hidden;
-      border-radius: 34px;
-      border: 1px solid rgba(255, 255, 255, .15);
-      box-shadow: 0 28px 80px rgba(0, 0, 0, .45);
-      transform-style: preserve-3d;
-      will-change: transform;
-      transition: transform .35s var(--vptr-hero-ease), box-shadow .35s var(--vptr-hero-ease);
-    }
-
-    .vptr-photo-wrap img {
-      display: block;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      border-radius: inherit;
-    }
-
-    .vptr-photo-wrap::after {
-      content: "";
-      position: absolute;
-      inset: -40% -70%;
-      background: linear-gradient(110deg, transparent 35%, rgba(255, 255, 255, .34), transparent 64%);
-      transform: translateX(-45%) rotate(8deg);
-      animation: vptrShine 3.8s ease-in-out 1.25s infinite;
-      pointer-events: none;
-    }
-
-    .vptr-info-card {
-      opacity: 0;
-      transform: translateY(26px);
-      animation: vptrCardFloatIn .9s var(--vptr-hero-ease) 1.08s forwards, vptrFloating 5s ease-in-out 2s infinite;
-    }
-
-    .vptr-hero-animated .vpl-button,
-    .vptr-hero-animated .vpl-button-primary,
-    .vptr-hero-animated .vpl-button-secondary {
-      transition: transform .25s var(--vptr-hero-ease), box-shadow .25s var(--vptr-hero-ease), background .25s ease, color .25s ease;
-    }
-
-    .vptr-hero-animated .vpl-button:hover,
-    .vptr-hero-animated .vpl-button-primary:hover,
-    .vptr-hero-animated .vpl-button-secondary:hover {
-      transform: translateY(-3px);
-    }
-
-    @keyframes vptrNavIn {
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    @keyframes vptrRiseIn {
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    @keyframes vptrTextReveal {
-      to { transform: translateY(0); }
-    }
-
-    @keyframes vptrMediaIn {
-      to { opacity: 1; transform: translateX(0) scale(1); }
-    }
-
-    @keyframes vptrCardFloatIn {
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    @keyframes vptrFloating {
-      0%, 100% { translate: 0 0; }
-      50% { translate: 0 -10px; }
-    }
-
-    @keyframes vptrShine {
-      0%, 45% { transform: translateX(-50%) rotate(8deg); opacity: 0; }
-      56% { opacity: .55; }
-      72%, 100% { transform: translateX(50%) rotate(8deg); opacity: 0; }
-    }
-
-    @keyframes vptrPulseDot {
-      0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 255, 255, .5); }
-      50% { transform: scale(.82); box-shadow: 0 0 0 8px rgba(255, 255, 255, 0); }
-    }
-
-    @keyframes vptrOrbitBlob {
-      to { transform: translate(-40px, 32px) scale(1.08); }
-    }
-
-    @keyframes vptrBreatheBlob {
-      0%, 100% { transform: scale(1); opacity: .65; }
-      50% { transform: scale(1.18); opacity: .35; }
-    }
-
-    @media (hover: hover) {
-      .vptr-photo-wrap:hover {
-        box-shadow: 0 36px 90px rgba(0, 0, 0, .5);
-      }
-    }
-
-    @media (max-width: 1040px) {
-      .vptr-hero-animated {
-        min-height: auto;
-      }
-
-      .vptr-visual {
-        transform: translateY(26px) scale(.98);
-      }
-
-      .vptr-inner-title {
-        font-size: clamp(62px, 12vw, 96px);
-      }
-    }
-
-    @media (max-width: 640px) {
-      .vptr-inner-title {
-        font-size: clamp(54px, 16vw, 86px);
-      }
-
-      .vptr-eyebrow {
-        font-size: 14px;
-      }
-
-      .vptr-photo-wrap {
-        border-radius: 26px;
-      }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      .vptr-nav-animated,
-      .vptr-hero-animated::before,
-      .vptr-hero-animated::after,
-      .vptr-eyebrow,
-      .vptr-eyebrow-dot::after,
-      .vptr-title-line > span,
-      .vptr-copy,
-      .vptr-actions,
-      .vptr-visual,
-      .vptr-photo-wrap::after,
-      .vptr-info-card {
-        animation: none !important;
-        opacity: 1 !important;
-        transform: none !important;
-        translate: none !important;
-      }
-    }
-  </style>
-
-<style id="vptr-training-gallery-animation">
-  .vp-training-gallery {
-    position: relative;
-    overflow: hidden;
-    isolation: isolate;
-  }
-
-  .vp-training-gallery::before {
-    content: "";
-    position: absolute;
-    width: 620px;
-    height: 620px;
-    right: -260px;
-    top: 8%;
-    border-radius: 999px;
-    background: radial-gradient(circle, rgba(47, 127, 202, .22), transparent 68%);
-    pointer-events: none;
-    z-index: -1;
-    animation: vptrGalleryHalo 8s ease-in-out infinite alternate;
-  }
-
-  .vp-training-gallery__grid {
-    display: grid;
-    grid-template-columns: minmax(300px, .78fr) minmax(0, 1.22fr);
-    gap: clamp(34px, 5vw, 76px);
-    align-items: center;
-  }
-
-  .vp-training-gallery__copy {
-    max-width: 560px;
-  }
-
-  .vp-training-gallery__copy .eyebrow,
-  .vp-training-gallery__copy h2,
-  .vp-training-gallery__copy p {
-    opacity: 0;
-    transform: translateY(24px);
-    animation: vptrGalleryTextIn .8s cubic-bezier(.22, 1, .36, 1) forwards;
-  }
-
-  .vp-training-gallery__copy .eyebrow { animation-delay: .05s; }
-  .vp-training-gallery__copy h2 { animation-delay: .16s; }
-  .vp-training-gallery__copy p { animation-delay: .28s; }
-
-  .vp-training-gallery__stage {
-    position: relative;
-    min-height: 460px;
-    padding: 34px 0;
-    overflow: hidden;
-    border-radius: 38px;
-    border: 1px solid rgba(12, 34, 58, .1);
+<style id="vptr-formateur-sections-redesign">
+  body.page-formateur-redesign {
     background:
-      radial-gradient(circle at 82% 16%, rgba(255, 255, 255, .82), transparent 22%),
-      linear-gradient(135deg, rgba(7, 20, 33, .98), rgba(18, 50, 80, .94));
-    box-shadow: 0 34px 90px rgba(7, 20, 33, .18);
+      radial-gradient(circle at 13% 10%, rgba(159,206,242,.36), transparent 29%),
+      radial-gradient(circle at 88% 22%, rgba(255,255,255,.9), transparent 26%),
+      radial-gradient(circle at 50% 88%, rgba(164,210,243,.26), transparent 35%),
+      linear-gradient(135deg,#f8fbff 0%,#edf5fb 45%,#e6eff7 100%) !important;
   }
-
-  .vp-training-gallery__stage::before,
-  .vp-training-gallery__stage::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    width: 118px;
-    z-index: 3;
-    pointer-events: none;
+  body.page-formateur-redesign::before {
+    content:"";
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    background-image:
+      linear-gradient(rgba(132,164,191,.11) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(132,164,191,.11) 1px, transparent 1px),
+      radial-gradient(circle, rgba(94,154,199,.42) 1.1px, transparent 1.2px);
+    background-size:78px 78px,78px 78px,130px 130px;
+    -webkit-mask-image:linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%);
+    mask-image:linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%);
+    opacity:.55;
+    animation:vptrGridDrift 28s linear infinite;
+    z-index:-5;
   }
+  @keyframes vptrGridDrift { to { background-position:78px 156px,78px 156px,130px 260px; } }
+  @keyframes vptrFloatIn { from { opacity:0; transform:translateY(42px) scale(.96) rotateX(10deg); } to { opacity:1; transform:translateY(0) scale(1) rotateX(0); } }
+  @keyframes vptrPopIn { 0%{opacity:0; transform:scale(.82) rotate(-4deg)}70%{opacity:1; transform:scale(1.035) rotate(1deg)}100%{opacity:1; transform:scale(1) rotate(0)} }
+  @keyframes vptrBlobMove { 0%,100%{transform:translate3d(0,0,0) scale(1)}33%{transform:translate3d(34px,-28px,0) scale(1.08)}66%{transform:translate3d(-24px,22px,0) scale(.95)} }
+  @keyframes vptrOrbit { to { transform:rotate(360deg); } }
+  @keyframes vptrShimmer { to { transform:translateX(120%); } }
+  @keyframes vptrBreathe { 0%,100%{transform:scale(1); opacity:.72}50%{transform:scale(1.18); opacity:.38} }
+  @keyframes vptrFloatParticle { 0%,100%{transform:translateY(0); opacity:.25}50%{transform:translateY(-28px); opacity:.75} }
+  .vptr-background-orbs { position:fixed; inset:0; pointer-events:none; z-index:-4; overflow:hidden; }
+  .vptr-orb { position:absolute; width:32rem; aspect-ratio:1; border-radius:999px; background:radial-gradient(circle, rgba(159,206,242,.46), rgba(159,206,242,.13) 48%, transparent 70%); filter:blur(3px); animation:vptrBlobMove 16s ease-in-out infinite; }
+  .vptr-orb-one { top:-11rem; left:-13rem; }
+  .vptr-orb-two { right:-16rem; top:22rem; animation-delay:-5s; }
+  .vptr-orb-three { left:28%; bottom:-20rem; width:40rem; animation-delay:-10s; }
+  .vptr-particle { position:fixed; width:7px; height:7px; border-radius:999px; background:#9fb8cf; opacity:.38; pointer-events:none; animation:vptrFloatParticle 4.8s ease-in-out infinite; z-index:-3; }
 
-  .vp-training-gallery__stage::before {
-    left: 0;
-    background: linear-gradient(90deg, rgba(7, 20, 33, .98), transparent);
+  body.page-formateur-redesign .vptr-reveal { opacity:0; transform:translateY(34px); transition:opacity .75s ease, transform .75s ease; }
+  body.page-formateur-redesign .vptr-reveal.in { opacity:1; transform:translateY(0); }
+  body.page-formateur-redesign .module-catalog-head,
+  body.page-formateur-redesign .vptr-section .section-head,
+  body.page-formateur-redesign #sessions .section-head { text-align:center; margin-inline:auto; }
+  body.page-formateur-redesign .module-catalog-head h3,
+  body.page-formateur-redesign .vptr-section .section-head h2,
+  body.page-formateur-redesign #sessions .section-head h2 { margin-top:14px; font-size:clamp(2.7rem,6vw,5.7rem); line-height:.88; letter-spacing:-.08em; font-weight:950; text-wrap:balance; }
+  body.page-formateur-redesign .module-catalog-head p,
+  body.page-formateur-redesign .vptr-section .section-head p,
+  body.page-formateur-redesign #sessions .section-head p { max-width:690px; margin:18px auto 0; color:#617086; font-size:1rem; line-height:1.8; }
+  body.page-formateur-redesign .eyebrow { position:relative; overflow:hidden; }
+  body.page-formateur-redesign .eyebrow::after { content:""; position:absolute; inset:0; width:45%; background:linear-gradient(90deg,transparent,rgba(255,255,255,.85),transparent); transform:translateX(-130%); animation:vptrShimmer 3.8s ease-in-out infinite; }
+
+  body.page-formateur-redesign .module-grid { display:grid !important; grid-template-columns:repeat(3,minmax(0,1fr)) !important; gap:22px !important; margin-top:38px !important; align-items:stretch !important; perspective:1400px; }
+  body.page-formateur-redesign .module-card { min-height:236px !important; padding:0 !important; border:0 !important; background:transparent !important; box-shadow:none !important; perspective:1400px; animation:vptrFloatIn .8s both; overflow:visible !important; }
+  body.page-formateur-redesign .module-card:nth-child(2){animation-delay:.08s} body.page-formateur-redesign .module-card:nth-child(3){animation-delay:.16s} body.page-formateur-redesign .module-card:nth-child(4){animation-delay:.24s}
+  body.page-formateur-redesign .module-flip-inner { position:relative; width:100%; min-height:236px; transform-style:preserve-3d; transition:transform .8s cubic-bezier(.2,.75,.2,1); }
+  body.page-formateur-redesign .module-card:hover .module-flip-inner,
+  body.page-formateur-redesign .module-card.is-flipped .module-flip-inner { transform:rotateY(180deg); }
+  body.page-formateur-redesign .module-flip-face { position:absolute; inset:0; display:flex; flex-direction:column; backface-visibility:hidden; border:1px solid rgba(207,224,240,.82); background:rgba(255,255,255,.78); backdrop-filter:blur(18px); border-radius:28px; box-shadow:0 16px 40px rgba(7,24,44,.09); padding:24px; overflow:hidden; transform-style:preserve-3d; }
+  body.page-formateur-redesign .module-flip-face::before,
+  body.page-formateur-redesign .profile-card::before,
+  body.page-formateur-redesign .info-panel::before,
+  body.page-formateur-redesign .benefit-card::before,
+  body.page-formateur-redesign .session-card::before,
+  body.page-formateur-redesign .faq-card::before,
+  body.page-formateur-redesign .form-card::before { content:""; position:absolute; inset:0; background:linear-gradient(135deg,rgba(255,255,255,.76),transparent 50%); pointer-events:none; }
+  body.page-formateur-redesign .module-flip-face::after,
+  body.page-formateur-redesign .profile-card::after,
+  body.page-formateur-redesign .info-panel::after,
+  body.page-formateur-redesign .benefit-card::after,
+  body.page-formateur-redesign .session-card::after,
+  body.page-formateur-redesign .faq-card::after { content:""; position:absolute; inset:-1px; border-radius:inherit; background:conic-gradient(from var(--angle,0deg), transparent, rgba(159,206,242,.75), transparent 34%); opacity:0; transition:opacity .25s ease; z-index:-1; animation:vptrOrbit 7s linear infinite; }
+  body.page-formateur-redesign .module-flip-face:hover::after,
+  body.page-formateur-redesign .profile-card:hover::after,
+  body.page-formateur-redesign .info-panel:hover::after,
+  body.page-formateur-redesign .benefit-card:hover::after,
+  body.page-formateur-redesign .session-card:hover::after,
+  body.page-formateur-redesign .faq-card:hover::after { opacity:.55; }
+  body.page-formateur-redesign .module-flip-face.back { transform:rotateY(180deg); justify-content:space-between; background:linear-gradient(135deg,rgba(255,255,255,.9),rgba(225,239,250,.88)); }
+  body.page-formateur-redesign .module-flip-hint { margin-top:auto; color:#7a8999 !important; font-size:.78rem !important; font-weight:800; }
+  body.page-formateur-redesign .module-card__meta { display:flex; flex-wrap:wrap; gap:7px; margin:20px 0 22px; position:relative; z-index:1; }
+  body.page-formateur-redesign .module-chip { padding:.38rem .58rem; border-radius:999px; background:#d7e8f8; color:#173c5b; font-size:.7rem; font-weight:850; border:1px solid rgba(142,181,215,.32); }
+
+  body.page-formateur-redesign .icon-dot,
+  body.page-formateur-redesign .module-dot,
+  body.page-formateur-redesign .profile-card .icon-dot { position:relative !important; width:30px !important; height:30px !important; margin:0 0 22px !important; border-radius:999px; background:transparent !important; z-index:1; }
+  body.page-formateur-redesign .icon-dot::before,
+  body.page-formateur-redesign .module-dot::before { content:""; position:absolute; inset:8px; border-radius:999px; background:#9db4c9; box-shadow:0 0 0 6px rgba(157,180,201,.12); animation:vptrBreathe 3.2s ease-in-out infinite; }
+  body.page-formateur-redesign .icon-dot::after,
+  body.page-formateur-redesign .module-dot::after { content:""; position:absolute; inset:0; border:1px dashed rgba(94,121,145,.4); border-radius:999px; animation:vptrOrbit 8s linear infinite; }
+
+  body.page-formateur-redesign .profile-grid,
+  body.page-formateur-redesign .benefit-grid,
+  body.page-formateur-redesign .faq-grid { display:grid !important; grid-template-columns:repeat(3,minmax(0,1fr)) !important; gap:22px !important; margin-top:34px !important; perspective:1400px; }
+  body.page-formateur-redesign .profile-card,
+  body.page-formateur-redesign .benefit-card,
+  body.page-formateur-redesign .faq-card,
+  body.page-formateur-redesign .session-card { position:relative; border:1px solid rgba(207,224,240,.82) !important; background:rgba(255,255,255,.78) !important; backdrop-filter:blur(18px); border-radius:28px !important; box-shadow:0 16px 40px rgba(7,24,44,.09) !important; overflow:hidden; transform-style:preserve-3d; padding:24px !important; transition:transform .28s ease, box-shadow .28s ease, border-color .28s ease; }
+  body.page-formateur-redesign .profile-card { min-height:158px; text-align:center; animation:vptrPopIn .8s both; }
+  body.page-formateur-redesign .profile-card .icon-dot { margin-inline:auto !important; }
+  body.page-formateur-redesign .profile-card:hover,
+  body.page-formateur-redesign .benefit-card:hover,
+  body.page-formateur-redesign .session-card:hover { box-shadow:0 26px 70px rgba(7,24,44,.12) !important; border-color:rgba(159,206,242,.95) !important; transform:translateY(-8px); }
+  body.page-formateur-redesign .benefit-card:nth-child(1){transform:rotate(-1.5deg)}
+  body.page-formateur-redesign .benefit-card:nth-child(2){transform:translateY(14px)}
+  body.page-formateur-redesign .benefit-card:nth-child(3){transform:rotate(1.5deg)}
+  body.page-formateur-redesign .benefit-card:hover{transform:translateY(-10px) rotate(0)}
+
+  body.page-formateur-redesign .split-panel { display:grid !important; grid-template-columns:repeat(2,minmax(0,1fr)) !important; gap:42px !important; align-items:start !important; perspective:1400px; }
+  body.page-formateur-redesign .info-panel { position:relative; padding:36px !important; min-height:390px; border:1px solid rgba(207,224,240,.82) !important; background:rgba(255,255,255,.78) !important; backdrop-filter:blur(18px); border-radius:28px !important; box-shadow:0 16px 40px rgba(7,24,44,.09) !important; overflow:hidden; transition:transform .28s ease, box-shadow .28s ease; }
+  body.page-formateur-redesign .info-panel .eyebrow { width:100%; justify-content:flex-start; margin-bottom:12px; }
+  body.page-formateur-redesign .info-panel h3 { font-size:1.75rem !important; line-height:1.05 !important; letter-spacing:-.06em !important; font-weight:950 !important; margin-bottom:12px !important; position:relative; z-index:1; }
+  body.page-formateur-redesign .bullet-list { display:grid; gap:14px; margin-top:25px; position:relative; z-index:1; }
+  body.page-formateur-redesign .bullet-item { padding:17px 18px !important; border:1px solid #cfe0f0; background:#edf6fd; border-radius:14px; color:#425268; line-height:1.55; font-size:.9rem; transform:translateX(-12px); opacity:0; transition:transform .55s ease, opacity .55s ease, background .22s ease; }
+  body.page-formateur-redesign .vptr-reveal.in .bullet-item { transform:translateX(0); opacity:1; }
+  body.page-formateur-redesign .vptr-reveal.in .bullet-item:nth-child(2){transition-delay:.08s} body.page-formateur-redesign .vptr-reveal.in .bullet-item:nth-child(3){transition-delay:.16s} body.page-formateur-redesign .vptr-reveal.in .bullet-item:nth-child(4){transition-delay:.24s}
+  body.page-formateur-redesign .bullet-item:hover { background:#fff; transform:translateX(4px) !important; }
+
+  body.page-formateur-redesign .sessions-grid { margin-top:34px; }
+  body.page-formateur-redesign .empty-state { padding:28px !important; text-align:center; border-radius:20px; background:rgba(255,255,255,.9); border:1px solid rgba(207,224,240,.85); color:#617086; box-shadow:0 16px 40px rgba(7,24,44,.09); position:relative; overflow:hidden; }
+  body.page-formateur-redesign .session-card { margin-bottom:20px; }
+  body.page-formateur-redesign #formulaire { display:grid; place-items:center; padding:100px 0 72px; perspective:1400px; }
+  body.page-formateur-redesign #formulaire > .container { width:min(560px,calc(100% - 42px)); }
+  body.page-formateur-redesign .form-card { position:relative; width:100%; padding:30px !important; background:rgba(255,255,255,.86) !important; border:1px solid rgba(207,224,240,.82); border-radius:28px !important; box-shadow:0 32px 70px rgba(7,24,44,.2) !important; animation:vptrFloatIn .9s both; overflow:hidden; }
+  body.page-formateur-redesign .form-card h2 { font-size:clamp(2.6rem,6vw,4.6rem) !important; line-height:.86 !important; letter-spacing:-.08em !important; margin-bottom:14px !important; position:relative; z-index:1; }
+  body.page-formateur-redesign .form-grid { display:grid !important; grid-template-columns:repeat(2,minmax(0,1fr)); gap:13px !important; }
+  body.page-formateur-redesign .form-field label { font-size:.72rem; color:#24384f; font-weight:800; display:grid; gap:7px; }
+  body.page-formateur-redesign input,
+  body.page-formateur-redesign select,
+  body.page-formateur-redesign textarea { border:1px solid #c8d7e4 !important; background:rgba(255,255,255,.92) !important; border-radius:9px !important; padding:.83rem .86rem !important; transition:border .2s ease, box-shadow .2s ease, background .2s ease, transform .2s ease; }
+  body.page-formateur-redesign input:focus,
+  body.page-formateur-redesign select:focus,
+  body.page-formateur-redesign textarea:focus { border-color:#8fc0e8 !important; box-shadow:0 0 0 5px rgba(159,206,242,.24) !important; background:#fff !important; transform:translateY(-2px); }
+
+  body.page-formateur-redesign .faq-card { min-height:180px; perspective:1400px; animation:vptrFloatIn .8s both; padding:0 !important; }
+  body.page-formateur-redesign .faq-card h3 { font-size:1rem; }
+  body.page-formateur-redesign .faq-card p { color:#617086 !important; line-height:1.75; }
+
+  @media (max-width:920px) {
+    body.page-formateur-redesign .module-grid,
+    body.page-formateur-redesign .profile-grid,
+    body.page-formateur-redesign .benefit-grid,
+    body.page-formateur-redesign .split-panel,
+    body.page-formateur-redesign .faq-grid { grid-template-columns:1fr !important; }
+    body.page-formateur-redesign .module-catalog-head,
+    body.page-formateur-redesign .vptr-section .section-head,
+    body.page-formateur-redesign #sessions .section-head { text-align:left; }
+    body.page-formateur-redesign .module-catalog-head p,
+    body.page-formateur-redesign .vptr-section .section-head p,
+    body.page-formateur-redesign #sessions .section-head p { margin-left:0; }
+    body.page-formateur-redesign .info-panel { padding:24px !important; min-height:auto; }
+    body.page-formateur-redesign .form-grid { grid-template-columns:1fr; }
+    body.page-formateur-redesign .module-card, body.page-formateur-redesign .module-flip-inner { min-height:260px; }
+    body.page-formateur-redesign .benefit-card:nth-child(n) { transform:none; }
   }
-
-  .vp-training-gallery__stage::after {
-    right: 0;
-    background: linear-gradient(270deg, rgba(18, 50, 80, .94), transparent);
-  }
-
-  .vp-training-gallery__halo {
-    position: absolute;
-    inset: 18px;
-    border-radius: 32px;
-    border: 1px solid rgba(255, 255, 255, .08);
-    pointer-events: none;
-  }
-
-  .vp-training-gallery__rail {
-    position: relative;
-    display: flex;
-    width: 100%;
-    transform: rotate(-3.5deg);
-  }
-
-  .vp-training-gallery__rail + .vp-training-gallery__rail {
-    margin-top: 24px;
-    transform: rotate(3deg) translateX(-110px);
-  }
-
-  .vp-training-gallery__track {
-    display: flex;
-    width: max-content;
-    gap: 18px;
-    padding-inline: 0;
-    animation: vptrGalleryScroll 34s linear infinite;
-    will-change: transform;
-  }
-
-  .vp-training-gallery__rail--bottom .vp-training-gallery__track {
-    animation-name: vptrGalleryScrollReverse;
-    animation-duration: 40s;
-  }
-
-  .vp-training-gallery__stage:hover .vp-training-gallery__track {
-    animation-play-state: paused;
-  }
-
-  .vp-training-gallery__card {
-    position: relative;
-    flex: 0 0 clamp(230px, 27vw, 330px);
-    aspect-ratio: 4 / 3;
-    margin: 0;
-    padding: 10px;
-    overflow: hidden;
-    border-radius: 28px;
-    border: 1px solid rgba(255, 255, 255, .16);
-    background:
-      linear-gradient(145deg, rgba(255,255,255,.12), rgba(255,255,255,.04)),
-      #071421;
-    box-shadow: 0 24px 54px rgba(0, 0, 0, .34);
-    transform: translateZ(0);
-  }
-
-  .vp-training-gallery__card::after {
-    content: "";
-    position: absolute;
-    inset: 10px;
-    border-radius: 20px;
-    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .08);
-    pointer-events: none;
-  }
-
-  .vp-training-gallery__card img {
-    display: block;
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    object-position: center;
-    border-radius: 20px;
-    background: linear-gradient(135deg, #071421, #132c46);
-  }
-
-  .vp-training-gallery__badge {
-    position: absolute;
-    left: 28px;
-    bottom: 26px;
-    z-index: 4;
-    max-width: calc(100% - 56px);
-    padding: 12px 16px;
-    border-radius: 999px;
-    border: 1px solid rgba(255, 255, 255, .16);
-    background: rgba(255, 255, 255, .9);
-    color: #071421;
-    font-weight: 850;
-    font-size: .92rem;
-    letter-spacing: -.02em;
-    box-shadow: 0 18px 38px rgba(0, 0, 0, .22);
-  }
-
-  @keyframes vptrGalleryScroll {
-    from { transform: translateX(0); }
-    to { transform: translateX(-50%); }
-  }
-
-  @keyframes vptrGalleryScrollReverse {
-    from { transform: translateX(-50%); }
-    to { transform: translateX(0); }
-  }
-
-  @keyframes vptrGalleryHalo {
-    from { transform: translate3d(0, 0, 0) scale(1); opacity: .7; }
-    to { transform: translate3d(-48px, 28px, 0) scale(1.08); opacity: .42; }
-  }
-
-  @keyframes vptrGalleryTextIn {
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  @media (max-width: 920px) {
-    .vp-training-gallery__grid {
-      grid-template-columns: 1fr;
-    }
-
-    .vp-training-gallery__copy {
-      max-width: 720px;
-    }
-
-    .vp-training-gallery__stage {
-      min-height: 400px;
-    }
-  }
-
-  @media (max-width: 640px) {
-    .vp-training-gallery__stage {
-      min-height: 360px;
-      border-radius: 28px;
-      margin-inline: -8px;
-    }
-
-    .vp-training-gallery__stage::before,
-    .vp-training-gallery__stage::after {
-      width: 54px;
-    }
-
-    .vp-training-gallery__rail + .vp-training-gallery__rail {
-      margin-top: 18px;
-      transform: rotate(3deg) translateX(-72px);
-    }
-
-    .vp-training-gallery__card {
-      flex-basis: 230px;
-      border-radius: 22px;
-      padding: 8px;
-    }
-
-    .vp-training-gallery__card img,
-    .vp-training-gallery__card::after {
-      border-radius: 16px;
-    }
-
-    .vp-training-gallery__badge {
-      left: 18px;
-      right: 18px;
-      bottom: 18px;
-      max-width: none;
-      text-align: center;
-      white-space: normal;
-    }
-  }
-
   @media (prefers-reduced-motion: reduce) {
-    .vp-training-gallery::before,
-    .vp-training-gallery__track,
-    .vp-training-gallery__copy .eyebrow,
-    .vp-training-gallery__copy h2,
-    .vp-training-gallery__copy p {
-      animation: none !important;
-      opacity: 1 !important;
-      transform: none !important;
-    }
+    body.page-formateur-redesign .vptr-reveal,
+    body.page-formateur-redesign .module-card,
+    body.page-formateur-redesign .profile-card,
+    body.page-formateur-redesign .faq-card { opacity:1 !important; transform:none !important; animation:none !important; }
+    body.page-formateur-redesign .module-card:hover .module-flip-inner,
+    body.page-formateur-redesign .module-card.is-flipped .module-flip-inner { transform:none !important; }
   }
 </style>
 
 </head>
-<body class="vpl-inner-page page-editorial-light">
+<body class="vpl-inner-page page-editorial-light page-formateur-redesign">
+<div class="vptr-background-orbs" aria-hidden="true"><span class="vptr-orb vptr-orb-one"></span><span class="vptr-orb vptr-orb-two"></span><span class="vptr-orb vptr-orb-three"></span></div>
 <canvas aria-hidden="true" class="vpl-canvas"></canvas>
 <div aria-hidden="true" class="vpl-noise"></div>
 <div aria-hidden="true" class="vpl-scroll-ribbon">
@@ -609,7 +226,7 @@
 <circle class="vpl-ribbon-dot" cx="920" cy="-80" r="18"></circle>
 </svg>
 </div>
-<header class="vpl-nav vptr-nav-animated">
+<header class="vpl-nav">
 <a aria-label="Accueil Vital Protect" class="vpl-brand" href="/index.html">
 <img alt="Vital Protect" src="/logo.png"/>
 <div>
@@ -630,26 +247,20 @@
 <a class="vpl-nav-cta" href="/stage.html">Trouver un stage</a>
 </header>
 <main>
-<section class="vpl-inner-hero vptr-hero-animated" data-vptr-hero>
-<div class="vpl-container vpl-inner-hero-grid vptr-hero-grid">
-<div class="vptr-hero-content">
-<div class="vpl-eyebrow vptr-eyebrow"><span class="vptr-eyebrow-dot" aria-hidden="true"></span>Réseau formateur</div>
-<h1 class="vpl-inner-title vptr-inner-title" aria-label="Intégrer un réseau encadré.">
-<span class="vptr-title-line"><span>Intégrer un</span></span>
-<span class="vptr-title-line"><span>réseau</span></span>
-<span class="vptr-title-line"><span>encadré.</span></span>
-</h1>
-<p class="vpl-inner-lead vptr-copy">Devenir formateur Vital Protect, c’est rejoindre un cadre de transmission contrôlé, accompagné et maintenu à jour.</p>
-<div class="vpl-actions vptr-actions">
+<section class="vpl-inner-hero">
+<div class="vpl-container vpl-inner-hero-grid">
+<div>
+<div class="vpl-eyebrow">Réseau formateur</div>
+<h1 class="vpl-inner-title">Intégrer un réseau<span>encadré.</span></h1>
+<p class="vpl-inner-lead">Devenir formateur Vital Protect, c’est rejoindre un cadre de transmission contrôlé, accompagné et maintenu à jour.</p>
+<div class="vpl-actions">
 <a class="vpl-button vpl-button-primary" href="/stage.html">Trouver un stage</a>
 <a class="vpl-button vpl-button-secondary" href="/contact.html">Nous contacter</a>
 </div>
 </div>
-<div class="vpl-inner-visual vptr-visual">
-<div class="vptr-photo-wrap" data-vptr-tilt>
+<div class="vpl-inner-visual">
 <img alt="Formateur Vital Protect guidant un groupe pendant un briefing pédagogique" src="/hero-formateur-reseau.webp"/>
-</div>
-<div class="vpl-inner-stat vptr-info-card">
+<div class="vpl-inner-stat">
 <strong>Habilité. Supervisé. Maintenu à jour.</strong>
 <span>La qualité ne dépend pas d’une personne, mais d’un standard commun.</span>
 </div>
@@ -671,9 +282,9 @@
 </div>
 
 
-<section class="vp-visual-story vp-visual-story--trainer vp-training-gallery" aria-labelledby="trainer-visual-title">
-  <div class="container vp-training-gallery__grid">
-    <div class="vp-training-gallery__copy">
+<section class="vp-visual-story vp-visual-story--trainer" aria-labelledby="trainer-visual-title">
+  <div class="container vp-visual-story-grid">
+    <div class="vp-visual-copy">
       <span class="eyebrow">Transmission</span>
       <h2 id="trainer-visual-title">Transmettre demande plus qu’une expérience personnelle.</h2>
       <p>
@@ -681,38 +292,18 @@
         et garder une progression commune d’un groupe à l’autre.
       </p>
     </div>
-
-    <div class="vp-training-gallery__stage" aria-label="Galerie animée de scènes de formation Vital Protect">
-      <div class="vp-training-gallery__halo" aria-hidden="true"></div>
-
-      <div class="vp-training-gallery__rail vp-training-gallery__rail--top" aria-hidden="true">
-        <div class="vp-training-gallery__track">
-          <figure class="vp-training-gallery__card"><img src="/visuel-mise-distance.webp" alt="" loading="lazy" /></figure>
-          <figure class="vp-training-gallery__card"><img src="/visuel-briefing-crossfit.webp" alt="" loading="lazy" /></figure>
-          <figure class="vp-training-gallery__card"><img src="/hero-formateur-reseau.webp" alt="" loading="lazy" /></figure>
-          <figure class="vp-training-gallery__card"><img src="/visuel-mise-distance.webp" alt="" loading="lazy" /></figure>
-          <figure class="vp-training-gallery__card"><img src="/visuel-briefing-crossfit.webp" alt="" loading="lazy" /></figure>
-          <figure class="vp-training-gallery__card"><img src="/hero-formateur-reseau.webp" alt="" loading="lazy" /></figure>
-        </div>
-      </div>
-
-      <div class="vp-training-gallery__rail vp-training-gallery__rail--bottom" aria-hidden="true">
-        <div class="vp-training-gallery__track">
-          <figure class="vp-training-gallery__card"><img src="/hero-formateur-reseau.webp" alt="" loading="lazy" /></figure>
-          <figure class="vp-training-gallery__card"><img src="/visuel-mise-distance.webp" alt="" loading="lazy" /></figure>
-          <figure class="vp-training-gallery__card"><img src="/visuel-briefing-crossfit.webp" alt="" loading="lazy" /></figure>
-          <figure class="vp-training-gallery__card"><img src="/hero-formateur-reseau.webp" alt="" loading="lazy" /></figure>
-          <figure class="vp-training-gallery__card"><img src="/visuel-mise-distance.webp" alt="" loading="lazy" /></figure>
-          <figure class="vp-training-gallery__card"><img src="/visuel-briefing-crossfit.webp" alt="" loading="lazy" /></figure>
-        </div>
-      </div>
-
-      <div class="vp-training-gallery__badge">Progression commune · correction · sécurité</div>
+    <div class="vp-visual-mosaic">
+      <figure class="vp-image-card">
+        <img src="/visuel-mise-distance.webp" alt="Correction de distance pendant une formation Vital Protect" loading="lazy" />
+      </figure>
+      <figure class="vp-image-card">
+        <img src="/visuel-briefing-crossfit.webp" alt="Groupe en briefing dans une salle de formation" loading="lazy" />
+      </figure>
     </div>
   </div>
 </section>
 
-<section id="modules">
+<section id="modules" class="vptr-section vptr-catalogue-section vptr-reveal">
 <div class="container">
 <div class="section-head section-head--center">
 <span class="eyebrow">Formules formateur</span>
@@ -788,7 +379,7 @@
 </div>
 </div>
 </section>
-<section>
+<section class="vptr-section vptr-profile-section vptr-reveal">
 <div class="container">
 <div class="section-head section-head--center">
 <span class="eyebrow">Pour qui ?</span>
@@ -799,7 +390,7 @@
           </p>
 </div>
 <div class="profile-grid">
-<article class="profile-card">
+<article class="profile-card vptr-tilt">
 <div class="icon-dot"></div>
 <h3>Pédagogie</h3>
 <p>
@@ -807,7 +398,7 @@
               avec clarté, calme et cohérence.
             </p>
 </article>
-<article class="profile-card">
+<article class="profile-card vptr-tilt">
 <div class="icon-dot"></div>
 <h3>Posture sérieuse</h3>
 <p>
@@ -815,7 +406,7 @@
               supérieur à une simple logique commerciale.
             </p>
 </article>
-<article class="profile-card">
+<article class="profile-card vptr-tilt">
 <div class="icon-dot"></div>
 <h3>Engagement de standard</h3>
 <p>
@@ -829,9 +420,9 @@
 </div>
 </div>
 </section>
-<section>
+<section class="vptr-section vptr-validation-section vptr-reveal">
 <div class="container split-panel">
-<div class="soft-card info-panel">
+<div class="soft-card info-panel vptr-tilt">
 <span class="eyebrow">Ce qu’on valide</span>
 <h3>Une capacité à transmettre, pas seulement à pratiquer</h3>
 <p>
@@ -846,7 +437,7 @@
 <div class="bullet-item"><strong>Sécurité :</strong> encadrer sans dérive ni mise en danger.</div>
 </div>
 </div>
-<div class="soft-card info-panel">
+<div class="soft-card info-panel vptr-tilt">
 <span class="eyebrow">Ce qu’on ne valide pas</span>
 <h3>Pas un statut vague, pas une liberté totale d’interprétation</h3>
 <p>
@@ -863,7 +454,7 @@
 </div>
 </div>
 </section>
-<section>
+<section class="vptr-section vptr-benefit-section vptr-reveal">
 <div class="container">
 <div class="section-head section-head--center">
 <span class="eyebrow">Pourquoi rejoindre le réseau</span>
@@ -875,21 +466,21 @@
           </p>
 </div>
 <div class="benefit-grid">
-<article class="benefit-card">
+<article class="benefit-card vptr-tilt">
 <h3>Une méthode claire</h3>
 <p>
               Vous rejoignez une architecture pédagogique identifiable, avec un langage,
               une logique et des repères de transmission plus solides.
             </p>
 </article>
-<article class="benefit-card">
+<article class="benefit-card vptr-tilt">
 <h3>Une habilitation exploitable</h3>
 <p>
               Votre validation ouvre un droit de transmission sur des modules définis,
               dans le cadre du standard Vital Protect.
             </p>
 </article>
-<article class="benefit-card">
+<article class="benefit-card vptr-tilt">
 <h3>Un cadre de réseau</h3>
 <p>
               Vous n’avancez pas seul : affiliation, cohérence, suivi, espace formateur,
@@ -904,9 +495,9 @@
 </section>
 
 
-<section>
+<section class="vptr-section vptr-payment-section vptr-reveal">
 <div class="container split-panel">
-<div class="soft-card info-panel">
+<div class="soft-card info-panel vptr-tilt">
 <span class="eyebrow">Coût &amp; logique de paiement</span>
 <h3>Une réservation claire et sécurisée</h3>
 <p>
@@ -920,7 +511,7 @@
 <div class="bullet-item"><strong>Clarté :</strong> le parcours reste cadré du début à la fin.</div>
 </div>
 </div>
-<div class="soft-card info-panel">
+<div class="soft-card info-panel vptr-tilt">
 <span class="eyebrow">Ce que vous obtenez à la fin</span>
 <h3>En cas de validation</h3>
 <p>
@@ -936,7 +527,7 @@
 </div>
 </div>
 </section>
-<section id="sessions">
+<section id="sessions" class="vptr-section vptr-sessions-section vptr-reveal">
 <div class="container">
 <div class="section-head">
 <span class="eyebrow">Sessions disponibles</span>
@@ -954,7 +545,7 @@
 </div>
 </div>
 </section>
-<section id="formulaire">
+<section id="formulaire" class="vptr-section vptr-form-section vptr-reveal">
 <div class="container">
 <div class="form-card">
 <div class="form-head">
@@ -1016,7 +607,7 @@
 </div>
 </div>
 </section>
-<section>
+<section class="vptr-section vptr-faq-section vptr-reveal">
 <div class="container">
 <div class="section-head section-head--center">
 <span class="eyebrow">Questions fréquentes</span>
@@ -1087,32 +678,68 @@
 </div>
 </div>
 </footer>
-<script>
-    (function () {
-      var hero = document.querySelector('[data-vptr-hero]');
-      if (!hero) return;
 
-      var card = hero.querySelector('[data-vptr-tilt]');
-      var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      var canHover = window.matchMedia('(hover: hover)').matches;
+<script id="vptr-formateur-sections-js">
+  (function () {
+    var prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-      if (card && !reduceMotion && canHover) {
-        card.addEventListener('mousemove', function (event) {
-          var rect = card.getBoundingClientRect();
-          var x = event.clientX - rect.left;
-          var y = event.clientY - rect.top;
-          var rotateY = ((x / rect.width) - .5) * 10;
-          var rotateX = (.5 - (y / rect.height)) * 10;
-
-          card.style.transform = 'rotateX(' + rotateX + 'deg) rotateY(' + rotateY + 'deg) translateY(-4px)';
-        });
-
-        card.addEventListener('mouseleave', function () {
-          card.style.transform = 'rotateX(0deg) rotateY(0deg) translateY(0)';
-        });
+    function initParticles() {
+      if (prefersReducedMotion) return;
+      if (document.querySelector('.vptr-particle')) return;
+      for (var i = 0; i < 26; i++) {
+        var particle = document.createElement('span');
+        particle.className = 'vptr-particle';
+        particle.style.left = (Math.random() * 100) + '%';
+        particle.style.top = (Math.random() * 100) + '%';
+        particle.style.animationDelay = (Math.random() * 5) + 's';
+        particle.style.animationDuration = (3.5 + Math.random() * 4) + 's';
+        document.body.appendChild(particle);
       }
-    })();
-  </script>
+    }
+
+    function initReveal() {
+      var items = Array.prototype.slice.call(document.querySelectorAll('.vptr-reveal'));
+      if (!items.length) return;
+      if (!('IntersectionObserver' in window)) {
+        items.forEach(function (item) { item.classList.add('in'); });
+        return;
+      }
+      var observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) entry.target.classList.add('in');
+        });
+      }, { threshold: 0.12 });
+      items.forEach(function (item) { observer.observe(item); });
+    }
+
+    function initTilt() {
+      if (prefersReducedMotion) return;
+      document.querySelectorAll('.vptr-tilt').forEach(function (el) {
+        el.addEventListener('pointermove', function (event) {
+          var rect = el.getBoundingClientRect();
+          var x = ((event.clientX - rect.left) / rect.width - .5) * 10;
+          var y = ((event.clientY - rect.top) / rect.height - .5) * -10;
+          el.style.transform = 'translateY(-8px) rotateX(' + y + 'deg) rotateY(' + x + 'deg)';
+        });
+        el.addEventListener('pointerleave', function () { el.style.transform = ''; });
+      });
+    }
+
+    function initFlipDelegation() {
+      document.addEventListener('click', function (event) {
+        var card = event.target.closest('.module-card');
+        if (!card || event.target.closest('button, a')) return;
+        card.classList.toggle('is-flipped');
+      });
+    }
+
+    initParticles();
+    initReveal();
+    initTilt();
+    initFlipDelegation();
+  })();
+</script>
+
 <script type="module">
     import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
@@ -1255,21 +882,27 @@
           .join("");
 
         return `
-          <article class="module-card">
-            <div class="icon-dot"></div>
-            <h3>${escapeHtml(module.name)}</h3>
-            <p>${escapeHtml(module.short_description || module.long_description || "Module disponible au catalogue Vital Protect.")}</p>
-
-            ${chips ? `<div class="module-card__meta">${chips}</div>` : ""}
-
-            <div class="timeline-cta" style="justify-content:flex-start; margin-top:18px;">
-              <button
-                type="button"
-                class="btn btn-dark"
-                data-module-name="${escapeHtml(module.name)}"
-              >
-                Voir les sessions
-              </button>
+          <article class="module-card" tabindex="0">
+            <div class="module-flip-inner">
+              <div class="module-flip-face front">
+                <div class="module-dot" aria-hidden="true"></div>
+                <h3>${escapeHtml(module.name)}</h3>
+                <p>${escapeHtml(module.short_description || module.long_description || "Module disponible au catalogue Vital Protect.")}</p>
+                <p class="module-flip-hint">Survolez ou cliquez pour voir l’action</p>
+              </div>
+              <div class="module-flip-face back">
+                <div>
+                  <h3>${escapeHtml(module.name)}</h3>
+                  ${chips ? `<div class="module-card__meta">${chips}</div>` : ""}
+                </div>
+                <button
+                  type="button"
+                  class="btn btn-dark"
+                  data-module-name="${escapeHtml(module.name)}"
+                >
+                  Voir les sessions
+                </button>
+              </div>
             </div>
           </article>
         `;
