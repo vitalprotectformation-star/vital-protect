@@ -1,8 +1,7 @@
 <!DOCTYPE html>
-
 <html lang="fr">
 <head>
-<script>
+  <script>
     (function () {
       try {
         var root = document.documentElement;
@@ -10,8 +9,6 @@
         var ORIGIN_KEY = 'vpl-route-transition-origin';
         var SEED_KEY = 'vpl-route-transition-seed';
 
-        // Sur l'accueil, on utilise maintenant la même animation d'entrée
-        // que les autres pages, même lors d'une ouverture directe du site.
         if (sessionStorage.getItem(STORAGE_KEY) !== '1') {
           sessionStorage.setItem(STORAGE_KEY, '1');
           sessionStorage.setItem(SEED_KEY, String(Math.floor((Date.now() + Math.random() * 100000) % 2147483647)));
@@ -25,594 +22,1020 @@
       } catch (_) {}
     })();
   </script>
-<style>
+
+  <style>
     html{--vpl-transition-image:url("transition-screen.png");--vpl-transition-bg-size:cover}
     html.vpl-route-preload-transition,html.vpl-route-preload-transition body{background:#2f6f9f!important}
     html.vpl-route-preload-transition::before{content:"";position:fixed;inset:0;z-index:2147482998;pointer-events:none;background-color:#2f6f9f;background-image:var(--vpl-transition-image);background-position:center;background-size:var(--vpl-transition-bg-size);background-repeat:no-repeat;opacity:1}
     @media (max-width: 768px), (pointer: coarse) and (orientation: portrait){html{--vpl-transition-image:url("transition-screen-mobile.jpg");--vpl-transition-bg-size:cover}}
   </style>
-<link as="image" href="transition-screen.png" media="(min-width: 769px)" rel="preload"/>
-<link as="image" href="transition-screen-mobile.jpg" media="(max-width: 768px), (pointer: coarse) and (orientation: portrait)" rel="preload"/>
-<script src="/page-transition.js"></script>
-<script>
+
+  <link as="image" href="transition-screen.png" media="(min-width: 769px)" rel="preload"/>
+  <link as="image" href="transition-screen-mobile.jpg" media="(max-width: 768px), (pointer: coarse) and (orientation: portrait)" rel="preload"/>
+
+  <script src="/page-transition.js"></script>
+  <script>
     if (!window.VitalPageTransition) {
       document.write('<script src="page-transition.js"><\/script>');
     }
   </script>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Vital Protect — Stages de sécurité personnelle et prévention des situations à risque</title>
-<meta content="Stages de sécurité personnelle accessibles à tous, interventions entreprise et parcours formateur encadré pour apprendre à prévenir, éviter et réagir face aux situations à risque." name="description"/>
-<link href="https://vital-protect.fr/" rel="canonical"/>
-<meta content="Vital Protect — Stages de sécurité personnelle" property="og:title"/>
-<meta content="Stages grand public, interventions entreprise et parcours formateur encadré pour prévenir, éviter et réagir face aux situations à risque." property="og:description"/>
-<meta content="website" property="og:type"/>
-<link href="/logo.png" rel="icon" type="image/png"/>
-<link href="/styles/lusion-level.css" rel="stylesheet"/>
+
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>Vital Protect — Stages de sécurité personnelle et prévention des situations à risque</title>
+  <meta content="Stages de sécurité personnelle accessibles à tous, interventions entreprise et parcours formateur encadré pour apprendre à prévenir, éviter et réagir face aux situations à risque." name="description"/>
+  <link href="https://vital-protect.fr/" rel="canonical"/>
+  <meta content="Vital Protect — Stages de sécurité personnelle" property="og:title"/>
+  <meta content="Stages grand public, interventions entreprise et parcours formateur encadré pour prévenir, éviter et réagir face aux situations à risque." property="og:description"/>
+  <meta content="website" property="og:type"/>
+  <link href="/logo.png" rel="icon" type="image/png"/>
+  <link href="/styles/lusion-level.css" rel="stylesheet"/>
+
+  <style>
+    .vpl-scroll-ribbon {
+      display: none !important;
+    }
+
+    .hp-standard-premium {
+      position: relative;
+      min-height: 100vh;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      padding: 90px 0 !important;
+      isolation: isolate;
+      background:
+        radial-gradient(circle at 8% 20%, rgba(255,255,255,0.9), transparent 26%),
+        radial-gradient(circle at 78% 18%, rgba(130, 207, 247, 0.18), transparent 30%),
+        radial-gradient(circle at 52% 58%, rgba(130, 207, 247, 0.14), transparent 36%),
+        linear-gradient(135deg, #edf7fb 0%, #e7f1f7 55%, #eff8fb 100%) !important;
+    }
+
+    .hp-standard-premium::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      opacity: 0.22;
+      background-image:
+        linear-gradient(rgba(12, 76, 125, 0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(12, 76, 125, 0.08) 1px, transparent 1px);
+      background-size: 72px 72px;
+      -webkit-mask-image: radial-gradient(circle at 50% 50%, black, transparent 76%);
+      mask-image: radial-gradient(circle at 50% 50%, black, transparent 76%);
+      pointer-events: none;
+    }
+
+    .hp-standard-orb {
+      position: absolute;
+      z-index: 0;
+      width: 420px;
+      height: 420px;
+      left: 46%;
+      top: 44%;
+      border-radius: 999px;
+      background: radial-gradient(
+        circle,
+        rgba(112, 202, 249, 0.34),
+        rgba(112, 202, 249, 0.08) 46%,
+        transparent 72%
+      );
+      filter: blur(24px);
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+    }
+
+    .hp-standard-noise {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      opacity: 0.04;
+      pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140' viewBox='0 0 140 140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.7'/%3E%3C/svg%3E");
+    }
+
+    .hp-standard-premium .hp-standard-grid {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      grid-template-columns: 0.95fr 1.05fr;
+      gap: clamp(48px, 7vw, 110px);
+      align-items: center;
+    }
+
+    .hp-standard-left {
+      position: relative;
+      z-index: 2;
+    }
+
+    .hp-standard-pill {
+      display: inline-flex !important;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 15px;
+      border-radius: 999px;
+      background: rgba(248, 252, 255, 0.82);
+      color: #0b3b63;
+      font-size: 13px;
+      font-weight: 850;
+      box-shadow:
+        inset 0 0 0 1px rgba(7, 18, 36, 0.08),
+        0 18px 44px rgba(8, 30, 50, 0.08);
+      backdrop-filter: blur(14px);
+    }
+
+    .hp-standard-pill::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: #82cff7;
+      box-shadow: 0 0 0 6px rgba(130, 207, 247, 0.16);
+    }
+
+    .hp-standard-title {
+      max-width: 620px;
+      margin: 26px 0 24px;
+      font-size: clamp(54px, 7.2vw, 104px);
+      line-height: 0.95;
+      letter-spacing: -0.075em;
+      color: #061224;
+    }
+
+    .hp-standard-title-mask {
+      display: block;
+      overflow: hidden;
+    }
+
+    .hp-standard-title-line {
+      display: block;
+      transform-origin: left bottom;
+    }
+
+    .hp-standard-copy {
+      max-width: 585px;
+      margin: 0 0 18px;
+      color: #334963;
+      font-size: 16px;
+      line-height: 1.7;
+    }
+
+    .hp-standard-button {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hp-standard-button::after {
+      content: "";
+      position: absolute;
+      inset: -40% auto -40% -55%;
+      width: 48%;
+      transform: rotate(18deg);
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.78), transparent);
+      transition: left 0.65s ease;
+      pointer-events: none;
+    }
+
+    .hp-standard-button:hover::after {
+      left: 110%;
+    }
+
+    .hp-standard-cards-wrap {
+      position: relative;
+      z-index: 2;
+    }
+
+    .hp-standard-step-track {
+      position: absolute;
+      top: 24px;
+      bottom: 24px;
+      left: -28px;
+      width: 2px;
+      border-radius: 999px;
+      background: rgba(12, 76, 125, 0.14);
+    }
+
+    .hp-standard-step-track span {
+      display: block;
+      width: 100%;
+      height: 0%;
+      border-radius: inherit;
+      background: linear-gradient(180deg, #82cff7, #0b4c7f);
+    }
+
+    .hp-standard-cards {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .hp-standard-card {
+      margin: 0;
+      overflow: hidden;
+      perspective: 900px;
+    }
+
+    .hp-standard-js .hp-standard-card {
+      height: 0;
+      opacity: 0;
+    }
+
+    .hp-standard-card-inner {
+      position: relative;
+      min-height: 104px;
+      display: grid;
+      grid-template-columns: 46px 1fr;
+      gap: 24px;
+      align-items: center;
+      padding: 30px 34px 30px 20px;
+      border-radius: 26px;
+      border: 1px solid rgba(255, 255, 255, 0.72);
+      background:
+        linear-gradient(135deg, rgba(255,255,255,0.92), rgba(255,255,255,0.66)),
+        rgba(255,255,255,0.78);
+      box-shadow: 0 22px 70px rgba(8, 30, 50, 0.12);
+      backdrop-filter: blur(16px);
+      transform-origin: top center;
+      will-change: transform, box-shadow;
+    }
+
+    .hp-standard-card-inner::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      padding: 1px;
+      background: linear-gradient(
+        135deg,
+        rgba(130, 207, 247, 0.72),
+        rgba(255,255,255,0.08),
+        rgba(12, 76, 125, 0.18)
+      );
+      -webkit-mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor;
+      mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+      mask-composite: exclude;
+      opacity: 0;
+      transition: opacity 0.35s ease;
+      pointer-events: none;
+    }
+
+    .hp-standard-card.is-active .hp-standard-card-inner::before {
+      opacity: 1;
+    }
+
+    .hp-standard-card.is-active .hp-standard-card-inner {
+      box-shadow:
+        0 26px 90px rgba(8, 30, 50, 0.17),
+        0 0 0 8px rgba(130, 207, 247, 0.08);
+    }
+
+    .hp-standard-card-inner > span {
+      position: relative;
+      width: 42px;
+      height: 42px;
+      border-radius: 13px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(145deg, #0f5d96, #0b4c7f);
+      color: white;
+      font-size: 19px;
+      font-weight: 850;
+      box-shadow: 0 14px 30px rgba(12, 76, 125, 0.28);
+    }
+
+    .hp-standard-card-inner > span::after {
+      content: "";
+      position: absolute;
+      inset: -7px;
+      border-radius: 18px;
+      border: 1px solid rgba(12, 76, 125, 0.2);
+      opacity: 0;
+      transform: scale(0.82);
+    }
+
+    .hp-standard-card.is-active .hp-standard-card-inner > span::after {
+      animation: hpStandardPulse 0.8s ease forwards;
+    }
+
+    @keyframes hpStandardPulse {
+      0% { opacity: 0; transform: scale(0.82); }
+      45% { opacity: 1; }
+      100% { opacity: 0; transform: scale(1.22); }
+    }
+
+    .hp-standard-card-inner strong {
+      display: block;
+      margin: 0 0 8px;
+      font-size: 16px;
+      line-height: 1.2;
+      color: #061224;
+    }
+
+    .hp-standard-card-inner p {
+      margin: 0;
+      color: #4a5d75;
+      font-size: 16px;
+      line-height: 1.5;
+    }
+
+    .hp-standard-progress {
+      position: absolute;
+      left: 50%;
+      bottom: -54px;
+      width: min(420px, calc(100% - 48px));
+      height: 7px;
+      transform: translateX(-50%);
+      border-radius: 999px;
+      background: rgba(12, 76, 125, 0.1);
+      overflow: hidden;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.45);
+    }
+
+    .hp-standard-progress span {
+      display: block;
+      width: 0%;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #82cff7, #0b4c7f);
+      box-shadow: 0 0 22px rgba(76, 158, 224, 0.7);
+    }
+
+    @media (max-width: 900px) {
+      .hp-standard-premium {
+        min-height: auto;
+        padding: 80px 0 !important;
+      }
+
+      .hp-standard-premium .hp-standard-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hp-standard-title {
+        font-size: clamp(44px, 14vw, 72px);
+      }
+
+      .hp-standard-card-inner {
+        grid-template-columns: 42px 1fr;
+        padding: 24px 22px;
+      }
+
+      .hp-standard-step-track {
+        display: none;
+      }
+
+      .hp-standard-progress {
+        position: relative;
+        left: auto;
+        bottom: auto;
+        transform: none;
+        grid-column: 1 / -1;
+        margin: 8px auto 0;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .hp-standard-card {
+        height: auto !important;
+        opacity: 1 !important;
+      }
+
+      .hp-standard-card-inner,
+      .hp-standard-title-line,
+      .hp-standard-left {
+        transform: none !important;
+        opacity: 1 !important;
+      }
+    }
+  </style>
 </head>
+
 <body class="vpl-home page-editorial-light page-accueil-rythme">
-<canvas aria-hidden="true" class="vpl-canvas"></canvas>
-<div aria-hidden="true" class="vpl-noise"></div>
-<div aria-hidden="true" class="vpl-scroll-ribbon">
-<svg class="vpl-scroll-ribbon-svg" preserveaspectratio="none" viewbox="0 0 1000 1600">
-<defs>
-<lineargradient id="vplRibbonGradient" x1="0%" x2="0%" y1="0%" y2="100%">
-<stop offset="0%" stop-color="#d8ecff" stop-opacity="0.96"></stop>
-<stop offset="38%" stop-color="#6db7ff" stop-opacity="0.94"></stop>
-<stop offset="72%" stop-color="#2f7fca" stop-opacity="0.94"></stop>
-<stop offset="100%" stop-color="#0b3a6f" stop-opacity="0.92"></stop>
-</lineargradient>
-</defs>
-<path class="vpl-ribbon-base" d="M920 -80 C980 130 700 120 760 330 C820 520 990 560 860 760 C700 1010 240 930 300 1180 C360 1420 760 1350 680 1580 C640 1680 560 1710 430 1750" pathlength="1"></path>
-<path class="vpl-ribbon-progress" d="M920 -80 C980 130 700 120 760 330 C820 520 990 560 860 760 C700 1010 240 930 300 1180 C360 1420 760 1350 680 1580 C640 1680 560 1710 430 1750" pathlength="1"></path>
-<circle class="vpl-ribbon-dot" cx="920" cy="-80" r="18"></circle>
-</svg>
-</div>
-<div class="vpl-page">
-<header class="vpl-nav">
-<a aria-label="Accueil Vital Protect" class="vpl-brand" href="/index.html">
-<img alt="Vital Protect" src="/logo.png"/>
-<div>
-<b>VITAL PROTECT</b>
-<span>Standard sécurité personnelle</span>
-</div>
-</a>
-<nav aria-label="Navigation principale" class="vpl-menu">
-<a class="active" href="/index.html">Accueil</a>
-<a href="/methode.html">Standard</a>
-<a href="/stage.html">Stages</a>
-<a href="/entreprises.html">Entreprises</a>
-<a href="/devenir-formateur.html">Formateurs</a>
-<a href="/contact.html">Contact</a>
-<a class="vpl-nav-ghost" href="/formateur-login.html">Espace</a>
-</nav>
-<a class="vpl-nav-cta" href="/stage.html">Recevoir les dates <span aria-hidden="true">→</span></a>
-</header>
-<main>
-  <section class="hp-hero" aria-labelledby="hp-hero-title">
-    <div class="vpl-container hp-hero-grid">
-      <div class="hp-hero-copy">
-        <div class="hp-chip-row" aria-label="Repères Vital Protect">
-          <span>Sécurité personnelle réaliste</span>
-          <span>Public débutant</span>
-          <span>Sans folklore martial</span>
-        </div>
-
-        <h1 id="hp-hero-title">Prévenir, éviter et réagir simplement.</h1>
-        <p>
-          Vital Protect transmet une méthode progressive pour lire une situation,
-          garder la bonne distance, désamorcer quand c’est possible et réagir avec lucidité quand c’est nécessaire.
-        </p>
-
-        <div class="hp-actions">
-          <a class="vpl-button vpl-button-primary" href="/stage.html">Recevoir les prochaines dates <span aria-hidden="true">→</span></a>
-          <a class="vpl-button vpl-button-secondary" href="/methode.html">Découvrir la méthode</a>
-        </div>
-
-        <p class="hp-microcopy">
-          Les réservations ne sont ouvertes que lorsqu’une session affiche clairement le lieu, la date, le tarif,
-          le nombre de places, l’encadrant et les conditions de participation.
-        </p>
-      </div>
-
-      <div class="hp-hero-visual" aria-label="Aperçu d'une formation Vital Protect">
-        <figure class="hp-hero-photo">
-          <img src="/visuel-prevenir-proteger-agir.webp" alt="Formation Vital Protect en salle avec message Prévenir Protéger Agir" />
-        </figure>
-        <div class="hp-hero-claim">
-          <strong>Pas un cours de combat.</strong>
-        </div>
-
-        <div class="hp-hero-mosaic">
-          <figure>
-            <img src="/visuel-mise-distance.webp" alt="Exercice de mise à distance encadré par un formateur Vital Protect" />
-          </figure>
-          <article>
-            <span></span>
-            <p>On travaille la lucidité, la distance, la sortie possible et des réponses simples.</p>
-          </article>
-        </div>
-        <div class="hp-hero-note">
-          <strong>Pas de réservation floue.</strong>
-          <span>Une session incomplète ne doit pas être vendue comme disponible.</span>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <div class="hp-band" aria-hidden="true">
-    <div class="hp-band-track">
-      <div class="hp-band-set">
-        <span>Prévenir</span><i>—</i>
-        <span>Observer</span><i>—</i>
-        <span>Éviter</span><i>—</i>
-        <span>Réagir</span><i>—</i>
-        <span>Sécuriser l’après</span><i>—</i>
-      </div>
-      <div class="hp-band-set">
-        <span>Prévenir</span><i>—</i>
-        <span>Observer</span><i>—</i>
-        <span>Éviter</span><i>—</i>
-        <span>Réagir</span><i>—</i>
-        <span>Sécuriser l’après</span><i>—</i>
-      </div>
-    </div>
+  <canvas aria-hidden="true" class="vpl-canvas"></canvas>
+  <div aria-hidden="true" class="vpl-noise"></div>
+  <div aria-hidden="true" class="vpl-scroll-ribbon">
+    <svg class="vpl-scroll-ribbon-svg" preserveAspectRatio="none" viewBox="0 0 1000 1600">
+      <defs>
+        <linearGradient id="vplRibbonGradient" x1="0%" x2="0%" y1="0%" y2="100%">
+          <stop offset="0%" stop-color="#d8ecff" stop-opacity="0.96"></stop>
+          <stop offset="38%" stop-color="#6db7ff" stop-opacity="0.94"></stop>
+          <stop offset="72%" stop-color="#2f7fca" stop-opacity="0.94"></stop>
+          <stop offset="100%" stop-color="#0b3a6f" stop-opacity="0.92"></stop>
+        </linearGradient>
+      </defs>
+      <path class="vpl-ribbon-base" d="M920 -80 C980 130 700 120 760 330 C820 520 990 560 860 760 C700 1010 240 930 300 1180 C360 1420 760 1350 680 1580 C640 1680 560 1710 430 1750" pathLength="1"></path>
+      <path class="vpl-ribbon-progress" d="M920 -80 C980 130 700 120 760 330 C820 520 990 560 860 760 C700 1010 240 930 300 1180 C360 1420 760 1350 680 1580 C640 1680 560 1710 430 1750" pathLength="1"></path>
+      <circle class="vpl-ribbon-dot" cx="920" cy="-80" r="18"></circle>
+    </svg>
   </div>
 
-  <section class="hp-problem hp-section" aria-labelledby="hp-problem-title">
-    <div class="vpl-container hp-asym-grid">
-      <div class="hp-section-copy">
-        <span class="hp-kicker">Le problème</span>
-        <h2 id="hp-problem-title">La sécurité personnelle mérite mieux que la peur ou le spectacle.</h2>
-        <p>
-          Beaucoup de contenus promettent trop, dramatisent ou mélangent tout.
-          Vital Protect prend le chemin inverse : comprendre la situation, garder de l’espace,
-          choisir une réponse simple et connaître ses limites.
-        </p>
-      </div>
+  <div class="vpl-page">
+    <header class="vpl-nav">
+      <a aria-label="Accueil Vital Protect" class="vpl-brand" href="/index.html">
+        <img alt="Vital Protect" src="/logo.png"/>
+        <div>
+          <b>VITAL PROTECT</b>
+          <span>Standard sécurité personnelle</span>
+        </div>
+      </a>
+      <nav aria-label="Navigation principale" class="vpl-menu">
+        <a class="active" href="/index.html">Accueil</a>
+        <a href="/methode.html">Standard</a>
+        <a href="/stage.html">Stages</a>
+        <a href="/entreprises.html">Entreprises</a>
+        <a href="/devenir-formateur.html">Formateurs</a>
+        <a href="/contact.html">Contact</a>
+        <a class="vpl-nav-ghost" href="/formateur-login.html">Espace</a>
+      </nav>
+      <a class="vpl-nav-cta" href="/stage.html">Recevoir les dates <span aria-hidden="true">→</span></a>
+    </header>
 
-      <div class="hp-problem-stack">
-        <article>
-          <b>01</b>
-          <div>
-            <h3>Trop flou</h3>
-            <p>On parle souvent de sécurité sans cadre clair ni progression.</p>
+    <main>
+      <section class="hp-hero" aria-labelledby="hp-hero-title">
+        <div class="vpl-container hp-hero-grid">
+          <div class="hp-hero-copy">
+            <div class="hp-chip-row" aria-label="Repères Vital Protect">
+              <span>Sécurité personnelle réaliste</span>
+              <span>Public débutant</span>
+              <span>Sans folklore martial</span>
+            </div>
+
+            <h1 id="hp-hero-title">Prévenir, éviter et réagir simplement.</h1>
+            <p>
+              Vital Protect transmet une méthode progressive pour lire une situation,
+              garder la bonne distance, désamorcer quand c’est possible et réagir avec lucidité quand c’est nécessaire.
+            </p>
+
+            <div class="hp-actions">
+              <a class="vpl-button vpl-button-primary" href="/stage.html">Recevoir les prochaines dates <span aria-hidden="true">→</span></a>
+              <a class="vpl-button vpl-button-secondary" href="/methode.html">Découvrir la méthode</a>
+            </div>
+
+            <p class="hp-microcopy">
+              Les réservations ne sont ouvertes que lorsqu’une session affiche clairement le lieu, la date, le tarif,
+              le nombre de places, l’encadrant et les conditions de participation.
+            </p>
           </div>
-        </article>
-        <article>
-          <b>02</b>
-          <div>
-            <h3>Trop spectaculaire</h3>
-            <p>Les démonstrations impressionnent, mais ne servent pas toujours sous stress.</p>
+
+          <div class="hp-hero-visual" aria-label="Aperçu d'une formation Vital Protect">
+            <figure class="hp-hero-photo">
+              <img src="/visuel-prevenir-proteger-agir.webp" alt="Formation Vital Protect en salle avec message Prévenir Protéger Agir" />
+            </figure>
+            <div class="hp-hero-claim">
+              <strong>Pas un cours de combat.</strong>
+            </div>
+
+            <div class="hp-hero-mosaic">
+              <figure>
+                <img src="/visuel-mise-distance.webp" alt="Exercice de mise à distance encadré par un formateur Vital Protect" />
+              </figure>
+              <article>
+                <span></span>
+                <p>On travaille la lucidité, la distance, la sortie possible et des réponses simples.</p>
+              </article>
+            </div>
+            <div class="hp-hero-note">
+              <strong>Pas de réservation floue.</strong>
+              <span>Une session incomplète ne doit pas être vendue comme disponible.</span>
+            </div>
           </div>
-        </article>
-        <article>
-          <b>03</b>
-          <div>
-            <h3>Trop anxiogène</h3>
-            <p>L’objectif n’est pas de vivre dans la peur, mais de retrouver des repères.</p>
+        </div>
+      </section>
+
+      <div class="hp-band" aria-hidden="true">
+        <div class="hp-band-track">
+          <div class="hp-band-set">
+            <span>Prévenir</span><i>—</i>
+            <span>Observer</span><i>—</i>
+            <span>Éviter</span><i>—</i>
+            <span>Réagir</span><i>—</i>
+            <span>Sécuriser l’après</span><i>—</i>
           </div>
-        </article>
-      </div>
-    </div>
-  </section>
-
-  <section class="hp-learn hp-section" aria-labelledby="hp-learn-title">
-    <div class="vpl-container">
-      <div class="hp-centered-head">
-        <span class="hp-kicker">Ce que vous apprenez</span>
-        <h2 id="hp-learn-title">Cinq repères simples à utiliser dans le réel.</h2>
-        <p>Une méthode courte, mémorisable, pensée pour un public débutant.</p>
-      </div>
-
-      <div class="hp-learn-grid">
-        <article><span>1</span><h3>Comprendre</h3><p>Identifier les contextes sensibles et les signaux faibles.</p></article>
-        <article><span>2</span><h3>Prévenir</h3><p>Anticiper, éviter les impasses et choisir une sortie.</p></article>
-        <article><span>3</span><h3>Se positionner</h3><p>Travailler la distance, l’angle, la posture, la voix et la place du corps.</p></article>
-        <article><span>4</span><h3>Réagir</h3><p>Utiliser des réponses simples, proportionnées et compatibles avec le stress.</p></article>
-        <article><span>5</span><h3>Sécuriser l’après</h3><p>Sortir de la zone, alerter, transmettre les informations utiles et retrouver du calme.</p></article>
-      </div>
-    </div>
-  </section>
-
-  <section class="hp-routes hp-section" aria-labelledby="hp-routes-title">
-    <div class="vpl-container hp-routes-layout">
-      <div class="hp-routes-card hp-routes-card-main">
-        <span class="hp-kicker">Pour qui ?</span>
-        <h2 id="hp-routes-title">Choisissez le parcours adapté à votre situation.</h2>
-        <p>
-          Vous cherchez à vous former, à protéger vos équipes ou à transmettre la méthode ?
-          Accédez directement au bon parcours, sans lire toute la page.
-        </p>
-      </div>
-
-      <div class="hp-route-list">
-        <a href="/stage.html">
-          <span>01</span>
-          <strong>Je veux me former</strong>
-          <p>Pour apprendre à repérer les tensions, garder de la distance, éviter l’escalade et réagir simplement.</p>
-          <em>Recevoir les prochaines dates →</em>
-        </a>
-        <a href="/entreprises.html">
-          <span>02</span>
-          <strong>Je veux former mes équipes</strong>
-          <p>Pour des collaborateurs exposés aux incivilités, à l’accueil du public ou aux situations relationnelles sensibles.</p>
-          <em>Demander un échange de cadrage →</em>
-        </a>
-        <a href="/devenir-formateur.html">
-          <span>03</span>
-          <strong>Je veux devenir formateur</strong>
-          <p>Pour transmettre la méthode dans un périmètre précis, avec une habilitation interne par module.</p>
-          <em>Vérifier si mon profil correspond →</em>
-        </a>
-      </div>
-    </div>
-  </section>
-
-
-  <section class="hp-standard hp-section hp-standard-premium" id="methodSection" aria-labelledby="hp-standard-title">
-    <div class="hp-standard-orb" aria-hidden="true"></div>
-    <div class="hp-standard-noise" aria-hidden="true"></div>
-
-    <div class="vpl-container hp-standard-grid">
-      <div class="hp-standard-left">
-        <span class="hp-kicker hp-standard-pill">Le standard</span>
-        <h2 id="hp-standard-title" class="hp-standard-title">
-          <span class="hp-standard-title-mask"><span class="hp-standard-title-line">Une progression</span></span>
-          <span class="hp-standard-title-mask"><span class="hp-standard-title-line">simple, encadrée</span></span>
-          <span class="hp-standard-title-mask"><span class="hp-standard-title-line">et sans mise</span></span>
-          <span class="hp-standard-title-mask"><span class="hp-standard-title-line">en danger.</span></span>
-        </h2>
-        <p class="hp-standard-copy">
-          Une session Vital Protect doit rester lisible : comprendre avant de pratiquer,
-          pratiquer avant de complexifier, débriefer avant de repartir.
-        </p>
-        <a class="vpl-button vpl-button-primary hp-standard-button" href="/methode.html">Voir la méthode</a>
-      </div>
-
-      <div class="hp-standard-cards-wrap">
-        <div class="hp-standard-step-track" aria-hidden="true"><span></span></div>
-
-        <ol class="hp-timeline hp-standard-cards" aria-label="Étapes de la méthode">
-          <li class="hp-standard-card">
-            <div class="hp-standard-card-inner">
-              <span>1</span>
-              <div><strong>Briefing</strong><p>Objectifs, règles de sécurité, limites physiques, contexte et niveau du groupe.</p></div>
-            </div>
-          </li>
-          <li class="hp-standard-card">
-            <div class="hp-standard-card-inner">
-              <span>2</span>
-              <div><strong>Démonstration</strong><p>Les repères sont montrés simplement avant d’être pratiqués.</p></div>
-            </div>
-          </li>
-          <li class="hp-standard-card">
-            <div class="hp-standard-card-inner">
-              <span>3</span>
-              <div><strong>Pratique guidée</strong><p>Posture, distance, déplacement, parole courte et sortie possible.</p></div>
-            </div>
-          </li>
-          <li class="hp-standard-card">
-            <div class="hp-standard-card-inner">
-              <span>4</span>
-              <div><strong>Mises en situation</strong><p>Situations progressives, encadrées, sans humiliation ni recherche de performance.</p></div>
-            </div>
-          </li>
-          <li class="hp-standard-card">
-            <div class="hp-standard-card-inner">
-              <span>5</span>
-              <div><strong>Débrief</strong><p>Ce qui a été compris, ce qui reste à travailler, quoi faire après une situation réelle.</p></div>
-            </div>
-          </li>
-        </ol>
-      </div>
-
-      <div class="hp-standard-progress" aria-hidden="true"><span></span></div>
-    </div>
-  </section>
-  <section class="vp-visual-story vp-visual-story--home hp-section vp-home-visual-clean" aria-labelledby="home-visual-title">
-    <div class="vpl-container vp-home-visual-grid">
-      <div class="vp-visual-copy">
-        <span class="hp-kicker">Sur le terrain</span>
-        <h2 id="home-visual-title">Une méthode qui se voit, se pratique et se retient.</h2>
-        <p>
-          L’approche Vital Protect alterne explication, démonstration, pratique guidée et débrief.
-          Les visuels doivent montrer l’ambiance de formation, pas des captures du site.
-        </p>
-        <div class="vp-mini-proof">
-          <span>Briefing clair</span>
-          <span>Exercices encadrés</span>
-          <span>Débrief utile</span>
+          <div class="hp-band-set">
+            <span>Prévenir</span><i>—</i>
+            <span>Observer</span><i>—</i>
+            <span>Éviter</span><i>—</i>
+            <span>Réagir</span><i>—</i>
+            <span>Sécuriser l’après</span><i>—</i>
+          </div>
         </div>
       </div>
 
-      <div class="vp-home-visual-panel" aria-label="Aperçu visuel d'une formation Vital Protect">
-        <figure class="vp-home-visual-main">
-          <img src="/visuel-prevenir-proteger-agir.webp" alt="Formation Vital Protect avec message Prévenir Protéger Agir" loading="lazy" />
-        </figure>
-        <div class="vp-home-visual-duo">
-          <figure>
-            <img src="/visuel-briefing-crossfit.webp" alt="Briefing de groupe dans une salle de formation" loading="lazy" />
-          </figure>
-          <figure>
-            <img src="/visuel-mise-distance.webp" alt="Exercice de mise à distance encadré" loading="lazy" />
-          </figure>
+      <section class="hp-problem hp-section" aria-labelledby="hp-problem-title">
+        <div class="vpl-container hp-asym-grid">
+          <div class="hp-section-copy">
+            <span class="hp-kicker">Le problème</span>
+            <h2 id="hp-problem-title">La sécurité personnelle mérite mieux que la peur ou le spectacle.</h2>
+            <p>
+              Beaucoup de contenus promettent trop, dramatisent ou mélangent tout.
+              Vital Protect prend le chemin inverse : comprendre la situation, garder de l’espace,
+              choisir une réponse simple et connaître ses limites.
+            </p>
+          </div>
+
+          <div class="hp-problem-stack">
+            <article>
+              <b>01</b>
+              <div>
+                <h3>Trop flou</h3>
+                <p>On parle souvent de sécurité sans cadre clair ni progression.</p>
+              </div>
+            </article>
+            <article>
+              <b>02</b>
+              <div>
+                <h3>Trop spectaculaire</h3>
+                <p>Les démonstrations impressionnent, mais ne servent pas toujours sous stress.</p>
+              </div>
+            </article>
+            <article>
+              <b>03</b>
+              <div>
+                <h3>Trop anxiogène</h3>
+                <p>L’objectif n’est pas de vivre dans la peur, mais de retrouver des repères.</p>
+              </div>
+            </article>
+          </div>
         </div>
-      </div>
-    </div>
-  </section>
+      </section>
 
-  <section class="hp-contrast hp-section" aria-labelledby="hp-contrast-title">
-    <div class="vpl-container">
-      <div class="hp-centered-head hp-centered-head-light">
-        <span class="hp-kicker">Clarté</span>
-        <h2 id="hp-contrast-title">Ce que Vital Protect est —<br/>et ce que ce n’est pas.</h2>
-      </div>
+      <section class="hp-learn hp-section" aria-labelledby="hp-learn-title">
+        <div class="vpl-container">
+          <div class="hp-centered-head">
+            <span class="hp-kicker">Ce que vous apprenez</span>
+            <h2 id="hp-learn-title">Cinq repères simples à utiliser dans le réel.</h2>
+            <p>Une méthode courte, mémorisable, pensée pour un public débutant.</p>
+          </div>
 
-      <div class="hp-compare">
-        <article>
-          <span>Ce que ce n’est pas</span>
-          <h3>Pas un entraînement pour se prendre pour un combattant.</h3>
-          <ul>
-            <li>pas de combat libre ;</li>
-            <li>pas de promesse d’invincibilité ;</li>
-            <li>pas de scénario spectaculaire ou humiliant ;</li>
-            <li>pas de contenu vendu si les conditions de sécurité ne sont pas claires.</li>
-          </ul>
-        </article>
-        <article>
-          <span>Ce que c’est</span>
-          <h3>Un entraînement à la lucidité, à la distance et à la décision simple.</h3>
+          <div class="hp-learn-grid">
+            <article><span>1</span><h3>Comprendre</h3><p>Identifier les contextes sensibles et les signaux faibles.</p></article>
+            <article><span>2</span><h3>Prévenir</h3><p>Anticiper, éviter les impasses et choisir une sortie.</p></article>
+            <article><span>3</span><h3>Se positionner</h3><p>Travailler la distance, l’angle, la posture, la voix et la place du corps.</p></article>
+            <article><span>4</span><h3>Réagir</h3><p>Utiliser des réponses simples, proportionnées et compatibles avec le stress.</p></article>
+            <article><span>5</span><h3>Sécuriser l’après</h3><p>Sortir de la zone, alerter, transmettre les informations utiles et retrouver du calme.</p></article>
+          </div>
+        </div>
+      </section>
+
+      <section class="hp-routes hp-section" aria-labelledby="hp-routes-title">
+        <div class="vpl-container hp-routes-layout">
+          <div class="hp-routes-card hp-routes-card-main">
+            <span class="hp-kicker">Pour qui ?</span>
+            <h2 id="hp-routes-title">Choisissez le parcours adapté à votre situation.</h2>
+            <p>
+              Vous cherchez à vous former, à protéger vos équipes ou à transmettre la méthode ?
+              Accédez directement au bon parcours, sans lire toute la page.
+            </p>
+          </div>
+
+          <div class="hp-route-list">
+            <a href="/stage.html">
+              <span>01</span>
+              <strong>Je veux me former</strong>
+              <p>Pour apprendre à repérer les tensions, garder de la distance, éviter l’escalade et réagir simplement.</p>
+              <em>Recevoir les prochaines dates →</em>
+            </a>
+            <a href="/entreprises.html">
+              <span>02</span>
+              <strong>Je veux former mes équipes</strong>
+              <p>Pour des collaborateurs exposés aux incivilités, à l’accueil du public ou aux situations relationnelles sensibles.</p>
+              <em>Demander un échange de cadrage →</em>
+            </a>
+            <a href="/devenir-formateur.html">
+              <span>03</span>
+              <strong>Je veux devenir formateur</strong>
+              <p>Pour transmettre la méthode dans un périmètre précis, avec une habilitation interne par module.</p>
+              <em>Vérifier si mon profil correspond →</em>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <section class="hp-standard hp-section hp-standard-premium" id="methodSection" aria-labelledby="hp-standard-title">
+        <div class="hp-standard-orb" aria-hidden="true"></div>
+        <div class="hp-standard-noise" aria-hidden="true"></div>
+
+        <div class="vpl-container hp-standard-grid">
+          <div class="hp-standard-left">
+            <span class="hp-kicker hp-standard-pill">Le standard</span>
+
+            <h2 id="hp-standard-title" class="hp-standard-title">
+              <span class="hp-standard-title-mask"><span class="hp-standard-title-line">Une progression</span></span>
+              <span class="hp-standard-title-mask"><span class="hp-standard-title-line">simple, encadrée</span></span>
+              <span class="hp-standard-title-mask"><span class="hp-standard-title-line">et sans mise</span></span>
+              <span class="hp-standard-title-mask"><span class="hp-standard-title-line">en danger.</span></span>
+            </h2>
+
+            <p class="hp-standard-copy">
+              Une session Vital Protect doit rester lisible : comprendre avant de pratiquer,
+              pratiquer avant de complexifier, débriefer avant de repartir.
+            </p>
+
+            <a class="vpl-button vpl-button-primary hp-standard-button" href="/methode.html">Voir la méthode</a>
+          </div>
+
+          <div class="hp-standard-cards-wrap">
+            <div class="hp-standard-step-track" aria-hidden="true">
+              <span></span>
+            </div>
+
+            <ol class="hp-standard-cards" aria-label="Étapes de la méthode">
+              <li class="hp-standard-card">
+                <div class="hp-standard-card-inner">
+                  <span>1</span>
+                  <div>
+                    <strong>Briefing</strong>
+                    <p>Objectifs, règles de sécurité, limites physiques, contexte et niveau du groupe.</p>
+                  </div>
+                </div>
+              </li>
+
+              <li class="hp-standard-card">
+                <div class="hp-standard-card-inner">
+                  <span>2</span>
+                  <div>
+                    <strong>Démonstration</strong>
+                    <p>Les repères sont montrés simplement avant d’être pratiqués.</p>
+                  </div>
+                </div>
+              </li>
+
+              <li class="hp-standard-card">
+                <div class="hp-standard-card-inner">
+                  <span>3</span>
+                  <div>
+                    <strong>Pratique guidée</strong>
+                    <p>Posture, distance, déplacement, parole courte et sortie possible.</p>
+                  </div>
+                </div>
+              </li>
+
+              <li class="hp-standard-card">
+                <div class="hp-standard-card-inner">
+                  <span>4</span>
+                  <div>
+                    <strong>Mises en situation</strong>
+                    <p>Situations progressives, encadrées, sans humiliation ni recherche de performance.</p>
+                  </div>
+                </div>
+              </li>
+
+              <li class="hp-standard-card">
+                <div class="hp-standard-card-inner">
+                  <span>5</span>
+                  <div>
+                    <strong>Débrief</strong>
+                    <p>Ce qui a été compris, ce qui reste à travailler, quoi faire après une situation réelle.</p>
+                  </div>
+                </div>
+              </li>
+            </ol>
+          </div>
+
+          <div class="hp-standard-progress" aria-hidden="true">
+            <span></span>
+          </div>
+        </div>
+      </section>
+
+      <section class="vp-visual-story vp-visual-story--home hp-section vp-home-visual-clean" aria-labelledby="home-visual-title">
+        <div class="vpl-container vp-home-visual-grid">
+          <div class="vp-visual-copy">
+            <span class="hp-kicker">Sur le terrain</span>
+            <h2 id="home-visual-title">Une méthode qui se voit, se pratique et se retient.</h2>
+            <p>
+              L’approche Vital Protect alterne explication, démonstration, pratique guidée et débrief.
+              Les visuels doivent montrer l’ambiance de formation, pas des captures du site.
+            </p>
+            <div class="vp-mini-proof">
+              <span>Briefing clair</span>
+              <span>Exercices encadrés</span>
+              <span>Débrief utile</span>
+            </div>
+          </div>
+
+          <div class="vp-home-visual-panel" aria-label="Aperçu visuel d'une formation Vital Protect">
+            <figure class="vp-home-visual-main">
+              <img src="/visuel-prevenir-proteger-agir.webp" alt="Formation Vital Protect avec message Prévenir Protéger Agir" loading="lazy" />
+            </figure>
+            <div class="vp-home-visual-duo">
+              <figure>
+                <img src="/visuel-briefing-crossfit.webp" alt="Briefing de groupe dans une salle de formation" loading="lazy" />
+              </figure>
+              <figure>
+                <img src="/visuel-mise-distance.webp" alt="Exercice de mise à distance encadré" loading="lazy" />
+              </figure>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="hp-contrast hp-section" aria-labelledby="hp-contrast-title">
+        <div class="vpl-container">
+          <div class="hp-centered-head hp-centered-head-light">
+            <span class="hp-kicker">Clarté</span>
+            <h2 id="hp-contrast-title">Ce que Vital Protect est —<br/>et ce que ce n’est pas.</h2>
+          </div>
+
+          <div class="hp-compare">
+            <article>
+              <span>Ce que ce n’est pas</span>
+              <h3>Pas un entraînement pour se prendre pour un combattant.</h3>
+              <ul>
+                <li>pas de combat libre ;</li>
+                <li>pas de promesse d’invincibilité ;</li>
+                <li>pas de scénario spectaculaire ou humiliant ;</li>
+                <li>pas de contenu vendu si les conditions de sécurité ne sont pas claires.</li>
+              </ul>
+            </article>
+            <article>
+              <span>Ce que c’est</span>
+              <h3>Un entraînement à la lucidité, à la distance et à la décision simple.</h3>
+              <p>
+                La bonne réaction n’est pas toujours un geste. Souvent, c’est voir plus tôt,
+                se placer mieux, parler plus court, sortir plus vite ou demander de l’aide au bon moment.
+              </p>
+              <a href="/stage.html">Recevoir les prochaines dates</a>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="hp-final">
+        <div class="vpl-container hp-final-panel">
+          <h2>Prévenir d’abord. Réagir seulement si nécessaire.</h2>
           <p>
-            La bonne réaction n’est pas toujours un geste. Souvent, c’est voir plus tôt,
-            se placer mieux, parler plus court, sortir plus vite ou demander de l’aide au bon moment.
+            Recevez les prochaines dates, demandez un échange entreprise ou découvrez le parcours formateur.
+            Chaque action doit mener à une information claire, concrète et vérifiable.
           </p>
-          <a href="/stage.html">Recevoir les prochaines dates</a>
-        </article>
-      </div>
-    </div>
-  </section>
+          <div class="hp-actions">
+            <a class="vpl-button vpl-button-primary" href="/stage.html">Recevoir les prochaines dates</a>
+            <a class="vpl-button vpl-button-secondary" href="/entreprises.html">Demander un échange entreprise</a>
+            <a class="vpl-button vpl-button-secondary" href="/devenir-formateur.html">Parcours formateur</a>
+          </div>
+        </div>
+      </section>
+    </main>
 
-  <section class="hp-final">
-    <div class="vpl-container hp-final-panel">
-      <h2>Prévenir d’abord. Réagir seulement si nécessaire.</h2>
-      <p>
-        Recevez les prochaines dates, demandez un échange entreprise ou découvrez le parcours formateur.
-        Chaque action doit mener à une information claire, concrète et vérifiable.
-      </p>
-      <div class="hp-actions">
-        <a class="vpl-button vpl-button-primary" href="/stage.html">Recevoir les prochaines dates</a>
-        <a class="vpl-button vpl-button-secondary" href="/entreprises.html">Demander un échange entreprise</a>
-        <a class="vpl-button vpl-button-secondary" href="/devenir-formateur.html">Parcours formateur</a>
-      </div>
-    </div>
-  </section>
-</main>
-<footer class="vpl-footer">
-<div class="vpl-container vpl-footer-grid">
-<div>
-<strong>Vital Protect</strong><br/>
+    <footer class="vpl-footer">
+      <div class="vpl-container vpl-footer-grid">
+        <div>
+          <strong>Vital Protect</strong><br/>
           Méthode de sécurité personnelle transmise par un réseau habilité.
         </div>
-<nav aria-label="Liens légaux">
-<a href="/mentions-legales.html">Mentions légales</a>
-<a href="/politique-confidentialite.html">Confidentialité</a>
-<a href="/cgv.html">CGV</a>
-</nav>
-</div>
-</footer>
-</div>
-<script src="/lusion-level.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-<script>
-  (function () {
-    var section = document.querySelector('#methodSection.hp-standard-premium');
-    if (!section) return;
+        <nav aria-label="Liens légaux">
+          <a href="/mentions-legales.html">Mentions légales</a>
+          <a href="/politique-confidentialite.html">Confidentialité</a>
+          <a href="/cgv.html">CGV</a>
+        </nav>
+      </div>
+    </footer>
+  </div>
 
-    var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    var cards = window.gsap ? gsap.utils.toArray('.hp-standard-card') : Array.prototype.slice.call(document.querySelectorAll('.hp-standard-card'));
-    var progressBar = document.querySelector('.hp-standard-progress span');
-    var trackFill = document.querySelector('.hp-standard-step-track span');
+  <script src="/lusion-level.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 
-    function revealAllCards() {
-      cards.forEach(function (card) {
-        card.style.height = 'auto';
-        card.style.opacity = '1';
-      });
+  <script>
+    (function () {
+      var section = document.querySelector('#methodSection.hp-standard-premium');
+      if (!section) return;
 
-      if (window.gsap) {
-        gsap.set('.hp-standard-card-inner', {
-          y: 0,
-          x: 0,
-          rotateX: 0,
-          rotateZ: 0,
-          scale: 1,
-          filter: 'brightness(1)'
-        });
+      var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var cards = Array.prototype.slice.call(section.querySelectorAll('.hp-standard-card'));
+      var cardInners = Array.prototype.slice.call(section.querySelectorAll('.hp-standard-card-inner'));
+      var titleLines = Array.prototype.slice.call(section.querySelectorAll('.hp-standard-title-line'));
+      var pill = section.querySelector('.hp-standard-pill');
+      var copy = section.querySelector('.hp-standard-copy');
+      var button = section.querySelector('.hp-standard-button');
+      var orb = section.querySelector('.hp-standard-orb');
+      var progressBar = section.querySelector('.hp-standard-progress span');
+      var trackFill = section.querySelector('.hp-standard-step-track span');
+      var timelineHasPlayed = false;
 
-        gsap.set(['.hp-standard-left', '.hp-standard-title-line', '.hp-standard-pill', '.hp-standard-copy', '.hp-standard-button'], {
-          y: 0,
-          yPercent: 0,
-          rotate: 0,
-          opacity: 1
-        });
-
-        gsap.set(progressBar, { width: '100%' });
-        gsap.set(trackFill, { height: '100%' });
+      function setProgress(value) {
+        if (progressBar) progressBar.style.width = value;
+        if (trackFill) trackFill.style.height = value;
       }
-    }
 
-    function lockScroll() {
-      document.body.style.overflow = 'hidden';
-      document.documentElement.style.overflow = 'hidden';
-    }
+      function revealAllCards() {
+        cards.forEach(function (card) {
+          card.style.height = 'auto';
+          card.style.opacity = '1';
+        });
 
-    function unlockScroll() {
-      document.body.style.overflow = '';
-      document.documentElement.style.overflow = '';
-    }
+        if (window.gsap) {
+          gsap.set(cardInners, {
+            y: 0,
+            x: 0,
+            rotateX: 0,
+            rotateZ: 0,
+            scale: 1,
+            filter: 'brightness(1)'
+          });
 
-    function setActiveCard(activeIndex) {
-      cards.forEach(function (card, index) {
-        card.classList.toggle('is-active', index === activeIndex);
+          gsap.set(titleLines, {
+            yPercent: 0,
+            rotate: 0,
+            opacity: 1
+          });
+
+          gsap.set([pill, copy, button], {
+            y: 0,
+            opacity: 1
+          });
+
+          gsap.set(orb, {
+            scale: 1,
+            opacity: 1
+          });
+        }
+
+        setProgress('100%');
+      }
+
+      function lockScroll() {
+        document.body.style.overflow = 'hidden';
+        document.documentElement.style.overflow = 'hidden';
+      }
+
+      function unlockScroll() {
+        document.body.style.overflow = '';
+        document.documentElement.style.overflow = '';
+      }
+
+      function setActiveCard(activeIndex) {
+        cards.forEach(function (card, index) {
+          card.classList.toggle('is-active', index === activeIndex);
+        });
+      }
+
+      if (!window.gsap || !window.ScrollTrigger || reduceMotion) {
+        revealAllCards();
+        return;
+      }
+
+      gsap.registerPlugin(ScrollTrigger);
+      section.classList.add('hp-standard-js');
+
+      gsap.set([pill, copy, button], {
+        y: 18,
+        opacity: 0
       });
-    }
 
-    if (!window.gsap || !window.ScrollTrigger || reduceMotion) {
-      revealAllCards();
-      return;
-    }
+      gsap.set(titleLines, {
+        yPercent: 108,
+        rotate: 2,
+        opacity: 0
+      });
 
-    gsap.registerPlugin(ScrollTrigger);
-    section.classList.add('hp-standard-js');
+      gsap.set(cardInners, {
+        x: 92,
+        y: 44,
+        rotateX: -10,
+        rotateZ: 1.8,
+        scale: 0.94
+      });
 
-    gsap.set(['.hp-standard-pill', '.hp-standard-copy', '.hp-standard-button'], {
-      y: 18,
-      opacity: 0
-    });
+      gsap.set(orb, {
+        scale: 0.5,
+        opacity: 0
+      });
 
-    gsap.set('.hp-standard-title-line', {
-      yPercent: 108,
-      rotate: 2,
-      opacity: 0
-    });
+      cards.forEach(function (card) {
+        card.style.height = '0px';
+        card.style.opacity = '0';
+      });
 
-    gsap.set('.hp-standard-card-inner', {
-      x: 92,
-      y: 44,
-      rotateX: -10,
-      rotateZ: 1.8,
-      scale: 0.94
-    });
+      setProgress('0%');
 
-    gsap.set('.hp-standard-orb', {
-      scale: 0.5,
-      opacity: 0
-    });
-
-    cards.forEach(function (card) {
-      card.style.height = '0px';
-      card.style.opacity = '0';
-    });
-
-    const timeline = gsap.timeline({
-      paused: true,
-      defaults: {
-        ease: 'power3.out'
-      },
-      onStart: lockScroll,
-      onUpdate: function () {
-        const progress = timeline.progress() * 100 + '%';
-        gsap.set(progressBar, { width: progress });
-        gsap.set(trackFill, { height: progress });
-      },
-      onComplete: function () {
-        setActiveCard(cards.length - 1);
-        unlockScroll();
-      },
-      onReverseComplete: unlockScroll
-    });
-
-    timeline
-      .to('.hp-standard-orb', {
-        scale: 1,
-        opacity: 1,
-        duration: 0.85
-      })
-      .to('.hp-standard-pill', {
-        y: 0,
-        opacity: 1,
-        duration: 0.45
-      }, '<0.05')
-      .to('.hp-standard-title-line', {
-        yPercent: 0,
-        rotate: 0,
-        opacity: 1,
-        duration: 0.72,
-        stagger: 0.08
-      }, '<0.1')
-      .to(['.hp-standard-copy', '.hp-standard-button'], {
-        y: 0,
-        opacity: 1,
-        duration: 0.5,
-        stagger: 0.08
-      }, '<-0.08');
-
-    cards.forEach(function (card, index) {
-      const inner = card.querySelector('.hp-standard-card-inner');
+      var timeline = gsap.timeline({
+        paused: true,
+        defaults: {
+          ease: 'power3.out'
+        },
+        onStart: function () {
+          lockScroll();
+        },
+        onUpdate: function () {
+          var progress = timeline.progress() * 100 + '%';
+          gsap.set(progressBar, { width: progress });
+          gsap.set(trackFill, { height: progress });
+        },
+        onComplete: function () {
+          setActiveCard(cards.length - 1);
+          unlockScroll();
+        }
+      });
 
       timeline
-        .call(function () { setActiveCard(index); }, null, '>-0.08')
-        .to(card, {
-          height: function () { return inner.offsetHeight; },
-          opacity: 1,
-          duration: 0.5
-        }, '>-0.02')
-        .to(inner, {
-          x: 0,
-          y: 0,
-          rotateX: 0,
-          rotateZ: 0,
+        .to(orb, {
           scale: 1,
-          duration: 0.62
-        }, '<')
-        .fromTo(inner, {
-          filter: 'brightness(1.08)'
-        }, {
-          filter: 'brightness(1)',
-          duration: 0.45
-        }, '<0.1')
-        .to(inner, {
-          y: -6,
-          duration: 0.16,
-          ease: 'power1.out'
-        }, '>-0.14')
-        .to(inner, {
+          opacity: 1,
+          duration: 0.85
+        })
+        .to(pill, {
           y: 0,
-          duration: 0.18,
-          ease: 'power1.out'
-        }, '>');
-    });
+          opacity: 1,
+          duration: 0.45
+        }, '<0.05')
+        .to(titleLines, {
+          yPercent: 0,
+          rotate: 0,
+          opacity: 1,
+          duration: 0.72,
+          stagger: 0.08
+        }, '<0.1')
+        .to([copy, button], {
+          y: 0,
+          opacity: 1,
+          duration: 0.5,
+          stagger: 0.08
+        }, '<-0.08');
 
-    timeline.to('.hp-standard-orb', {
-      x: 40,
-      y: -16,
-      scale: 1.08,
-      duration: 0.55,
-      ease: 'sine.inOut'
-    });
+      cards.forEach(function (card, index) {
+        var inner = card.querySelector('.hp-standard-card-inner');
 
-    ScrollTrigger.create({
-      trigger: section,
-      start: 'top top',
-      end: '+=1',
-      pin: true,
-      anticipatePin: 1,
-      onEnter: function () {
-        if (timeline.progress() === 0) {
-          timeline.play();
+        timeline
+          .call(function () {
+            setActiveCard(index);
+          }, null, '>-0.08')
+          .to(card, {
+            height: function () {
+              return inner.offsetHeight;
+            },
+            opacity: 1,
+            duration: 0.5
+          }, '>-0.02')
+          .to(inner, {
+            x: 0,
+            y: 0,
+            rotateX: 0,
+            rotateZ: 0,
+            scale: 1,
+            duration: 0.62
+          }, '<')
+          .fromTo(inner, {
+            filter: 'brightness(1.08)'
+          }, {
+            filter: 'brightness(1)',
+            duration: 0.45
+          }, '<0.1')
+          .to(inner, {
+            y: -6,
+            duration: 0.16,
+            ease: 'power1.out'
+          }, '>-0.14')
+          .to(inner, {
+            y: 0,
+            duration: 0.18,
+            ease: 'power1.out'
+          }, '>');
+      });
+
+      timeline.to(orb, {
+        x: 40,
+        y: -16,
+        scale: 1.08,
+        duration: 0.55,
+        ease: 'sine.inOut'
+      });
+
+      ScrollTrigger.create({
+        trigger: section,
+        start: 'top top',
+        end: '+=1',
+        pin: true,
+        anticipatePin: 1,
+        onEnter: function () {
+          if (!timelineHasPlayed) {
+            timelineHasPlayed = true;
+            timeline.play();
+          }
+        },
+        onEnterBack: function () {
+          if (timeline.progress() === 1) {
+            revealAllCards();
+          }
         }
-      },
-      onEnterBack: function () {
-        if (timeline.progress() === 1) {
-          revealAllCards();
-          gsap.set(progressBar, { width: '100%' });
-          gsap.set(trackFill, { height: '100%' });
-        }
-      }
-    });
+      });
 
-    gsap.to('.hp-standard-orb', {
-      x: 22,
-      y: -18,
-      duration: 3.2,
-      repeat: -1,
-      yoyo: true,
-      ease: 'sine.inOut'
-    });
-  })();
-</script>
-
+      gsap.to(orb, {
+        x: 22,
+        y: -18,
+        duration: 3.2,
+        repeat: -1,
+        yoyo: true,
+        ease: 'sine.inOut'
+      });
+    })();
+  </script>
 </body>
 </html>
