@@ -1,6 +1,22 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+
+  <title>Entreprises — Prévention des tensions, posture professionnelle et sécurité relationnelle | Vital Protect</title>
+
+  <meta
+    content="Vital Protect propose aux entreprises et structures exposées un module entreprise unique de 3h pour prévenir les tensions, améliorer la posture professionnelle et renforcer la sécurité relationnelle."
+    name="description"
+  />
+
+  <link href="https://vital-protect.fr/entreprises.html" rel="canonical" />
+  <link href="/logo.png" rel="icon" type="image/png" />
+
+  <link as="image" href="transition-screen.png" media="(min-width: 769px)" rel="preload" />
+  <link as="image" href="transition-screen-mobile.jpg" media="(max-width: 768px), (pointer: coarse) and (orientation: portrait)" rel="preload" />
+
   <script>
     (function () {
       try {
@@ -59,10 +75,632 @@
         --vpl-transition-bg-size: cover;
       }
     }
+
+    .intervention-section {
+      --int-bg: #eef5fb;
+      --int-bg-soft: #f8fbff;
+      --int-ink: #0f1b2d;
+      --int-muted: #627086;
+      --int-card: rgba(255, 255, 255, 0.72);
+      --int-dark: #07111f;
+      --int-radius-xl: 28px;
+      --int-shadow: 0 24px 80px rgba(15, 23, 42, 0.1);
+      --int-shadow-hover: 0 34px 90px rgba(15, 23, 42, 0.16);
+      --int-ease: cubic-bezier(.22, 1, .36, 1);
+
+      position: relative;
+      isolation: isolate;
+      overflow: hidden;
+      padding: clamp(72px, 8vw, 120px) 20px;
+      color: var(--int-ink);
+      background:
+        radial-gradient(circle at 18% 8%, rgba(125, 211, 252, 0.36), transparent 28%),
+        radial-gradient(circle at 82% 26%, rgba(165, 180, 252, 0.32), transparent 30%),
+        linear-gradient(180deg, #eef5fb 0%, #f8fbff 48%, #e8f2fb 100%);
+    }
+
+    .intervention-section,
+    .intervention-section * {
+      box-sizing: border-box;
+    }
+
+    .intervention-section a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .intervention-section::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: -2;
+      opacity: .55;
+      background-image:
+        linear-gradient(rgba(15, 23, 42, .035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(15, 23, 42, .035) 1px, transparent 1px);
+      background-size: 56px 56px;
+      mask-image: radial-gradient(circle at center, black 0%, transparent 70%);
+      -webkit-mask-image: radial-gradient(circle at center, black 0%, transparent 70%);
+    }
+
+    .intervention-section .section-shell {
+      width: min(1180px, 100%);
+      margin-inline: auto;
+    }
+
+    .intervention-section .hero-block {
+      width: min(820px, 100%);
+      margin-inline: auto;
+      text-align: center;
+    }
+
+    .intervention-section .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 15px;
+      border: 1px solid rgba(148, 163, 184, .35);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, .7);
+      color: #344256;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, .05);
+      backdrop-filter: blur(16px);
+    }
+
+    .intervention-section .eyebrow::before {
+      content: "";
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--int-dark);
+      box-shadow: 0 0 0 6px rgba(15, 23, 42, .07);
+    }
+
+    .intervention-section .section-title {
+      margin: 24px 0 0;
+      color: var(--int-ink);
+      font-size: clamp(46px, 8vw, 94px);
+      line-height: .88;
+      letter-spacing: -0.075em;
+      font-weight: 950;
+      text-wrap: balance;
+    }
+
+    .intervention-section .section-intro {
+      width: min(700px, 100%);
+      margin: 24px auto 0;
+      color: var(--int-muted);
+      font-size: clamp(15px, 1.5vw, 18px);
+      line-height: 1.8;
+      text-wrap: pretty;
+    }
+
+    .intervention-section .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+      margin-top: 48px;
+    }
+
+    .intervention-section .glass-card {
+      position: relative;
+      overflow: hidden;
+      min-height: 210px;
+      padding: 26px;
+      border: 1px solid rgba(255, 255, 255, .78);
+      border-radius: var(--int-radius-xl);
+      background: var(--int-card);
+      box-shadow: var(--int-shadow);
+      backdrop-filter: blur(18px);
+      transform-style: preserve-3d;
+      transition:
+        transform .45s var(--int-ease),
+        box-shadow .45s var(--int-ease),
+        border-color .45s var(--int-ease);
+    }
+
+    .intervention-section .glass-card::before {
+      content: "";
+      position: absolute;
+      width: 170px;
+      height: 170px;
+      top: -90px;
+      right: -88px;
+      border-radius: 50%;
+      background: rgba(125, 211, 252, .36);
+      filter: blur(30px);
+      opacity: 0;
+      transition: opacity .45s ease;
+    }
+
+    .intervention-section .glass-card::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255, 255, 255, .65), transparent 48%);
+      opacity: .45;
+      pointer-events: none;
+    }
+
+    .intervention-section .glass-card:hover {
+      transform: translateY(-10px) rotateX(2deg) rotateY(-2deg);
+      box-shadow: var(--int-shadow-hover);
+      border-color: rgba(15, 23, 42, .16);
+    }
+
+    .intervention-section .glass-card:hover::before {
+      opacity: 1;
+    }
+
+    .intervention-section .card-content {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+
+    .intervention-section .icon-box {
+      display: grid;
+      place-items: center;
+      flex: 0 0 auto;
+      width: 46px;
+      height: 46px;
+      border-radius: 17px;
+      color: #fff;
+      background: var(--int-dark);
+      box-shadow: 0 14px 30px rgba(15, 23, 42, .18);
+    }
+
+    .intervention-section .icon-box svg {
+      width: 21px;
+      height: 21px;
+      stroke-width: 2.2;
+    }
+
+    .intervention-section .glass-card h3 {
+      margin: 0;
+      font-size: 17px;
+      line-height: 1.15;
+      letter-spacing: -0.035em;
+      font-weight: 900;
+    }
+
+    .intervention-section .glass-card p {
+      margin: 12px 0 0;
+      color: var(--int-muted);
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .intervention-section .cta-row {
+      display: flex;
+      justify-content: center;
+      margin-top: 30px;
+    }
+
+    .intervention-section .cta {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      min-height: 46px;
+      padding: 0 22px;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      background: var(--int-dark);
+      color: #fff;
+      font-size: 14px;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      box-shadow: 0 16px 42px rgba(15, 23, 42, .2);
+      transition:
+        transform .3s var(--int-ease),
+        box-shadow .3s var(--int-ease),
+        background .3s var(--int-ease);
+    }
+
+    .intervention-section .cta:hover {
+      transform: translateY(-4px);
+      background: #111c2d;
+      box-shadow: 0 22px 52px rgba(15, 23, 42, .26);
+    }
+
+    .intervention-section .cta svg {
+      width: 16px;
+      height: 16px;
+      transition: transform .3s var(--int-ease);
+    }
+
+    .intervention-section .cta:hover svg {
+      transform: translateX(3px);
+    }
+
+    .intervention-section .cta.secondary {
+      color: var(--int-ink);
+      background: rgba(255, 255, 255, .88);
+      border-color: rgba(148, 163, 184, .32);
+      box-shadow: 0 16px 42px rgba(15, 23, 42, .08);
+    }
+
+    .intervention-section .cta.secondary:hover {
+      background: #fff;
+      border-color: rgba(15, 23, 42, .35);
+    }
+
+    .intervention-section .section-divider {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      height: 124px;
+      margin: clamp(72px, 9vw, 120px) 0;
+    }
+
+    .intervention-section .section-divider::before {
+      content: "";
+      width: 1px;
+      height: 100%;
+      background: linear-gradient(180deg, transparent, rgba(15, 23, 42, .22), transparent);
+      transform-origin: top;
+      animation: intGrowLine 1.1s var(--int-ease) both;
+      animation-timeline: view();
+      animation-range: entry 20% cover 45%;
+    }
+
+    .intervention-section .spark {
+      position: absolute;
+      top: 44px;
+      display: grid;
+      place-items: center;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 255, 255, .9);
+      background: rgba(255, 255, 255, .88);
+      box-shadow: 0 18px 50px rgba(15, 23, 42, .12);
+      backdrop-filter: blur(14px);
+    }
+
+    .intervention-section .spark svg {
+      width: 19px;
+      height: 19px;
+    }
+
+    .intervention-section .bottom-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 28px;
+      margin-top: clamp(76px, 8vw, 110px);
+    }
+
+    .intervention-section .panel {
+      position: relative;
+      overflow: hidden;
+      padding: clamp(24px, 3vw, 34px);
+      border: 1px solid rgba(255, 255, 255, .78);
+      border-radius: 34px;
+      background: rgba(255, 255, 255, .68);
+      box-shadow: var(--int-shadow);
+      backdrop-filter: blur(18px);
+    }
+
+    .intervention-section .panel::before {
+      content: "";
+      position: absolute;
+      top: -80px;
+      right: -70px;
+      width: 170px;
+      height: 170px;
+      border-radius: 50%;
+      background: rgba(125, 211, 252, .42);
+      filter: blur(34px);
+    }
+
+    .intervention-section .panel-inner {
+      position: relative;
+      z-index: 1;
+    }
+
+    .intervention-section .panel-kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: #dceeff;
+      color: #344256;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .intervention-section .panel-kicker svg {
+      width: 15px;
+      height: 15px;
+    }
+
+    .intervention-section .panel h3 {
+      width: min(520px, 100%);
+      margin: 18px 0 0;
+      font-size: clamp(26px, 3.2vw, 38px);
+      line-height: .98;
+      letter-spacing: -0.055em;
+      font-weight: 950;
+    }
+
+    .intervention-section .info-list {
+      display: grid;
+      gap: 12px;
+      margin-top: 26px;
+    }
+
+    .intervention-section .info-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 16px;
+      border: 1px solid rgba(148, 163, 184, .26);
+      border-radius: 20px;
+      background: rgba(255, 255, 255, .78);
+      transition:
+        transform .35s var(--int-ease),
+        box-shadow .35s var(--int-ease),
+        border-color .35s var(--int-ease);
+    }
+
+    .intervention-section .info-item:hover {
+      transform: translateY(-4px);
+      border-color: rgba(15, 23, 42, .22);
+      box-shadow: 0 16px 36px rgba(15, 23, 42, .08);
+    }
+
+    .intervention-section .mini-arrow {
+      display: grid;
+      place-items: center;
+      flex: 0 0 auto;
+      width: 26px;
+      height: 26px;
+      margin-top: 2px;
+      border-radius: 999px;
+      background: var(--int-dark);
+      color: #fff;
+    }
+
+    .intervention-section .mini-arrow svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    .intervention-section .info-item p {
+      margin: 0;
+      color: var(--int-muted);
+      font-size: 14px;
+      line-height: 1.65;
+    }
+
+    .intervention-section .info-item strong {
+      color: var(--int-ink);
+      font-weight: 900;
+    }
+
+    .intervention-section .premium-strip {
+      position: relative;
+      overflow: hidden;
+      margin-top: 34px;
+      padding: clamp(24px, 4vw, 38px);
+      border: 1px solid rgba(15, 23, 42, .9);
+      border-radius: 34px;
+      color: #fff;
+      background:
+        radial-gradient(circle at 86% 12%, rgba(125, 211, 252, .22), transparent 34%),
+        linear-gradient(135deg, #07111f 0%, #101c2d 100%);
+      box-shadow: 0 34px 95px rgba(15, 23, 42, .24);
+    }
+
+    .intervention-section .premium-strip::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(120deg, transparent 0%, rgba(255,255,255,.08) 45%, transparent 70%);
+      transform: translateX(-100%);
+      animation: intShine 4.8s ease-in-out infinite;
+    }
+
+    .intervention-section .premium-grid {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: 1.3fr .7fr;
+      gap: 32px;
+      align-items: center;
+    }
+
+    .intervention-section .dark-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      color: #dbe7f7;
+      background: rgba(255, 255, 255, .1);
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .intervention-section .premium-strip h3 {
+      margin: 20px 0 0;
+      max-width: 760px;
+      font-size: clamp(28px, 3.8vw, 48px);
+      line-height: 1;
+      letter-spacing: -0.055em;
+      font-weight: 950;
+    }
+
+    .intervention-section .premium-strip p {
+      max-width: 720px;
+      margin: 18px 0 0;
+      color: #b9c5d6;
+      font-size: 15px;
+      line-height: 1.8;
+    }
+
+    .intervention-section .feature-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .intervention-section .feature {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, .1);
+      color: #fff;
+      font-size: 14px;
+      font-weight: 900;
+    }
+
+    .intervention-section .feature svg,
+    .intervention-section .dark-pill svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .intervention-section .float-dot {
+      position: absolute;
+      z-index: -1;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: rgba(59, 130, 246, .35);
+      animation: intFloat 11s ease-in-out infinite;
+    }
+
+    .intervention-section .dot-1 {
+      left: 7%;
+      top: 14%;
+    }
+
+    .intervention-section .dot-2 {
+      right: 10%;
+      top: 30%;
+      animation-delay: -3s;
+    }
+
+    .intervention-section .dot-3 {
+      left: 34%;
+      bottom: 12%;
+      animation-delay: -6s;
+    }
+
+    .intervention-section .reveal {
+      opacity: 0;
+      transform: translateY(34px) scale(.98);
+      transition:
+        opacity .75s var(--int-ease),
+        transform .75s var(--int-ease);
+      transition-delay: var(--delay, 0ms);
+    }
+
+    .intervention-section .reveal.is-visible {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    @keyframes intFloat {
+      0%, 100% {
+        transform: translate3d(0, 0, 0);
+      }
+
+      35% {
+        transform: translate3d(22px, -18px, 0);
+      }
+
+      70% {
+        transform: translate3d(-14px, 16px, 0);
+      }
+    }
+
+    @keyframes intShine {
+      0%, 55% {
+        transform: translateX(-110%);
+      }
+
+      100% {
+        transform: translateX(110%);
+      }
+    }
+
+    @keyframes intGrowLine {
+      from {
+        transform: scaleY(0);
+      }
+
+      to {
+        transform: scaleY(1);
+      }
+    }
+
+    @media (max-width: 900px) {
+      .intervention-section .cards-grid,
+      .intervention-section .bottom-grid,
+      .intervention-section .premium-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .intervention-section .glass-card {
+        min-height: auto;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .intervention-section {
+        padding-inline: 14px;
+      }
+
+      .intervention-section .section-title {
+        font-size: clamp(42px, 14vw, 64px);
+      }
+
+      .intervention-section .card-content {
+        flex-direction: column;
+      }
+
+      .intervention-section .cta {
+        width: 100%;
+      }
+
+      .intervention-section .panel,
+      .intervention-section .premium-strip,
+      .intervention-section .glass-card {
+        border-radius: 24px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .intervention-section *,
+      .intervention-section *::before,
+      .intervention-section *::after {
+        scroll-behavior: auto !important;
+        animation-duration: .001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .001ms !important;
+      }
+
+      .intervention-section .reveal {
+        opacity: 1;
+        transform: none;
+      }
+    }
   </style>
 
-  <link as="image" href="transition-screen.png" media="(min-width: 769px)" rel="preload" />
-  <link as="image" href="transition-screen-mobile.jpg" media="(max-width: 768px), (pointer: coarse) and (orientation: portrait)" rel="preload" />
+  <link href="/styles/tokens.css" rel="stylesheet" />
+  <link href="/styles/base.css" rel="stylesheet" />
+  <link href="/styles/components.css" rel="stylesheet" />
+  <link href="/styles/lusion-level.css" rel="stylesheet" />
 
   <script src="/page-transition.js"></script>
 
@@ -71,24 +709,6 @@
       document.write('<script src="page-transition.js"><\/script>');
     }
   </script>
-
-  <meta charset="utf-8" />
-  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-
-  <title>Entreprises — Prévention des tensions, posture professionnelle et sécurité relationnelle | Vital Protect</title>
-
-  <meta
-    content="Vital Protect propose aux entreprises et structures exposées une approche structurée de prévention des tensions, posture professionnelle, gestion de l’escalade et sécurité relationnelle."
-    name="description"
-  />
-
-  <link href="https://vital-protect.fr/entreprises.html" rel="canonical" />
-  <link href="/logo.png" rel="icon" type="image/png" />
-
-  <link href="/styles/tokens.css" rel="stylesheet" />
-  <link href="/styles/base.css" rel="stylesheet" />
-  <link href="/styles/components.css" rel="stylesheet" />
-  <link href="/styles/lusion-level.css" rel="stylesheet" />
 </head>
 
 <body class="vpl-inner-page page-editorial-light">
@@ -156,18 +776,19 @@
           </h1>
 
           <p>
-            Les interventions visent la posture, la distance, la désescalade et le retour au calme.
-            Elles s’adaptent au métier, au lieu et au niveau d’exposition des collaborateurs.
+            Le module entreprise Vital Protect dure 3 heures et accueille jusqu’à 20 personnes.
+            Il vise la posture, la distance, la désescalade et le retour au calme, avec des exemples
+            contextualisés à votre réalité professionnelle.
           </p>
 
           <div class="vp-mini-proof">
-            <span>Accueil public</span>
+            <span>Module 3h</span>
+            <span>20 personnes max</span>
             <span>Terrain</span>
-            <span>Managers</span>
           </div>
 
           <div class="vpl-actions" style="margin-top: 26px;">
-            <a class="vpl-button vpl-button-primary" href="/stage.html">Trouver un stage</a>
+            <a class="vpl-button vpl-button-primary" href="#contact-entreprise">Demander un devis</a>
             <a class="vpl-button vpl-button-secondary" href="/contact.html">Nous contacter</a>
           </div>
         </div>
@@ -204,193 +825,392 @@
 
     <div class="vpl-light vpl-internal-effects" aria-hidden="true"></div>
 
-    <section id="offre">
-      <div class="container">
-        <div class="section-head section-head--center">
-          <span class="eyebrow">Les problèmes rencontrés</span>
-          <h2>Des réalités que beaucoup d’équipes vivent déjà</h2>
-          <p>
-            Accueil du public, tension relationnelle, agressivité verbale, montée d’incivilités,
+    <section class="intervention-section" id="offre" aria-labelledby="intervention-title">
+      <span class="float-dot dot-1" aria-hidden="true"></span>
+      <span class="float-dot dot-2" aria-hidden="true"></span>
+      <span class="float-dot dot-3" aria-hidden="true"></span>
+
+      <div class="section-shell">
+        <div class="hero-block reveal">
+          <span class="eyebrow">Les problématiques rencontrées</span>
+          <h2 class="section-title" id="intervention-title">
+            Des réalités que beaucoup d’équipes vivent déjà
+          </h2>
+          <p class="section-intro">
+            Accueil du public, tensions relationnelles, agressivité verbale, montées d’incivilités,
             pression terrain, difficulté à garder une posture claire : ces situations fragilisent
             le travail quotidien, augmentent le stress et exposent les équipes.
           </p>
         </div>
 
-        <div class="problem-grid">
-          <article class="problem-card">
-            <div class="icon-dot"></div>
-            <h3>Agressivité verbale et incivilités</h3>
-            <p>
-              Certaines équipes sont confrontées à des interactions tendues sans toujours disposer
-              de repères concrets pour réduire l’escalade et tenir une posture adaptée.
-            </p>
+        <div class="cards-grid">
+          <article class="glass-card reveal" style="--delay: 80ms">
+            <div class="card-content">
+              <div class="icon-box" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/>
+                  <path d="M12 9v4"/>
+                  <path d="M12 17h.01"/>
+                </svg>
+              </div>
+              <div>
+                <h3>Agressivité verbale et incivilités</h3>
+                <p>
+                  Certaines équipes sont confrontées à des interactions tendues, sans toujours disposer
+                  de repères concrets pour réduire l’escalade et tenir une posture adaptée.
+                </p>
+              </div>
+            </div>
           </article>
 
-          <article class="problem-card">
-            <div class="icon-dot"></div>
-            <h3>Stress, flou, manque de cadre</h3>
-            <p>
-              Sous pression, beaucoup de professionnels manquent de structure pratique pour lire une
-              situation, choisir une réponse et garder de la maîtrise.
-            </p>
+          <article class="glass-card reveal" style="--delay: 160ms">
+            <div class="card-content">
+              <div class="icon-box" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <path d="M12 5a3 3 0 0 0-3 3v1H8a3 3 0 0 0 0 6h1v1a3 3 0 0 0 6 0v-1h1a3 3 0 0 0 0-6h-1V8a3 3 0 0 0-3-3Z"/>
+                  <path d="M12 5V3"/>
+                  <path d="M12 21v-2"/>
+                  <path d="M5 12H3"/>
+                  <path d="M21 12h-2"/>
+                </svg>
+              </div>
+              <div>
+                <h3>Stress, flou, manque de cadre</h3>
+                <p>
+                  Sous pression, beaucoup de professionnels manquent de structures simples pour lire
+                  une situation, choisir une réponse et garder de la maîtrise.
+                </p>
+              </div>
+            </div>
           </article>
 
-          <article class="problem-card">
-            <div class="icon-dot"></div>
-            <h3>Besoin d’une réponse crédible</h3>
-            <p>
-              Les structures ne cherchent pas un folklore spectaculaire, mais une réponse utile,
-              professionnelle, pédagogique et adaptée au terrain.
-            </p>
+          <article class="glass-card reveal" style="--delay: 240ms">
+            <div class="card-content">
+              <div class="icon-box" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4Z"/>
+                  <path d="M8 9h8"/>
+                  <path d="M8 13h5"/>
+                </svg>
+              </div>
+              <div>
+                <h3>Besoin d’une réponse crédible</h3>
+                <p>
+                  Les structures ne cherchent pas une formation spectaculaire, mais une réponse utile,
+                  professionnelle, pédagogique et adaptée au terrain.
+                </p>
+              </div>
+            </div>
           </article>
         </div>
 
-        <div class="timeline-cta" style="justify-content: center;">
-          <a class="btn btn-dark" href="#contact-entreprise">Demander un échange</a>
+        <div class="cta-row reveal">
+          <a class="cta" href="#contact-entreprise">
+            Demander un échange
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M5 12h14"/>
+              <path d="m12 5 7 7-7 7"/>
+            </svg>
+          </a>
         </div>
-      </div>
-    </section>
 
-    <section>
-      <div class="container">
-        <div class="section-head section-head--center">
+        <div class="section-divider reveal" aria-hidden="true">
+          <div class="spark">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M13 2 3 14h9l-1 8 10-12h-9l1-8Z"/>
+            </svg>
+          </div>
+        </div>
+
+        <div class="hero-block reveal">
           <span class="eyebrow">Ce que l’intervention change</span>
-          <h2>Des bénéfices concrets pour les équipes et la structure</h2>
-          <p>
+          <h2 class="section-title">
+            Des bénéfices concrets pour les équipes et la structure
+          </h2>
+          <p class="section-intro">
             L’objectif n’est pas d’impressionner. L’objectif est de donner des repères utilisables,
             cohérents et immédiatement transposables dans le quotidien professionnel.
           </p>
         </div>
 
-        <div class="benefit-grid">
-          <article class="benefit-card">
-            <h3>Mieux lire une situation</h3>
-            <p>
-              Identifier plus tôt les signaux de tension, mieux comprendre l’environnement,
-              les dynamiques d’interaction et les risques de bascule.
-            </p>
+        <div class="cards-grid">
+          <article class="glass-card reveal" style="--delay: 80ms">
+            <div class="card-content">
+              <div class="icon-box" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <circle cx="12" cy="12" r="9"/>
+                  <circle cx="12" cy="12" r="3"/>
+                  <path d="M12 3v3"/>
+                  <path d="M21 12h-3"/>
+                  <path d="M12 21v-3"/>
+                  <path d="M3 12h3"/>
+                </svg>
+              </div>
+              <div>
+                <h3>Mieux lire une situation</h3>
+                <p>
+                  Identifier plus tôt les signaux de tension, mieux comprendre l’environnement,
+                  les dynamiques d’interaction et les risques de bascule.
+                </p>
+              </div>
+            </div>
           </article>
 
-          <article class="benefit-card">
-            <h3>Réduire l’escalade</h3>
-            <p>
-              Adopter une posture, une distance, un placement et une qualité d’intervention qui
-              diminuent les risques d’aggravation.
-            </p>
+          <article class="glass-card reveal" style="--delay: 160ms">
+            <div class="card-content">
+              <div class="icon-box" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/>
+                  <path d="m9 12 2 2 4-5"/>
+                </svg>
+              </div>
+              <div>
+                <h3>Réduire l’escalade</h3>
+                <p>
+                  Adopter une posture, une distance, un placement et une qualité d’intervention
+                  qui diminuent les risques d’aggravation.
+                </p>
+              </div>
+            </div>
           </article>
 
-          <article class="benefit-card">
-            <h3>Réagir avec cohérence</h3>
-            <p>
-              Donner aux équipes des réponses réalistes, accessibles et compatibles avec leurs
-              contraintes métier et leur environnement de travail.
-            </p>
+          <article class="glass-card reveal" style="--delay: 240ms">
+            <div class="card-content">
+              <div class="icon-box" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <path d="M9 12l2 2 4-4"/>
+                  <circle cx="12" cy="12" r="9"/>
+                </svg>
+              </div>
+              <div>
+                <h3>Réagir avec cohérence</h3>
+                <p>
+                  Donner aux équipes des réponses réalistes, accessibles et compatibles avec leurs
+                  contraintes métier et leur environnement de travail.
+                </p>
+              </div>
+            </div>
           </article>
         </div>
 
-        <div class="timeline-cta" style="justify-content: center;">
-          <a class="btn btn-outline" href="#contact-entreprise">Recevoir un devis</a>
+        <div class="cta-row reveal">
+          <a class="cta secondary" href="#contact-entreprise">
+            Recevoir un devis
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M5 12h14"/>
+              <path d="m12 5 7 7-7 7"/>
+            </svg>
+          </a>
         </div>
-      </div>
-    </section>
 
-    <section>
-      <div class="container split-panel">
-        <div class="soft-card info-panel">
-          <span class="eyebrow">Pour quels contextes ?</span>
-          <h3>Des environnements où la posture et la prévention comptent réellement</h3>
-          <p>
-            L’offre entreprises Vital Protect s’adresse aux structures confrontées à des
-            environnements relationnels sensibles, à des tensions fréquentes ou à des publics exposés.
-          </p>
+        <div class="bottom-grid">
+          <article class="panel reveal">
+            <div class="panel-inner">
+              <span class="panel-kicker">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                  <circle cx="9" cy="7" r="4"/>
+                  <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                </svg>
+                Pour qui ça concerne ?
+              </span>
 
-          <div class="bullet-list">
-            <div class="bullet-item">
-              <strong>Accueil du public :</strong> guichets, halls, secrétariats, permanences, services usagers.
+              <h3>Des environnements où la posture et la prévention comptent réellement</h3>
+
+              <div class="info-list">
+                <div class="info-item">
+                  <span class="mini-arrow">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                      <path d="m9 18 6-6-6-6"/>
+                    </svg>
+                  </span>
+                  <p><strong>Accueil du public</strong> : guichets, halls, secrétariats, pharmacies, services usagers.</p>
+                </div>
+
+                <div class="info-item">
+                  <span class="mini-arrow">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                      <path d="m9 18 6-6-6-6"/>
+                    </svg>
+                  </span>
+                  <p><strong>Encadrement &amp; terrain</strong> : managers, responsables, référents, équipes mobiles, agents de proximité.</p>
+                </div>
+
+                <div class="info-item">
+                  <span class="mini-arrow">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                      <path d="m9 18 6-6-6-6"/>
+                    </svg>
+                  </span>
+                  <p><strong>Secteurs exposés</strong> : santé, social, collectivités, retail, transport, services, sécurité privée.</p>
+                </div>
+
+                <div class="info-item">
+                  <span class="mini-arrow">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                      <path d="m9 18 6-6-6-6"/>
+                    </svg>
+                  </span>
+                  <p><strong>Structures sensibles</strong> : établissements confrontés à l’incivilité, à la pression ou à l’imprévu.</p>
+                </div>
+              </div>
             </div>
-            <div class="bullet-item">
-              <strong>Encadrement &amp; terrain :</strong> managers, responsables, référents, équipes mobiles, agents de proximité.
+          </article>
+
+          <article class="panel reveal" style="--delay: 120ms">
+            <div class="panel-inner">
+              <span class="panel-kicker">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <path d="m16 6 2 2 4-4"/>
+                  <path d="M21 10v6a2 2 0 0 1-2 2H5l-4 4V4a2 2 0 0 1 2-2h12"/>
+                </svg>
+                Comment le module est cadré
+              </span>
+
+              <h3>Un module fixe, contextualisé à votre réalité terrain</h3>
+
+              <div class="info-list">
+                <div class="info-item">
+                  <span class="mini-arrow">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                      <path d="m9 18 6-6-6-6"/>
+                    </svg>
+                  </span>
+                  <p><strong>Échange préalable</strong> : compréhension de votre structure, de vos équipes et des situations rencontrées.</p>
+                </div>
+
+                <div class="info-item">
+                  <span class="mini-arrow">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                      <path d="m9 18 6-6-6-6"/>
+                    </svg>
+                  </span>
+                  <p><strong>Cadre fixe</strong> : module unique de 3 heures, jusqu’à 20 participants maximum.</p>
+                </div>
+
+                <div class="info-item">
+                  <span class="mini-arrow">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                      <path d="m9 18 6-6-6-6"/>
+                    </svg>
+                  </span>
+                  <p><strong>Contextualisation</strong> : exemples, échanges et situations adaptés à votre environnement professionnel.</p>
+                </div>
+
+                <div class="info-item">
+                  <span class="mini-arrow">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                      <path d="m9 18 6-6-6-6"/>
+                    </svg>
+                  </span>
+                  <p><strong>Objectif</strong> : donner des repères simples, cohérents et utilisables dès le retour sur le terrain.</p>
+                </div>
+              </div>
             </div>
-            <div class="bullet-item">
-              <strong>Secteurs exposés :</strong> santé, social, collectivités, retail, transport, services, sécurité privée.
+          </article>
+        </div>
+
+        <aside class="premium-strip reveal">
+          <div class="premium-grid">
+            <div>
+              <span class="dark-pill">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <path d="M13 2 3 14h9l-1 8 10-12h-9l1-8Z"/>
+                </svg>
+                Module entreprise unique
+              </span>
+
+              <h3>Un format clair : 3h d’intervention, jusqu’à 20 personnes.</h3>
+
+              <p>
+                Le module entreprise Vital Protect repose sur un cadre fixe, lisible et opérationnel.
+                Il dure 3 heures et s’adresse à un groupe de 20 participants maximum.
+                Le contenu peut être contextualisé selon votre environnement professionnel,
+                mais la structure du module reste la même pour garantir une transmission cohérente.
+              </p>
             </div>
-            <div class="bullet-item">
-              <strong>Structures sensibles :</strong> établissements confrontés à l’incivilité, à la pression ou à l’imprévu.
+
+            <div class="feature-list">
+              <div class="feature">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <circle cx="12" cy="12" r="9"/>
+                  <path d="M12 7v5l3 3"/>
+                </svg>
+                Durée fixe : 3h
+              </div>
+
+              <div class="feature">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                  <circle cx="9" cy="7" r="4"/>
+                  <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                </svg>
+                20 personnes maximum
+              </div>
+
+              <div class="feature">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <path d="m3 11 19-9-9 19-2-8-8-2Z"/>
+                </svg>
+                Contextualisé au terrain
+              </div>
             </div>
           </div>
-        </div>
-
-        <div class="soft-card info-panel">
-          <span class="eyebrow">Comment l’offre se construit</span>
-          <h3>Une intervention cadrée, professionnelle et adaptable</h3>
-          <p>
-            Chaque intervention commence par un échange de cadrage, puis s’adapte à votre contexte,
-            au niveau d’exposition réel des équipes et à vos objectifs opérationnels.
-          </p>
-
-          <div class="bullet-list">
-            <div class="bullet-item">
-              <strong>Analyse du besoin :</strong> public concerné, situations vécues, objectifs, contraintes.
-            </div>
-            <div class="bullet-item">
-              <strong>Construction du format :</strong> sensibilisation, atelier, module ciblé, format sur mesure.
-            </div>
-            <div class="bullet-item">
-              <strong>Animation :</strong> déroulé progressif, pédagogie claire, mise en pratique encadrée.
-            </div>
-            <div class="bullet-item">
-              <strong>Suite possible :</strong> prolongement, second niveau, autre public ou approfondissement ciblé.
-            </div>
-          </div>
-        </div>
+        </aside>
       </div>
     </section>
 
     <section>
       <div class="container">
         <div class="section-head section-head--center">
-          <span class="eyebrow">Formats possibles</span>
-          <h2>Sensibilisation, atelier pratique ou intervention sur mesure</h2>
+          <span class="eyebrow">Module entreprise</span>
+          <h2>Un format unique, clair et directement exploitable</h2>
           <p>
-            Le format dépend de votre public, de votre niveau d’exposition et de votre objectif opérationnel.
+            L’offre entreprise Vital Protect repose sur un module de 3 heures.
+            Il est conçu pour transmettre des repères concrets, sans multiplier les formats
+            ni diluer le contenu.
           </p>
         </div>
 
         <div class="format-grid">
           <article class="format-card">
             <div class="icon-dot"></div>
-            <h3>Sensibilisation — 2h</h3>
+            <h3>Durée : 3 heures</h3>
             <p>
-              Format court pour poser les fondamentaux : prévention, lecture des situations, posture,
-              distance et réduction de l’escalade. Idéal pour un premier groupe.
+              Un temps suffisant pour poser les bases, travailler les situations fréquentes,
+              clarifier les postures utiles et donner des repères immédiatement applicables.
             </p>
           </article>
 
           <article class="format-card">
             <div class="icon-dot"></div>
-            <h3>Demi-journée — 3h30</h3>
+            <h3>Groupe : 20 personnes maximum</h3>
             <p>
-              Format appliqué pour travailler des cas concrets, les mots à éviter, les postures utiles
-              et les réponses simples dans un cadre maîtrisé.
+              Le nombre de participants est limité afin de conserver une qualité d’échange,
+              une bonne dynamique de groupe et une transmission claire pour chacun.
             </p>
           </article>
 
           <article class="format-card">
             <div class="icon-dot"></div>
-            <h3>Journée ou cycle</h3>
+            <h3>Contenu contextualisé</h3>
             <p>
-              Format approfondi ou progressif selon vos équipes, vos contraintes métier, vos publics
-              exposés et les situations réellement rencontrées.
+              Le module garde sa structure fixe, mais les exemples, situations et échanges
+              peuvent être adaptés à votre environnement : accueil, terrain, management,
+              service usager, retail, santé, social ou collectivité.
             </p>
           </article>
         </div>
 
         <div class="soft-card" style="margin-top: 28px;">
-          <h3>Limites clairement posées</h3>
+          <h3>Cadre de l’intervention</h3>
           <p>
-            L’intervention n’est pas une formation de sécurité privée, pas un cours de combat et ne
-            garantit pas l’absence d’incident. Elle sert à améliorer les repères, la prévention,
-            la posture et la capacité à désamorcer ou sécuriser une situation.
+            Le module entreprise n’est pas une formation de sécurité privée, pas un cours de combat
+            et ne garantit pas l’absence d’incident. Il vise à améliorer la prévention,
+            la posture professionnelle, la lecture des tensions, la distance, la désescalade
+            et la cohérence de réaction face à une situation difficile.
           </p>
         </div>
 
@@ -403,34 +1223,37 @@
     <section>
       <div class="container">
         <div class="section-head section-head--center">
-          <span class="eyebrow">Méthode de travail</span>
-          <h2>Un déroulé simple en 4 étapes</h2>
-          <p>Pour rester lisible, réactif et professionnel.</p>
+          <span class="eyebrow">Déroulé</span>
+          <h2>Un cadrage simple avant l’intervention</h2>
+          <p>
+            Le module reste fixe dans sa durée et sa structure, mais l’échange préalable permet
+            d’adapter les exemples à votre réalité terrain.
+          </p>
         </div>
 
         <div class="process-grid">
           <article class="process-card">
             <div class="process-step">1</div>
             <h3>Échange</h3>
-            <p>Nous clarifions votre contexte, vos équipes, vos objectifs et vos contraintes.</p>
+            <p>Nous clarifions votre contexte, vos équipes, vos situations fréquentes et vos contraintes.</p>
           </article>
 
           <article class="process-card">
             <div class="process-step">2</div>
             <h3>Cadrage</h3>
-            <p>Nous proposons un format réaliste : durée, public, angle pédagogique et niveau de travail.</p>
+            <p>Nous confirmons le module de 3h, le public concerné et le groupe de 20 personnes maximum.</p>
           </article>
 
           <article class="process-card">
             <div class="process-step">3</div>
             <h3>Intervention</h3>
-            <p>La session est animée dans un cadre clair, progressif et adapté au terrain réel.</p>
+            <p>La session est animée dans un cadre clair, progressif et adapté au terrain réel des équipes.</p>
           </article>
 
           <article class="process-card">
             <div class="process-step">4</div>
-            <h3>Suite</h3>
-            <p>Possibilité d’approfondissement, de second module ou d’extension à d’autres équipes.</p>
+            <h3>Repères</h3>
+            <p>Les participants repartent avec des repères simples sur la posture, la distance et la désescalade.</p>
           </article>
         </div>
 
@@ -446,8 +1269,8 @@
           <span class="eyebrow">Prise de contact</span>
           <h3>Demandez un échange ou un devis</h3>
           <p>
-            Décrivez votre structure, votre besoin, votre public concerné et votre contexte.
-            Nous pourrons ensuite vous orienter vers le format le plus pertinent.
+            Décrivez votre structure, votre public concerné et les situations rencontrées.
+            Nous pourrons confirmer avec vous si le module entreprise de 3h correspond à votre besoin.
           </p>
 
           <div class="contact-proof-list">
@@ -455,10 +1278,10 @@
               <strong>Réponse attendue :</strong> premier retour sous 24/48h ouvrées, puis devis après cadrage du besoin.
             </div>
             <div class="contact-proof">
-              <strong>Formats possibles :</strong> sensibilisation, atelier pratique, intervention sur mesure.
+              <strong>Format :</strong> module entreprise unique de 3h, jusqu’à 20 personnes maximum.
             </div>
             <div class="contact-proof">
-              <strong>Objectif :</strong> proposer un format crédible, clair et adapté à votre terrain.
+              <strong>Objectif :</strong> proposer un cadre clair, crédible et contextualisé à votre terrain.
             </div>
           </div>
         </div>
@@ -500,10 +1323,10 @@
                 <label for="subject">Sujet</label>
                 <select id="subject" required>
                   <option value="">Choisir un sujet</option>
-                  <option value="Demande de devis entreprise">Demande de devis entreprise</option>
-                  <option value="Demande d’échange">Demande d’échange</option>
-                  <option value="Formation sur mesure">Formation sur mesure</option>
-                  <option value="Sensibilisation équipe">Sensibilisation équipe</option>
+                  <option value="Demande de devis module entreprise">Demande de devis module entreprise</option>
+                  <option value="Demande d’échange préalable">Demande d’échange préalable</option>
+                  <option value="Module entreprise 3h">Module entreprise 3h</option>
+                  <option value="Informations groupe entreprise">Informations groupe entreprise</option>
                 </select>
               </div>
 
@@ -511,7 +1334,7 @@
                 <label for="message">Votre besoin</label>
                 <textarea
                   id="message"
-                  placeholder="Décrivez votre contexte, vos équipes concernées, vos objectifs et vos contraintes."
+                  placeholder="Décrivez votre structure, les équipes concernées, les situations rencontrées et le nombre de participants envisagé."
                   required
                 ></textarea>
               </div>
@@ -552,26 +1375,26 @@
           </article>
 
           <article class="faq-card">
-            <h3>Pouvez-vous adapter le contenu à notre métier ?</h3>
+            <h3>Le module peut-il être adapté à notre métier ?</h3>
             <p>
-              Oui. Le format peut être contextualisé selon votre secteur, vos publics, vos contraintes
-              et les situations que vivent vos équipes.
+              Oui. Le module garde une durée et une structure fixes, mais les exemples et les échanges
+              peuvent être contextualisés selon votre secteur, vos publics et vos contraintes.
             </p>
           </article>
 
           <article class="faq-card">
             <h3>Pouvez-vous intervenir dans nos locaux ?</h3>
             <p>
-              Oui, selon le format retenu. Une intervention sur site est souvent pertinente pour
-              travailler dans le contexte réel des équipes.
+              Oui, selon les conditions d’accueil du groupe. Une intervention sur site est souvent pertinente
+              pour rester proche du contexte réel des équipes.
             </p>
           </article>
 
           <article class="faq-card">
-            <h3>Pourquoi vous parler plutôt que choisir un intervenant isolé ?</h3>
+            <h3>Combien de personnes peuvent participer ?</h3>
             <p>
-              Parce que la lisibilité du cadre, la cohérence de méthode et la qualité de transmission
-              comptent autant que l’intervention elle-même.
+              Le module entreprise est prévu pour 20 personnes maximum afin de préserver la qualité des échanges,
+              la clarté de transmission et la dynamique du groupe.
             </p>
           </article>
         </div>
@@ -607,6 +1430,28 @@
       </div>
     </div>
   </footer>
+
+  <script>
+    const interventionRevealEls = document.querySelectorAll('.intervention-section .reveal');
+
+    if ('IntersectionObserver' in window) {
+      const interventionObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+            interventionObserver.unobserve(entry.target);
+          }
+        });
+      }, {
+        threshold: 0.16,
+        rootMargin: '0px 0px -60px 0px'
+      });
+
+      interventionRevealEls.forEach((el) => interventionObserver.observe(el));
+    } else {
+      interventionRevealEls.forEach((el) => el.classList.add('is-visible'));
+    }
+  </script>
 
   <script>
     const form = document.getElementById("enterpriseContactForm");
@@ -659,12 +1504,15 @@
 Ville : ${payload.city || "Non précisée"}
 Téléphone : ${payload.phone || "Non renseigné"}
 
+Module demandé :
+Module entreprise Vital Protect — 3h — 20 personnes maximum.
+
 Message :
 ${payload.message}`
           })
         });
 
-        const result = await res.json();
+        const result = await res.json().catch(() => ({}));
 
         if (!res.ok) {
           showStatus(result.error || "Erreur lors de l’envoi du message.", "error");
