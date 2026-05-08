@@ -14080,3 +14080,78 @@ body.page-accueil-rythme .vp-home-visual-duo figure:last-child img {
     object-position: center 14% !important;
   }
 }
+
+
+/* =========================================================
+   Hotfix accueil — bloc images étendu entre les repères rouges
+   ---------------------------------------------------------
+   Le panneau des 3 images est légèrement remonté et les visuels
+   sont plus hauts, pour s’aligner visuellement avec la colonne
+   texte à gauche. Le visuel central est recadré vers le haut
+   pour bien montrer la tête du formateur.
+   ========================================================= */
+body.page-accueil-rythme .vp-home-visual-grid {
+  align-items: start !important;
+}
+
+body.page-accueil-rythme .vp-home-visual-panel {
+  width: min(500px, 100%) !important;
+  max-width: 500px !important;
+  justify-self: end !important;
+  gap: 10px !important;
+  padding: 10px !important;
+  margin-top: -12px !important;
+  margin-bottom: -12px !important;
+}
+
+body.page-accueil-rythme .vp-home-visual-main,
+body.page-accueil-rythme .vp-home-visual-duo figure {
+  width: 100% !important;
+  aspect-ratio: 16 / 6.45 !important;
+  min-height: 0 !important;
+  border-radius: 20px !important;
+}
+
+body.page-accueil-rythme .vp-home-visual-panel img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+}
+
+body.page-accueil-rythme .vp-home-visual-main img {
+  object-position: center center !important;
+}
+
+body.page-accueil-rythme .vp-home-visual-duo figure:first-child img {
+  object-position: center 10% !important;
+}
+
+body.page-accueil-rythme .vp-home-visual-duo figure:last-child img {
+  object-position: center 48% !important;
+}
+
+@media (max-width: 980px) {
+  body.page-accueil-rythme .vp-home-visual-panel {
+    justify-self: center !important;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+  }
+}
+
+@media (max-width: 640px) {
+  body.page-accueil-rythme .vp-home-visual-panel {
+    gap: 8px !important;
+    padding: 10px !important;
+    width: min(100%, 520px) !important;
+  }
+
+  body.page-accueil-rythme .vp-home-visual-main,
+  body.page-accueil-rythme .vp-home-visual-duo figure {
+    aspect-ratio: 16 / 7.2 !important;
+    border-radius: 18px !important;
+  }
+
+  body.page-accueil-rythme .vp-home-visual-duo figure:first-child img {
+    object-position: center 8% !important;
+  }
+}
