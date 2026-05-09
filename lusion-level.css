@@ -4931,7 +4931,7 @@ label {
 }
 
 .vpl-visual-card {
-  z-index: 2 !important;
+  z-index: 3 !important;
   border-color: rgba(255,255,255,.18) !important;
   box-shadow:
     0 32px 90px rgba(0,0,0,.34),
@@ -12496,8 +12496,6 @@ body.vpl-inner-page .stage-flow-list article .bg-number {
 
 /* Ce bloc est celui visible sous l'image du hero :
    "Prévenir d’abord. Réagir seulement si nécessaire." */
-body .vpl-inner-visual .vpl-inner-stat,
-body.vpl-inner-page .vpl-inner-visual .vpl-inner-stat,
 body.page-methode .vpl-inner-visual .vpl-inner-stat,
 body.page-stage .vpl-inner-visual .vpl-inner-stat,
 body.page-stage-redesign .vpl-inner-visual .vpl-inner-stat {
@@ -12510,8 +12508,6 @@ body.page-stage-redesign .vpl-inner-visual .vpl-inner-stat {
 }
 
 /* Forçage du titre et du texte dans l'encart, même si une ancienne règle les met en blanc. */
-body .vpl-inner-visual .vpl-inner-stat *,
-body.vpl-inner-page .vpl-inner-visual .vpl-inner-stat *,
 body.page-methode .vpl-inner-visual .vpl-inner-stat *,
 body.page-stage .vpl-inner-visual .vpl-inner-stat *,
 body.page-stage-redesign .vpl-inner-visual .vpl-inner-stat * {
@@ -12519,27 +12515,27 @@ body.page-stage-redesign .vpl-inner-visual .vpl-inner-stat * {
   text-shadow: none !important;
 }
 
-body .vpl-inner-visual .vpl-inner-stat strong,
-body .vpl-inner-visual .vpl-inner-stat h1,
-body .vpl-inner-visual .vpl-inner-stat h2,
-body .vpl-inner-visual .vpl-inner-stat h3,
-body.vpl-inner-page .vpl-inner-visual .vpl-inner-stat strong,
-body.vpl-inner-page .vpl-inner-visual .vpl-inner-stat h1,
-body.vpl-inner-page .vpl-inner-visual .vpl-inner-stat h2,
-body.vpl-inner-page .vpl-inner-visual .vpl-inner-stat h3,
 body.page-methode .vpl-inner-visual .vpl-inner-stat strong,
 body.page-methode .vpl-inner-visual .vpl-inner-stat h1,
 body.page-methode .vpl-inner-visual .vpl-inner-stat h2,
-body.page-methode .vpl-inner-visual .vpl-inner-stat h3 {
+body.page-methode .vpl-inner-visual .vpl-inner-stat h3,
+body.page-stage .vpl-inner-visual .vpl-inner-stat strong,
+body.page-stage .vpl-inner-visual .vpl-inner-stat h1,
+body.page-stage .vpl-inner-visual .vpl-inner-stat h2,
+body.page-stage .vpl-inner-visual .vpl-inner-stat h3,
+body.page-stage-redesign .vpl-inner-visual .vpl-inner-stat strong,
+body.page-stage-redesign .vpl-inner-visual .vpl-inner-stat h1,
+body.page-stage-redesign .vpl-inner-visual .vpl-inner-stat h2,
+body.page-stage-redesign .vpl-inner-visual .vpl-inner-stat h3 {
   color: #07111f !important;
 }
 
-body .vpl-inner-visual .vpl-inner-stat span,
-body .vpl-inner-visual .vpl-inner-stat p,
-body.vpl-inner-page .vpl-inner-visual .vpl-inner-stat span,
-body.vpl-inner-page .vpl-inner-visual .vpl-inner-stat p,
 body.page-methode .vpl-inner-visual .vpl-inner-stat span,
-body.page-methode .vpl-inner-visual .vpl-inner-stat p {
+body.page-methode .vpl-inner-visual .vpl-inner-stat p,
+body.page-stage .vpl-inner-visual .vpl-inner-stat span,
+body.page-stage .vpl-inner-visual .vpl-inner-stat p,
+body.page-stage-redesign .vpl-inner-visual .vpl-inner-stat span,
+body.page-stage-redesign .vpl-inner-visual .vpl-inner-stat p {
   color: #34465d !important;
 }
 
@@ -12572,10 +12568,8 @@ body.page-methode .vpl-inner-stat p {
    Correctif final — suppression de l'encart sous image hero
    ========================================================= */
 
-/* L'encart sous les images hero crée des problèmes de contraste et de hiérarchie.
-   On le retire sur les pages internes : méthode, stage, entreprises, formateurs, etc. */
-body.vpl-inner-page .vpl-inner-visual .vpl-inner-stat,
-body.vpl-inner-page .vpl-inner-stat,
+/* L'encart sous les images hero est retiré uniquement sur les pages prévues.
+   Important : ne pas cibler body.vpl-inner-page, utilisé par presque toutes les pages. */
 body.page-methode .vpl-inner-visual .vpl-inner-stat,
 body.page-methode .vpl-inner-stat,
 body.page-stage .vpl-inner-visual .vpl-inner-stat,
@@ -12589,7 +12583,6 @@ body.page-stage-redesign .vpl-inner-stat {
 }
 
 /* L'image hero reprend une position propre quand l'encart est retiré. */
-body.vpl-inner-page .vpl-inner-visual,
 body.page-methode .vpl-inner-visual,
 body.page-stage .vpl-inner-visual,
 body.page-stage-redesign .vpl-inner-visual {
@@ -12597,7 +12590,6 @@ body.page-stage-redesign .vpl-inner-visual {
   align-content: center !important;
 }
 
-body.vpl-inner-page .vpl-inner-visual img,
 body.page-methode .vpl-inner-visual img,
 body.page-stage .vpl-inner-visual img,
 body.page-stage-redesign .vpl-inner-visual img {
@@ -12765,13 +12757,13 @@ body.page-stage-redesign .vpl-inner-visual img {
   to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-/* Les images hero internes prennent un peu plus de poids visuel après suppression des encarts. */
-body.vpl-inner-page .vpl-inner-visual img,
+/* L'image hero de la page Standard prend un peu plus de poids visuel après suppression de l'encart. */
 body.page-methode .vpl-inner-visual img {
   width: min(620px, 100%) !important;
   max-height: none !important;
   aspect-ratio: 4 / 3 !important;
   object-fit: cover !important;
+  object-position: 82% center !important;
 }
 
 /* Hero accueil : la bannière large doit rester lisible dans la carte. */
@@ -12966,3 +12958,2391 @@ body.page-accueil-rythme .hp-hero-photo img {
     object-position: 90% center !important;
   }
 }
+
+
+/* =========================================================
+   Page Standard — effet flip image strictement isolé
+   ========================================================= */
+body.page-methode .vp-image-flip {
+  position: relative;
+  z-index: 4;
+  display: grid;
+  gap: 14px;
+  width: 100%;
+  max-width: 760px;
+  margin-inline: auto;
+  perspective: 1400px;
+}
+
+body.page-methode .vp-image-flip__toggle {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+body.page-methode .vp-image-flip__card {
+  position: relative;
+  display: block;
+  width: 100%;
+  min-height: clamp(320px, 44vw, 560px);
+  border-radius: clamp(24px, 3vw, 38px);
+  cursor: pointer;
+  transform-style: preserve-3d;
+  transition: transform .75s cubic-bezier(.16, 1, .3, 1);
+}
+
+body.page-methode .vp-image-flip__toggle:focus-visible + .vp-image-flip__card {
+  outline: 3px solid rgba(74, 184, 255, .82);
+  outline-offset: 6px;
+}
+
+body.page-methode .vp-image-flip__toggle:checked + .vp-image-flip__card {
+  transform: rotateY(180deg);
+}
+
+body.page-methode .vp-image-flip__face {
+  position: absolute;
+  inset: 0;
+  display: block;
+  overflow: hidden;
+  border-radius: inherit;
+  border: 1px solid rgba(255,255,255,.32);
+  background: #dce8f3;
+  box-shadow: 0 28px 90px rgba(8,14,28,.16);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+body.page-methode .vp-image-flip__face--back {
+  transform: rotateY(180deg);
+}
+
+body.page-methode .vp-image-flip__face img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: inherit;
+  object-fit: cover;
+  object-position: center;
+}
+
+body.page-methode .vp-image-flip__badge {
+  position: absolute;
+  left: 18px;
+  bottom: 18px;
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  padding: 9px 14px;
+  border-radius: 999px;
+  color: #07111f;
+  background: rgba(255,255,255,.92);
+  border: 1px solid rgba(7,17,31,.10);
+  box-shadow: 0 16px 36px rgba(0,0,0,.16);
+  font-size: .88rem;
+  line-height: 1.1;
+  font-weight: 900;
+}
+
+body.page-methode .vp-image-flip__caption {
+  margin: 0;
+  color: #40536b;
+  font-size: .94rem;
+  line-height: 1.5;
+  text-align: center;
+}
+
+@media (hover: hover) {
+  body.page-methode .vp-image-flip__card:hover .vp-image-flip__face img {
+    transform: scale(1.025);
+  }
+
+  body.page-methode .vp-image-flip__face img {
+    transition: transform .75s cubic-bezier(.16, 1, .3, 1);
+  }
+}
+
+@media (max-width: 680px) {
+  body.page-methode .vp-image-flip__card {
+    min-height: 280px;
+    border-radius: 24px;
+  }
+
+  body.page-methode .vp-image-flip__badge {
+    left: 12px;
+    bottom: 12px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.page-methode .vp-image-flip__card,
+  body.page-methode .vp-image-flip__face img {
+    transition: none !important;
+  }
+}
+
+
+/* =========================================================
+   Hotfix accueil — collage visuel stable
+   ---------------------------------------------------------
+   Le correctif flip de la page Standard ne doit jamais laisser
+   la section visuelle d'accueil s'étirer ni créer un vide entre
+   l'image principale et les deux images basses.
+   ========================================================= */
+body.page-accueil-rythme .vp-home-visual-panel {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 16px !important;
+  width: 100% !important;
+  max-width: 720px !important;
+  justify-self: end !important;
+  align-self: center !important;
+  overflow: hidden !important;
+}
+
+body.page-accueil-rythme .vp-home-visual-panel figure {
+  position: relative !important;
+  display: block !important;
+  flex: 0 0 auto !important;
+  margin: 0 !important;
+}
+
+body.page-accueil-rythme .vp-home-visual-panel figure > img {
+  position: absolute !important;
+  inset: 0 !important;
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  object-fit: cover !important;
+}
+
+body.page-accueil-rythme .vp-home-visual-main {
+  aspect-ratio: 16 / 6.9 !important;
+  min-height: 0 !important;
+}
+
+body.page-accueil-rythme .vp-home-visual-duo {
+  display: grid !important;
+  grid-template-columns: .96fr 1.04fr !important;
+  gap: 16px !important;
+  margin: 0 !important;
+  min-height: 0 !important;
+}
+
+body.page-accueil-rythme .vp-home-visual-duo figure {
+  aspect-ratio: 16 / 10.2 !important;
+  min-height: 0 !important;
+}
+
+body.page-accueil-rythme .vp-home-visual-main img {
+  object-position: 72% center !important;
+}
+
+body.page-accueil-rythme .vp-home-visual-duo figure:first-child img {
+  object-position: center 45% !important;
+}
+
+body.page-accueil-rythme .vp-home-visual-duo figure:last-child img {
+  object-position: center center !important;
+}
+
+@media (max-width: 980px) {
+  body.page-accueil-rythme .vp-home-visual-panel {
+    justify-self: start !important;
+    max-width: 760px !important;
+  }
+}
+
+@media (max-width: 640px) {
+  body.page-accueil-rythme .vp-home-visual-panel {
+    gap: 10px !important;
+  }
+
+  body.page-accueil-rythme .vp-home-visual-main,
+  body.page-accueil-rythme .vp-home-visual-duo figure {
+    aspect-ratio: 4 / 3 !important;
+  }
+
+  body.page-accueil-rythme .vp-home-visual-duo {
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+  }
+}
+
+
+/* =========================================================
+   Hotfix accueil — demande 2 photos uniquement
+   ---------------------------------------------------------
+   - Supprime la photo de briefing barrée dans le HTML.
+   - Agrandit la photo d'exercice en pleine largeur basse.
+   - Recadre l'image haute vers la droite pour masquer le texte
+     imprimé dans le visuel source.
+   ========================================================= */
+body.page-accueil-rythme .vp-home-visual-main {
+  overflow: hidden !important;
+}
+
+body.page-accueil-rythme .vp-home-visual-main img {
+  object-position: 100% center !important;
+  transform: scale(1.46) !important;
+  transform-origin: right center !important;
+}
+
+body.page-accueil-rythme .vp-home-visual-duo,
+body.page-accueil-rythme .vp-home-visual-duo--single {
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: 0 !important;
+  margin: 0 !important;
+  min-height: 0 !important;
+}
+
+body.page-accueil-rythme .vp-home-visual-duo--single figure,
+body.page-accueil-rythme .vp-home-visual-duo figure:only-child {
+  aspect-ratio: 16 / 7.3 !important;
+  width: 100% !important;
+  min-height: 0 !important;
+}
+
+body.page-accueil-rythme .vp-home-visual-duo--single figure img,
+body.page-accueil-rythme .vp-home-visual-duo figure:only-child img {
+  /* Cadrage légèrement abaissé pour garder la tête du formateur visible. */
+  object-position: center 34% !important;
+}
+
+@media (max-width: 640px) {
+  body.page-accueil-rythme .vp-home-visual-main img {
+    transform: scale(1.32) !important;
+  }
+
+  body.page-accueil-rythme .vp-home-visual-duo--single figure,
+  body.page-accueil-rythme .vp-home-visual-duo figure:only-child {
+    aspect-ratio: 4 / 3 !important;
+  }
+}
+
+/* =========================================================
+   Hotfix Page Standard — flip photo dos-à-dos, même format
+   ---------------------------------------------------------
+   Objectif : une seule photo visible à la fois. Au clic, la
+   carte se retourne pour afficher la deuxième photo au verso,
+   dans exactement le même cadre.
+   ========================================================= */
+body.page-methode .vp-image-flip {
+  max-width: min(760px, 100%) !important;
+  perspective: 1600px !important;
+  perspective-origin: 50% 50% !important;
+}
+
+body.page-methode .vp-image-flip__card {
+  display: block !important;
+  width: 100% !important;
+  aspect-ratio: 4 / 3 !important;
+  min-height: 0 !important;
+  height: auto !important;
+  border-radius: clamp(24px, 3vw, 38px) !important;
+  transform-style: preserve-3d !important;
+  -webkit-transform-style: preserve-3d !important;
+  transition: transform .72s cubic-bezier(.16, 1, .3, 1) !important;
+  will-change: transform !important;
+  cursor: pointer !important;
+}
+
+body.page-methode .vp-image-flip__toggle:checked + .vp-image-flip__card {
+  transform: rotateY(180deg) !important;
+}
+
+body.page-methode .vp-image-flip__face {
+  position: absolute !important;
+  inset: 0 !important;
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  overflow: hidden !important;
+  border-radius: inherit !important;
+  backface-visibility: hidden !important;
+  -webkit-backface-visibility: hidden !important;
+  transform-style: preserve-3d !important;
+  -webkit-transform-style: preserve-3d !important;
+}
+
+body.page-methode .vp-image-flip__face--front {
+  transform: rotateY(0deg) translateZ(1px) !important;
+}
+
+body.page-methode .vp-image-flip__face--back {
+  transform: rotateY(180deg) translateZ(1px) !important;
+}
+
+body.page-methode .vp-image-flip__face img {
+  position: absolute !important;
+  inset: 0 !important;
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  object-fit: cover !important;
+  transform: translateZ(0) !important;
+}
+
+/* Photo briefing verticale : cadrée pour garder le formateur, le tableau et le groupe visibles. */
+body.page-methode .vp-image-flip__face--front img {
+  object-position: center 36% !important;
+}
+
+/* Photo pratique horizontale : même cadre, cadrage naturel. */
+body.page-methode .vp-image-flip__face--back img {
+  object-position: center center !important;
+}
+
+body.page-methode .vp-image-flip__badge {
+  transform: translateZ(2px) !important;
+  pointer-events: none !important;
+}
+
+body.page-methode .vp-image-flip__caption {
+  max-width: 46ch !important;
+  margin-inline: auto !important;
+}
+
+@media (max-width: 680px) {
+  body.page-methode .vp-image-flip__card {
+    aspect-ratio: 4 / 3 !important;
+    min-height: 0 !important;
+    border-radius: 24px !important;
+  }
+}
+
+
+
+
+/* =========================================================
+   Hotfix Page Standard — flip déclenché au scroll
+   ---------------------------------------------------------
+   La carte garde le même format, sans badge ni texte sous
+   l'image. En arrivant dans la section, un scroll supplémentaire
+   retourne la photo avant de reprendre le défilement normal.
+   ========================================================= */
+body.page-methode .vp-image-flip__badge,
+body.page-methode .vp-image-flip__caption {
+  display: none !important;
+}
+
+body.page-methode .vp-image-flip__face--front img {
+  object-position: center 28% !important;
+}
+
+body.page-methode .vp-image-flip__face--back img {
+  object-position: center 46% !important;
+}
+
+body.page-methode .vp-flip-scroll-section .vp-image-flip__card {
+  cursor: pointer !important;
+}
+
+
+/* =========================================================
+   Page Standard — animation scroll des 5 piliers
+   ---------------------------------------------------------
+   Intégration de l'animation fournie, avec classes préfixées
+   pour éviter d'impacter les autres grilles de cartes du site.
+   ========================================================= */
+body.page-methode .vp-scroll-pillars-section {
+  --vp-pillars-ink: #0f1f31;
+  --vp-pillars-muted: #5f6d7e;
+  --vp-pillars-blue-soft: rgba(151, 206, 255, 0.32);
+  --vp-pillars-edge: #dce8f3;
+  --vp-pillars-shadow: 0 24px 70px rgba(30, 68, 104, 0.16);
+  --vp-pillars-ease: cubic-bezier(.18, .9, .2, 1);
+  position: relative !important;
+  min-height: 315vh !important;
+  overflow: clip !important;
+  padding: 0 !important;
+  background:
+    radial-gradient(circle at 28% 18%, rgba(255,255,255,.95), rgba(255,255,255,0) 28%),
+    linear-gradient(180deg, #f8fcff 0%, #eef7ff 100%) !important;
+  color: var(--vp-pillars-ink) !important;
+}
+
+body.page-methode .vp-scroll-pillars-sticky {
+  position: sticky !important;
+  top: 0 !important;
+  min-height: 100vh !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: clamp(32px, 5vw, 72px) 24px !important;
+  isolation: isolate !important;
+}
+
+body.page-methode .vp-scroll-pillars-wrap {
+  width: min(1320px, 100%) !important;
+  margin-inline: auto !important;
+  position: relative !important;
+  z-index: 2 !important;
+}
+
+body.page-methode .vp-scroll-pillars-head {
+  margin-bottom: clamp(44px, 7vh, 76px) !important;
+}
+
+body.page-methode .vp-scroll-pillars-head h2 {
+  margin: 0 !important;
+  text-align: center !important;
+  font-size: clamp(48px, 7vw, 108px) !important;
+  line-height: .9 !important;
+  letter-spacing: -0.08em !important;
+  font-weight: 900 !important;
+}
+
+body.page-methode .vp-scroll-pillars-head p {
+  max-width: 600px !important;
+  margin: 22px auto 0 !important;
+  text-align: center !important;
+  color: var(--vp-pillars-muted) !important;
+  font-size: clamp(16px, 1.35vw, 20px) !important;
+  line-height: 1.7 !important;
+}
+
+body.page-methode .vp-scroll-pillars-grid {
+  display: grid !important;
+  grid-template-columns: repeat(5, minmax(170px, 1fr)) !important;
+  align-items: end !important;
+  gap: clamp(16px, 2vw, 28px) !important;
+  perspective: 1200px !important;
+}
+
+body.page-methode .vp-scroll-pillar-card {
+  --delay: 0ms;
+  min-height: clamp(330px, 38vh, 430px) !important;
+  display: grid !important;
+  grid-template-rows: auto 1fr auto !important;
+  opacity: 0;
+  transform: translateY(42vh) scale(.9) rotateX(8deg);
+  filter: blur(8px);
+  transition:
+    opacity 720ms var(--vp-pillars-ease) var(--delay),
+    transform 1000ms var(--vp-pillars-ease) var(--delay),
+    filter 900ms var(--vp-pillars-ease) var(--delay) !important;
+  will-change: transform, opacity, filter !important;
+}
+
+body.page-methode .vp-scroll-pillar-card.is-visible {
+  opacity: 1;
+  transform: translateY(0) scale(1) rotateX(0deg);
+  filter: blur(0);
+}
+
+body.page-methode .vp-scroll-pillars-section.vp-scroll-pillars-complete .vp-scroll-pillar-card {
+  opacity: 1 !important;
+  transform: none !important;
+  filter: none !important;
+  transition-duration: .01ms !important;
+}
+
+body.page-methode .vp-scroll-pillar-capital,
+body.page-methode .vp-scroll-pillar-base {
+  width: 86% !important;
+  margin-inline: auto !important;
+  background: linear-gradient(90deg, #edf5fc 0%, #fff 18%, #fff 50%, #eaf3fb 100%) !important;
+  border: 1px solid rgba(201, 218, 232, .9) !important;
+  box-shadow: var(--vp-pillars-shadow) !important;
+}
+
+body.page-methode .vp-scroll-pillar-capital {
+  height: 48px !important;
+  border-radius: 24px 24px 10px 10px !important;
+  position: relative !important;
+  transform-origin: bottom center !important;
+}
+
+body.page-methode .vp-scroll-pillar-capital::before,
+body.page-methode .vp-scroll-pillar-capital::after,
+body.page-methode .vp-scroll-pillar-base::before {
+  content: "";
+  position: absolute !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  background: inherit !important;
+  border: inherit !important;
+  box-shadow: 0 12px 30px rgba(30, 68, 104, .08) !important;
+}
+
+body.page-methode .vp-scroll-pillar-capital::before {
+  width: 118% !important;
+  height: 18px !important;
+  bottom: -10px !important;
+  border-radius: 999px !important;
+}
+
+body.page-methode .vp-scroll-pillar-capital::after {
+  width: 72% !important;
+  height: 13px !important;
+  top: 9px !important;
+  border-radius: 999px !important;
+  opacity: .75 !important;
+}
+
+body.page-methode .vp-scroll-pillar-shaft {
+  position: relative !important;
+  margin: 4px auto 0 !important;
+  width: 78% !important;
+  padding: 44px 24px 34px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: flex-start !important;
+  border: 1px solid var(--vp-pillars-edge) !important;
+  border-radius: 999px 999px 34px 34px / 42px 42px 34px 34px !important;
+  background:
+    linear-gradient(90deg,
+      rgba(206, 223, 238, .65) 0 4%,
+      rgba(255,255,255,0) 4% 13%,
+      rgba(206, 223, 238, .55) 13% 17%,
+      rgba(255,255,255,0) 17% 30%,
+      rgba(206, 223, 238, .45) 30% 34%,
+      rgba(255,255,255,0) 34% 47%,
+      rgba(206, 223, 238, .45) 47% 51%,
+      rgba(255,255,255,0) 51% 64%,
+      rgba(206, 223, 238, .5) 64% 68%,
+      rgba(255,255,255,0) 68% 81%,
+      rgba(206, 223, 238, .65) 81% 85%,
+      rgba(255,255,255,0) 85% 100%),
+    linear-gradient(110deg, #edf5fc 0%, #fff 22%, #fff 56%, #edf5fc 100%) !important;
+  box-shadow: var(--vp-pillars-shadow) !important;
+  overflow: hidden !important;
+}
+
+body.page-methode .vp-scroll-pillar-shaft::before {
+  content: "";
+  position: absolute !important;
+  inset: 0 !important;
+  background: linear-gradient(180deg, rgba(255,255,255,.9), rgba(255,255,255,0) 38%, rgba(151,206,255,.10)) !important;
+  pointer-events: none !important;
+}
+
+body.page-methode .vp-scroll-pillar-medallion {
+  position: relative !important;
+  z-index: 1 !important;
+  width: 46px !important;
+  height: 46px !important;
+  display: grid !important;
+  place-items: center !important;
+  margin: 0 auto 20px !important;
+  border-radius: 999px !important;
+  background: var(--vp-pillars-ink) !important;
+  color: #fff !important;
+  font-size: 18px !important;
+  font-weight: 900 !important;
+  box-shadow: 0 10px 22px rgba(15, 31, 49, .18) !important;
+}
+
+body.page-methode .vp-scroll-pillar-card h3 {
+  position: relative !important;
+  z-index: 1 !important;
+  margin: 0 0 14px !important;
+  text-align: center !important;
+  font-size: clamp(18px, 1.45vw, 24px) !important;
+  line-height: 1.08 !important;
+  letter-spacing: -0.04em !important;
+}
+
+body.page-methode .vp-scroll-pillar-card p {
+  position: relative !important;
+  z-index: 1 !important;
+  margin: 0 !important;
+  color: var(--vp-pillars-muted) !important;
+  text-align: center !important;
+  font-size: clamp(14px, 1.05vw, 17px) !important;
+  line-height: 1.55 !important;
+}
+
+body.page-methode .vp-scroll-pillar-base {
+  position: relative !important;
+  height: 54px !important;
+  margin-top: 0 !important;
+  border-radius: 12px 12px 28px 28px !important;
+}
+
+body.page-methode .vp-scroll-pillar-base::before {
+  width: 122% !important;
+  height: 18px !important;
+  top: -10px !important;
+  border-radius: 999px !important;
+}
+
+body.page-methode .vp-scroll-pillar-card:nth-child(2) { min-height: clamp(352px, 41vh, 462px) !important; }
+body.page-methode .vp-scroll-pillar-card:nth-child(3) { min-height: clamp(374px, 44vh, 492px) !important; }
+body.page-methode .vp-scroll-pillar-card:nth-child(4) { min-height: clamp(352px, 41vh, 462px) !important; }
+body.page-methode .vp-scroll-pillar-card:nth-child(5) { min-height: clamp(330px, 38vh, 430px) !important; }
+
+body.page-methode .vp-scroll-pillar-card:nth-child(1) { --delay: 0ms; }
+body.page-methode .vp-scroll-pillar-card:nth-child(2) { --delay: 80ms; }
+body.page-methode .vp-scroll-pillar-card:nth-child(3) { --delay: 160ms; }
+body.page-methode .vp-scroll-pillar-card:nth-child(4) { --delay: 240ms; }
+body.page-methode .vp-scroll-pillar-card:nth-child(5) { --delay: 320ms; }
+
+body.page-methode .vp-scroll-pillars-decor {
+  display: none !important;
+}
+
+body.page-methode .vp-scroll-pillars-grain {
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 2 !important;
+  opacity: .35 !important;
+  pointer-events: none !important;
+  background-image: radial-gradient(circle, rgba(119, 175, 226, .35) 1.4px, transparent 1.6px) !important;
+  background-size: 84px 84px !important;
+  mask-image: linear-gradient(180deg, transparent, #000 16%, #000 86%, transparent) !important;
+}
+
+body.page-methode .vp-scroll-pillars-hint {
+  position: absolute !important;
+  left: 50% !important;
+  bottom: 22px !important;
+  transform: translateX(-50%) !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  color: #748396 !important;
+  font-size: 13px !important;
+  z-index: 3 !important;
+  opacity: .78 !important;
+}
+
+body.page-methode .vp-scroll-pillars-hint span {
+  width: 18px !important;
+  height: 30px !important;
+  border: 1.5px solid currentColor !important;
+  border-radius: 999px !important;
+  position: relative !important;
+}
+
+body.page-methode .vp-scroll-pillars-hint span::before {
+  content: "";
+  position: absolute !important;
+  left: 50% !important;
+  top: 6px !important;
+  width: 4px !important;
+  height: 4px !important;
+  border-radius: 50% !important;
+  background: currentColor !important;
+  transform: translateX(-50%) !important;
+  animation: vp-pillars-wheel 1.5s ease-in-out infinite !important;
+}
+
+@keyframes vp-pillars-wheel {
+  0% { transform: translate(-50%, 0); opacity: 0; }
+  25% { opacity: 1; }
+  80% { transform: translate(-50%, 12px); opacity: 0; }
+  100% { opacity: 0; }
+}
+
+@media (max-width: 1060px) {
+  body.page-methode .vp-scroll-pillars-grid {
+    grid-template-columns: repeat(3, minmax(190px, 1fr)) !important;
+  }
+
+  body.page-methode .vp-scroll-pillars-section {
+    min-height: 350vh !important;
+  }
+}
+
+@media (max-width: 720px) {
+  body.page-methode .vp-scroll-pillars-sticky {
+    position: relative !important;
+    align-items: start !important;
+    min-height: auto !important;
+  }
+
+  body.page-methode .vp-scroll-pillars-section {
+    min-height: auto !important;
+  }
+
+  body.page-methode .vp-scroll-pillars-grid {
+    grid-template-columns: 1fr !important;
+    max-width: 380px !important;
+    margin-inline: auto !important;
+  }
+
+  body.page-methode .vp-scroll-pillar-card,
+  body.page-methode .vp-scroll-pillar-card:nth-child(n) {
+    min-height: 380px !important;
+    opacity: 1 !important;
+    filter: none !important;
+    transform: none !important;
+  }
+
+  body.page-methode .vp-scroll-pillars-hint {
+    display: none !important;
+  }
+
+  body.page-methode .vp-scroll-pillars-head h2 {
+    letter-spacing: -0.06em !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.page-methode .vp-scroll-pillar-card,
+  body.page-methode .vp-scroll-pillar-card:nth-child(n) {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+    transition-duration: .01ms !important;
+  }
+
+  body.page-methode .vp-scroll-pillars-hint span::before {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+
+
+/* =========================================================
+   Hotfix Page Standard — blocage réel de la section piliers
+   ---------------------------------------------------------
+   La section occupe un écran : le scroll est consommé par le
+   JavaScript pour afficher les 5 piliers avant de laisser la
+   page repartir vers la section suivante.
+   ========================================================= */
+@media (min-width: 721px) {
+  body.page-methode .vp-scroll-pillars-section {
+    min-height: 100vh !important;
+  }
+
+  body.page-methode .vp-scroll-pillars-sticky {
+    position: relative !important;
+    top: auto !important;
+    min-height: 100vh !important;
+  }
+
+  body.page-methode .vp-scroll-pillars-section.vp-scroll-pillars-locked {
+    cursor: ns-resize !important;
+  }
+}
+
+
+/* =========================================================
+   Hotfix accueil — suppression de l'encart bas + recadrage hero
+   ---------------------------------------------------------
+   - supprime l'encart "Pas de réservation floue"
+   - accentue le recadrage de l'image haute pour ne plus voir
+     le texte intégré sur la gauche
+   ========================================================= */
+body.page-accueil-rythme .hp-hero-note {
+  display: none !important;
+}
+
+body.page-accueil-rythme .hp-hero-photo {
+  aspect-ratio: 16 / 8.1 !important;
+}
+
+body.page-accueil-rythme .hp-hero-photo img {
+  width: 178% !important;
+  max-width: none !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  object-position: 100% center !important;
+  transform: scale(1.02) !important;
+  transform-origin: center center !important;
+}
+
+@media (max-width: 980px) {
+  body.page-accueil-rythme .hp-hero-photo img {
+    width: 190% !important;
+    object-position: 100% center !important;
+  }
+}
+
+@media (max-width: 640px) {
+  body.page-accueil-rythme .hp-hero-photo img {
+    width: 205% !important;
+    object-position: 100% center !important;
+  }
+}
+
+
+/* =========================================================
+   Hotfix accueil — nouvelle image hero fournie par le client
+   ---------------------------------------------------------
+   Remplace l'ancien visuel et rétablit un cadrage normal,
+   car le zoom agressif n'est plus nécessaire.
+   ========================================================= */
+body.page-accueil-rythme .hp-hero-note {
+  display: none !important;
+}
+
+body.page-accueil-rythme .hp-hero-photo {
+  aspect-ratio: 16 / 8.2 !important;
+  overflow: hidden !important;
+}
+
+body.page-accueil-rythme .hp-hero-photo img {
+  width: 100% !important;
+  max-width: none !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  object-position: center center !important;
+  transform: none !important;
+  transform-origin: center center !important;
+}
+
+@media (max-width: 980px) {
+  body.page-accueil-rythme .hp-hero-photo img {
+    width: 100% !important;
+    object-position: center center !important;
+  }
+}
+
+@media (max-width: 640px) {
+  body.page-accueil-rythme .hp-hero-photo img {
+    width: 100% !important;
+    object-position: center center !important;
+  }
+}
+
+/* =========================================================
+   Hotfix accueil — suppression encart bas droit + photo pleine largeur
+   ---------------------------------------------------------
+   Corrige le bloc visuel hero : l'encart texte "Pas un cours de combat"
+   est retiré et la photo d'exercice prend toute la largeur du bas.
+   ========================================================= */
+body.page-accueil-rythme .hp-hero-visual {
+  gap: 12px !important;
+}
+
+body.page-accueil-rythme .hp-hero-mosaic {
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: 0 !important;
+}
+
+body.page-accueil-rythme .hp-hero-mosaic article {
+  display: none !important;
+}
+
+body.page-accueil-rythme .hp-hero-mosaic figure {
+  width: 100% !important;
+  min-height: 210px !important;
+  aspect-ratio: 16 / 7.2 !important;
+  border-radius: 18px !important;
+}
+
+body.page-accueil-rythme .hp-hero-mosaic figure img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  object-position: center 46% !important;
+}
+
+@media (max-width: 980px) {
+  body.page-accueil-rythme .hp-hero-mosaic figure {
+    min-height: 220px !important;
+    aspect-ratio: 16 / 8.5 !important;
+  }
+}
+
+@media (max-width: 640px) {
+  body.page-accueil-rythme .hp-hero-mosaic figure {
+    min-height: 220px !important;
+    aspect-ratio: 4 / 3 !important;
+  }
+}
+
+
+/* =========================================================
+   Hotfix accueil — texte encart repositionné
+   ---------------------------------------------------------
+   Le titre en gras passe entre les deux images. Le petit
+   encadré reste présent avec son texte, légèrement agrandi.
+   ========================================================= */
+body.page-accueil-rythme .hp-hero-note {
+  display: none !important;
+}
+
+body.page-accueil-rythme .hp-hero-visual {
+  gap: 12px !important;
+}
+
+body.page-accueil-rythme .hp-hero-claim {
+  display: block !important;
+  padding: 4px 8px 0 !important;
+  color: #fff !important;
+}
+
+body.page-accueil-rythme .hp-hero-claim strong {
+  display: block !important;
+  color: #fff !important;
+  font-size: clamp(1.08rem, 1.55vw, 1.34rem) !important;
+  line-height: 1.05 !important;
+  letter-spacing: -0.035em !important;
+  max-width: 22ch !important;
+}
+
+body.page-accueil-rythme .hp-hero-claim::before {
+  content: "";
+  display: block;
+  width: 44px;
+  height: 3px;
+  margin-bottom: 12px;
+  border-radius: 999px;
+  background: #66d9ff;
+  box-shadow: 0 0 16px rgba(102,217,255,.56);
+}
+
+body.page-accueil-rythme .hp-hero-mosaic {
+  display: grid !important;
+  grid-template-columns: 1.15fr .85fr !important;
+  gap: 12px !important;
+}
+
+body.page-accueil-rythme .hp-hero-mosaic figure {
+  width: auto !important;
+  min-height: 170px !important;
+  aspect-ratio: auto !important;
+  border-radius: 18px !important;
+}
+
+body.page-accueil-rythme .hp-hero-mosaic figure img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  object-position: center 46% !important;
+}
+
+body.page-accueil-rythme .hp-hero-mosaic article {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  min-height: 170px !important;
+  padding: 20px !important;
+  border-radius: 18px !important;
+}
+
+body.page-accueil-rythme .hp-hero-mosaic article span {
+  display: block !important;
+  width: 44px !important;
+  height: 3px !important;
+  margin-bottom: 14px !important;
+  border-radius: 999px !important;
+}
+
+body.page-accueil-rythme .hp-hero-mosaic article p {
+  margin: 0 !important;
+  font-size: .95rem !important;
+  line-height: 1.62 !important;
+}
+
+@media (max-width: 980px) {
+  body.page-accueil-rythme .hp-hero-mosaic {
+    grid-template-columns: 1fr !important;
+  }
+
+  body.page-accueil-rythme .hp-hero-mosaic figure,
+  body.page-accueil-rythme .hp-hero-mosaic article {
+    min-height: 190px !important;
+  }
+}
+
+@media (max-width: 640px) {
+  body.page-accueil-rythme .hp-hero-claim strong {
+    max-width: none !important;
+  }
+
+  body.page-accueil-rythme .hp-hero-mosaic figure,
+  body.page-accueil-rythme .hp-hero-mosaic article {
+    min-height: 180px !important;
+  }
+}
+
+
+/* =========================================================
+   Hotfix accueil — 3 visuels terrain de même taille
+   ---------------------------------------------------------
+   Les trois photos de la section "Sur le terrain" sont
+   empilées avec le même format et le même espacement.
+   ========================================================= */
+body.page-accueil-rythme .vp-home-visual-panel {
+  gap: 10px !important;
+  padding: 12px !important;
+}
+
+body.page-accueil-rythme .vp-home-visual-main,
+body.page-accueil-rythme .vp-home-visual-duo figure {
+  width: 100% !important;
+  aspect-ratio: 16 / 7.6 !important;
+  min-height: 0 !important;
+  border-radius: 22px !important;
+}
+
+body.page-accueil-rythme .vp-home-visual-duo {
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: 10px !important;
+}
+
+body.page-accueil-rythme .vp-home-visual-panel img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+}
+
+body.page-accueil-rythme .vp-home-visual-main img {
+  object-position: center center !important;
+}
+
+body.page-accueil-rythme .vp-home-visual-duo figure:first-child img {
+  object-position: center 46% !important;
+}
+
+body.page-accueil-rythme .vp-home-visual-duo figure:last-child img {
+  object-position: center 50% !important;
+}
+
+@media (max-width: 640px) {
+  body.page-accueil-rythme .vp-home-visual-panel {
+    gap: 8px !important;
+    padding: 10px !important;
+  }
+
+  body.page-accueil-rythme .vp-home-visual-main,
+  body.page-accueil-rythme .vp-home-visual-duo figure {
+    aspect-ratio: 16 / 8.4 !important;
+    border-radius: 18px !important;
+  }
+
+  body.page-accueil-rythme .vp-home-visual-duo {
+    gap: 8px !important;
+  }
+}
+
+
+/* =========================================================
+   Hotfix accueil — bloc images terrain plus compact
+   ---------------------------------------------------------
+   Aligne visuellement le bloc des 3 images avec la hauteur du
+   texte à gauche, tout en gardant les trois visuels identiques.
+   ========================================================= */
+body.page-accueil-rythme .vp-home-visual-grid {
+  align-items: start !important;
+}
+
+body.page-accueil-rythme .vp-home-visual-panel {
+  width: min(520px, 100%) !important;
+  max-width: 520px !important;
+  justify-self: end !important;
+  gap: 10px !important;
+  padding: 10px !important;
+}
+
+body.page-accueil-rythme .vp-home-visual-main,
+body.page-accueil-rythme .vp-home-visual-duo figure {
+  aspect-ratio: 16 / 5.35 !important;
+  min-height: 0 !important;
+  border-radius: 20px !important;
+}
+
+body.page-accueil-rythme .vp-home-visual-main img {
+  object-position: center center !important;
+}
+
+/* Image du centre : cadrage remonté pour faire rentrer la tête du formateur. */
+body.page-accueil-rythme .vp-home-visual-duo figure:first-child img {
+  object-position: center 18% !important;
+}
+
+body.page-accueil-rythme .vp-home-visual-duo figure:last-child img {
+  object-position: center 26% !important;
+}
+
+@media (max-width: 980px) {
+  body.page-accueil-rythme .vp-home-visual-panel {
+    justify-self: center !important;
+  }
+}
+
+@media (max-width: 640px) {
+  body.page-accueil-rythme .vp-home-visual-panel {
+    gap: 8px !important;
+    padding: 10px !important;
+  }
+
+  body.page-accueil-rythme .vp-home-visual-main,
+  body.page-accueil-rythme .vp-home-visual-duo figure {
+    aspect-ratio: 16 / 6.4 !important;
+    border-radius: 18px !important;
+  }
+
+  body.page-accueil-rythme .vp-home-visual-duo figure:first-child img {
+    object-position: center 14% !important;
+  }
+}
+
+
+/* =========================================================
+   Hotfix accueil — bloc images étendu entre les repères rouges
+   ---------------------------------------------------------
+   Le panneau des 3 images est légèrement remonté et les visuels
+   sont plus hauts, pour s’aligner visuellement avec la colonne
+   texte à gauche. Le visuel central est recadré vers le haut
+   pour bien montrer la tête du formateur.
+   ========================================================= */
+body.page-accueil-rythme .vp-home-visual-grid {
+  align-items: start !important;
+}
+
+body.page-accueil-rythme .vp-home-visual-panel {
+  width: min(500px, 100%) !important;
+  max-width: 500px !important;
+  justify-self: end !important;
+  gap: 10px !important;
+  padding: 10px !important;
+  margin-top: -12px !important;
+  margin-bottom: -12px !important;
+}
+
+body.page-accueil-rythme .vp-home-visual-main,
+body.page-accueil-rythme .vp-home-visual-duo figure {
+  width: 100% !important;
+  aspect-ratio: 16 / 6.45 !important;
+  min-height: 0 !important;
+  border-radius: 20px !important;
+}
+
+body.page-accueil-rythme .vp-home-visual-panel img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+}
+
+body.page-accueil-rythme .vp-home-visual-main img {
+  object-position: center center !important;
+}
+
+body.page-accueil-rythme .vp-home-visual-duo figure:first-child img {
+  object-position: center 10% !important;
+}
+
+body.page-accueil-rythme .vp-home-visual-duo figure:last-child img {
+  object-position: center 8% !important;
+}
+
+@media (max-width: 980px) {
+  body.page-accueil-rythme .vp-home-visual-panel {
+    justify-self: center !important;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+  }
+}
+
+@media (max-width: 640px) {
+  body.page-accueil-rythme .vp-home-visual-panel {
+    gap: 8px !important;
+    padding: 10px !important;
+    width: min(100%, 520px) !important;
+  }
+
+  body.page-accueil-rythme .vp-home-visual-main,
+  body.page-accueil-rythme .vp-home-visual-duo figure {
+    aspect-ratio: 16 / 7.2 !important;
+    border-radius: 18px !important;
+  }
+
+  body.page-accueil-rythme .vp-home-visual-duo figure:first-child img {
+    object-position: center 8% !important;
+  }
+}
+
+
+/* =========================================================
+   Hotfix accueil — animation scroll section "Le standard"
+   ---------------------------------------------------------
+   Les cartes de progression se déploient une par une pendant
+   que la section reste sticky. La page ne passe à la suite
+   qu'après avoir scrollé toute l'animation.
+   ========================================================= */
+@media (min-width: 901px) {
+  body.page-accueil-rythme .hp-standard {
+    --hp-standard-blue: #0c4c7d;
+    position: relative !important;
+    min-height: 220vh !important;
+    display: block !important;
+    padding: 0 !important;
+    overflow: clip !important;
+    background: #eaf3f8 !important;
+  }
+
+  body.page-accueil-rythme .hp-standard::before {
+    content: "" !important;
+    position: absolute !important;
+    right: -22vw !important;
+    top: -30vh !important;
+    width: 92vw !important;
+    height: 72vw !important;
+    border-radius: 50% !important;
+    border: 82px solid rgba(88, 169, 235, 0.32) !important;
+    transform: rotate(18deg) scaleX(1.25) !important;
+    filter: blur(1px) !important;
+    pointer-events: none !important;
+    z-index: 0 !important;
+  }
+
+  body.page-accueil-rythme .hp-standard::after {
+    content: "" !important;
+    position: absolute !important;
+    left: 37% !important;
+    top: 62% !important;
+    width: 50vw !important;
+    height: 24px !important;
+    background: linear-gradient(90deg, rgba(76, 158, 224, 0.55), rgba(76, 158, 224, 0)) !important;
+    border-radius: 999px !important;
+    transform: rotate(-5deg) !important;
+    filter: blur(2px) !important;
+    pointer-events: none !important;
+    z-index: 0 !important;
+  }
+
+  body.page-accueil-rythme .hp-standard-grid {
+    position: sticky !important;
+    top: 0 !important;
+    min-height: 100vh !important;
+    z-index: 3 !important;
+    display: grid !important;
+    grid-template-columns: 0.95fr 1.05fr !important;
+    gap: clamp(48px, 7vw, 110px) !important;
+    align-items: center !important;
+    padding-top: 70px !important;
+    padding-bottom: 70px !important;
+  }
+
+  body.page-accueil-rythme .hp-standard-grid > div:first-child {
+    transform-origin: left center !important;
+    will-change: transform, opacity !important;
+  }
+
+  body.page-accueil-rythme .hp-standard-grid h2 {
+    max-width: 590px !important;
+  }
+
+  body.page-accueil-rythme .hp-standard-grid > div > p {
+    max-width: 585px !important;
+  }
+
+  body.page-accueil-rythme .hp-standard .hp-timeline {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 16px !important;
+    list-style: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  body.page-accueil-rythme .hp-standard.hp-standard-scroll-ready .hp-timeline li {
+    height: 0;
+    opacity: 0;
+    overflow: hidden !important;
+    will-change: height, opacity, transform !important;
+  }
+
+  body.page-accueil-rythme .hp-standard .hp-timeline li {
+    min-height: 104px !important;
+    display: grid !important;
+    grid-template-columns: 46px 1fr !important;
+    gap: 24px !important;
+    align-items: center !important;
+    padding: 30px 34px 30px 20px !important;
+    border-radius: 24px !important;
+    background: rgba(255, 255, 255, 0.9) !important;
+    box-shadow: 0 22px 70px rgba(8, 30, 50, 0.12) !important;
+    backdrop-filter: blur(12px) !important;
+    transform-origin: top center !important;
+  }
+
+  body.page-accueil-rythme .hp-standard .hp-timeline li > span {
+    width: 42px !important;
+    height: 42px !important;
+    border-radius: 12px !important;
+    display: grid !important;
+    place-items: center !important;
+    background: var(--hp-standard-blue) !important;
+    color: #fff !important;
+    font-size: 19px !important;
+    font-weight: 800 !important;
+    flex: none !important;
+  }
+
+  body.page-accueil-rythme .hp-standard .hp-timeline strong {
+    display: block !important;
+    margin: 0 0 8px !important;
+    color: #071224 !important;
+    font-size: 16px !important;
+    line-height: 1.2 !important;
+  }
+
+  body.page-accueil-rythme .hp-standard .hp-timeline p {
+    margin: 0 !important;
+    color: #4a5d75 !important;
+    font-size: 16px !important;
+    line-height: 1.5 !important;
+  }
+
+  body.page-accueil-rythme .hp-standard-progress {
+    position: absolute !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    height: 5px !important;
+    z-index: 4 !important;
+    background: rgba(12, 76, 125, 0.10) !important;
+    overflow: hidden !important;
+  }
+
+  body.page-accueil-rythme .hp-standard-progress span {
+    display: block !important;
+    width: 0%;
+    height: 100% !important;
+    background: var(--hp-standard-blue) !important;
+  }
+}
+
+@media (max-width: 900px), (prefers-reduced-motion: reduce) {
+  body.page-accueil-rythme .hp-standard {
+    min-height: auto !important;
+  }
+
+  body.page-accueil-rythme .hp-standard-grid {
+    position: relative !important;
+    top: auto !important;
+  }
+
+  body.page-accueil-rythme .hp-standard .hp-timeline li {
+    height: auto !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  body.page-accueil-rythme .hp-standard-progress {
+    display: none !important;
+  }
+}
+
+
+/* =========================================================
+   Hotfix accueil — animation premium section "Le standard"
+   ---------------------------------------------------------
+   Version avec titre masqué ligne par ligne, cartes premium,
+   track vertical, orb lumineux et barre de progression.
+   ========================================================= */
+body.page-accueil-rythme .hp-standard-premium {
+  --hp-standard-bg: #eaf3f8;
+  --hp-standard-text: #061224;
+  --hp-standard-muted: #40566f;
+  --hp-standard-blue: #0b4c7f;
+  --hp-standard-blue-soft: #82cff7;
+  --hp-standard-card: rgba(255, 255, 255, 0.78);
+  position: relative !important;
+  min-height: 100vh !important;
+  overflow: hidden !important;
+  isolation: isolate !important;
+  display: flex !important;
+  align-items: center !important;
+  padding: 70px 0 !important;
+  background:
+    radial-gradient(circle at 8% 20%, rgba(255,255,255,0.82), transparent 24%),
+    radial-gradient(circle at 82% 18%, rgba(130, 207, 247, 0.18), transparent 28%),
+    radial-gradient(circle at 52% 54%, rgba(130, 207, 247, 0.16), transparent 34%),
+    linear-gradient(135deg, #edf7fb 0%, #e7f1f7 55%, #eff8fb 100%) !important;
+}
+
+body.page-accueil-rythme .hp-standard-premium::before {
+  content: "" !important;
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 0 !important;
+  opacity: 0.24 !important;
+  background-image:
+    linear-gradient(rgba(12, 76, 125, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(12, 76, 125, 0.08) 1px, transparent 1px) !important;
+  background-size: 72px 72px !important;
+  -webkit-mask-image: radial-gradient(circle at 50% 50%, black, transparent 76%) !important;
+  mask-image: radial-gradient(circle at 50% 50%, black, transparent 76%) !important;
+  pointer-events: none !important;
+  transform: none !important;
+  border: 0 !important;
+  filter: none !important;
+}
+
+body.page-accueil-rythme .hp-standard-premium::after {
+  content: none !important;
+}
+
+body.page-accueil-rythme .hp-standard-orb {
+  position: absolute !important;
+  z-index: 0 !important;
+  width: 380px !important;
+  height: 380px !important;
+  left: 42% !important;
+  top: 42% !important;
+  border-radius: 50% !important;
+  background: radial-gradient(circle, rgba(112, 202, 249, 0.36), rgba(112, 202, 249, 0.08) 45%, transparent 70%) !important;
+  filter: blur(24px) !important;
+  transform: translate(-50%, -50%) scale(.5);
+  opacity: 0;
+  pointer-events: none !important;
+}
+
+body.page-accueil-rythme .hp-standard-noise {
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 1 !important;
+  opacity: 0.04 !important;
+  pointer-events: none !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140' viewBox='0 0 140 140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.7'/%3E%3C/svg%3E") !important;
+}
+
+body.page-accueil-rythme .hp-standard-premium .hp-standard-grid {
+  position: relative !important;
+  top: auto !important;
+  z-index: 2 !important;
+  width: min(1240px, calc(100% - 80px)) !important;
+  min-height: auto !important;
+  margin: 0 auto !important;
+  display: grid !important;
+  grid-template-columns: .95fr 1.05fr !important;
+  gap: clamp(48px, 7vw, 110px) !important;
+  align-items: center !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+body.page-accueil-rythme .hp-standard-left {
+  transform-origin: left center !important;
+}
+
+body.page-accueil-rythme .hp-standard-pill {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  padding: 6px 14px !important;
+  border-radius: 999px !important;
+  background: rgba(248, 252, 255, 0.82) !important;
+  color: #0b3b63 !important;
+  font-size: 13px !important;
+  font-weight: 850 !important;
+  box-shadow: inset 0 0 0 1px rgba(7, 18, 36, 0.08), 0 18px 44px rgba(8, 30, 50, 0.08) !important;
+  backdrop-filter: blur(14px) !important;
+}
+
+body.page-accueil-rythme .hp-standard-pill::before {
+  content: "" !important;
+  width: 8px !important;
+  height: 8px !important;
+  border-radius: 50% !important;
+  background: var(--hp-standard-blue-soft) !important;
+  box-shadow: 0 0 0 6px rgba(130, 207, 247, 0.16) !important;
+}
+
+body.page-accueil-rythme .hp-standard-title {
+  max-width: 590px !important;
+  margin: 26px 0 24px !important;
+  color: var(--hp-standard-text) !important;
+  font-size: clamp(54px, 7.2vw, 104px) !important;
+  line-height: .95 !important;
+  letter-spacing: -.075em !important;
+  font-weight: 950 !important;
+}
+
+body.page-accueil-rythme .hp-standard-title-mask {
+  display: block !important;
+  overflow: hidden !important;
+}
+
+body.page-accueil-rythme .hp-standard-title-line {
+  display: block !important;
+  transform-origin: left bottom !important;
+  will-change: transform, opacity !important;
+}
+
+body.page-accueil-rythme .hp-standard-copy {
+  max-width: 585px !important;
+  margin: 0 0 12px !important;
+  color: #334963 !important;
+  font-size: 16px !important;
+  line-height: 1.7 !important;
+}
+
+body.page-accueil-rythme .hp-standard-button {
+  position: relative !important;
+  overflow: hidden !important;
+  min-width: 230px !important;
+  margin-top: 4px !important;
+  box-shadow: 0 22px 60px rgba(43, 157, 216, 0.18) !important;
+}
+
+body.page-accueil-rythme .hp-standard-button::after {
+  content: "" !important;
+  position: absolute !important;
+  inset: -40% auto -40% -55% !important;
+  width: 48% !important;
+  transform: rotate(18deg) !important;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.85), transparent) !important;
+  transition: left .65s ease !important;
+}
+
+body.page-accueil-rythme .hp-standard-button:hover::after {
+  left: 110% !important;
+}
+
+body.page-accueil-rythme .hp-standard-cards-wrap {
+  position: relative !important;
+}
+
+body.page-accueil-rythme .hp-standard-step-track {
+  position: absolute !important;
+  top: 24px !important;
+  bottom: 24px !important;
+  left: -28px !important;
+  width: 2px !important;
+  border-radius: 999px !important;
+  background: rgba(12, 76, 125, .14) !important;
+}
+
+body.page-accueil-rythme .hp-standard-step-track span {
+  position: absolute !important;
+  left: 0 !important;
+  top: 0 !important;
+  width: 100% !important;
+  height: 0%;
+  border-radius: inherit !important;
+  background: linear-gradient(180deg, var(--hp-standard-blue-soft), var(--hp-standard-blue)) !important;
+}
+
+body.page-accueil-rythme .hp-standard-premium .hp-timeline {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 16px !important;
+  list-style: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+body.page-accueil-rythme .hp-standard-premium .hp-standard-card {
+  display: block !important;
+  height: auto;
+  min-height: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  overflow: hidden !important;
+  opacity: 1;
+  perspective: 900px !important;
+  will-change: height, opacity !important;
+}
+
+body.page-accueil-rythme .hp-standard-js .hp-standard-card {
+  height: 0;
+  opacity: 0;
+}
+
+body.page-accueil-rythme .hp-standard-card-inner {
+  position: relative !important;
+  min-height: 104px !important;
+  display: grid !important;
+  grid-template-columns: 46px 1fr !important;
+  gap: 24px !important;
+  align-items: center !important;
+  padding: 30px 34px 30px 20px !important;
+  border-radius: 26px !important;
+  border: 1px solid rgba(255,255,255,.72) !important;
+  background:
+    linear-gradient(135deg, rgba(255,255,255,.92), rgba(255,255,255,.66)),
+    var(--hp-standard-card) !important;
+  box-shadow: 0 22px 70px rgba(8, 30, 50, .12) !important;
+  backdrop-filter: blur(16px) !important;
+  transform-origin: top center !important;
+  will-change: transform, box-shadow !important;
+}
+
+body.page-accueil-rythme .hp-standard-card-inner::before {
+  content: "" !important;
+  position: absolute !important;
+  inset: 0 !important;
+  border-radius: inherit !important;
+  padding: 1px !important;
+  background: linear-gradient(135deg, rgba(130,207,247,.72), rgba(255,255,255,.08), rgba(12,76,125,.18)) !important;
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0) !important;
+  -webkit-mask-composite: xor !important;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0) !important;
+  mask-composite: exclude !important;
+  opacity: 0 !important;
+  transition: opacity .35s ease !important;
+  pointer-events: none !important;
+}
+
+body.page-accueil-rythme .hp-standard-card.is-active .hp-standard-card-inner::before {
+  opacity: 1 !important;
+}
+
+body.page-accueil-rythme .hp-standard-card.is-active .hp-standard-card-inner {
+  box-shadow: 0 26px 90px rgba(8, 30, 50, .17), 0 0 0 8px rgba(130,207,247,.08) !important;
+}
+
+body.page-accueil-rythme .hp-standard-premium .hp-standard-card span {
+  position: relative !important;
+  width: 42px !important;
+  height: 42px !important;
+  border-radius: 13px !important;
+  display: grid !important;
+  place-items: center !important;
+  background: linear-gradient(145deg, #0f5d96, var(--hp-standard-blue)) !important;
+  color: #fff !important;
+  font-size: 19px !important;
+  font-weight: 850 !important;
+  box-shadow: 0 14px 30px rgba(12,76,125,.28) !important;
+}
+
+body.page-accueil-rythme .hp-standard-premium .hp-standard-card span::after {
+  content: "" !important;
+  position: absolute !important;
+  inset: -7px !important;
+  border-radius: 18px !important;
+  border: 1px solid rgba(12,76,125,.20) !important;
+  opacity: 0;
+  transform: scale(.82);
+}
+
+body.page-accueil-rythme .hp-standard-card.is-active span::after {
+  animation: hp-standard-pulse .8s ease forwards !important;
+}
+
+@keyframes hp-standard-pulse {
+  0% { opacity: 0; transform: scale(.82); }
+  45% { opacity: 1; }
+  100% { opacity: 0; transform: scale(1.22); }
+}
+
+body.page-accueil-rythme .hp-standard-premium .hp-timeline strong {
+  display: block !important;
+  margin: 0 0 8px !important;
+  color: var(--hp-standard-text) !important;
+  font-size: 16px !important;
+  line-height: 1.2 !important;
+}
+
+body.page-accueil-rythme .hp-standard-premium .hp-timeline p {
+  margin: 0 !important;
+  color: #4a5d75 !important;
+  font-size: 16px !important;
+  line-height: 1.5 !important;
+}
+
+body.page-accueil-rythme .hp-standard-premium .hp-standard-progress {
+  position: absolute !important;
+  z-index: 4 !important;
+  left: 50% !important;
+  right: auto !important;
+  bottom: 28px !important;
+  width: min(420px, calc(100% - 48px)) !important;
+  height: 7px !important;
+  transform: translateX(-50%) !important;
+  border-radius: 999px !important;
+  background: rgba(12, 76, 125, .10) !important;
+  overflow: hidden !important;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.45) !important;
+}
+
+body.page-accueil-rythme .hp-standard-premium .hp-standard-progress span {
+  display: block !important;
+  width: 0%;
+  height: 100% !important;
+  border-radius: inherit !important;
+  background: linear-gradient(90deg, var(--hp-standard-blue-soft), var(--hp-standard-blue)) !important;
+  box-shadow: 0 0 22px rgba(76,158,224,.70) !important;
+}
+
+@media (max-width: 900px) {
+  body.page-accueil-rythme .hp-standard-premium {
+    min-height: auto !important;
+    padding: 80px 0 !important;
+  }
+
+  body.page-accueil-rythme .hp-standard-premium .hp-standard-grid {
+    width: min(100% - 32px, 640px) !important;
+    grid-template-columns: 1fr !important;
+  }
+
+  body.page-accueil-rythme .hp-standard-title {
+    font-size: clamp(44px, 14vw, 72px) !important;
+  }
+
+  body.page-accueil-rythme .hp-standard-card-inner {
+    grid-template-columns: 42px 1fr !important;
+    padding: 24px 22px !important;
+  }
+
+  body.page-accueil-rythme .hp-standard-step-track,
+  body.page-accueil-rythme .hp-standard-progress {
+    display: none !important;
+  }
+}
+
+@media (max-width: 900px), (prefers-reduced-motion: reduce) {
+  body.page-accueil-rythme .hp-standard-premium .hp-standard-card {
+    height: auto !important;
+    opacity: 1 !important;
+  }
+
+  body.page-accueil-rythme .hp-standard-card-inner,
+  body.page-accueil-rythme .hp-standard-title-line,
+  body.page-accueil-rythme .hp-standard-pill,
+  body.page-accueil-rythme .hp-standard-copy,
+  body.page-accueil-rythme .hp-standard-button {
+    transform: none !important;
+    opacity: 1 !important;
+    filter: none !important;
+  }
+
+  body.page-accueil-rythme .hp-standard-orb {
+    opacity: 1 !important;
+    transform: translate(-50%, -50%) scale(1) !important;
+  }
+}
+
+
+
+
+/* =========================================================
+   Correctif accueil — ruban derrière le fond Standard
+   ---------------------------------------------------------
+   Le ruban n'est pas masqué au scroll. La section Standard
+   possède un fond opaque au-dessus du ruban, ce qui évite
+   l'apparition/disparition brutale avant la section.
+   ========================================================= */
+body.hp-standard-ribbon-hidden .vpl-scroll-ribbon,
+body.hp-standard-ribbon-hidden .vpl-ribbon-base,
+body.hp-standard-ribbon-hidden .vpl-ribbon-progress,
+body.hp-standard-ribbon-hidden .vpl-ribbon-dot {
+  display: block !important;
+  visibility: visible !important;
+}
+
+body.page-accueil-rythme .hp-standard-premium {
+  position: relative !important;
+  z-index: 2 !important;
+  background: #eef7fb !important;
+  isolation: isolate !important;
+}
+
+body.page-accueil-rythme .hp-standard-premium::before {
+  z-index: 0 !important;
+  opacity: 1 !important;
+  background:
+    radial-gradient(circle at 8% 20%, rgba(255,255,255,1), transparent 28%),
+    radial-gradient(circle at 78% 18%, rgba(130, 207, 247, 0.06), transparent 30%),
+    radial-gradient(circle at 52% 58%, rgba(130, 207, 247, 0.05), transparent 36%),
+    linear-gradient(135deg, #edf7fb 0%, #e7f1f7 55%, #eff8fb 100%) !important;
+}
+
+body.page-accueil-rythme .hp-standard-premium .hp-standard-grid,
+body.page-accueil-rythme .hp-standard-premium .hp-standard-orb,
+body.page-accueil-rythme .hp-standard-premium .hp-standard-noise,
+body.page-accueil-rythme .hp-standard-premium .hp-standard-progress {
+  position: relative !important;
+}
+
+body.page-accueil-rythme .hp-standard-premium .hp-standard-grid,
+body.page-accueil-rythme .hp-standard-premium .hp-standard-progress {
+  z-index: 3 !important;
+}
+
+
+/* =========================================================
+   Correctif propre Formateur — ruban arrière-plan, photo unique,
+   cartes conservées
+   ========================================================= */
+
+/* Le ruban reste décoratif et passe derrière les zones de contenu, sans modifier les fonds des cards. */
+body.page-formateur-redesign {
+  position: relative !important;
+  isolation: isolate !important;
+}
+
+body.page-formateur-redesign > .vpl-scroll-ribbon,
+body.page-formateur-redesign .vpl-scroll-ribbon {
+  z-index: 0 !important;
+  pointer-events: none !important;
+  opacity: .26 !important;
+  mix-blend-mode: normal !important;
+}
+
+body.page-formateur-redesign > main,
+body.page-formateur-redesign main > section,
+body.page-formateur-redesign > footer,
+body.page-formateur-redesign .vpl-marquee,
+body.page-formateur-redesign .vptr-background-orbs {
+  position: relative !important;
+}
+
+body.page-formateur-redesign > main,
+body.page-formateur-redesign main > section,
+body.page-formateur-redesign > footer,
+body.page-formateur-redesign .vpl-marquee {
+  z-index: 2 !important;
+}
+
+body.page-formateur-redesign .vpl-nav {
+  z-index: 100 !important;
+}
+
+/* Section Transmission : même mise en page sombre, mais avec une seule photo agrandie. */
+body.page-formateur-redesign .vp-visual-story--trainer-dark {
+  padding: clamp(84px, 9vw, 136px) 0 !important;
+  background:
+    radial-gradient(circle at 18% 20%, rgba(74, 184, 255, .12), transparent 24%),
+    linear-gradient(135deg, #07111f 0%, #0d2943 100%) !important;
+  color: #fff !important;
+}
+
+body.page-formateur-redesign .vp-visual-story--trainer-dark .vp-visual-story-grid {
+  grid-template-columns: minmax(500px, .92fr) minmax(0, 1fr) !important;
+  gap: clamp(44px, 6vw, 88px) !important;
+  align-items: center !important;
+}
+
+body.page-formateur-redesign .vp-visual-story--trainer-dark .vp-visual-copy h2 {
+  max-width: 10.8ch !important;
+  color: #fff !important;
+}
+
+body.page-formateur-redesign .vp-visual-story--trainer-dark .vp-visual-copy p {
+  max-width: 58ch !important;
+  color: rgba(255, 255, 255, .78) !important;
+}
+
+body.page-formateur-redesign .vp-visual-story--trainer-dark .eyebrow,
+body.page-formateur-redesign .vp-visual-story--trainer-dark .vp-mini-proof span {
+  color: #fff !important;
+}
+
+body.page-formateur-redesign .vp-visual-story--trainer-dark .vp-mini-proof span {
+  background: rgba(255,255,255,.10) !important;
+  border-color: rgba(255,255,255,.22) !important;
+}
+
+body.page-formateur-redesign .vp-visual-mosaic--trainer-single {
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  width: 100% !important;
+  max-width: 650px !important;
+  justify-self: center !important;
+  align-items: center !important;
+}
+
+body.page-formateur-redesign .vp-visual-mosaic--trainer-single .vp-image-card--trainer-large {
+  width: 100% !important;
+  min-height: clamp(480px, 43vw, 650px) !important;
+  aspect-ratio: 4 / 5 !important;
+  margin: 0 !important;
+  border-color: rgba(255, 255, 255, .22) !important;
+  background: rgba(255, 255, 255, .08) !important;
+  box-shadow: 0 28px 90px rgba(0, 0, 0, .24) !important;
+}
+
+body.page-formateur-redesign .vp-visual-mosaic--trainer-single .vp-image-card--trainer-large img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  object-position: center !important;
+}
+
+/* Formules formateur : on restaure les fonds spécifiques par card. */
+body.page-formateur-redesign .vptr-catalogue-section .offer-card {
+  position: relative !important;
+  overflow: hidden !important;
+  background-size: cover !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+  color: #fff !important;
+}
+
+body.page-formateur-redesign .vptr-catalogue-section .offer-card--one {
+  background-image:
+    linear-gradient(180deg, rgba(11, 20, 32, .18) 0%, rgba(11, 20, 32, .54) 58%, rgba(11, 20, 32, .86) 100%),
+    url('/1module.png') !important;
+}
+
+body.page-formateur-redesign .vptr-catalogue-section .offer-card--two {
+  background-image:
+    linear-gradient(180deg, rgba(11, 20, 32, .16) 0%, rgba(11, 20, 32, .52) 58%, rgba(11, 20, 32, .86) 100%),
+    url('/2modules.png') !important;
+}
+
+body.page-formateur-redesign .vptr-catalogue-section .offer-card--full {
+  background-image:
+    linear-gradient(180deg, rgba(11, 20, 32, .16) 0%, rgba(11, 20, 32, .52) 58%, rgba(11, 20, 32, .86) 100%),
+    url('/packcomplet.png') !important;
+}
+
+body.page-formateur-redesign .vptr-catalogue-section .offer-card > * {
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+body.page-formateur-redesign .vptr-catalogue-section .offer-card p,
+body.page-formateur-redesign .vptr-catalogue-section .offer-card li,
+body.page-formateur-redesign .vptr-catalogue-section .offer-card span,
+body.page-formateur-redesign .vptr-catalogue-section .offer-card strong,
+body.page-formateur-redesign .vptr-catalogue-section .offer-card h3 {
+  color: #fff !important;
+}
+
+/* Catalogue : grille régulière, sans grand trou entre les lignes. */
+body.page-formateur-redesign .vptr-catalogue-section #modulesContainer.module-grid {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 22px !important;
+  align-items: stretch !important;
+  margin-top: 34px !important;
+}
+
+body.page-formateur-redesign .vptr-catalogue-section #modulesContainer .module-card,
+body.page-formateur-redesign .vptr-catalogue-section #modulesContainer .module-flip-inner {
+  min-height: 236px !important;
+}
+
+body.page-formateur-redesign .vptr-catalogue-section #modulesContainer .module-card {
+  align-self: stretch !important;
+}
+
+/* FAQ : texte réintégré avec de l'air dans les cartes. */
+body.page-formateur-redesign .vptr-faq-section .faq-grid {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 22px !important;
+  align-items: stretch !important;
+}
+
+body.page-formateur-redesign .vptr-faq-section .faq-grid .faq-card {
+  padding: clamp(22px, 2vw, 28px) !important;
+  min-height: 176px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: flex-start !important;
+}
+
+body.page-formateur-redesign .vptr-faq-section .faq-card h3 {
+  margin: 0 0 12px !important;
+  font-size: clamp(1rem, 1.4vw, 1.25rem) !important;
+  line-height: 1.12 !important;
+  letter-spacing: -.04em !important;
+}
+
+body.page-formateur-redesign .vptr-faq-section .faq-card p {
+  margin: 0 !important;
+  line-height: 1.72 !important;
+}
+
+@media (max-width: 980px) {
+  body.page-formateur-redesign .vp-visual-story--trainer-dark .vp-visual-story-grid,
+  body.page-formateur-redesign .vptr-catalogue-section #modulesContainer.module-grid,
+  body.page-formateur-redesign .vptr-faq-section .faq-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  body.page-formateur-redesign .vp-visual-mosaic--trainer-single {
+    max-width: 100% !important;
+  }
+}
+
+@media (max-width: 680px) {
+  body.page-formateur-redesign .vp-visual-mosaic--trainer-single .vp-image-card--trainer-large {
+    min-height: 390px !important;
+  }
+}
+
+
+/* =========================================================
+   Correctif Formateur — formulaire plus lisible
+   ========================================================= */
+body.page-formateur-redesign #formulaire {
+  padding: clamp(86px, 9vw, 124px) 0 clamp(82px, 8vw, 110px) !important;
+}
+
+body.page-formateur-redesign #formulaire > .container {
+  width: min(980px, calc(100% - 44px)) !important;
+}
+
+body.page-formateur-redesign #formulaire .form-card {
+  width: 100% !important;
+  padding: clamp(34px, 4.8vw, 58px) !important;
+  border-radius: 34px !important;
+  background: rgba(255, 255, 255, .90) !important;
+  box-shadow: 0 34px 90px rgba(7, 24, 44, .16) !important;
+}
+
+body.page-formateur-redesign #formulaire .form-head {
+  max-width: 780px !important;
+  margin-bottom: 26px !important;
+}
+
+body.page-formateur-redesign #formulaire .form-head h2 {
+  max-width: 740px !important;
+  font-size: clamp(3.2rem, 5.8vw, 6.3rem) !important;
+  line-height: .88 !important;
+  letter-spacing: -.085em !important;
+  margin-bottom: 18px !important;
+}
+
+body.page-formateur-redesign #formulaire .form-head p {
+  max-width: 680px !important;
+  font-size: 1rem !important;
+  line-height: 1.72 !important;
+}
+
+body.page-formateur-redesign #formulaire .form-grid {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  column-gap: 22px !important;
+  row-gap: 18px !important;
+  align-items: start !important;
+}
+
+body.page-formateur-redesign #formulaire input,
+body.page-formateur-redesign #formulaire select,
+body.page-formateur-redesign #formulaire textarea {
+  min-height: 52px !important;
+  border-radius: 12px !important;
+  font-size: .98rem !important;
+}
+
+body.page-formateur-redesign #formulaire select {
+  text-overflow: ellipsis !important;
+}
+
+body.page-formateur-redesign #formulaire .form-field.full,
+body.page-formateur-redesign #formulaire .form-field.full textarea {
+  grid-column: 1 / -1 !important;
+}
+
+body.page-formateur-redesign #formulaire textarea {
+  min-height: 150px !important;
+  resize: vertical !important;
+}
+
+body.page-formateur-redesign #formulaire .btn[type="submit"] {
+  margin-top: 20px !important;
+}
+
+body.page-formateur-redesign #formulaire .form-rgpd-note {
+  max-width: 820px !important;
+  font-size: .82rem !important;
+  line-height: 1.7 !important;
+}
+
+@media (min-width: 1040px) {
+  body.page-formateur-redesign #formulaire .form-card {
+    display: grid !important;
+    grid-template-columns: .82fr 1.18fr !important;
+    gap: clamp(34px, 4vw, 56px) !important;
+    align-items: start !important;
+  }
+
+  body.page-formateur-redesign #formulaire .form-head,
+  body.page-formateur-redesign #checkoutFeedback,
+  body.page-formateur-redesign #selectedSessionBox {
+    grid-column: 1 !important;
+  }
+
+  body.page-formateur-redesign #formulaire form {
+    grid-column: 2 !important;
+    grid-row: 1 / span 5 !important;
+  }
+
+  body.page-formateur-redesign #formulaire .form-head h2 {
+    font-size: clamp(4rem, 5.1vw, 5.6rem) !important;
+  }
+}
+
+@media (max-width: 760px) {
+  body.page-formateur-redesign #formulaire > .container {
+    width: min(100% - 28px, 620px) !important;
+  }
+
+  body.page-formateur-redesign #formulaire .form-card {
+    padding: 28px 22px !important;
+    border-radius: 26px !important;
+  }
+
+  body.page-formateur-redesign #formulaire .form-head h2 {
+    font-size: clamp(2.75rem, 14vw, 4.2rem) !important;
+    line-height: .92 !important;
+    letter-spacing: -.075em !important;
+  }
+
+  body.page-formateur-redesign #formulaire .form-grid {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+
+  body.page-formateur-redesign #formulaire .form-field.full,
+  body.page-formateur-redesign #formulaire .form-field.full textarea {
+    grid-column: auto !important;
+  }
+
+  body.page-formateur-redesign #formulaire .btn[type="submit"] {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+}
+
+/* =========================================================
+   Correctif marge menu / début de page — uniformisation
+   =========================================================
+   Toutes les pages publiques avec le menu flottant utilisent maintenant
+   le même dégagement vertical avant le premier bloc de contenu.
+*/
+:root {
+  --vpl-first-screen-top: clamp(126px, 10vw, 148px);
+  --vpl-first-screen-scroll-offset: 92px;
+}
+
+html {
+  scroll-padding-top: var(--vpl-first-screen-scroll-offset) !important;
+}
+
+/* Le menu doit rester au-dessus des sections, quelle que soit la page. */
+.vpl-nav {
+  z-index: 1000 !important;
+}
+
+/* Héros standards / pages éditoriales. */
+body.vpl-inner-page main > .vpl-inner-hero:first-child,
+body.page-methode main > .vpl-inner-hero:first-child,
+body.page-formateur-redesign main > .vpl-inner-hero:first-child,
+body.page-legal-clean main > .vpl-inner-hero:first-child,
+body.page-legal-clean > .vpl-inner-hero:first-of-type {
+  margin-top: 0 !important;
+  padding-top: var(--vpl-first-screen-top) !important;
+}
+
+/* Héros spécifiques : accueil, stage, entreprise et contact. */
+body.vpl-home main > .hp-hero:first-child,
+body.page-accueil-rythme main > .hp-hero:first-child,
+body.page-stage-redesign main > .stage-hero-redesign:first-child,
+body.page-editorial-light main > .vp-visual-story:first-child,
+body.page-editorial-light main > .vpw-contact-wow:first-child {
+  margin-top: 0 !important;
+  padding-top: var(--vpl-first-screen-top) !important;
+}
+
+/* Si le premier bloc n'est pas un hero classique, il reçoit quand même le dégagement. */
+body.vpl-inner-page main > section:first-child:not(.vpl-inner-hero):not(.stage-hero-redesign):not(.hp-hero):not(.vpw-contact-wow):not(.vp-visual-story) {
+  margin-top: 0 !important;
+  padding-top: var(--vpl-first-screen-top) !important;
+}
+
+@media (max-width: 980px) {
+  :root {
+    --vpl-first-screen-top: 112px;
+    --vpl-first-screen-scroll-offset: 86px;
+  }
+}
+
+@media (max-width: 640px) {
+  :root {
+    --vpl-first-screen-top: 88px;
+    --vpl-first-screen-scroll-offset: 74px;
+  }
+}
+
+/* =========================================================
+   Correctif Page Standard — ruban derrière les piliers
+   ---------------------------------------------------------
+   Le ruban décoratif reste en arrière-plan pendant la section
+   des 5 piliers : les piliers et leurs éléments passent au-dessus.
+   ========================================================= */
+body.page-methode .vp-scroll-pillars-sticky,
+body.page-methode .vp-scroll-pillars-wrap,
+body.page-methode .vp-scroll-pillars-grid,
+body.page-methode .vp-scroll-pillar-card,
+body.page-methode .vp-scroll-pillar-capital,
+body.page-methode .vp-scroll-pillar-shaft,
+body.page-methode .vp-scroll-pillar-base {
+  position: relative !important;
+  z-index: 6 !important;
+}
+
+body.page-methode .vp-scroll-pillars-grain,
+body.page-methode .vp-scroll-pillars-hint {
+  z-index: 1 !important;
+}
+
+body.page-methode .vpl-scroll-ribbon {
+  z-index: 0 !important;
+}
+
+
+/* =========================================================
+   Correctif Contact — suppression du grand vide sous le menu
+   ---------------------------------------------------------
+   La page Contact possède son propre hero .vpw-contact-wow.
+   Elle ne doit pas hériter des espacements génériques de pages internes.
+   ========================================================= */
+body.page-contact-clean {
+  --vpl-first-screen-top: clamp(104px, 8vw, 124px) !important;
+  --vpl-contact-top: clamp(112px, 8.5vw, 132px) !important;
+}
+
+body.page-contact-clean main,
+body.page-contact-clean .vpw-contact-main {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+  min-height: 0 !important;
+  transform: none !important;
+}
+
+body.page-contact-clean main.vpw-contact-main > section.vpw-contact-wow:first-child,
+body.page-contact-clean main > section.vpw-contact-wow:first-child {
+  margin-top: 0 !important;
+  padding-top: var(--vpl-contact-top) !important;
+  min-height: auto !important;
+}
+
+body.page-contact-clean .vpw-contact-wow > .vpw-container,
+body.page-contact-clean .vpw-hero,
+body.page-contact-clean .vpw-layout,
+body.page-contact-clean .vpw-quick-links {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+  top: auto !important;
+  transform: none !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+body.page-contact-clean .vpw-cinematic-wipe {
+  display: none !important;
+}
+
+@media (max-width: 1024px) {
+  body.page-contact-clean {
+    --vpl-contact-top: 112px !important;
+  }
+}
+
+@media (max-width: 720px) {
+  body.page-contact-clean {
+    --vpl-contact-top: 96px !important;
+  }
+}
+
+/* =========================================================
+   Correctif Contact V2 — suppression définitive du vide haut
+   ========================================================= */
+body.page-contact-clean {
+  --vpl-first-screen-top: 118px !important;
+  --vpl-contact-top: 118px !important;
+}
+
+body.page-contact-clean main,
+body.page-contact-clean main.vpw-contact-main,
+body.page-contact-clean .vpw-contact-main {
+  display: block !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  min-height: 0 !important;
+  height: auto !important;
+  top: auto !important;
+  transform: none !important;
+}
+
+body.page-contact-clean main.vpw-contact-main > section.vpw-contact-wow:first-child,
+body.page-contact-clean main > section.vpw-contact-wow:first-child {
+  display: block !important;
+  align-items: stretch !important;
+  justify-content: flex-start !important;
+  place-items: initial !important;
+  margin: 0 !important;
+  padding: var(--vpl-contact-top) 24px 88px !important;
+  min-height: 0 !important;
+  height: auto !important;
+  max-height: none !important;
+  top: auto !important;
+  transform: none !important;
+}
+
+body.page-contact-clean .vpw-contact-wow > .vpw-container,
+body.page-contact-clean .vpw-hero,
+body.page-contact-clean .vpw-layout,
+body.page-contact-clean .vpw-quick-links {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+  min-height: 0 !important;
+  height: auto !important;
+  top: auto !important;
+  transform: none !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+body.page-contact-clean .vpw-hero {
+  margin-bottom: 42px !important;
+}
+
+@media (max-width: 1024px) {
+  body.page-contact-clean {
+    --vpl-first-screen-top: 104px !important;
+    --vpl-contact-top: 104px !important;
+  }
+
+  body.page-contact-clean main.vpw-contact-main > section.vpw-contact-wow:first-child,
+  body.page-contact-clean main > section.vpw-contact-wow:first-child {
+    padding: var(--vpl-contact-top) 20px 76px !important;
+  }
+}
+
+@media (max-width: 720px) {
+  body.page-contact-clean {
+    --vpl-first-screen-top: 92px !important;
+    --vpl-contact-top: 92px !important;
+  }
+
+  body.page-contact-clean main.vpw-contact-main > section.vpw-contact-wow:first-child,
+  body.page-contact-clean main > section.vpw-contact-wow:first-child {
+    padding: var(--vpl-contact-top) 16px 64px !important;
+  }
+}
+
+/* =========================================================
+   Correctif Contact V3 — le SVG de fond ne doit pas pousser le contenu
+   ---------------------------------------------------------
+   Une règle globale du site applique position: relative aux SVG des pages
+   internes. Sur Contact, le SVG décoratif .vpw-mesh redevenait donc un
+   élément de layout et créait un grand écran vide avant le titre.
+   ========================================================= */
+body.page-contact-clean .vpw-contact-wow > svg.vpw-mesh,
+body.page-contact-clean svg.vpw-mesh {
+  position: absolute !important;
+  inset: 0 !important;
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  min-height: 0 !important;
+  z-index: 0 !important;
+  pointer-events: none !important;
+  overflow: visible !important;
+  transform: none !important;
+}
+
+body.page-contact-clean .vpw-contact-wow > svg.vpw-mesh path,
+body.page-contact-clean svg.vpw-mesh path {
+  position: static !important;
+  z-index: auto !important;
+}
+
