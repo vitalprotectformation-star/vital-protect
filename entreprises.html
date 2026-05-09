@@ -1624,6 +1624,7 @@
     }
 
     body.page-entreprise-ribbon-back .vpba-img,
+    body.page-entreprise-ribbon-back .vpba-before-layer,
     body.page-entreprise-ribbon-back .vpba-after {
       position: absolute !important;
       inset: 0 !important;
@@ -1645,9 +1646,20 @@
       -webkit-user-drag: none !important;
     }
 
-    body.page-entreprise-ribbon-back .vpba-before { z-index: 1 !important; }
-
+    /*
+      Le comparateur est volontairement construit ainsi :
+      - l'image "Après" reste en fond ;
+      - l'image "Avant" est au premier plan et se découpe avec le curseur.
+      En déplaçant le curseur vers la gauche, on révèle donc progressivement l'après.
+    */
     body.page-entreprise-ribbon-back .vpba-after {
+      z-index: 1 !important;
+      width: 100% !important;
+      height: 100% !important;
+      pointer-events: none !important;
+    }
+
+    body.page-entreprise-ribbon-back .vpba-before-layer {
       z-index: 2 !important;
       width: 100% !important;
       height: 100% !important;
@@ -1869,10 +1881,10 @@
 
         <figure class="vpba-hero-card" aria-label="Comparaison avant après d'une situation d'accueil public">
           <div class="vpba-compare" data-vpba-compare style="--vpba-position: 50%;">
-            <img class="vpba-img vpba-before" src="/entreprise-accueil-avant.png" alt="Avant : une situation d'accueil public sous tension" loading="eager" decoding="async">
+            <img class="vpba-img vpba-after" src="/entreprise-accueil-apres.png" alt="Après : une posture d'accueil plus stable et maîtrisée" loading="eager" decoding="async">
 
-            <div class="vpba-after" aria-hidden="true">
-              <img class="vpba-img" src="/entreprise-accueil-apres.png" alt="">
+            <div class="vpba-before-layer">
+              <img class="vpba-img vpba-before" src="/entreprise-accueil-avant.png" alt="Avant : une situation d'accueil public sous tension" loading="eager" decoding="async">
             </div>
 
             <div class="vpba-divider" aria-hidden="true"></div>
