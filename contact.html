@@ -656,10 +656,36 @@
       gap: 18px;
     }
 
+    .vpw-conditional-fields {
+      display: none;
+      gap: 16px;
+      padding: 16px;
+      border: 1px solid rgba(186,230,253,.86);
+      border-radius: 24px;
+      background: rgba(240,249,255,.62);
+      box-shadow: 0 14px 34px rgba(15,23,42,.045);
+    }
+
+    .vpw-conditional-fields.is-active {
+      display: grid;
+    }
+
+    .vpw-context-note {
+      margin: 0;
+      color: #475569;
+      font-size: 13px;
+      line-height: 1.55;
+      font-weight: 700;
+    }
+
     .vpw-field-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 16px;
+    }
+
+    .vpw-field-grid--full {
+      grid-template-columns: 1fr;
     }
 
     .vpw-field {
@@ -814,6 +840,18 @@
 
     .vpw-button:hover svg {
       transform: translateX(5px);
+    }
+
+    .vpw-reassurance {
+      margin: 0;
+      padding: 14px 16px;
+      border: 1px solid rgba(186,230,253,.88);
+      border-radius: 18px;
+      background: rgba(240,249,255,.72);
+      color: #334155;
+      font-size: 13px;
+      line-height: 1.6;
+      font-weight: 700;
     }
 
     .vpw-privacy {
@@ -1251,6 +1289,13 @@
                     </svg>
                     <span>Délai indicatif : <strong>premier retour sous 24/48h ouvrées</strong></span>
                   </div>
+
+                  <div class="vpw-info-row">
+                    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                      <path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"></path>
+                    </svg>
+                    <span>Contact uniquement par <strong>email ou formulaire</strong> pour le moment.</span>
+                  </div>
                 </div>
               </div>
             </article>
@@ -1401,19 +1446,98 @@
                       <span class="vpw-label">Téléphone</span>
                       <input id="contactPhone" placeholder="Votre numéro" type="tel" autocomplete="tel">
                     </label>
+
+                    <label class="vpw-field" for="contactLocation">
+                      <span class="vpw-label">Ville / département / zone</span>
+                      <input id="contactLocation" placeholder="Ex. Lyon, Rhône, Auvergne-Rhône-Alpes" required type="text" autocomplete="address-level2">
+                    </label>
+
+                    <label class="vpw-field" for="contactOrganization">
+                      <span class="vpw-label">Structure / entreprise</span>
+                      <input id="contactOrganization" placeholder="Si concerné" type="text" autocomplete="organization">
+                    </label>
                   </div>
 
                   <label class="vpw-field" for="contactSubject">
                     <span class="vpw-label">Objet de votre demande</span>
                     <select id="contactSubject" required>
-                      <option value="">Choisir un objet</option>
-                      <option value="Question sur un stage">Question sur un stage</option>
-                      <option value="Demande entreprise / structure">Demande entreprise / structure</option>
-                      <option value="Question sur le parcours formateur">Question sur le parcours formateur</option>
-                      <option value="Demande de partenariat / projet">Demande de partenariat / projet</option>
-                      <option value="Autre demande">Autre demande</option>
+                      <option value="" data-contact-type="">Choisir un objet</option>
+                      <option value="Question sur un stage" data-contact-type="stage">Question sur un stage</option>
+                      <option value="Demande entreprise / structure" data-contact-type="entreprise">Demande entreprise / structure</option>
+                      <option value="Question sur le parcours formateur" data-contact-type="formateur">Question sur le parcours formateur</option>
+                      <option value="Demande de partenariat / projet" data-contact-type="partenariat">Demande de partenariat / projet</option>
+                      <option value="Autre demande" data-contact-type="autre">Autre demande</option>
                     </select>
                   </label>
+
+                  <div class="vpw-conditional-fields" data-contact-context="stage">
+                    <p class="vpw-context-note">Pour un stage, ces précisions nous aident à vous orienter vers une session adaptée.</p>
+                    <div class="vpw-field-grid">
+                      <label class="vpw-field" for="contactStageAvailability">
+                        <span class="vpw-label">Disponibilités souhaitées</span>
+                        <input id="contactStageAvailability" placeholder="Week-end, semaine, période..." type="text">
+                      </label>
+
+                      <label class="vpw-field" for="contactStageConstraints">
+                        <span class="vpw-label">Contrainte physique éventuelle</span>
+                        <input id="contactStageConstraints" placeholder="À préciser si utile" type="text">
+                      </label>
+                    </div>
+                  </div>
+
+                  <div class="vpw-conditional-fields" data-contact-context="entreprise">
+                    <p class="vpw-context-note">Pour une structure, indiquez le contexte afin que la réponse soit concrète et exploitable.</p>
+                    <div class="vpw-field-grid">
+                      <label class="vpw-field" for="contactParticipants">
+                        <span class="vpw-label">Nombre de participants</span>
+                        <input id="contactParticipants" placeholder="Ex. 12 personnes" type="text">
+                      </label>
+
+                      <label class="vpw-field" for="contactSector">
+                        <span class="vpw-label">Secteur / activité</span>
+                        <input id="contactSector" placeholder="Santé, commerce, sport, collectivité..." type="text">
+                      </label>
+                    </div>
+                    <label class="vpw-field" for="contactEnterpriseContext">
+                      <span class="vpw-label">Contexte rencontré</span>
+                      <textarea id="contactEnterpriseContext" placeholder="Situations, risques, public concerné, objectif de l’intervention..."></textarea>
+                    </label>
+                  </div>
+
+                  <div class="vpw-conditional-fields" data-contact-context="formateur">
+                    <p class="vpw-context-note">Pour le parcours formateur, précisez votre expérience et le module visé.</p>
+                    <div class="vpw-field-grid">
+                      <label class="vpw-field" for="contactTrainingExperience">
+                        <span class="vpw-label">Expérience pédagogique</span>
+                        <input id="contactTrainingExperience" placeholder="Formation, encadrement, animation..." type="text">
+                      </label>
+
+                      <label class="vpw-field" for="contactTargetModule">
+                        <span class="vpw-label">Module / parcours visé</span>
+                        <input id="contactTargetModule" placeholder="Module souhaité ou à définir" type="text">
+                      </label>
+                    </div>
+                  </div>
+
+                  <div class="vpw-conditional-fields" data-contact-context="partenariat">
+                    <p class="vpw-context-note">Pour un partenariat, indiquez le type de projet, la zone concernée et l’échéance envisagée.</p>
+                    <div class="vpw-field-grid">
+                      <label class="vpw-field" for="contactProjectType">
+                        <span class="vpw-label">Type de projet</span>
+                        <input id="contactProjectType" placeholder="Déploiement, événement, collaboration..." type="text">
+                      </label>
+
+                      <label class="vpw-field" for="contactProjectZone">
+                        <span class="vpw-label">Zone concernée</span>
+                        <input id="contactProjectZone" placeholder="Ville, département, région..." type="text">
+                      </label>
+
+                      <label class="vpw-field" for="contactDeadline">
+                        <span class="vpw-label">Échéance</span>
+                        <input id="contactDeadline" placeholder="Date ou période souhaitée" type="text">
+                      </label>
+                    </div>
+                  </div>
 
                   <label class="vpw-field" for="contactMessage">
                     <span class="vpw-label">Votre message</span>
@@ -1432,6 +1556,10 @@
                       <path d="M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
                     </svg>
                   </button>
+
+                  <p class="vpw-reassurance">
+                    Après envoi, vous recevez une réponse par email. Aucun paiement ne sera demandé depuis ce formulaire.
+                  </p>
 
                   <p class="vpw-privacy">
                     Les informations transmises via ce formulaire sont utilisées uniquement pour répondre à votre demande.
@@ -1600,6 +1728,36 @@
     const form = document.getElementById("contactForm");
     const submitBtn = document.getElementById("contactSubmitBtn");
     const statusBox = document.getElementById("contactStatus");
+    const subjectSelect = document.getElementById("contactSubject");
+    const organizationField = document.getElementById("contactOrganization");
+    const conditionalBlocks = document.querySelectorAll("[data-contact-context]");
+
+    function getContactType() {
+      return subjectSelect?.selectedOptions?.[0]?.dataset?.contactType || "";
+    }
+
+    function updateConditionalFields() {
+      const contactType = getContactType();
+
+      conditionalBlocks.forEach((block) => {
+        block.classList.toggle("is-active", block.dataset.contactContext === contactType);
+      });
+
+      if (organizationField) {
+        const needsOrganization = contactType === "entreprise";
+        organizationField.required = needsOrganization;
+        organizationField.placeholder = needsOrganization
+          ? "Nom de la structure"
+          : "Si concerné";
+      }
+    }
+
+    subjectSelect?.addEventListener("change", updateConditionalFields);
+    updateConditionalFields();
+
+    function getValue(id) {
+      return document.getElementById(id)?.value.trim() || "";
+    }
 
     function showStatus(message, type) {
       statusBox.textContent = message;
@@ -1609,18 +1767,39 @@
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
 
+      const contactType = getContactType();
       const payload = {
-        first_name: document.getElementById("contactFirstName").value.trim(),
-        last_name: document.getElementById("contactLastName").value.trim(),
-        email: document.getElementById("contactEmail").value.trim(),
-        phone: document.getElementById("contactPhone").value.trim(),
-        subject: document.getElementById("contactSubject").value.trim(),
-        message: document.getElementById("contactMessage").value.trim(),
-        website: document.getElementById("website").value.trim()
+        first_name: getValue("contactFirstName"),
+        last_name: getValue("contactLastName"),
+        email: getValue("contactEmail"),
+        phone: getValue("contactPhone"),
+        location: getValue("contactLocation"),
+        organization: getValue("contactOrganization"),
+        subject: getValue("contactSubject"),
+        contact_type: contactType,
+        message: getValue("contactMessage"),
+        website: getValue("website"),
+        details: {
+          stage_availability: getValue("contactStageAvailability"),
+          stage_constraints: getValue("contactStageConstraints"),
+          participant_count: getValue("contactParticipants"),
+          sector: getValue("contactSector"),
+          enterprise_context: getValue("contactEnterpriseContext"),
+          pedagogical_experience: getValue("contactTrainingExperience"),
+          target_module: getValue("contactTargetModule"),
+          project_type: getValue("contactProjectType"),
+          project_zone: getValue("contactProjectZone"),
+          deadline: getValue("contactDeadline")
+        }
       };
 
-      if (!payload.first_name || !payload.last_name || !payload.email || !payload.subject || !payload.message) {
-        showStatus("Merci de remplir tous les champs obligatoires.", "error");
+      if (!payload.first_name || !payload.last_name || !payload.email || !payload.location || !payload.subject || !payload.message) {
+        showStatus("Merci de remplir tous les champs obligatoires, dont la ville ou zone géographique.", "error");
+        return;
+      }
+
+      if (contactType === "entreprise" && !payload.organization) {
+        showStatus("Merci d’indiquer le nom de la structure pour une demande entreprise.", "error");
         return;
       }
 
