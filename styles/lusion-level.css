@@ -15503,3 +15503,42 @@ body.page-contact-clean .vpw-quick-link {
     margin-top: 34px !important;
   }
 }
+
+/* =========================================================
+   Correctif haut de page — Accueil + Stage
+   ---------------------------------------------------------
+   Ces deux pages avaient encore les calques immersifs globaux
+   avant le premier hero : canvas animé, bruit, ruban et halos fixes.
+   Ils créaient une zone bleutée mouvante visible au-dessus du
+   fond réel du hero, surtout à gauche de la navigation.
+   Le premier écran redevient porté par son hero uniquement.
+   ========================================================= */
+body.vpl-home.page-accueil-rythme > .vpl-canvas,
+body.vpl-home.page-accueil-rythme > .vpl-noise,
+body.vpl-home.page-accueil-rythme > .vpl-scroll-ribbon,
+body.page-stage-redesign > .vpl-canvas,
+body.page-stage-redesign > .vpl-noise,
+body.page-stage-redesign > .vpl-scroll-ribbon {
+  display: none !important;
+}
+
+body.vpl-home.page-accueil-rythme .vpl-page::before,
+body.vpl-home.page-accueil-rythme .vpl-page::after,
+body.page-stage-redesign.vpl-inner-page::before,
+body.page-stage-redesign.vpl-inner-page::after {
+  content: none !important;
+  display: none !important;
+}
+
+body.vpl-home.page-accueil-rythme .vpl-page {
+  background: #04111f !important;
+}
+
+body.page-stage-redesign {
+  background: #050a12 !important;
+}
+
+body.vpl-home.page-accueil-rythme .vp-home-immersive-hero,
+body.page-stage-redesign .stage-hero-redesign.stage-hero-carousel {
+  margin-top: 0 !important;
+}
