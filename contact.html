@@ -656,6 +656,58 @@
       gap: 18px;
     }
 
+    .vpw-form-step {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 13px 15px;
+      border-radius: 20px;
+      border: 1px solid rgba(186,230,253,.78);
+      background: rgba(255,255,255,.52);
+      color: #475569;
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .vpw-form-step span {
+      width: 26px;
+      height: 26px;
+      flex: 0 0 auto;
+      display: grid;
+      place-items: center;
+      border-radius: 999px;
+      background: #0f172a;
+      color: white;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .vpw-form-step strong,
+    .vpw-form-step small {
+      display: block;
+    }
+
+    .vpw-form-step strong {
+      color: #0f172a;
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .vpw-form-step small {
+      margin-top: 2px;
+      color: #64748b;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .vpw-organization-field {
+      display: none;
+    }
+
+    .vpw-organization-field.is-visible {
+      display: block;
+    }
+
     .vpw-conditional-fields {
       display: none;
       gap: 16px;
@@ -859,6 +911,18 @@
       color: #64748b;
       font-size: 12px;
       line-height: 1.7;
+    }
+
+    .vpw-info-row a,
+    .vpw-privacy a {
+      color: #0369a1;
+      font-weight: 900;
+      text-decoration: none;
+    }
+
+    .vpw-info-row a:hover,
+    .vpw-privacy a:hover {
+      text-decoration: underline;
     }
 
     .vpw-contact-wow .honeypot {
@@ -1167,6 +1231,56 @@
         filter: none !important;
       }
     }
+
+    /* Correctif architecture Contact : aucun calque décoratif ne doit masquer le contenu. */
+    .vpw-cinematic-wipe {
+      display: none !important;
+    }
+
+    .vpw-contact-wow {
+      padding-top: clamp(118px, 11vw, 152px);
+    }
+
+    .vpw-container,
+    .vpw-hero,
+    .vpw-layout,
+    .vpw-quick-links {
+      position: relative;
+      z-index: 12;
+    }
+
+    .vpw-hero {
+      margin-bottom: clamp(40px, 5vw, 58px);
+    }
+
+    .vpw-reveal,
+    .vpw-word,
+    .vpw-lead {
+      opacity: 1;
+      transform: none;
+      filter: none;
+    }
+
+    .vpw-word,
+    .vpw-lead {
+      animation: none;
+    }
+
+    .vpw-form-wrap {
+      top: 112px;
+    }
+
+    @media (max-width: 1024px) {
+      .vpw-contact-wow {
+        padding-top: 112px;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .vpw-contact-wow {
+        padding-top: 96px;
+      }
+    }
   </style>
 </head>
 
@@ -1215,8 +1329,6 @@
 
   <main>
     <section class="vpw-contact-wow" id="contact">
-      <div class="vpw-cinematic-wipe" aria-hidden="true"></div>
-
       <svg class="vpw-mesh" viewBox="0 0 1440 900" preserveAspectRatio="none" aria-hidden="true">
         <path d="M-40 520 C 250 360, 420 650, 720 420 S 1120 210, 1510 360" fill="none" stroke="rgba(56,189,248,.35)" stroke-width="2"></path>
         <path d="M-80 320 C 220 160, 500 300, 760 210 S 1140 130, 1510 220" fill="none" stroke="rgba(79,70,229,.25)" stroke-width="2"></path>
@@ -1280,7 +1392,7 @@
                     <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
                       <path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"></path>
                     </svg>
-                    <span>Email direct : <strong>vitalprotectformation@gmail.com</strong></span>
+                    <span>Email direct : <a href="mailto:vitalprotectformation@gmail.com">vitalprotectformation@gmail.com</a></span>
                   </div>
 
                   <div class="vpw-info-row">
@@ -1426,36 +1538,12 @@
                     <input autocomplete="off" id="website" name="website" tabindex="-1" type="text">
                   </div>
 
-                  <div class="vpw-field-grid">
-                    <label class="vpw-field" for="contactFirstName">
-                      <span class="vpw-label">Prénom</span>
-                      <input id="contactFirstName" placeholder="Votre prénom" required type="text" autocomplete="given-name">
-                    </label>
-
-                    <label class="vpw-field" for="contactLastName">
-                      <span class="vpw-label">Nom</span>
-                      <input id="contactLastName" placeholder="Votre nom" required type="text" autocomplete="family-name">
-                    </label>
-
-                    <label class="vpw-field" for="contactEmail">
-                      <span class="vpw-label">Email</span>
-                      <input id="contactEmail" placeholder="vous@email.fr" required type="email" autocomplete="email">
-                    </label>
-
-                    <label class="vpw-field" for="contactPhone">
-                      <span class="vpw-label">Téléphone</span>
-                      <input id="contactPhone" placeholder="Votre numéro" type="tel" autocomplete="tel">
-                    </label>
-
-                    <label class="vpw-field" for="contactLocation">
-                      <span class="vpw-label">Ville / département / zone</span>
-                      <input id="contactLocation" placeholder="Ex. Lyon, Rhône, Auvergne-Rhône-Alpes" required type="text" autocomplete="address-level2">
-                    </label>
-
-                    <label class="vpw-field" for="contactOrganization">
-                      <span class="vpw-label">Structure / entreprise</span>
-                      <input id="contactOrganization" placeholder="Si concerné" type="text" autocomplete="organization">
-                    </label>
+                  <div class="vpw-form-step">
+                    <span>1</span>
+                    <div>
+                      <strong>Choisissez l’objet de votre demande</strong>
+                      <small>Les champs adaptés apparaissent automatiquement sous ce choix.</small>
+                    </div>
                   </div>
 
                   <label class="vpw-field" for="contactSubject">
@@ -1539,6 +1627,46 @@
                     </div>
                   </div>
 
+                  <div class="vpw-form-step">
+                    <span>2</span>
+                    <div>
+                      <strong>Complétez vos coordonnées et le message</strong>
+                      <small>La ville ou zone géographique nous permet de vous orienter correctement.</small>
+                    </div>
+                  </div>
+
+                  <div class="vpw-field-grid">
+                    <label class="vpw-field" for="contactFirstName">
+                      <span class="vpw-label">Prénom</span>
+                      <input id="contactFirstName" placeholder="Votre prénom" required type="text" autocomplete="given-name">
+                    </label>
+
+                    <label class="vpw-field" for="contactLastName">
+                      <span class="vpw-label">Nom</span>
+                      <input id="contactLastName" placeholder="Votre nom" required type="text" autocomplete="family-name">
+                    </label>
+
+                    <label class="vpw-field" for="contactEmail">
+                      <span class="vpw-label">Email</span>
+                      <input id="contactEmail" placeholder="vous@email.fr" required type="email" autocomplete="email">
+                    </label>
+
+                    <label class="vpw-field" for="contactPhone">
+                      <span class="vpw-label">Téléphone optionnel</span>
+                      <input id="contactPhone" placeholder="Votre numéro" type="tel" autocomplete="tel">
+                    </label>
+
+                    <label class="vpw-field" for="contactLocation">
+                      <span class="vpw-label">Ville / département / zone</span>
+                      <input id="contactLocation" placeholder="Ex. Lyon, Rhône, Auvergne-Rhône-Alpes" required type="text" autocomplete="address-level2">
+                    </label>
+
+                    <label class="vpw-field vpw-organization-field" for="contactOrganization" data-organization-field>
+                      <span class="vpw-label">Structure / entreprise / association / collectivité</span>
+                      <input id="contactOrganization" placeholder="Si concerné" type="text" autocomplete="organization">
+                    </label>
+                  </div>
+
                   <label class="vpw-field" for="contactMessage">
                     <span class="vpw-label">Votre message</span>
                     <textarea id="contactMessage" placeholder="Décrivez votre besoin, votre contexte ou votre question." required></textarea>
@@ -1564,7 +1692,8 @@
                   <p class="vpw-privacy">
                     Les informations transmises via ce formulaire sont utilisées uniquement pour répondre à votre demande.
                     Vous pouvez exercer vos droits d’accès, de rectification ou de suppression en écrivant à
-                    vitalprotectformation@gmail.com. Voir notre politique de confidentialité.
+                    <a href="mailto:vitalprotectformation@gmail.com">vitalprotectformation@gmail.com</a>. Voir
+                    <a href="/politique-confidentialite.html">notre politique de confidentialité</a>.
                   </p>
 
                   <div class="form-status" id="contactStatus"></div>
@@ -1730,25 +1859,49 @@
     const statusBox = document.getElementById("contactStatus");
     const subjectSelect = document.getElementById("contactSubject");
     const organizationField = document.getElementById("contactOrganization");
+    const organizationWrapper = document.querySelector("[data-organization-field]");
     const conditionalBlocks = document.querySelectorAll("[data-contact-context]");
+    const allowedContactTypes = new Set(["stage", "entreprise", "formateur", "partenariat", "autre"]);
 
     function getContactType() {
       return subjectSelect?.selectedOptions?.[0]?.dataset?.contactType || "";
+    }
+
+    function clearFieldsInside(container) {
+      container.querySelectorAll("input, textarea, select").forEach((field) => {
+        if (field.type === "checkbox" || field.type === "radio") {
+          field.checked = false;
+        } else {
+          field.value = "";
+        }
+      });
     }
 
     function updateConditionalFields() {
       const contactType = getContactType();
 
       conditionalBlocks.forEach((block) => {
-        block.classList.toggle("is-active", block.dataset.contactContext === contactType);
+        const isActive = block.dataset.contactContext === contactType;
+        block.classList.toggle("is-active", isActive);
+
+        if (!isActive) {
+          clearFieldsInside(block);
+        }
       });
 
-      if (organizationField) {
+      if (organizationField && organizationWrapper) {
+        const showOrganization = contactType === "entreprise" || contactType === "partenariat";
         const needsOrganization = contactType === "entreprise";
+
+        organizationWrapper.classList.toggle("is-visible", showOrganization);
         organizationField.required = needsOrganization;
         organizationField.placeholder = needsOrganization
           ? "Nom de la structure"
-          : "Si concerné";
+          : "Organisation partenaire, si concerné";
+
+        if (!showOrganization) {
+          organizationField.value = "";
+        }
       }
     }
 
@@ -1762,6 +1915,35 @@
     function showStatus(message, type) {
       statusBox.textContent = message;
       statusBox.className = `form-status show ${type}`;
+    }
+
+    function buildConditionalDetails(contactType) {
+      switch (contactType) {
+        case "stage":
+          return {
+            stage_availability: getValue("contactStageAvailability"),
+            stage_constraints: getValue("contactStageConstraints")
+          };
+        case "entreprise":
+          return {
+            participant_count: getValue("contactParticipants"),
+            sector: getValue("contactSector"),
+            enterprise_context: getValue("contactEnterpriseContext")
+          };
+        case "formateur":
+          return {
+            pedagogical_experience: getValue("contactTrainingExperience"),
+            target_module: getValue("contactTargetModule")
+          };
+        case "partenariat":
+          return {
+            project_type: getValue("contactProjectType"),
+            project_zone: getValue("contactProjectZone"),
+            deadline: getValue("contactDeadline")
+          };
+        default:
+          return {};
+      }
     }
 
     form.addEventListener("submit", async (e) => {
@@ -1779,22 +1961,16 @@
         contact_type: contactType,
         message: getValue("contactMessage"),
         website: getValue("website"),
-        details: {
-          stage_availability: getValue("contactStageAvailability"),
-          stage_constraints: getValue("contactStageConstraints"),
-          participant_count: getValue("contactParticipants"),
-          sector: getValue("contactSector"),
-          enterprise_context: getValue("contactEnterpriseContext"),
-          pedagogical_experience: getValue("contactTrainingExperience"),
-          target_module: getValue("contactTargetModule"),
-          project_type: getValue("contactProjectType"),
-          project_zone: getValue("contactProjectZone"),
-          deadline: getValue("contactDeadline")
-        }
+        details: buildConditionalDetails(contactType)
       };
 
       if (!payload.first_name || !payload.last_name || !payload.email || !payload.location || !payload.subject || !payload.message) {
         showStatus("Merci de remplir tous les champs obligatoires, dont la ville ou zone géographique.", "error");
+        return;
+      }
+
+      if (!allowedContactTypes.has(contactType)) {
+        showStatus("Merci de choisir un objet de demande valide.", "error");
         return;
       }
 
@@ -1824,6 +2000,7 @@
 
         showStatus("Votre demande a bien été envoyée. Nous vous répondrons dès que possible.", "success");
         form.reset();
+        updateConditionalFields();
       } catch (error) {
         console.error("Contact form error:", error);
         showStatus("Erreur réseau. Merci de réessayer.", "error");
