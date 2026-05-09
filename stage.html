@@ -325,9 +325,8 @@
     height:120px;
     z-index:1;
     pointer-events:none;
-    background:
-      radial-gradient(circle at 78% 26%, rgba(62,137,206,.20), transparent 32%),
-      linear-gradient(135deg,#050a12 0%,#081522 52%,#0b2135 100%);
+    /* Bande haute neutre : évite la tache bleue visible à gauche de la navbar. */
+    background:linear-gradient(180deg,rgba(5,10,18,.98) 0%,rgba(5,10,18,.94) 58%,rgba(5,10,18,0) 100%);
   }
 
   body.page-stage-redesign .vpl-nav{
