@@ -422,6 +422,148 @@
   }
 </style>
 
+
+<style id="vptr-formateur-final-polish">
+  /* Correctif Formateur — blocs de validation égalisés + formulaire lisible et mieux cadré */
+  body.page-formateur-redesign .vptr-validation-section .split-panel {
+    align-items: stretch !important;
+  }
+
+  body.page-formateur-redesign .vptr-validation-section .info-panel {
+    height: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  body.page-formateur-redesign .vptr-validation-section .info-panel .bullet-list {
+    flex: 1 1 auto !important;
+    align-content: start !important;
+  }
+
+  body.page-formateur-redesign #formulaire .form-card {
+    position: relative !important;
+    isolation: isolate !important;
+    overflow: hidden !important;
+    padding: clamp(46px, 5.2vw, 66px) !important;
+    background: rgba(255, 255, 255, .44) !important;
+  }
+
+  body.page-formateur-redesign #formulaire .form-card::before {
+    content: "" !important;
+    position: absolute !important;
+    inset: clamp(16px, 2vw, 22px) !important;
+    z-index: 0 !important;
+    border-radius: clamp(22px, 2.8vw, 32px) !important;
+    background: rgba(255, 255, 255, .94) !important;
+    border: 1px solid rgba(207, 224, 240, .74) !important;
+    box-shadow: 0 18px 44px rgba(7, 24, 44, .07) !important;
+    pointer-events: none !important;
+  }
+
+  body.page-formateur-redesign #formulaire .form-head,
+  body.page-formateur-redesign #formulaire #checkoutFeedback,
+  body.page-formateur-redesign #formulaire #selectedSessionBox,
+  body.page-formateur-redesign #formulaire form {
+    position: relative !important;
+    z-index: 1 !important;
+  }
+
+  body.page-formateur-redesign #formulaire .trainer-candidate-form {
+    width: 100% !important;
+    min-width: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+  }
+
+  body.page-formateur-redesign #formulaire .form-head h2 {
+    max-width: 100% !important;
+    font-size: clamp(2.65rem, 3.6vw, 4.15rem) !important;
+    line-height: .98 !important;
+    letter-spacing: -.058em !important;
+    text-wrap: balance !important;
+    overflow-wrap: normal !important;
+    word-break: normal !important;
+    hyphens: none !important;
+  }
+
+  body.page-formateur-redesign #formulaire .form-head p,
+  body.page-formateur-redesign #formulaire .field-help,
+  body.page-formateur-redesign #formulaire .form-submit-note,
+  body.page-formateur-redesign #formulaire .form-rgpd-note,
+  body.page-formateur-redesign #formulaire input,
+  body.page-formateur-redesign #formulaire select,
+  body.page-formateur-redesign #formulaire textarea {
+    overflow-wrap: normal !important;
+    word-break: normal !important;
+    hyphens: none !important;
+  }
+
+  body.page-formateur-redesign #formulaire input,
+  body.page-formateur-redesign #formulaire select,
+  body.page-formateur-redesign #formulaire textarea {
+    font-size: .94rem !important;
+    line-height: 1.35 !important;
+  }
+
+  body.page-formateur-redesign #formulaire textarea {
+    min-height: 142px !important;
+  }
+
+  body.page-formateur-redesign #formulaire .field-help {
+    font-size: .77rem !important;
+    line-height: 1.55 !important;
+  }
+
+  body.page-formateur-redesign #formulaire .form-submit-note {
+    margin-top: 16px !important;
+    padding: 15px 17px !important;
+    font-size: .84rem !important;
+    line-height: 1.64 !important;
+  }
+
+  body.page-formateur-redesign #formulaire .form-rgpd-note {
+    font-size: .78rem !important;
+    line-height: 1.68 !important;
+  }
+
+  @media (min-width: 1040px) {
+    body.page-formateur-redesign #formulaire .form-card {
+      grid-template-columns: minmax(270px, .86fr) minmax(0, 1.14fr) !important;
+      gap: clamp(26px, 3.4vw, 44px) !important;
+    }
+
+    body.page-formateur-redesign #formulaire .form-head h2 {
+      font-size: clamp(2.9rem, 3.45vw, 4rem) !important;
+    }
+  }
+
+  @media (max-width: 1039px) {
+    body.page-formateur-redesign #formulaire .form-card {
+      padding: clamp(38px, 6vw, 54px) !important;
+    }
+  }
+
+  @media (max-width: 760px) {
+    body.page-formateur-redesign #formulaire .form-card {
+      padding: 42px 28px !important;
+    }
+
+    body.page-formateur-redesign #formulaire .form-card::before {
+      inset: 12px !important;
+      border-radius: 22px !important;
+    }
+
+    body.page-formateur-redesign #formulaire .form-head h2 {
+      font-size: clamp(2.25rem, 10.8vw, 3.35rem) !important;
+      line-height: 1 !important;
+      letter-spacing: -.055em !important;
+    }
+  }
+</style>
+
 </head>
 <body class="vpl-inner-page page-editorial-light page-formateur-redesign">
 <div class="vptr-background-orbs" aria-hidden="true"><span class="vptr-orb vptr-orb-one"></span><span class="vptr-orb vptr-orb-two"></span><span class="vptr-orb vptr-orb-three"></span></div>
