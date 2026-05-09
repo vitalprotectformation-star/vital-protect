@@ -1825,6 +1825,59 @@
     background-image: none !important;
   }
 
+
+  /* Correctif fond carte formulaire : l’ASIDE est le seul panneau blanc.
+     Le style global .vpl-inner-page form transformait le <form> en mini-carte,
+     ce qui donnait un fond blanc partiel au lieu d’un fond sur toute la card. */
+  body.page-contact-organized .vpc-form-card.vpc-form-card--plain-white {
+    display: block !important;
+    width: 100% !important;
+    position: relative !important;
+    isolation: isolate !important;
+    overflow: hidden !important;
+    background: #ffffff !important;
+    background-color: #ffffff !important;
+    background-image: none !important;
+  }
+
+  body.page-contact-organized .vpc-form-card.vpc-form-card--plain-white .vpc-form-white-bg {
+    position: absolute !important;
+    inset: 0 !important;
+    z-index: 0 !important;
+    width: auto !important;
+    height: auto !important;
+    min-height: 100% !important;
+    border-radius: inherit !important;
+    background: #ffffff !important;
+    background-color: #ffffff !important;
+    background-image: none !important;
+    pointer-events: none !important;
+  }
+
+  body.page-contact-organized .vpc-form-card.vpc-form-card--plain-white > :not(.vpc-form-white-bg) {
+    position: relative !important;
+    z-index: 2 !important;
+  }
+
+  body.page-contact-organized #contactForm.vpc-form {
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  body.page-contact-organized .vpc-form-card.vpc-form-card--plain-white .vpc-form-head {
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+  }
+
 </style>
 
 </head>
