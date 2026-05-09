@@ -15184,3 +15184,58 @@ body.page-methode .vp-scroll-pillars-hint {
 body.page-methode .vpl-scroll-ribbon {
   z-index: 0 !important;
 }
+
+
+/* =========================================================
+   Correctif Contact — suppression du grand vide sous le menu
+   ---------------------------------------------------------
+   La page Contact possède son propre hero .vpw-contact-wow.
+   Elle ne doit pas hériter des espacements génériques de pages internes.
+   ========================================================= */
+body.page-contact-clean {
+  --vpl-first-screen-top: clamp(104px, 8vw, 124px) !important;
+  --vpl-contact-top: clamp(112px, 8.5vw, 132px) !important;
+}
+
+body.page-contact-clean main,
+body.page-contact-clean .vpw-contact-main {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+  min-height: 0 !important;
+  transform: none !important;
+}
+
+body.page-contact-clean main.vpw-contact-main > section.vpw-contact-wow:first-child,
+body.page-contact-clean main > section.vpw-contact-wow:first-child {
+  margin-top: 0 !important;
+  padding-top: var(--vpl-contact-top) !important;
+  min-height: auto !important;
+}
+
+body.page-contact-clean .vpw-contact-wow > .vpw-container,
+body.page-contact-clean .vpw-hero,
+body.page-contact-clean .vpw-layout,
+body.page-contact-clean .vpw-quick-links {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+  top: auto !important;
+  transform: none !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+body.page-contact-clean .vpw-cinematic-wipe {
+  display: none !important;
+}
+
+@media (max-width: 1024px) {
+  body.page-contact-clean {
+    --vpl-contact-top: 112px !important;
+  }
+}
+
+@media (max-width: 720px) {
+  body.page-contact-clean {
+    --vpl-contact-top: 96px !important;
+  }
+}
