@@ -49,6 +49,7 @@
   <meta content="Stages grand public, interventions entreprise et parcours formateur encadré pour prévenir, éviter et réagir face aux situations à risque." property="og:description"/>
   <meta content="website" property="og:type"/>
   <link href="/logo.png" rel="icon" type="image/png"/>
+  <link as="image" href="/vital-protect-slide-1.webp" rel="preload"/>
   <link href="/styles/lusion-level.css" rel="stylesheet"/>
 
   <style>
@@ -551,6 +552,465 @@
         opacity: 1 !important;
       }
     }
+
+
+    /* =========================================================
+       ACCUEIL — HERO CARROUSEL IMMERSIF
+       Intégration isolée : ne dépend pas des anciens styles hp-hero.
+    ========================================================= */
+    body.page-accueil-rythme .vp-home-immersive-hero {
+      position: relative !important;
+      z-index: 2 !important;
+      min-height: 100svh !important;
+      display: flex !important;
+      align-items: center !important;
+      padding: calc(var(--vpl-nav-offset, 92px) + clamp(26px, 4vw, 54px)) clamp(18px, 4vw, 72px) clamp(54px, 7vw, 96px) !important;
+      overflow: hidden !important;
+      isolation: isolate !important;
+      color: #f7fbff !important;
+      background:
+        radial-gradient(circle at 18% 14%, rgba(109,223,255,.16), transparent 30%),
+        radial-gradient(circle at 82% 22%, rgba(34,122,190,.24), transparent 32%),
+        linear-gradient(135deg, #04111f 0%, #061827 52%, #082940 100%) !important;
+    }
+
+    body.page-accueil-rythme .vp-home-immersive-hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.018) 1px, transparent 1px);
+      background-size: 76px 76px;
+      -webkit-mask-image: radial-gradient(circle at center, black, transparent 78%);
+      mask-image: radial-gradient(circle at center, black, transparent 78%);
+      opacity: .28;
+    }
+
+    body.page-accueil-rythme .vp-home-immersive-wrap {
+      width: min(1520px, 100%) !important;
+      margin: 0 auto !important;
+      display: grid !important;
+      grid-template-columns: minmax(390px, .92fr) minmax(560px, 1.28fr) !important;
+      gap: clamp(34px, 5vw, 76px) !important;
+      align-items: center !important;
+      position: relative !important;
+      z-index: 3 !important;
+    }
+
+    body.page-accueil-rythme .vp-home-immersive-copy,
+    body.page-accueil-rythme .vp-home-immersive-media,
+    body.page-accueil-rythme .vp-home-slider,
+    body.page-accueil-rythme .vp-home-slide,
+    body.page-accueil-rythme .vp-home-caption,
+    body.page-accueil-rythme .vp-home-pills,
+    body.page-accueil-rythme .vp-home-actions,
+    body.page-accueil-rythme .vp-home-benefits {
+      position: relative !important;
+      z-index: 3 !important;
+    }
+
+    body.page-accueil-rythme .vp-home-pills {
+      display: flex !important;
+      flex-wrap: wrap !important;
+      gap: 10px !important;
+      margin-bottom: clamp(22px, 3vw, 36px) !important;
+    }
+
+    body.page-accueil-rythme .vp-home-pills span {
+      min-height: 34px !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      padding: 7px 14px !important;
+      border-radius: 999px !important;
+      border: 1px solid rgba(255,255,255,.22) !important;
+      background: rgba(255,255,255,.065) !important;
+      color: rgba(255,255,255,.9) !important;
+      font-size: 13px !important;
+      line-height: 1 !important;
+      font-weight: 780 !important;
+      letter-spacing: 0 !important;
+      backdrop-filter: blur(12px) !important;
+    }
+
+    body.page-accueil-rythme .vp-home-immersive-copy h1 {
+      margin: 0 !important;
+      max-width: 760px !important;
+      font-size: clamp(58px, 7vw, 106px) !important;
+      line-height: .91 !important;
+      letter-spacing: -.085em !important;
+      font-weight: 950 !important;
+      color: #f7fbff !important;
+      text-shadow: 0 18px 54px rgba(0,0,0,.28) !important;
+      overflow: visible !important;
+      padding: 0 0 .06em !important;
+    }
+
+    body.page-accueil-rythme .vp-home-lead {
+      max-width: 640px !important;
+      margin: clamp(24px, 3vw, 34px) 0 0 !important;
+      color: rgba(247,251,255,.72) !important;
+      font-size: clamp(17px, 1.25vw, 20px) !important;
+      line-height: 1.75 !important;
+      letter-spacing: -.015em !important;
+    }
+
+    body.page-accueil-rythme .vp-home-actions {
+      display: flex !important;
+      flex-wrap: wrap !important;
+      gap: 16px !important;
+      margin-top: clamp(26px, 3vw, 38px) !important;
+    }
+
+    body.page-accueil-rythme .vp-home-btn {
+      min-height: 58px !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      gap: 12px !important;
+      padding: 0 28px !important;
+      border-radius: 999px !important;
+      text-decoration: none !important;
+      font-weight: 850 !important;
+      letter-spacing: -.02em !important;
+      border: 0 !important;
+      transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease, background .22s ease !important;
+    }
+
+    body.page-accueil-rythme .vp-home-btn:hover {
+      transform: translateY(-2px) !important;
+    }
+
+    body.page-accueil-rythme .vp-home-btn-primary {
+      color: #03111f !important;
+      background: linear-gradient(135deg, #f4fdff, #7fe6ff 62%, #51cdf7) !important;
+      box-shadow: 0 18px 46px rgba(81,205,247,.24) !important;
+    }
+
+    body.page-accueil-rythme .vp-home-btn-secondary {
+      border: 1px solid rgba(255,255,255,.28) !important;
+      background: rgba(255,255,255,.04) !important;
+      color: #f7fbff !important;
+      backdrop-filter: blur(12px) !important;
+    }
+
+    body.page-accueil-rythme .vp-home-note {
+      max-width: 620px !important;
+      margin: 24px 0 0 !important;
+      color: rgba(247,251,255,.56) !important;
+      font-size: 14px !important;
+      line-height: 1.65 !important;
+      font-weight: 560 !important;
+    }
+
+    body.page-accueil-rythme .vp-home-benefits {
+      display: grid !important;
+      grid-template-columns: repeat(4, 1fr) !important;
+      max-width: 650px !important;
+      margin-top: clamp(34px, 5vw, 62px) !important;
+      border: 1px solid rgba(255,255,255,.075) !important;
+      border-radius: 24px !important;
+      background: linear-gradient(90deg, rgba(255,255,255,.045), rgba(255,255,255,.018)) !important;
+      overflow: hidden !important;
+    }
+
+    body.page-accueil-rythme .vp-home-benefits div {
+      min-height: 116px !important;
+      padding: 18px 12px !important;
+      display: grid !important;
+      align-content: center !important;
+      gap: 12px !important;
+      text-align: center !important;
+      border-right: 1px solid rgba(255,255,255,.095) !important;
+    }
+
+    body.page-accueil-rythme .vp-home-benefits div:last-child {
+      border-right: 0 !important;
+    }
+
+    body.page-accueil-rythme .vp-home-benefits strong {
+      color: #6ddfff !important;
+      font-size: 13px !important;
+      letter-spacing: .18em !important;
+    }
+
+    body.page-accueil-rythme .vp-home-benefits span {
+      color: rgba(255,255,255,.86) !important;
+      font-size: 14px !important;
+      line-height: 1.35 !important;
+      font-weight: 720 !important;
+    }
+
+    body.page-accueil-rythme .vp-home-immersive-media {
+      min-width: 0 !important;
+      padding: 12px !important;
+      border-radius: 36px !important;
+      background:
+        linear-gradient(135deg, rgba(109,223,255,.35), rgba(255,255,255,.06) 36%, rgba(109,223,255,.18)),
+        rgba(255,255,255,.04) !important;
+      box-shadow: 0 30px 96px rgba(0,0,0,.42), 0 0 80px rgba(109,223,255,.14) !important;
+      transform: translateY(34px) !important;
+    }
+
+    body.page-accueil-rythme .vp-home-slider {
+      position: relative !important;
+      height: clamp(620px, 62vw, 820px) !important;
+      overflow: hidden !important;
+      border-radius: 26px !important;
+      background: #07121d !important;
+      isolation: isolate !important;
+    }
+
+    body.page-accueil-rythme .vp-home-slides {
+      height: 100% !important;
+      display: flex !important;
+      transition: transform .75s cubic-bezier(.2,.8,.2,1) !important;
+      will-change: transform !important;
+    }
+
+    body.page-accueil-rythme .vp-home-slide {
+      min-width: 100% !important;
+      width: 100% !important;
+      height: 100% !important;
+      overflow: hidden !important;
+    }
+
+    body.page-accueil-rythme .vp-home-slide::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      background:
+        linear-gradient(90deg, rgba(2,10,18,.76), rgba(2,10,18,.28) 46%, rgba(2,10,18,.04) 78%),
+        linear-gradient(0deg, rgba(2,10,18,.62), transparent 52%);
+      pointer-events: none;
+    }
+
+    body.page-accueil-rythme .vp-home-slide img {
+      position: absolute !important;
+      inset: 0 !important;
+      width: 100% !important;
+      height: 100% !important;
+      display: block !important;
+      object-fit: cover !important;
+      object-position: center center !important;
+      filter: saturate(1.05) contrast(1.03) !important;
+      animation: vpHomeKen 9s ease-in-out infinite alternate !important;
+      z-index: 0 !important;
+      max-width: none !important;
+    }
+
+    body.page-accueil-rythme .vp-home-slide:nth-child(1) img { object-position: center 48% !important; }
+    body.page-accueil-rythme .vp-home-slide:nth-child(2) img { object-position: center 26% !important; }
+    body.page-accueil-rythme .vp-home-slide:nth-child(3) img { object-position: center 50% !important; }
+    body.page-accueil-rythme .vp-home-slide:nth-child(4) img { object-position: center 48% !important; }
+    body.page-accueil-rythme .vp-home-slide:nth-child(5) img { object-position: center 45% !important; }
+
+    body.page-accueil-rythme .vp-home-caption {
+      position: absolute !important;
+      z-index: 2 !important;
+      left: clamp(24px, 4.5vw, 62px) !important;
+      bottom: clamp(26px, 5vw, 62px) !important;
+      display: grid !important;
+      gap: 12px !important;
+      width: min(530px, calc(100% - 110px)) !important;
+      padding: 24px 26px !important;
+      border-radius: 24px !important;
+      border: 1px solid rgba(255,255,255,.18) !important;
+      background: rgba(3,15,26,.62) !important;
+      backdrop-filter: blur(18px) saturate(1.12) !important;
+      box-shadow: 0 24px 70px rgba(0,0,0,.36) !important;
+      color: #f7fbff !important;
+    }
+
+    body.page-accueil-rythme .vp-home-caption small {
+      color: #6ddfff !important;
+      letter-spacing: .16em !important;
+      text-transform: uppercase !important;
+      font-weight: 850 !important;
+      font-size: 12px !important;
+    }
+
+    body.page-accueil-rythme .vp-home-caption strong {
+      color: #f7fbff !important;
+      font-size: clamp(30px, 3.7vw, 52px) !important;
+      line-height: .95 !important;
+      letter-spacing: -.055em !important;
+    }
+
+    body.page-accueil-rythme .vp-home-caption span {
+      color: rgba(255,255,255,.84) !important;
+      font-size: clamp(15px, 1.2vw, 18px) !important;
+      line-height: 1.5 !important;
+    }
+
+    body.page-accueil-rythme .vp-home-slider-nav {
+      position: absolute !important;
+      z-index: 4 !important;
+      top: 50% !important;
+      transform: translateY(-50%) !important;
+      width: 54px !important;
+      height: 54px !important;
+      border-radius: 50% !important;
+      display: grid !important;
+      place-items: center !important;
+      background: rgba(255,255,255,.16) !important;
+      border: 1px solid rgba(255,255,255,.26) !important;
+      color: white !important;
+      font-size: 40px !important;
+      line-height: 1 !important;
+      padding: 0 0 5px !important;
+      backdrop-filter: blur(12px) !important;
+      cursor: pointer !important;
+      transition: transform .22s ease, background .22s ease, border-color .22s ease !important;
+    }
+
+    body.page-accueil-rythme .vp-home-slider-nav:hover {
+      transform: translateY(-50%) scale(1.06) !important;
+      background: rgba(109,223,255,.18) !important;
+      border-color: rgba(109,223,255,.72) !important;
+    }
+
+    body.page-accueil-rythme .vp-home-slider-prev { left: 22px !important; }
+    body.page-accueil-rythme .vp-home-slider-next { right: 22px !important; }
+
+    body.page-accueil-rythme .vp-home-dots {
+      position: absolute !important;
+      z-index: 4 !important;
+      right: 28px !important;
+      bottom: 24px !important;
+      display: flex !important;
+      gap: 9px !important;
+      align-items: center !important;
+    }
+
+    body.page-accueil-rythme .vp-home-dots button {
+      width: 10px !important;
+      height: 10px !important;
+      padding: 0 !important;
+      border: 0 !important;
+      border-radius: 999px !important;
+      background: rgba(255,255,255,.46) !important;
+      transition: width .28s ease, background .28s ease, box-shadow .28s ease !important;
+      cursor: pointer !important;
+    }
+
+    body.page-accueil-rythme .vp-home-dots button.is-active {
+      width: 34px !important;
+      background: #6ddfff !important;
+      box-shadow: 0 0 18px rgba(109,223,255,.75) !important;
+    }
+
+    @keyframes vpHomeKen {
+      from { transform: scale(1); }
+      to { transform: scale(1.08); }
+    }
+
+    @media (max-width: 1180px) {
+      body.page-accueil-rythme .vp-home-immersive-hero {
+        padding: calc(var(--vpl-nav-offset, 82px) + 28px) 20px 54px !important;
+      }
+
+      body.page-accueil-rythme .vp-home-immersive-wrap {
+        grid-template-columns: 1fr !important;
+      }
+
+      body.page-accueil-rythme .vp-home-immersive-copy h1 {
+        max-width: 920px !important;
+        font-size: clamp(54px, 11vw, 92px) !important;
+      }
+
+      body.page-accueil-rythme .vp-home-slider {
+        height: min(82vw, 780px) !important;
+        min-height: 560px !important;
+      }
+    }
+
+    @media (max-width: 720px) {
+      body.page-accueil-rythme .vp-home-immersive-hero {
+        padding: calc(var(--vpl-nav-offset, 76px) + 18px) 14px 42px !important;
+      }
+
+      body.page-accueil-rythme .vp-home-immersive-copy h1 {
+        font-size: clamp(44px, 13vw, 68px) !important;
+      }
+
+      body.page-accueil-rythme .vp-home-actions {
+        flex-direction: column !important;
+      }
+
+      body.page-accueil-rythme .vp-home-btn {
+        width: 100% !important;
+      }
+
+      body.page-accueil-rythme .vp-home-benefits {
+        grid-template-columns: repeat(2, 1fr) !important;
+      }
+
+      body.page-accueil-rythme .vp-home-benefits div:nth-child(2) {
+        border-right: 0 !important;
+      }
+
+      body.page-accueil-rythme .vp-home-benefits div:nth-child(1),
+      body.page-accueil-rythme .vp-home-benefits div:nth-child(2) {
+        border-bottom: 1px solid rgba(255,255,255,.095) !important;
+      }
+
+      body.page-accueil-rythme .vp-home-immersive-media {
+        padding: 8px !important;
+        border-radius: 26px !important;
+        transform: translateY(12px) !important;
+      }
+
+      body.page-accueil-rythme .vp-home-slider {
+        height: 74vh !important;
+        min-height: 560px !important;
+        border-radius: 20px !important;
+      }
+
+      body.page-accueil-rythme .vp-home-caption {
+        left: 14px !important;
+        right: 14px !important;
+        bottom: 62px !important;
+        width: auto !important;
+        max-width: none !important;
+        padding: 18px !important;
+        border-radius: 18px !important;
+      }
+
+      body.page-accueil-rythme .vp-home-caption strong {
+        font-size: 34px !important;
+      }
+
+      body.page-accueil-rythme .vp-home-slider-nav {
+        width: 46px !important;
+        height: 46px !important;
+        font-size: 32px !important;
+      }
+
+      body.page-accueil-rythme .vp-home-slider-prev { left: 12px !important; }
+      body.page-accueil-rythme .vp-home-slider-next { right: 12px !important; }
+      body.page-accueil-rythme .vp-home-dots {
+        left: 18px !important;
+        right: auto !important;
+        bottom: 22px !important;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      body.page-accueil-rythme .vp-home-slide img {
+        animation: none !important;
+      }
+
+      body.page-accueil-rythme .vp-home-slides,
+      body.page-accueil-rythme .vp-home-slider-nav,
+      body.page-accueil-rythme .vp-home-dots button,
+      body.page-accueil-rythme .vp-home-btn {
+        transition: none !important;
+      }
+    }
   </style>
 </head>
 
@@ -596,52 +1056,89 @@
     </header>
 
     <main>
-      <section class="hp-hero" aria-labelledby="hp-hero-title">
-        <div class="vpl-container hp-hero-grid">
-          <div class="hp-hero-copy">
-            <div class="hp-chip-row" aria-label="Repères Vital Protect">
+      <section class="vpl-hero vp-home-immersive-hero" aria-labelledby="hp-hero-title">
+        <div class="vp-home-immersive-wrap">
+          <div class="vp-home-immersive-copy">
+            <div class="vp-home-pills" aria-label="Repères Vital Protect">
               <span>Sécurité personnelle réaliste</span>
               <span>Public débutant</span>
               <span>Sans folklore martial</span>
             </div>
 
-            <h1 id="hp-hero-title">Prévenir, éviter et réagir simplement.</h1>
-            <p>
+            <h1 id="hp-hero-title">Prévenir,<br/>éviter et réagir<br/>simplement.</h1>
+
+            <p class="vp-home-lead">
               Vital Protect transmet une méthode progressive pour lire une situation,
-              garder la bonne distance, désamorcer quand c’est possible et réagir avec lucidité quand c’est nécessaire.
+              garder la bonne distance, désamorcer quand c’est possible et réagir avec
+              lucidité quand c’est nécessaire.
             </p>
 
-            <div class="hp-actions">
-              <a class="vpl-button vpl-button-primary" href="/stage.html">Recevoir les prochaines dates <span aria-hidden="true">→</span></a>
-              <a class="vpl-button vpl-button-secondary" href="/methode.html">Découvrir la méthode</a>
+            <div class="vp-home-actions">
+              <a class="vp-home-btn vp-home-btn-primary" href="/stage.html">Recevoir les prochaines dates <span aria-hidden="true">→</span></a>
+              <a class="vp-home-btn vp-home-btn-secondary" href="/methode.html">Découvrir la méthode</a>
             </div>
 
-            <p class="hp-microcopy">
-              Les réservations ne sont ouvertes que lorsqu’une session affiche clairement le lieu, la date, le tarif,
-              le nombre de places, l’encadrant et les conditions de participation.
+            <p class="vp-home-note">
+              Les réservations ne sont ouvertes que lorsqu’une session affiche clairement
+              le lieu, la date, le tarif, le nombre de places, l’encadrant et les conditions
+              de participation.
             </p>
+
+            <div class="vp-home-benefits" aria-label="Bénéfices de la méthode Vital Protect">
+              <div><strong>01</strong><span>Prévention<br/>avant tout</span></div>
+              <div><strong>02</strong><span>Distance<br/>et lucidité</span></div>
+              <div><strong>03</strong><span>Anticipation<br/>des risques</span></div>
+              <div><strong>04</strong><span>Réponses<br/>simples</span></div>
+            </div>
           </div>
 
-          <div class="hp-hero-visual" aria-label="Aperçu d'une formation Vital Protect">
-            <figure class="hp-hero-photo">
-              <img src="/visuel-prevenir-proteger-agir.webp" alt="Formation Vital Protect en salle avec message Prévenir Protéger Agir" />
-            </figure>
-            <div class="hp-hero-claim">
-              <strong>Pas un cours de combat.</strong>
-            </div>
-
-            <div class="hp-hero-mosaic">
-              <figure>
-                <img src="/visuel-mise-distance.webp" alt="Exercice de mise à distance encadré par un formateur Vital Protect" />
-              </figure>
-              <article>
-                <span></span>
-                <p>On travaille la lucidité, la distance, la sortie possible et des réponses simples.</p>
-              </article>
-            </div>
-            <div class="hp-hero-note">
-              <strong>Pas de réservation floue.</strong>
-              <span>Une session incomplète ne doit pas être vendue comme disponible.</span>
+          <div class="vp-home-immersive-media">
+            <div class="vp-home-slider" data-vp-home-slider aria-label="Carrousel Vital Protect">
+              <div class="vp-home-slides" data-vp-home-slides>
+                <article class="vp-home-slide">
+                  <img src="/vital-protect-slide-1.webp" alt="Brief pédagogique Vital Protect avant la mise en pratique"/>
+                  <div class="vp-home-caption">
+                    <small>Brief pédagogique</small>
+                    <strong>Comprendre avant de pratiquer.</strong>
+                    <span>On pose le cadre, les objectifs et les repères avant de passer aux exercices.</span>
+                  </div>
+                </article>
+                <article class="vp-home-slide">
+                  <img src="/vital-protect-slide-2.webp" alt="Exercice de mise à distance encadré par un formateur Vital Protect"/>
+                  <div class="vp-home-caption">
+                    <small>Mise à distance</small>
+                    <strong>Créer de l’espace sans agressivité.</strong>
+                    <span>Apprendre à placer une limite claire, visible et proportionnée.</span>
+                  </div>
+                </article>
+                <article class="vp-home-slide">
+                  <img src="/vital-protect-slide-3.webp" alt="Observation terrain et prévention autour d’un groupe en entreprise"/>
+                  <div class="vp-home-caption">
+                    <small>Observation terrain</small>
+                    <strong>Observer avant d’agir.</strong>
+                    <span>Lire l’environnement, anticiper les signaux et garder une marge de décision.</span>
+                  </div>
+                </article>
+                <article class="vp-home-slide">
+                  <img src="/vital-protect-slide-4.webp" alt="Mise en situation concrète avec encadrement Vital Protect"/>
+                  <div class="vp-home-caption">
+                    <small>Situation concrète</small>
+                    <strong>Réagir juste, sans sur-réagir.</strong>
+                    <span>Des exercices simples pour protéger, se dégager et reprendre le contrôle.</span>
+                  </div>
+                </article>
+                <article class="vp-home-slide">
+                  <img src="/vital-protect-slide-5.webp" alt="Formation progressive Vital Protect en salle"/>
+                  <div class="vp-home-caption">
+                    <small>Méthode progressive</small>
+                    <strong>Avancer étape par étape.</strong>
+                    <span>Une progression accessible pour intégrer les bons réflexes sans folklore martial.</span>
+                  </div>
+                </article>
+              </div>
+              <button class="vp-home-slider-nav vp-home-slider-prev" type="button" data-vp-home-prev aria-label="Photo précédente">‹</button>
+              <button class="vp-home-slider-nav vp-home-slider-next" type="button" data-vp-home-next aria-label="Photo suivante">›</button>
+              <div class="vp-home-dots" data-vp-home-dots aria-label="Navigation du carrousel"></div>
             </div>
           </div>
         </div>
@@ -940,6 +1437,100 @@
   <script src="/lusion-level.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+
+
+  <script>
+    (function () {
+      var root = document.querySelector('[data-vp-home-slider]');
+      if (!root) return;
+
+      var slidesTrack = root.querySelector('[data-vp-home-slides]');
+      var slideItems = Array.prototype.slice.call(root.querySelectorAll('.vp-home-slide'));
+      var dots = root.querySelector('[data-vp-home-dots]');
+      var prev = root.querySelector('[data-vp-home-prev]');
+      var next = root.querySelector('[data-vp-home-next]');
+      var count = slideItems.length;
+      var index = 0;
+      var timer = null;
+      var startX = null;
+      var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      if (!slidesTrack || !dots || count < 1) return;
+
+      function restartAutoPlay() {
+        window.clearInterval(timer);
+        if (reduceMotion || count < 2) return;
+        timer = window.setInterval(function () {
+          go(index + 1, false);
+        }, 5200);
+      }
+
+      function setActiveDot() {
+        Array.prototype.forEach.call(dots.children, function (dot, dotIndex) {
+          dot.classList.toggle('is-active', dotIndex === index);
+          dot.setAttribute('aria-current', dotIndex === index ? 'true' : 'false');
+        });
+      }
+
+      function go(nextIndex, shouldRestart) {
+        index = (nextIndex + count) % count;
+        slidesTrack.style.transform = 'translateX(' + (-index * 100) + '%)';
+        setActiveDot();
+        if (shouldRestart !== false) restartAutoPlay();
+      }
+
+      slideItems.forEach(function (_, dotIndex) {
+        var button = document.createElement('button');
+        button.type = 'button';
+        button.setAttribute('aria-label', 'Aller à la photo ' + (dotIndex + 1));
+        button.addEventListener('click', function () {
+          go(dotIndex);
+        });
+        dots.appendChild(button);
+      });
+
+      if (prev) {
+        prev.addEventListener('click', function () {
+          go(index - 1);
+        });
+      }
+
+      if (next) {
+        next.addEventListener('click', function () {
+          go(index + 1);
+        });
+      }
+
+      root.addEventListener('mouseenter', function () {
+        window.clearInterval(timer);
+      });
+
+      root.addEventListener('mouseleave', restartAutoPlay);
+
+      root.addEventListener('touchstart', function (event) {
+        if (!event.touches || !event.touches.length) return;
+        startX = event.touches[0].clientX;
+      }, { passive: true });
+
+      root.addEventListener('touchend', function (event) {
+        if (startX === null || !event.changedTouches || !event.changedTouches.length) return;
+        var deltaX = event.changedTouches[0].clientX - startX;
+        startX = null;
+        if (Math.abs(deltaX) < 44) return;
+        go(deltaX < 0 ? index + 1 : index - 1);
+      }, { passive: true });
+
+      document.addEventListener('keydown', function (event) {
+        var isHeroVisible = root.getBoundingClientRect().bottom > 0 && root.getBoundingClientRect().top < window.innerHeight;
+        if (!isHeroVisible) return;
+        if (event.key === 'ArrowLeft') go(index - 1);
+        if (event.key === 'ArrowRight') go(index + 1);
+      });
+
+      go(0);
+    })();
+  </script>
 
   <script>
     (function () {
