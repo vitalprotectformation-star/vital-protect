@@ -1232,59 +1232,120 @@
       }
     }
 
-    /* Correctif architecture Contact : aucun calque décoratif ne doit masquer le contenu. */
-    .vpw-cinematic-wipe {
+    /* Correctif Contact final : la page ne doit plus hériter d'un grand vide avant le contenu. */
+    body.page-contact-clean {
+      --vpl-first-screen-top: clamp(104px, 8vw, 124px);
+      --vpl-contact-top: clamp(112px, 8.5vw, 132px);
+    }
+
+    body.page-contact-clean .vpw-cinematic-wipe {
       display: none !important;
+      opacity: 0 !important;
+      visibility: hidden !important;
     }
 
-    .vpw-contact-wow {
-      padding-top: clamp(118px, 11vw, 152px);
+    body.page-contact-clean .vpw-contact-main {
+      display: block !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      min-height: 0 !important;
+      position: relative !important;
+      z-index: auto !important;
+      transform: none !important;
     }
 
-    .vpw-container,
-    .vpw-hero,
-    .vpw-layout,
-    .vpw-quick-links {
-      position: relative;
-      z-index: 12;
+    body.page-contact-clean .vpw-contact-main > .vpw-contact-wow:first-child {
+      display: block !important;
+      margin: 0 !important;
+      padding-top: var(--vpl-contact-top) !important;
+      padding-right: 24px !important;
+      padding-bottom: 88px !important;
+      padding-left: 24px !important;
+      min-height: auto !important;
+      position: relative !important;
+      z-index: 2 !important;
+      overflow: hidden !important;
     }
 
-    .vpw-hero {
-      margin-bottom: clamp(40px, 5vw, 58px);
+    body.page-contact-clean .vpw-contact-wow > .vpw-container {
+      display: block !important;
+      margin-top: 0 !important;
+      padding-top: 0 !important;
+      position: relative !important;
+      top: auto !important;
+      transform: none !important;
+      opacity: 1 !important;
+      visibility: visible !important;
+      z-index: 20 !important;
     }
 
-    .vpw-reveal,
-    .vpw-word,
-    .vpw-lead {
-      opacity: 1;
-      transform: none;
-      filter: none;
+    body.page-contact-clean .vpw-hero {
+      display: block !important;
+      margin-top: 0 !important;
+      padding-top: 0 !important;
+      margin-bottom: clamp(34px, 4vw, 48px) !important;
+      position: relative !important;
+      top: auto !important;
+      transform: none !important;
+      opacity: 1 !important;
+      visibility: visible !important;
+      z-index: 21 !important;
     }
 
-    .vpw-word,
-    .vpw-lead {
-      animation: none;
+    body.page-contact-clean .vpw-layout,
+    body.page-contact-clean .vpw-quick-links,
+    body.page-contact-clean .vpw-stack,
+    body.page-contact-clean .vpw-form-wrap {
+      position: relative !important;
+      z-index: 21 !important;
+      opacity: 1 !important;
+      visibility: visible !important;
     }
 
-    .vpw-form-wrap {
-      top: 112px;
+    body.page-contact-clean .vpw-reveal,
+    body.page-contact-clean .vpw-word,
+    body.page-contact-clean .vpw-lead,
+    body.page-contact-clean .vpw-eyebrow,
+    body.page-contact-clean .vpw-title,
+    body.page-contact-clean .vpw-gradient-title {
+      opacity: 1 !important;
+      visibility: visible !important;
+      transform: none !important;
+      filter: none !important;
+      animation: none !important;
+    }
+
+    body.page-contact-clean .vpw-form-wrap {
+      top: 0 !important;
     }
 
     @media (max-width: 1024px) {
-      .vpw-contact-wow {
-        padding-top: 112px;
+      body.page-contact-clean {
+        --vpl-contact-top: 112px;
+      }
+
+      body.page-contact-clean .vpw-contact-main > .vpw-contact-wow:first-child {
+        padding-right: 20px !important;
+        padding-bottom: 76px !important;
+        padding-left: 20px !important;
       }
     }
 
     @media (max-width: 720px) {
-      .vpw-contact-wow {
-        padding-top: 96px;
+      body.page-contact-clean {
+        --vpl-contact-top: 96px;
+      }
+
+      body.page-contact-clean .vpw-contact-main > .vpw-contact-wow:first-child {
+        padding-right: 16px !important;
+        padding-bottom: 64px !important;
+        padding-left: 16px !important;
       }
     }
   </style>
 </head>
 
-<body class="vpl-inner-page page-editorial-light">
+<body class="vpl-inner-page page-editorial-light page-contact-clean">
   <canvas aria-hidden="true" class="vpl-canvas"></canvas>
   <div aria-hidden="true" class="vpl-noise"></div>
 
@@ -1327,7 +1388,7 @@
     <a class="vpl-nav-cta" href="/stage.html">Trouver un stage</a>
   </header>
 
-  <main>
+  <main class="vpw-contact-main">
     <section class="vpw-contact-wow" id="contact">
       <svg class="vpw-mesh" viewBox="0 0 1440 900" preserveAspectRatio="none" aria-hidden="true">
         <path d="M-40 520 C 250 360, 420 650, 720 420 S 1120 210, 1510 360" fill="none" stroke="rgba(56,189,248,.35)" stroke-width="2"></path>
