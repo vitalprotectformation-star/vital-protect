@@ -47,8 +47,10 @@
       position: relative;
       isolation: isolate;
       overflow: hidden;
-      min-height: 100vh;
-      padding: 112px 24px 96px;
+      display: block;
+      min-height: 0;
+      height: auto;
+      padding: 118px 24px 88px;
       color: #06111f;
       background:
         radial-gradient(circle at 12% 15%, rgba(56,189,248,.32), transparent 28%),
@@ -222,7 +224,9 @@
 
     .vpw-hero {
       max-width: 940px;
-      margin: 0 auto 70px;
+      margin: 0 auto 42px;
+      padding: 0;
+      min-height: 0;
       text-align: center;
     }
 
@@ -1137,7 +1141,9 @@
 
     @media (max-width: 1024px) {
       .vpw-contact-wow {
-        padding: 90px 20px;
+        padding: 108px 20px 76px;
+        min-height: 0;
+        height: auto;
       }
 
       .vpw-layout {
@@ -1156,7 +1162,9 @@
 
     @media (max-width: 720px) {
       .vpw-contact-wow {
-        padding: 76px 16px;
+        padding: 96px 16px 64px;
+        min-height: 0;
+        height: auto;
       }
 
       .vpw-hero {
@@ -1342,6 +1350,93 @@
         padding-left: 16px !important;
       }
     }
+
+    /* Correctif Contact V2 : neutralise définitivement le grand écran vide avant le contenu. */
+    body.page-contact-clean {
+      --vpl-contact-top: 118px !important;
+    }
+
+    body.page-contact-clean .vpw-contact-main,
+    body.page-contact-clean main.vpw-contact-main {
+      display: block !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      min-height: 0 !important;
+      height: auto !important;
+      position: relative !important;
+      top: auto !important;
+      transform: none !important;
+    }
+
+    body.page-contact-clean .vpw-contact-main > .vpw-contact-wow:first-child,
+    body.page-contact-clean main.vpw-contact-main > section.vpw-contact-wow:first-child {
+      display: block !important;
+      align-items: stretch !important;
+      justify-content: flex-start !important;
+      place-items: initial !important;
+      margin: 0 !important;
+      padding: var(--vpl-contact-top) 24px 88px !important;
+      min-height: 0 !important;
+      height: auto !important;
+      max-height: none !important;
+      position: relative !important;
+      top: auto !important;
+      transform: none !important;
+      overflow: hidden !important;
+    }
+
+    body.page-contact-clean .vpw-contact-wow > .vpw-container {
+      display: block !important;
+      margin: 0 auto !important;
+      padding: 0 !important;
+      min-height: 0 !important;
+      height: auto !important;
+      position: relative !important;
+      top: auto !important;
+      transform: none !important;
+      opacity: 1 !important;
+      visibility: visible !important;
+    }
+
+    body.page-contact-clean .vpw-hero {
+      display: block !important;
+      margin: 0 auto 42px !important;
+      padding: 0 !important;
+      min-height: 0 !important;
+      height: auto !important;
+      position: relative !important;
+      top: auto !important;
+      transform: none !important;
+      opacity: 1 !important;
+      visibility: visible !important;
+    }
+
+    body.page-contact-clean .vpw-eyebrow {
+      margin-top: 0 !important;
+    }
+
+    @media (max-width: 1024px) {
+      body.page-contact-clean {
+        --vpl-contact-top: 104px !important;
+      }
+
+      body.page-contact-clean .vpw-contact-main > .vpw-contact-wow:first-child,
+      body.page-contact-clean main.vpw-contact-main > section.vpw-contact-wow:first-child {
+        padding: var(--vpl-contact-top) 20px 76px !important;
+      }
+    }
+
+    @media (max-width: 720px) {
+      body.page-contact-clean {
+        --vpl-contact-top: 92px !important;
+      }
+
+      body.page-contact-clean .vpw-contact-main > .vpw-contact-wow:first-child,
+      body.page-contact-clean main.vpw-contact-main > section.vpw-contact-wow:first-child {
+        padding: var(--vpl-contact-top) 16px 64px !important;
+      }
+    }
+
   </style>
 </head>
 
