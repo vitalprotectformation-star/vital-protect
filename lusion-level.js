@@ -1092,6 +1092,13 @@ window.addEventListener('DOMContentLoaded', () => {
     drawer.innerHTML = '';
     sourceMenu.querySelectorAll('a').forEach((link) => {
       if (link.classList.contains('vpl-mobile-menu-cta')) return;
+
+      /* Mobile uniquement : on garde la FAQ disponible en desktop/footer,
+         mais elle ne doit plus apparaître dans le drawer burger. */
+      const href = (link.getAttribute('href') || '').toLowerCase();
+      const page = (link.getAttribute('data-page') || '').toLowerCase();
+      if (page === 'faq' || href.includes('faq.html')) return;
+
       const clone = link.cloneNode(true);
       clone.removeAttribute('style');
       clone.classList.remove('vpl-mobile-menu-cta');
