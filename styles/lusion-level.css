@@ -15542,3 +15542,39 @@ body.vpl-home.page-accueil-rythme .vp-home-immersive-hero,
 body.page-stage-redesign .stage-hero-redesign.stage-hero-carousel {
   margin-top: 0 !important;
 }
+
+
+/* =========================================================
+   Correctif mobile final — drawer burger
+   - FAQ retirée via JS côté mobile
+   - CTA du drawer pleine largeur (annule les anciens max-width du bouton nav)
+   ========================================================= */
+@media (max-width: 760px) {
+  .vpl-mobile-drawer .vpl-mobile-drawer-cta,
+  .vpl-mobile-drawer a.vpl-mobile-drawer-cta.vpl-nav-cta,
+  body.vpl-home .vpl-mobile-drawer a.vpl-mobile-drawer-cta.vpl-nav-cta {
+    width: 100% !important;
+    max-width: none !important;
+    min-width: 0 !important;
+    min-height: 54px !important;
+    padding: 14px 18px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    font-size: 1rem !important;
+    line-height: 1.15 !important;
+    letter-spacing: -0.03em !important;
+    border-radius: 18px !important;
+  }
+
+  .vpl-mobile-drawer .vpl-mobile-drawer-cta::after,
+  .vpl-mobile-drawer a.vpl-mobile-drawer-cta.vpl-nav-cta::after,
+  body.vpl-home .vpl-mobile-drawer a.vpl-mobile-drawer-cta.vpl-nav-cta::after {
+    content: none !important;
+    display: none !important;
+  }
+}
