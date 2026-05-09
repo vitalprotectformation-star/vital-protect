@@ -1795,6 +1795,27 @@
     }
   </style>
 
+
+  <style id="vp-enterprise-mobile-final-check-fix">
+    /* Vérification mobile finale : neutralise la marge native des <figure> et garde le comparateur dans la largeur écran. */
+    body.page-entreprise-ribbon-back .vpba-hero-card {
+      margin: 0 !important;
+      box-sizing: border-box !important;
+      max-width: 100% !important;
+    }
+
+    @media (max-width: 680px) {
+      body.page-entreprise-ribbon-back .vpba-hero-card {
+        width: 100% !important;
+        margin-inline: 0 !important;
+      }
+
+      body.page-entreprise-ribbon-back .vp-visual-story-grid {
+        overflow: visible !important;
+      }
+    }
+  </style>
+
 </head>
 
 <body class="vpl-inner-page page-editorial-light page-entreprise-ribbon-back">
