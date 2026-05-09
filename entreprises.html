@@ -1123,6 +1123,202 @@
   <link href="/styles/components.css" rel="stylesheet" />
   <link href="/styles/lusion-level.css" rel="stylesheet" />
 
+  <style id="enterprise-before-after-critical">
+    /* Hero Entreprise — comparateur avant / après interactif.
+       Ce style est placé après les CSS globaux pour éviter que les règles images du site
+       transforment le comparateur en image statique. */
+    body.page-entreprise-ribbon-back .enterprise-compare-card--interactive {
+      position: relative !important;
+      min-height: clamp(330px, 38vw, 560px) !important;
+      aspect-ratio: 4 / 3 !important;
+      padding: 0 !important;
+      overflow: hidden !important;
+      background: #07111f !important;
+      cursor: ew-resize !important;
+    }
+
+    body.page-entreprise-ribbon-back .enterprise-before-after {
+      --position: 50%;
+      position: absolute !important;
+      inset: 0 !important;
+      width: 100% !important;
+      height: 100% !important;
+      overflow: hidden !important;
+      border-radius: inherit !important;
+      isolation: isolate !important;
+      background: #07111f !important;
+      touch-action: pan-y !important;
+      cursor: ew-resize !important;
+    }
+
+    body.page-entreprise-ribbon-back .enterprise-ba-layer,
+    body.page-entreprise-ribbon-back .enterprise-ba-after {
+      position: absolute !important;
+      inset: 0 !important;
+    }
+
+    body.page-entreprise-ribbon-back .enterprise-ba-layer {
+      width: 100% !important;
+      height: 100% !important;
+      min-height: 0 !important;
+      background-size: cover !important;
+      background-position: center center !important;
+      background-repeat: no-repeat !important;
+      transform: none !important;
+      transition: none !important;
+      pointer-events: none !important;
+      user-select: none !important;
+    }
+
+    body.page-entreprise-ribbon-back .enterprise-ba-layer--before {
+      z-index: 1 !important;
+      background-image: var(--before-image) !important;
+    }
+
+    body.page-entreprise-ribbon-back .enterprise-ba-after {
+      z-index: 2 !important;
+      overflow: hidden !important;
+      clip-path: inset(0 calc(100% - var(--position)) 0 0) !important;
+      -webkit-clip-path: inset(0 calc(100% - var(--position)) 0 0) !important;
+      pointer-events: none !important;
+    }
+
+    body.page-entreprise-ribbon-back .enterprise-ba-layer--after {
+      background-image: var(--after-image) !important;
+    }
+
+    body.page-entreprise-ribbon-back .enterprise-ba-divider {
+      position: absolute !important;
+      z-index: 4 !important;
+      top: 0 !important;
+      bottom: 0 !important;
+      left: var(--position) !important;
+      width: 3px !important;
+      background: rgba(255, 255, 255, .96) !important;
+      transform: translateX(-50%) !important;
+      box-shadow: 0 0 18px rgba(0, 0, 0, .42) !important;
+      pointer-events: none !important;
+    }
+
+    body.page-entreprise-ribbon-back .enterprise-ba-handle {
+      position: absolute !important;
+      z-index: 5 !important;
+      left: var(--position) !important;
+      top: 50% !important;
+      transform: translate(-50%, -50%) !important;
+      width: 50px !important;
+      height: 50px !important;
+      display: grid !important;
+      place-items: center !important;
+      border-radius: 999px !important;
+      background: rgba(255, 255, 255, .96) !important;
+      color: #07111f !important;
+      font-weight: 900 !important;
+      letter-spacing: -.06em !important;
+      box-shadow: 0 16px 38px rgba(0, 0, 0, .34) !important;
+      pointer-events: none !important;
+    }
+
+    body.page-entreprise-ribbon-back .enterprise-ba-slider {
+      position: absolute !important;
+      z-index: 10 !important;
+      inset: 0 !important;
+      width: 100% !important;
+      height: 100% !important;
+      min-height: 0 !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      opacity: 0 !important;
+      cursor: ew-resize !important;
+      pointer-events: auto !important;
+      appearance: none !important;
+      -webkit-appearance: none !important;
+      touch-action: pan-y !important;
+    }
+
+    body.page-entreprise-ribbon-back .enterprise-ba-slider::-webkit-slider-thumb {
+      width: 44px !important;
+      height: 100% !important;
+      -webkit-appearance: none !important;
+      appearance: none !important;
+    }
+
+    body.page-entreprise-ribbon-back .enterprise-ba-slider::-moz-range-thumb {
+      width: 44px !important;
+      height: 100% !important;
+      border: 0 !important;
+      background: transparent !important;
+    }
+
+    body.page-entreprise-ribbon-back .enterprise-ba-label {
+      position: absolute !important;
+      z-index: 5 !important;
+      top: 18px !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      padding: 9px 14px !important;
+      border-radius: 999px !important;
+      background: rgba(7, 17, 31, .70) !important;
+      color: #fff !important;
+      font-size: .78rem !important;
+      line-height: 1 !important;
+      font-weight: 900 !important;
+      letter-spacing: .08em !important;
+      text-transform: uppercase !important;
+      backdrop-filter: blur(10px) !important;
+      box-shadow: 0 10px 28px rgba(0, 0, 0, .22) !important;
+      pointer-events: none !important;
+    }
+
+    body.page-entreprise-ribbon-back .enterprise-ba-label--before {
+      left: 18px !important;
+    }
+
+    body.page-entreprise-ribbon-back .enterprise-ba-label--after {
+      right: 18px !important;
+      background: rgba(255, 255, 255, .86) !important;
+      color: #07111f !important;
+    }
+
+    @supports not ((clip-path: inset(0 0 0 0)) or (-webkit-clip-path: inset(0 0 0 0))) {
+      body.page-entreprise-ribbon-back .enterprise-ba-after {
+        right: auto !important;
+        width: var(--position) !important;
+        clip-path: none !important;
+      }
+
+      body.page-entreprise-ribbon-back .enterprise-ba-layer--after {
+        width: calc(100% / (var(--position) / 100)) !important;
+      }
+    }
+
+    @media (max-width: 860px) {
+      body.page-entreprise-ribbon-back .enterprise-compare-card--interactive {
+        min-height: clamp(280px, 72vw, 480px) !important;
+      }
+
+      body.page-entreprise-ribbon-back .enterprise-ba-label {
+        top: 14px !important;
+        padding: 8px 12px !important;
+        font-size: .72rem !important;
+      }
+
+      body.page-entreprise-ribbon-back .enterprise-ba-label--before {
+        left: 14px !important;
+      }
+
+      body.page-entreprise-ribbon-back .enterprise-ba-label--after {
+        right: 14px !important;
+      }
+
+      body.page-entreprise-ribbon-back .enterprise-ba-handle {
+        width: 44px !important;
+        height: 44px !important;
+      }
+    }
+  </style>
+
   <style>
     /* Correctif : ajoute une légère marge sous le menu sur la section d'ouverture */
     .vp-visual-story.vp-visual-story--enterprise {
@@ -1473,22 +1669,20 @@
           </div>
         </div>
 
-        <figure class="vp-image-card vp-image-card--wide enterprise-compare-card" aria-label="Comparaison avant après d'une situation d'accueil public">
-          <div class="enterprise-before-after" data-enterprise-before-after style="--position: 50%;">
-            <img
-              class="enterprise-ba-image enterprise-ba-image--before"
-              src="/entreprise-accueil-avant.webp"
-              alt="Avant : une situation d'accueil public sous tension"
-              loading="eager"
-            />
+        <figure class="vp-image-card vp-image-card--wide enterprise-compare-card enterprise-compare-card--interactive" aria-label="Comparaison avant après d'une situation d'accueil public">
+          <div
+            class="enterprise-before-after"
+            data-enterprise-before-after
+            style="--position: 50%; --before-image: url('/images/entreprise-accueil-avant.png'); --after-image: url('/images/entreprise-accueil-apres.png');"
+          >
+            <div
+              class="enterprise-ba-layer enterprise-ba-layer--before"
+              role="img"
+              aria-label="Avant : une situation d'accueil public sous tension"
+            ></div>
 
             <div class="enterprise-ba-after" aria-hidden="true">
-              <img
-                class="enterprise-ba-image enterprise-ba-image--after"
-                src="/entreprise-accueil-apres.webp"
-                alt=""
-                loading="eager"
-              />
+              <div class="enterprise-ba-layer enterprise-ba-layer--after"></div>
             </div>
 
             <div class="enterprise-ba-divider" aria-hidden="true"></div>
@@ -2418,12 +2612,34 @@ ${payload.message}`
         var slider = compare.querySelector('.enterprise-ba-slider');
         if (!slider) return;
 
-        function updateComparison() {
-          compare.style.setProperty('--position', slider.value + '%');
+        function clamp(value, min, max) {
+          return Math.min(max, Math.max(min, value));
         }
 
-        slider.addEventListener('input', updateComparison);
-        slider.addEventListener('change', updateComparison);
+        function updateComparison(value) {
+          var nextValue = typeof value === 'number' ? value : Number(slider.value || 50);
+          nextValue = clamp(nextValue, 0, 100);
+          slider.value = String(nextValue);
+          compare.style.setProperty('--position', nextValue + '%');
+        }
+
+        function updateFromPointer(event) {
+          var rect = compare.getBoundingClientRect();
+          if (!rect.width) return;
+          var clientX = event.touches && event.touches.length ? event.touches[0].clientX : event.clientX;
+          updateComparison(((clientX - rect.left) / rect.width) * 100);
+        }
+
+        slider.addEventListener('input', function () { updateComparison(); });
+        slider.addEventListener('change', function () { updateComparison(); });
+        compare.addEventListener('pointerdown', function (event) {
+          updateFromPointer(event);
+        });
+        compare.addEventListener('pointermove', function (event) {
+          if (event.buttons !== 1) return;
+          updateFromPointer(event);
+        });
+
         updateComparison();
       });
     })();
