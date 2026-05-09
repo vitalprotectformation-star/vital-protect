@@ -131,6 +131,22 @@
     @media (max-width:700px){.vp-stage-modern{padding:64px 0}.vp-stage-title,.vp-stage-title.medium,.vp-stage-compare-card h2{letter-spacing:-.052em}.vp-stage-access-grid,.vp-stage-reflex-grid,.vp-stage-photo-grid{grid-template-columns:1fr}.vp-stage-photo:nth-child(2){margin-top:0}.vp-stage-photo{min-height:280px}.vp-stage-problem-card,.vp-stage-reflex-card{grid-template-columns:auto 1fr}.vp-stage-problem-card .vp-stage-icon,.vp-stage-reflex-card .vp-stage-icon,.vp-stage-access-orbit,.vp-stage-hover-chip,.vp-stage-process-list::before{display:none}.vp-stage-process-list{padding-left:0}.vp-stage-step{align-items:start}}
     @media (prefers-reduced-motion:reduce){.page-stage-redesign *,.page-stage-redesign *::before,.page-stage-redesign *::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}.vp-reveal,.vp-stagger>*,.page-stage-redesign .stage-reservation-section .section-head,.page-stage-redesign .stage-faq-section .section-head,.page-stage-redesign .stage-final-box,.page-stage-redesign .faq-grid>*{opacity:1!important;transform:none!important}}
   </style>
+
+<style id="vp-stage-hero-carousel-style">
+  .stage-hero-redesign.stage-hero-carousel{position:relative;isolation:isolate;overflow:hidden;padding:clamp(118px,9vw,150px) 0 clamp(76px,7vw,112px);background:radial-gradient(circle at 12% 10%,rgba(109,183,255,.24),transparent 31rem),radial-gradient(circle at 84% 16%,rgba(11,74,139,.12),transparent 32rem),linear-gradient(180deg,#f4faff 0%,#edf7ff 100%)}
+  .stage-hero-redesign.stage-hero-carousel:before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(rgba(11,74,139,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(11,74,139,.025) 1px,transparent 1px);background-size:78px 78px;mask-image:radial-gradient(circle at 55% 38%,black,transparent 78%);opacity:.72;pointer-events:none}
+  .stage-hero-carousel-grid{display:grid;grid-template-columns:minmax(330px,.88fr) minmax(600px,1.24fr);gap:clamp(38px,5vw,78px);align-items:center}.stage-hero-carousel .stage-hero-copy{min-width:0}.stage-hero-carousel .stage-pill-row{margin-bottom:24px}.stage-hero-carousel h1{max-width:760px;font-size:clamp(48px,6vw,88px);line-height:.9;letter-spacing:-.078em}.stage-hero-carousel #heroDescription{max-width:640px;font-size:clamp(16px,1.28vw,19px);line-height:1.7}
+  .stage-hero-benefits{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:28px;max-width:610px}.stage-hero-benefits span{min-height:88px;display:grid;align-content:center;gap:6px;padding:16px;border-radius:22px;border:1px solid rgba(11,74,139,.10);background:rgba(255,255,255,.62);box-shadow:0 14px 38px rgba(6,26,47,.06);color:#52677d;font-size:13px;line-height:1.35}.stage-hero-benefits b{color:#061a2f;font-size:15px;letter-spacing:-.025em}
+  .stage-carousel-shell{min-width:0;padding:12px;border-radius:36px;background:linear-gradient(135deg,rgba(109,183,255,.34),rgba(255,255,255,.74) 36%,rgba(11,74,139,.12)),rgba(255,255,255,.46);box-shadow:0 30px 92px rgba(6,26,47,.18),0 0 80px rgba(109,183,255,.18)}.stage-carousel{position:relative;height:clamp(560px,58vw,780px);overflow:hidden;border-radius:28px;background:#061a2f;isolation:isolate}.stage-carousel-track{height:100%;display:flex;transition:transform .75s cubic-bezier(.2,.8,.2,1);will-change:transform}.stage-carousel-slide{position:relative;min-width:100%;height:100%;overflow:hidden}.stage-carousel-slide:after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,rgba(3,14,27,.78),rgba(3,14,27,.26) 48%,rgba(3,14,27,.04) 78%),linear-gradient(0deg,rgba(3,14,27,.64),transparent 54%);z-index:1}.stage-carousel-slide img{width:100%;height:100%;display:block;object-fit:cover;object-position:var(--stage-slide-position,center center);filter:saturate(1.05) contrast(1.03);transform:scale(1.03);animation:stageHeroKen 9s ease-in-out infinite alternate}
+  .stage-carousel-caption{position:absolute;z-index:2;left:clamp(22px,4.2vw,56px);bottom:clamp(24px,4.5vw,58px);width:min(520px,calc(100% - 106px));display:grid;gap:11px;padding:clamp(18px,2.2vw,26px);border-radius:24px;border:1px solid rgba(255,255,255,.18);background:rgba(3,15,26,.62);color:#fff;backdrop-filter:blur(18px) saturate(1.12);box-shadow:0 24px 70px rgba(0,0,0,.34)}.stage-carousel-caption small{color:#83e6ff;letter-spacing:.15em;text-transform:uppercase;font-size:12px;font-weight:900}.stage-carousel-caption strong{font-size:clamp(28px,3.3vw,48px);line-height:.95;letter-spacing:-.055em;font-weight:950}.stage-carousel-caption span{color:rgba(255,255,255,.84);font-size:clamp(14px,1.15vw,17px);line-height:1.48}
+  .stage-carousel-nav{position:absolute;z-index:4;top:50%;transform:translateY(-50%);width:54px;height:54px;display:grid;place-items:center;border:1px solid rgba(255,255,255,.26);border-radius:999px;background:rgba(255,255,255,.16);color:#fff;font:inherit;font-size:40px;line-height:1;backdrop-filter:blur(12px);cursor:pointer;transition:transform .22s ease,background .22s ease,border-color .22s ease}.stage-carousel-nav:hover{transform:translateY(-50%) scale(1.06);background:rgba(109,223,255,.20);border-color:rgba(109,223,255,.72)}.stage-carousel-nav.prev{left:20px}.stage-carousel-nav.next{right:20px}.stage-carousel-dots{position:absolute;z-index:4;right:26px;bottom:24px;display:flex;flex-wrap:wrap;justify-content:flex-end;gap:8px;max-width:min(360px,calc(100% - 52px))}.stage-carousel-dots button{width:9px;height:9px;padding:0;border:0;border-radius:999px;background:rgba(255,255,255,.50);cursor:pointer;transition:width .28s ease,background .28s ease,box-shadow .28s ease}.stage-carousel-dots button.active{width:31px;background:#83e6ff;box-shadow:0 0 18px rgba(109,223,255,.75)}
+  @keyframes stageHeroKen{from{transform:scale(1.01)}to{transform:scale(1.08)}}
+  @media(max-width:1180px){.stage-hero-carousel-grid{grid-template-columns:1fr}.stage-carousel{height:min(82vw,760px);min-height:540px}}
+  @media(max-width:720px){.stage-hero-redesign.stage-hero-carousel{padding:96px 0 64px}.stage-hero-benefits{grid-template-columns:1fr}.stage-carousel-shell{padding:8px;border-radius:26px}.stage-carousel{height:74vh;min-height:560px;border-radius:20px}.stage-carousel-caption{left:14px;right:14px;bottom:62px;width:auto;padding:18px;border-radius:18px}.stage-carousel-caption strong{font-size:32px}.stage-carousel-nav{width:46px;height:46px;font-size:32px}.stage-carousel-nav.prev{left:12px}.stage-carousel-nav.next{right:12px}.stage-carousel-dots{left:18px;right:auto;bottom:22px;justify-content:flex-start}}
+  @media(prefers-reduced-motion:reduce){.stage-carousel-slide img{animation:none}.stage-carousel-track,.stage-carousel-nav,.stage-carousel-dots button{transition:none}}
+  body.page-stage-redesign main > .stage-hero-redesign.stage-hero-carousel:first-child{margin-top:0!important;padding-top:clamp(118px,9vw,150px)!important}
+</style>
+
 </head>
 <body class="vpl-inner-page page-editorial-light page-stage page-stage-redesign">
   <canvas class="vpl-canvas" aria-hidden="true"></canvas>
@@ -163,21 +179,35 @@
   </header>
 
   <main>
-    <section class="stage-hero-redesign">
-      <div class="vpl-container stage-hero-grid">
+
+    <section class="stage-hero-redesign stage-hero-carousel">
+      <div class="vpl-container stage-hero-carousel-grid">
         <div class="stage-hero-copy">
           <div class="stage-pill-row" aria-label="Points clés"><span>Sécurité personnelle réaliste</span><span>Débutants bienvenus</span><span>Pas de folklore martial</span></div>
           <div class="vpl-eyebrow" id="heroType">Stage Vital Protect</div>
           <h1 id="heroTitle">Apprendre à prévenir, éviter et réagir simplement.</h1>
           <p id="heroDescription">Vital Protect transmet des repères concrets pour lire les tensions, garder la bonne distance, désamorcer quand c’est possible et agir avec proportion.</p>
-          <div class="vpl-actions"><a class="vpl-button vpl-button-primary" href="#parcours">Choisir mon parcours</a><a class="vpl-button vpl-button-secondary" href="/methode.html">Découvrir la méthode</a></div>
+          <div class="vpl-actions"><a class="vpl-button vpl-button-primary" href="#parcours">Choisir mon parcours</a><a class="vpl-button vpl-button-secondary" href="#reservation">Recevoir les dates</a></div>
           <p class="stage-hero-note">Les réservations ne sont ouvertes que lorsqu’une session affiche clairement le lieu, la date, le tarif, l’encadrant et les conditions de participation.</p>
+          <div class="stage-hero-benefits" aria-label="Objectifs du stage"><span><b>Prévenir</b>Lire les signaux et garder une marge.</span><span><b>Éviter</b>Créer de l’espace sans sur-réagir.</span><span><b>Réagir</b>Agir simplement et reprendre le calme.</span></div>
         </div>
-        <div class="stage-hero-panel" aria-label="Aperçu du stage">
-          <img class="stage-hero-main-img" src="/visuel-mise-distance.webp" alt="Exercice de mise à distance dans un stage Vital Protect" />
-          <div class="stage-hero-mini-grid"><img src="/visuel-massage-cardiaque.webp" alt="Atelier de sécurité et assistance pendant une formation Vital Protect" /><div class="stage-hero-card-dark"><strong>Pas un cours de combat.</strong><span>Lucidité, distance, sortie possible et décisions simples.</span></div></div>
-          <div class="stage-hero-status"><strong>Pas de réservation floue.</strong><span>Une session incomplète ne doit pas être vendue comme disponible.</span></div>
-        </div>
+        <div class="stage-carousel-shell"><div class="stage-carousel" data-stage-carousel aria-label="Carrousel des stages Vital Protect"><div class="stage-carousel-track">
+              <article class="stage-carousel-slide" style="--stage-slide-position:center 42%;"><img src="/vital-protect-slide-1.webp" alt="Brief pédagogique Vital Protect avec un groupe assis"><div class="stage-carousel-caption"><small>Brief pédagogique</small><strong>Comprendre avant de pratiquer.</strong><span>On pose le cadre, les objectifs et les repères avant de passer aux exercices.</span></div></article>
+              <article class="stage-carousel-slide" style="--stage-slide-position:center 34%;"><img src="/vital-protect-slide-2.webp" alt="Formatrice Vital Protect en démonstration de mise à distance"><div class="stage-carousel-caption"><small>Mise à distance</small><strong>Créer de l’espace sans agressivité.</strong><span>Une limite claire, visible et proportionnée, sans entrer dans la confrontation.</span></div></article>
+              <article class="stage-carousel-slide" style="--stage-slide-position:center center;"><img src="/vital-protect-slide-3.webp" alt="Briefing sécurité en extérieur avec un groupe"><div class="stage-carousel-caption"><small>Observation terrain</small><strong>Observer avant d’agir.</strong><span>Lire l’environnement, anticiper les signaux et garder une marge de décision.</span></div></article>
+              <article class="stage-carousel-slide" style="--stage-slide-position:center center;"><img src="/vital-protect-slide-4.webp" alt="Exercice concret Vital Protect en salle"><div class="stage-carousel-caption"><small>Situation concrète</small><strong>Réagir juste, sans sur-réagir.</strong><span>Des exercices simples pour protéger, se dégager et reprendre le contrôle.</span></div></article>
+              <article class="stage-carousel-slide" style="--stage-slide-position:center center;"><img src="/vital-protect-slide-5.webp" alt="Démonstration progressive Vital Protect"><div class="stage-carousel-caption"><small>Méthode progressive</small><strong>Avancer étape par étape.</strong><span>Une progression accessible pour intégrer les bons réflexes sans folklore martial.</span></div></article>
+              <article class="stage-carousel-slide" style="--stage-slide-position:center center;"><img src="/visuel-mise-distance.webp" alt="Exercice de mise à distance dans un stage Vital Protect"><div class="stage-carousel-caption"><small>Distance</small><strong>Se placer avant de subir.</strong><span>Le bon geste commence souvent par une meilleure position et une parole courte.</span></div></article>
+              <article class="stage-carousel-slide" style="--stage-slide-position:center center;"><img src="/visuel-massage-cardiaque.webp" alt="Atelier d’assistance et de mise en sécurité pendant une formation"><div class="stage-carousel-caption"><small>Sécurité</small><strong>Protéger sans improviser.</strong><span>Le cadre reste clair : sécurité du groupe, consignes simples et débrief.</span></div></article>
+              <article class="stage-carousel-slide" style="--stage-slide-position:center 42%;"><img src="/visuel-briefing-crossfit.webp" alt="Briefing avec un groupe pendant une formation Vital Protect"><div class="stage-carousel-caption"><small>Briefing</small><strong>Mettre tout le monde au même niveau.</strong><span>Comprendre le pourquoi avant de chercher le comment.</span></div></article>
+              <article class="stage-carousel-slide" style="--stage-slide-position:center center;"><img src="/visuel-prevenir-proteger-agir.webp" alt="Prévenir protéger agir avec Vital Protect"><div class="stage-carousel-caption"><small>Repères</small><strong>Prévenir, protéger, agir.</strong><span>Une logique simple pour rester lucide quand la situation change.</span></div></article>
+              <article class="stage-carousel-slide" style="--stage-slide-position:center 40%;"><img src="/formatrice-briefe-groupe-assis.png" alt="Formatrice briefe un groupe assis en stage Vital Protect"><div class="stage-carousel-caption"><small>Pédagogie</small><strong>Expliquer clairement.</strong><span>Chaque exercice est replacé dans son objectif : comprendre, essayer, ajuster.</span></div></article>
+              <article class="stage-carousel-slide" style="--stage-slide-position:center 36%;"><img src="/femme-mise-a-distance-formateur-guide.png" alt="Mise à distance guidée par un formateur Vital Protect"><div class="stage-carousel-caption"><small>Guidage</small><strong>Pratiquer sans mise en danger.</strong><span>Le formateur corrige progressivement pour garder un cadre réaliste et sûr.</span></div></article>
+              <article class="stage-carousel-slide" style="--stage-slide-position:center center;"><img src="/groupe-dehors-briefing-securite.png" alt="Briefing sécurité en extérieur avec un groupe"><div class="stage-carousel-caption"><small>Terrain</small><strong>Relier la salle au réel.</strong><span>Un stage doit aider à lire les lieux, les distances et les sorties possibles.</span></div></article>
+              <article class="stage-carousel-slide" style="--stage-slide-position:center center;"><img src="/formateur-devant-public-assis-salle.png" alt="Formateur devant un public assis pendant une formation"><div class="stage-carousel-caption"><small>Transmission</small><strong>Des repères mémorisables.</strong><span>Le but n’est pas d’accumuler des techniques, mais de repartir avec une logique simple.</span></div></article>
+              <article class="stage-carousel-slide" style="--stage-slide-position:center center;"><img src="/emplacement-image-hero-methode.png" alt="Illustration de méthode Vital Protect"><div class="stage-carousel-caption"><small>Méthode</small><strong>Une progression lisible.</strong><span>Prévention, distance, sortie possible et réaction proportionnée restent le fil conducteur.</span></div></article>
+              <article class="stage-carousel-slide" style="--stage-slide-position:center center;"><img src="/emplacement-image-pedagogique-methode.png" alt="Illustration pédagogique Vital Protect"><div class="stage-carousel-caption"><small>Débrief</small><strong>Revenir au calme.</strong><span>On termine par ce qui a été compris, ce qui reste à ajuster et quoi faire ensuite.</span></div></article>
+            </div><button class="stage-carousel-nav prev" type="button" aria-label="Image précédente">‹</button><button class="stage-carousel-nav next" type="button" aria-label="Image suivante">›</button><div class="stage-carousel-dots" aria-label="Navigation du carrousel"></div></div></div>
       </div>
     </section>
 
@@ -309,6 +339,34 @@
       <div class="site-footer__links"><a href="/methode.html">La méthode</a><a href="/entreprises.html">Entreprises</a><a href="/devenir-formateur.html">Devenir formateur</a><a href="/faq.html">FAQ</a><a href="/contact.html">Contact</a></div>
     </div>
   </footer>
+
+
+<script>
+  (function(){
+    const root=document.querySelector('[data-stage-carousel]');
+    if(!root)return;
+    const track=root.querySelector('.stage-carousel-track');
+    const slides=[...root.querySelectorAll('.stage-carousel-slide')];
+    const dots=root.querySelector('.stage-carousel-dots');
+    const prev=root.querySelector('.stage-carousel-nav.prev');
+    const next=root.querySelector('.stage-carousel-nav.next');
+    const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if(!track||!slides.length||!dots)return;
+    let index=0,timer=null,startX=0,down=false;
+    slides.forEach((_,n)=>{const b=document.createElement('button');b.type='button';b.setAttribute('aria-label',`Voir l’image ${n+1}`);b.addEventListener('click',()=>go(n,true));dots.appendChild(b);});
+    function paint(){[...dots.children].forEach((d,n)=>d.classList.toggle('active',n===index));}
+    function go(n,manual){index=(n+slides.length)%slides.length;track.style.transform=`translateX(${-index*100}%)`;paint();if(manual)restart();}
+    function stop(){if(timer)clearInterval(timer);timer=null;}
+    function start(){if(reduced||slides.length<2)return;stop();timer=setInterval(()=>go(index+1,false),5200);}
+    function restart(){stop();start();}
+    prev?.addEventListener('click',()=>go(index-1,true));next?.addEventListener('click',()=>go(index+1,true));
+    root.addEventListener('mouseenter',stop);root.addEventListener('mouseleave',start);root.addEventListener('focusin',stop);root.addEventListener('focusout',start);
+    root.addEventListener('pointerdown',e=>{down=true;startX=e.clientX;},{passive:true});
+    root.addEventListener('pointerup',e=>{if(!down)return;down=false;const dx=e.clientX-startX;if(Math.abs(dx)>42)go(index+(dx<0?1:-1),true);},{passive:true});
+    document.addEventListener('keydown',e=>{if(!root.matches(':hover')&&document.activeElement?.closest('[data-stage-carousel]')!==root)return;if(e.key==='ArrowLeft')go(index-1,true);if(e.key==='ArrowRight')go(index+1,true);});
+    go(0,false);start();
+  })();
+</script>
 
 <script>
   (function () {
