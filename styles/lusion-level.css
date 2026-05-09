@@ -15239,3 +15239,80 @@ body.page-contact-clean .vpw-cinematic-wipe {
     --vpl-contact-top: 96px !important;
   }
 }
+
+/* =========================================================
+   Correctif Contact V2 — suppression définitive du vide haut
+   ========================================================= */
+body.page-contact-clean {
+  --vpl-first-screen-top: 118px !important;
+  --vpl-contact-top: 118px !important;
+}
+
+body.page-contact-clean main,
+body.page-contact-clean main.vpw-contact-main,
+body.page-contact-clean .vpw-contact-main {
+  display: block !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  min-height: 0 !important;
+  height: auto !important;
+  top: auto !important;
+  transform: none !important;
+}
+
+body.page-contact-clean main.vpw-contact-main > section.vpw-contact-wow:first-child,
+body.page-contact-clean main > section.vpw-contact-wow:first-child {
+  display: block !important;
+  align-items: stretch !important;
+  justify-content: flex-start !important;
+  place-items: initial !important;
+  margin: 0 !important;
+  padding: var(--vpl-contact-top) 24px 88px !important;
+  min-height: 0 !important;
+  height: auto !important;
+  max-height: none !important;
+  top: auto !important;
+  transform: none !important;
+}
+
+body.page-contact-clean .vpw-contact-wow > .vpw-container,
+body.page-contact-clean .vpw-hero,
+body.page-contact-clean .vpw-layout,
+body.page-contact-clean .vpw-quick-links {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+  min-height: 0 !important;
+  height: auto !important;
+  top: auto !important;
+  transform: none !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+body.page-contact-clean .vpw-hero {
+  margin-bottom: 42px !important;
+}
+
+@media (max-width: 1024px) {
+  body.page-contact-clean {
+    --vpl-first-screen-top: 104px !important;
+    --vpl-contact-top: 104px !important;
+  }
+
+  body.page-contact-clean main.vpw-contact-main > section.vpw-contact-wow:first-child,
+  body.page-contact-clean main > section.vpw-contact-wow:first-child {
+    padding: var(--vpl-contact-top) 20px 76px !important;
+  }
+}
+
+@media (max-width: 720px) {
+  body.page-contact-clean {
+    --vpl-first-screen-top: 92px !important;
+    --vpl-contact-top: 92px !important;
+  }
+
+  body.page-contact-clean main.vpw-contact-main > section.vpw-contact-wow:first-child,
+  body.page-contact-clean main > section.vpw-contact-wow:first-child {
+    padding: var(--vpl-contact-top) 16px 64px !important;
+  }
+}
