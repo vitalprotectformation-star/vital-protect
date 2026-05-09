@@ -1797,21 +1797,68 @@
 
 
   <style id="vp-enterprise-mobile-final-check-fix">
-    /* Vérification mobile finale : neutralise la marge native des <figure> et garde le comparateur dans la largeur écran. */
+    /* Mobile Entreprises : le comparateur avant/après reste centré, dans la largeur écran, sans marge native de <figure>. */
     body.page-entreprise-ribbon-back .vpba-hero-card {
       margin: 0 !important;
       box-sizing: border-box !important;
       max-width: 100% !important;
+      justify-self: center !important;
     }
 
-    @media (max-width: 680px) {
-      body.page-entreprise-ribbon-back .vpba-hero-card {
-        width: 100% !important;
-        margin-inline: 0 !important;
+    @media (max-width: 760px) {
+      body.page-entreprise-ribbon-back .vp-visual-story--enterprise {
+        overflow-x: clip !important;
       }
 
-      body.page-entreprise-ribbon-back .vp-visual-story-grid {
+      body.page-entreprise-ribbon-back .vp-visual-story-grid,
+      body.page-entreprise-ribbon-back .vp-visual-story-grid--reverse {
+        width: min(100% - 24px, 390px) !important;
+        max-width: 390px !important;
+        margin-inline: auto !important;
+        display: grid !important;
+        grid-template-columns: minmax(0, 1fr) !important;
+        justify-items: center !important;
+        gap: 30px !important;
         overflow: visible !important;
+      }
+
+      body.page-entreprise-ribbon-back .vp-visual-copy {
+        width: 100% !important;
+        max-width: 100% !important;
+        justify-self: stretch !important;
+      }
+
+      body.page-entreprise-ribbon-back .vpba-hero-card {
+        width: min(100%, 366px) !important;
+        max-width: calc(100vw - 24px) !important;
+        min-width: 0 !important;
+        min-height: 0 !important;
+        height: auto !important;
+        aspect-ratio: 4 / 3 !important;
+        margin: 4px auto 0 !important;
+        padding: 0 !important;
+        border-radius: 22px !important;
+        place-self: center !important;
+        transform: none !important;
+      }
+
+      body.page-entreprise-ribbon-back .vpba-compare {
+        width: 100% !important;
+        height: 100% !important;
+        border-radius: inherit !important;
+      }
+
+      body.page-entreprise-ribbon-back .vpba-img {
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: cover !important;
+        object-position: center center !important;
+      }
+    }
+
+    @media (max-width: 420px) {
+      body.page-entreprise-ribbon-back .vpba-hero-card {
+        width: 100% !important;
       }
     }
   </style>
