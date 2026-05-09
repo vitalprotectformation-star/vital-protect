@@ -1585,6 +1585,204 @@
       document.write('<script src="page-transition.js"><\/script>');
     }
   </script>
+
+
+  <style id="vp-enterprise-before-after-v3">
+    /* V3 — Comparateur avant/après Entreprise isolé des styles globaux du site. */
+    body.page-entreprise-ribbon-back .vpba-hero-card {
+      position: relative !important;
+      display: block !important;
+      width: 100% !important;
+      min-height: 0 !important;
+      aspect-ratio: 4 / 3 !important;
+      padding: 0 !important;
+      overflow: hidden !important;
+      border-radius: clamp(24px, 3vw, 38px) !important;
+      background: #07111f !important;
+      border: 1px solid rgba(255, 255, 255, .32) !important;
+      box-shadow: 0 34px 110px rgba(0, 0, 0, .30) !important;
+      cursor: ew-resize !important;
+      isolation: isolate !important;
+      animation: vpVisualReveal .75s ease both;
+      touch-action: pan-y !important;
+    }
+
+    body.page-entreprise-ribbon-back .vpba-compare {
+      --vpba-position: 50%;
+      position: absolute !important;
+      inset: 0 !important;
+      display: block !important;
+      width: 100% !important;
+      height: 100% !important;
+      overflow: hidden !important;
+      border-radius: inherit !important;
+      isolation: isolate !important;
+      background: #07111f !important;
+      cursor: ew-resize !important;
+      touch-action: pan-y !important;
+      user-select: none !important;
+    }
+
+    body.page-entreprise-ribbon-back .vpba-img,
+    body.page-entreprise-ribbon-back .vpba-after {
+      position: absolute !important;
+      inset: 0 !important;
+    }
+
+    body.page-entreprise-ribbon-back .vpba-img {
+      display: block !important;
+      width: 100% !important;
+      height: 100% !important;
+      min-width: 100% !important;
+      min-height: 100% !important;
+      object-fit: cover !important;
+      object-position: center center !important;
+      max-width: none !important;
+      transform: none !important;
+      transition: none !important;
+      pointer-events: none !important;
+      user-select: none !important;
+      -webkit-user-drag: none !important;
+    }
+
+    body.page-entreprise-ribbon-back .vpba-before { z-index: 1 !important; }
+
+    body.page-entreprise-ribbon-back .vpba-after {
+      z-index: 2 !important;
+      width: 100% !important;
+      height: 100% !important;
+      overflow: hidden !important;
+      clip-path: inset(0 calc(100% - var(--vpba-position)) 0 0) !important;
+      -webkit-clip-path: inset(0 calc(100% - var(--vpba-position)) 0 0) !important;
+      pointer-events: none !important;
+    }
+
+    body.page-entreprise-ribbon-back .vpba-divider {
+      position: absolute !important;
+      z-index: 5 !important;
+      top: 0 !important;
+      bottom: 0 !important;
+      left: var(--vpba-position) !important;
+      width: 3px !important;
+      background: rgba(255,255,255,.98) !important;
+      transform: translateX(-50%) !important;
+      box-shadow: 0 0 18px rgba(0,0,0,.45) !important;
+      pointer-events: none !important;
+    }
+
+    body.page-entreprise-ribbon-back .vpba-handle {
+      position: absolute !important;
+      z-index: 6 !important;
+      left: var(--vpba-position) !important;
+      top: 50% !important;
+      transform: translate(-50%, -50%) !important;
+      width: 52px !important;
+      height: 52px !important;
+      display: grid !important;
+      place-items: center !important;
+      border-radius: 999px !important;
+      background: rgba(255,255,255,.98) !important;
+      color: #07111f !important;
+      font-size: 22px !important;
+      font-weight: 900 !important;
+      line-height: 1 !important;
+      box-shadow: 0 16px 38px rgba(0,0,0,.34) !important;
+      pointer-events: none !important;
+    }
+
+    body.page-entreprise-ribbon-back .vpba-range {
+      position: absolute !important;
+      z-index: 10 !important;
+      inset: 0 !important;
+      display: block !important;
+      width: 100% !important;
+      height: 100% !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      opacity: 0.001 !important;
+      cursor: ew-resize !important;
+      appearance: none !important;
+      -webkit-appearance: none !important;
+      background: transparent !important;
+      touch-action: pan-y !important;
+    }
+
+    body.page-entreprise-ribbon-back .vpba-range::-webkit-slider-runnable-track {
+      height: 100% !important;
+      background: transparent !important;
+      border: 0 !important;
+    }
+
+    body.page-entreprise-ribbon-back .vpba-range::-webkit-slider-thumb {
+      width: 54px !important;
+      height: 100% !important;
+      border: 0 !important;
+      background: transparent !important;
+      -webkit-appearance: none !important;
+      appearance: none !important;
+    }
+
+    body.page-entreprise-ribbon-back .vpba-range::-moz-range-track {
+      height: 100% !important;
+      background: transparent !important;
+      border: 0 !important;
+    }
+
+    body.page-entreprise-ribbon-back .vpba-range::-moz-range-thumb {
+      width: 54px !important;
+      height: 100% !important;
+      border: 0 !important;
+      background: transparent !important;
+    }
+
+    body.page-entreprise-ribbon-back .vpba-label {
+      position: absolute !important;
+      z-index: 7 !important;
+      top: 18px !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      padding: 9px 14px !important;
+      border-radius: 999px !important;
+      background: rgba(7,17,31,.70) !important;
+      color: #fff !important;
+      font-size: .78rem !important;
+      line-height: 1 !important;
+      font-weight: 900 !important;
+      letter-spacing: .08em !important;
+      text-transform: uppercase !important;
+      backdrop-filter: blur(10px) !important;
+      box-shadow: 0 10px 28px rgba(0,0,0,.22) !important;
+      pointer-events: none !important;
+    }
+
+    body.page-entreprise-ribbon-back .vpba-label--before { left: 18px !important; }
+    body.page-entreprise-ribbon-back .vpba-label--after {
+      right: 18px !important;
+      background: rgba(255,255,255,.86) !important;
+      color: #07111f !important;
+    }
+
+    @media (max-width: 860px) {
+      body.page-entreprise-ribbon-back .vpba-hero-card {
+        aspect-ratio: 4 / 3 !important;
+        min-height: 280px !important;
+      }
+      body.page-entreprise-ribbon-back .vpba-label {
+        top: 14px !important;
+        padding: 8px 12px !important;
+        font-size: .72rem !important;
+      }
+      body.page-entreprise-ribbon-back .vpba-label--before { left: 14px !important; }
+      body.page-entreprise-ribbon-back .vpba-label--after { right: 14px !important; }
+      body.page-entreprise-ribbon-back .vpba-handle {
+        width: 44px !important;
+        height: 44px !important;
+        font-size: 19px !important;
+      }
+    }
+  </style>
+
 </head>
 
 <body class="vpl-inner-page page-editorial-light page-entreprise-ribbon-back">
@@ -1669,36 +1867,29 @@
           </div>
         </div>
 
-        <figure class="vp-image-card vp-image-card--wide enterprise-compare-card enterprise-compare-card--interactive" aria-label="Comparaison avant après d'une situation d'accueil public">
-          <div
-            class="enterprise-before-after"
-            data-enterprise-before-after
-            style="--position: 50%; --before-image: url('/images/entreprise-accueil-avant.png'); --after-image: url('/images/entreprise-accueil-apres.png');"
-          >
-            <div
-              class="enterprise-ba-layer enterprise-ba-layer--before"
-              role="img"
-              aria-label="Avant : une situation d'accueil public sous tension"
-            ></div>
+        <figure class="vpba-hero-card" aria-label="Comparaison avant après d'une situation d'accueil public">
+          <div class="vpba-compare" data-vpba-compare style="--vpba-position: 50%;">
+            <img class="vpba-img vpba-before" src="/images/avant.png" alt="Avant : une situation d'accueil public sous tension" loading="eager" decoding="async">
 
-            <div class="enterprise-ba-after" aria-hidden="true">
-              <div class="enterprise-ba-layer enterprise-ba-layer--after"></div>
+            <div class="vpba-after" aria-hidden="true">
+              <img class="vpba-img" src="/images/apres.png" alt="">
             </div>
 
-            <div class="enterprise-ba-divider" aria-hidden="true"></div>
-            <div class="enterprise-ba-handle" aria-hidden="true">↔</div>
+            <div class="vpba-divider" aria-hidden="true"></div>
+            <div class="vpba-handle" aria-hidden="true">↔</div>
 
             <input
-              class="enterprise-ba-slider"
+              class="vpba-range"
               type="range"
               min="0"
               max="100"
               value="50"
               aria-label="Comparer la situation avant et après la posture Vital Protect"
-            />
+              oninput="this.closest('[data-vpba-compare]').style.setProperty('--vpba-position', this.value + '%')"
+            >
 
-            <span class="enterprise-ba-label enterprise-ba-label--before">Avant</span>
-            <span class="enterprise-ba-label enterprise-ba-label--after">Après</span>
+            <span class="vpba-label vpba-label--before">Avant</span>
+            <span class="vpba-label vpba-label--after">Après</span>
           </div>
         </figure>
       </div>
@@ -2603,45 +2794,68 @@ ${payload.message}`
   </script>
 
 
-  <script>
+
+  <script id="vp-enterprise-before-after-script-v3">
     (function () {
-      var compares = document.querySelectorAll('[data-enterprise-before-after]');
-      if (!compares.length) return;
+      function initVpbaCompare(root) {
+        var range = root.querySelector('.vpba-range');
+        if (!range) return;
 
-      compares.forEach(function (compare) {
-        var slider = compare.querySelector('.enterprise-ba-slider');
-        if (!slider) return;
-
-        function clamp(value, min, max) {
-          return Math.min(max, Math.max(min, value));
+        function clamp(value) {
+          return Math.max(0, Math.min(100, value));
         }
 
-        function updateComparison(value) {
-          var nextValue = typeof value === 'number' ? value : Number(slider.value || 50);
-          nextValue = clamp(nextValue, 0, 100);
-          slider.value = String(nextValue);
-          compare.style.setProperty('--position', nextValue + '%');
+        function setPosition(value) {
+          var next = clamp(Number(value));
+          if (!Number.isFinite(next)) next = 50;
+          range.value = String(next);
+          root.style.setProperty('--vpba-position', next + '%');
         }
 
-        function updateFromPointer(event) {
-          var rect = compare.getBoundingClientRect();
+        function setFromClientX(clientX) {
+          var rect = root.getBoundingClientRect();
           if (!rect.width) return;
-          var clientX = event.touches && event.touches.length ? event.touches[0].clientX : event.clientX;
-          updateComparison(((clientX - rect.left) / rect.width) * 100);
+          setPosition(((clientX - rect.left) / rect.width) * 100);
         }
 
-        slider.addEventListener('input', function () { updateComparison(); });
-        slider.addEventListener('change', function () { updateComparison(); });
-        compare.addEventListener('pointerdown', function (event) {
-          updateFromPointer(event);
-        });
-        compare.addEventListener('pointermove', function (event) {
-          if (event.buttons !== 1) return;
-          updateFromPointer(event);
+        range.addEventListener('input', function () {
+          setPosition(range.value);
         });
 
-        updateComparison();
-      });
+        root.addEventListener('pointerdown', function (event) {
+          setFromClientX(event.clientX);
+          if (root.setPointerCapture) {
+            try { root.setPointerCapture(event.pointerId); } catch (_) {}
+          }
+        });
+
+        root.addEventListener('pointermove', function (event) {
+          if (event.buttons !== 1) return;
+          setFromClientX(event.clientX);
+        });
+
+        root.addEventListener('touchstart', function (event) {
+          if (!event.touches || !event.touches.length) return;
+          setFromClientX(event.touches[0].clientX);
+        }, { passive: true });
+
+        root.addEventListener('touchmove', function (event) {
+          if (!event.touches || !event.touches.length) return;
+          setFromClientX(event.touches[0].clientX);
+        }, { passive: true });
+
+        setPosition(range.value || 50);
+      }
+
+      function boot() {
+        document.querySelectorAll('[data-vpba-compare]').forEach(initVpbaCompare);
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', boot);
+      } else {
+        boot();
+      }
     })();
   </script>
 
