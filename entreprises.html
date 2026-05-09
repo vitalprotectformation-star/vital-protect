@@ -1113,6 +1113,9 @@
       }
     }
 
+
+
+
   </style>
 
   <link href="/styles/tokens.css" rel="stylesheet" />
@@ -1233,6 +1236,150 @@
         display: none !important;
       }
     }
+
+    /* Comparateur avant / après — Hero Entreprises */
+    .enterprise-compare-card {
+      min-height: clamp(330px, 38vw, 560px);
+      background: rgba(255, 255, 255, .10);
+      border-color: rgba(255, 255, 255, .30);
+      box-shadow: 0 34px 110px rgba(0, 0, 0, .30);
+    }
+
+    .enterprise-before-after {
+      --position: 50%;
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      border-radius: inherit;
+      background: #07111f;
+      isolation: isolate;
+      cursor: ew-resize;
+    }
+
+    .enterprise-ba-image,
+    .enterprise-ba-after {
+      position: absolute;
+      inset: 0;
+    }
+
+    .enterprise-compare-card .enterprise-ba-image {
+      display: block;
+      width: 100%;
+      height: 100%;
+      min-height: 0;
+      object-fit: cover;
+      object-position: center;
+      transform: none !important;
+      transition: none;
+      user-select: none;
+      pointer-events: none;
+    }
+
+    .enterprise-ba-after {
+      z-index: 2;
+      clip-path: inset(0 calc(100% - var(--position)) 0 0);
+    }
+
+    .enterprise-ba-divider {
+      position: absolute;
+      z-index: 4;
+      top: 0;
+      bottom: 0;
+      left: var(--position);
+      width: 3px;
+      background: rgba(255, 255, 255, .96);
+      transform: translateX(-50%);
+      box-shadow: 0 0 18px rgba(0, 0, 0, .42);
+      pointer-events: none;
+    }
+
+    .enterprise-ba-handle {
+      position: absolute;
+      z-index: 5;
+      left: var(--position);
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 50px;
+      height: 50px;
+      display: grid;
+      place-items: center;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, .96);
+      color: #07111f;
+      font-weight: 900;
+      letter-spacing: -.06em;
+      box-shadow: 0 16px 38px rgba(0, 0, 0, .34);
+      pointer-events: none;
+    }
+
+    .enterprise-ba-slider {
+      position: absolute;
+      z-index: 6;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      opacity: 0;
+      cursor: ew-resize;
+    }
+
+    .enterprise-ba-label {
+      position: absolute;
+      z-index: 5;
+      top: 18px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 9px 14px;
+      border-radius: 999px;
+      background: rgba(7, 17, 31, .70);
+      color: #fff;
+      font-size: .78rem;
+      line-height: 1;
+      font-weight: 900;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 10px 28px rgba(0, 0, 0, .22);
+      pointer-events: none;
+    }
+
+    .enterprise-ba-label--before {
+      left: 18px;
+    }
+
+    .enterprise-ba-label--after {
+      right: 18px;
+      background: rgba(255, 255, 255, .86);
+      color: #07111f;
+    }
+
+    @media (max-width: 860px) {
+      .enterprise-compare-card {
+        min-height: clamp(280px, 72vw, 480px);
+      }
+
+      .enterprise-ba-label {
+        top: 14px;
+        padding: 8px 12px;
+        font-size: .72rem;
+      }
+
+      .enterprise-ba-label--before {
+        left: 14px;
+      }
+
+      .enterprise-ba-label--after {
+        right: 14px;
+      }
+
+      .enterprise-ba-handle {
+        width: 44px;
+        height: 44px;
+      }
+    }
   </style>
 
   <script src="/page-transition.js"></script>
@@ -1326,12 +1473,39 @@
           </div>
         </div>
 
-        <figure class="vp-image-card vp-image-card--wide">
-          <img
-            src="/visuel-prevenir-proteger-agir.webp"
-            alt="Formation Vital Protect pour un groupe en environnement professionnel"
-            loading="lazy"
-          />
+        <figure class="vp-image-card vp-image-card--wide enterprise-compare-card" aria-label="Comparaison avant après d'une situation d'accueil public">
+          <div class="enterprise-before-after" data-enterprise-before-after style="--position: 50%;">
+            <img
+              class="enterprise-ba-image enterprise-ba-image--before"
+              src="/entreprise-accueil-avant.webp"
+              alt="Avant : une situation d'accueil public sous tension"
+              loading="eager"
+            />
+
+            <div class="enterprise-ba-after" aria-hidden="true">
+              <img
+                class="enterprise-ba-image enterprise-ba-image--after"
+                src="/entreprise-accueil-apres.webp"
+                alt=""
+                loading="eager"
+              />
+            </div>
+
+            <div class="enterprise-ba-divider" aria-hidden="true"></div>
+            <div class="enterprise-ba-handle" aria-hidden="true">↔</div>
+
+            <input
+              class="enterprise-ba-slider"
+              type="range"
+              min="0"
+              max="100"
+              value="50"
+              aria-label="Comparer la situation avant et après la posture Vital Protect"
+            />
+
+            <span class="enterprise-ba-label enterprise-ba-label--before">Avant</span>
+            <span class="enterprise-ba-label enterprise-ba-label--after">Après</span>
+          </div>
         </figure>
       </div>
     </section>
@@ -2230,6 +2404,27 @@ ${payload.message}`
         repeat: -1,
         yoyo: true,
         ease: 'sine.inOut'
+      });
+    })();
+  </script>
+
+
+  <script>
+    (function () {
+      var compares = document.querySelectorAll('[data-enterprise-before-after]');
+      if (!compares.length) return;
+
+      compares.forEach(function (compare) {
+        var slider = compare.querySelector('.enterprise-ba-slider');
+        if (!slider) return;
+
+        function updateComparison() {
+          compare.style.setProperty('--position', slider.value + '%');
+        }
+
+        slider.addEventListener('input', updateComparison);
+        slider.addEventListener('change', updateComparison);
+        updateComparison();
       });
     })();
   </script>
