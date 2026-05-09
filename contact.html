@@ -1437,6 +1437,33 @@
       }
     }
 
+
+
+    /* Correctif Contact V3 : le SVG décoratif du fond ne doit jamais prendre de place dans le layout.
+       Le CSS global du site remet certains SVG en position relative ; sur Contact, cela poussait
+       tout le contenu vers le bas. */
+    body.page-contact-clean .vpw-contact-wow > svg.vpw-mesh,
+    body.page-contact-clean svg.vpw-mesh {
+      position: absolute !important;
+      inset: 0 !important;
+      display: block !important;
+      width: 100% !important;
+      height: 100% !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      min-height: 0 !important;
+      z-index: 0 !important;
+      pointer-events: none !important;
+      overflow: visible !important;
+      transform: none !important;
+    }
+
+    body.page-contact-clean .vpw-contact-wow > svg.vpw-mesh path,
+    body.page-contact-clean svg.vpw-mesh path {
+      position: static !important;
+      z-index: auto !important;
+    }
+
   </style>
 </head>
 
