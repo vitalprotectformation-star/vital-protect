@@ -15633,3 +15633,33 @@ body.page-contact-clean .vpw-quick-link {
     padding-top: var(--vpl-first-screen-top, clamp(126px, 10vw, 148px)) !important;
   }
 }
+
+/* =========================================================
+   Correctif PC Entreprises V2 — vrai dégagement du hero
+   ---------------------------------------------------------
+   Diagnostic : contrairement à Stage, le premier bloc Entreprises
+   garde dans entreprises.html un padding-top local trop faible :
+   .vp-visual-story.vp-visual-story--enterprise { padding-top: clamp(92px, 8vw, 120px) !important; }
+
+   Le menu est déjà fixed. On ne le descend pas.
+   On redonne seulement au hero Entreprises le dégagement réel d'un
+   premier écran desktop, avec un sélecteur plus précis que le style inline.
+   Mobile inchangé.
+   ========================================================= */
+@media (min-width: 981px) and (hover: hover) and (pointer: fine) {
+  html body.page-entreprise-ribbon-back > header.vpl-nav,
+  html body.page-entreprise-ribbon-back > .vpl-nav.vpl-nav {
+    top: 10px !important;
+    transform: translateX(-50%) !important;
+  }
+
+  html.vpl-scrolled body.page-entreprise-ribbon-back > header.vpl-nav,
+  html.vpl-scrolled body.page-entreprise-ribbon-back > .vpl-nav.vpl-nav {
+    top: 8px !important;
+  }
+
+  html body.page-entreprise-ribbon-back main > section.vp-visual-story.vp-visual-story--enterprise:first-of-type {
+    margin-top: 0 !important;
+    padding-top: clamp(152px, 11.2vw, 184px) !important;
+  }
+}
