@@ -1663,12 +1663,6 @@
       -webkit-filter: grayscale(1) contrast(1.04) !important;
     }
 
-
-    /* Les deux photos sont retournées horizontalement pour rendre le sens Avant / Après plus naturel. */
-    body.page-entreprise-ribbon-back .vpba-compare .vpba-img {
-      transform: scaleX(-1) !important;
-    }
-
     body.page-entreprise-ribbon-back .vpba-after {
       z-index: 1 !important;
       width: 100% !important;
@@ -2096,7 +2090,7 @@
         </div>
 
         <figure class="vpba-hero-card" aria-label="Comparaison avant après d'une situation d'accueil public">
-          <div class="vpba-compare" data-vpba-compare style="--vpba-position: 100%;">
+          <div class="vpba-compare" data-vpba-compare style="--vpba-position: 50%;">
             <img class="vpba-img vpba-after" src="/entreprise-accueil-apres.png" alt="Après : une posture d'accueil plus stable et maîtrisée" loading="eager" decoding="async">
 
             <div class="vpba-before-layer">
@@ -2111,7 +2105,7 @@
               type="range"
               min="0"
               max="100"
-              value="100"
+              value="50"
               aria-label="Comparer la situation avant et après la posture Vital Protect"
               oninput="this.closest('[data-vpba-compare]').style.setProperty('--vpba-position', this.value + '%')"
             >
