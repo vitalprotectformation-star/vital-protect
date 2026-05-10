@@ -15603,3 +15603,26 @@ body.page-contact-clean .vpw-quick-link {
     top: 8px !important;
   }
 }
+
+/* =========================================================
+   Ajustement PC Entreprises — marge sous le menu fixé
+   ---------------------------------------------------------
+   Le menu reste fixed, mais le premier hero récupère de l'air
+   pour éviter que la nav flotte collée sur l'image/titre.
+   Desktop uniquement : mobile inchangé.
+   ========================================================= */
+@media (min-width: 981px) and (hover: hover) and (pointer: fine) {
+  html body.page-entreprise-ribbon-back > header.vpl-nav,
+  html body.page-entreprise-ribbon-back > .vpl-nav.vpl-nav {
+    top: 18px !important;
+  }
+
+  html.vpl-scrolled body.page-entreprise-ribbon-back > header.vpl-nav,
+  html.vpl-scrolled body.page-entreprise-ribbon-back > .vpl-nav.vpl-nav {
+    top: 14px !important;
+  }
+
+  body.page-entreprise-ribbon-back main > .vp-visual-story--enterprise:first-child {
+    padding-top: calc(clamp(72px, 8vw, 126px) + 46px) !important;
+  }
+}
