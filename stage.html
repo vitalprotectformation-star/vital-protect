@@ -564,7 +564,7 @@
             <div id="publicStagesContainer" class="vp-marketplace-list">
               <div class="vp-marketplace-empty"><strong>Chargement des stages...</strong>Les sessions publiées vont apparaître ici.</div>
             </div>
-            <div class="vp-marketplace-mini-note">Une session doit avoir une ville, une date, un lieu, un tarif et des places restantes pour ouvrir la réservation.</div>
+            <div class="vp-marketplace-mini-note">Une session doit surtout avoir un tarif et des places restantes pour ouvrir la réservation. Les infos manquantes restent affichées “à confirmer”.</div>
           </article>
 
           <article id="stages-equipe" class="vp-marketplace-column" data-marketplace-panel="team" hidden>
@@ -607,7 +607,7 @@
 
     <section id="reservation" class="stage-reservation-section">
       <div class="vpl-container">
-        <div class="section-head section-head--center"><span class="eyebrow">Réservation</span><h2>Réserver le stage sélectionné.</h2><p>Choisissez d’abord une session ouverte dans “Pour moi”. Le paiement reste désactivé si une information essentielle manque.</p></div>
+        <div class="section-head section-head--center"><span class="eyebrow">Réservation</span><h2>Réserver le stage sélectionné.</h2><p>Choisissez d’abord une session ouverte dans “Pour moi”. Le formulaire s’active dès qu’un stage a un tarif et des places restantes.</p></div>
         <div class="stage-booking-grid">
           <div class="stage-booking-summary">
             <h3>Résumé de la session</h3>
@@ -807,11 +807,15 @@
 
     function hasCompleteSession(item) {
       if (!item) return false;
-      const requiredText = [item.id, item.title, item.city, item.address, item.stage_date, item.start_time, item.duration, item.training_type];
-      const hasRequiredText = requiredText.every((value) => String(value || "").trim().length > 0);
+      // Pour ouvrir la réservation, Stripe et l’API ont besoin d’un stage publié,
+      // d’un identifiant, d’un prix valide et de places restantes.
+      // Les autres infos restent affichées “à confirmer” si elles manquent,
+      // mais elles ne doivent pas empêcher l’utilisateur de sélectionner le stage.
+      const hasId = String(item.id || "").trim().length > 0;
       const hasPrice = Number(item.price || 0) > 0;
       const hasPlaces = Number(item.remaining_places || 0) > 0;
-      return hasRequiredText && hasPrice && hasPlaces;
+      const isPublished = !item.status || String(item.status).toLowerCase() === "published";
+      return hasId && hasPrice && hasPlaces && isPublished;
     }
 
     function setBookingEnabled(enabled, message = "") {
@@ -844,7 +848,7 @@
     function showNoSessionState(message = "Aucune session complète n’est ouverte actuellement. Revenez bientôt ou contactez l’équipe pour être prévenu.") {
       stage = null;
       setText(heroTitle, "Apprendre à prévenir, éviter et réagir simplement.");
-      setText(heroDescription, "Les prochaines dates seront publiées uniquement lorsqu’une session aura une date, un lieu, un tarif, des places et des conditions confirmés.");
+      setText(heroDescription, "Les prochaines dates seront publiées dès qu’une session est ouverte avec un tarif et des places disponibles. Les détails manquants peuvent rester à confirmer.");
       setText(selectedStageValue, message);
       setText(bookingTotal, "Total : en attente d’une session complète");
       setText(metaCity, "À confirmer");
@@ -1073,9 +1077,9 @@
       setText(objectiveText, stage.description || "Ce stage s’inscrit dans la méthode Vital Protect : comprendre le risque, améliorer la lecture des situations, prévenir l’escalade et développer des réponses simples et réalistes.");
 
       if (!hasCompleteSession(stage)) {
-        setBookingEnabled(false, "Réservation désactivée : une ou plusieurs informations essentielles de la session sont à confirmer.");
+        setBookingEnabled(false, "Réservation désactivée : le stage n’a pas encore de tarif valide ou de place restante.");
       } else {
-        setBookingEnabled(true, "Session complète : vous pouvez réserver votre place.");
+        setBookingEnabled(true, "Stage sélectionné : vous pouvez réserver votre place.");
       }
       updateBookingTotal();
       renderPublicStages();
@@ -1111,7 +1115,7 @@
       bookingForm.addEventListener("submit", async (e) => {
         e.preventDefault();
         if (!stage || !bookingEnabled || !hasCompleteSession(stage)) {
-          showBookingStatus("Impossible de réserver : la session n’est pas complète ou n’est plus disponible.", "error");
+          showBookingStatus("Impossible de réserver : le stage n’est plus disponible ou n’a pas de tarif/place restante.", "error");
           return;
         }
         const firstName = $("firstName")?.value.trim();
