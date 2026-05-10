@@ -789,8 +789,9 @@
           <div class="card-header">
             <div>
               <h2>Gestion des modules certifiés</h2>
-              <p>Ajout manuel, prolongation et correction de statut.</p>
+              <p>Ajout manuel, prolongation, suppression ou masquage des modules.</p>
             </div>
+            <button class="btn btn-primary" type="button" onclick="window.openModuleCatalogForm()">Ajouter un module</button>
           </div>
           <div class="card-body">
             
@@ -951,10 +952,12 @@
           <div class="card-header">
             <div>
               <h2>Stages</h2>
-              <p>Voir, filtrer, supprimer et contacter les inscrits.</p>
+              <p>Voir, filtrer, publier, mettre en attente, supprimer et contacter les inscrits.</p>
             </div>
+            <button class="btn btn-primary" type="button" onclick="window.openCreateStageForm()">Ajouter un stage</button>
           </div>
           <div class="card-body">
+            <p class="muted" style="margin-top: 0;">Cette liste est chargée via l’API admin : elle inclut aussi les stages créés par les formateurs, même si les règles RLS Supabase masquent certaines lignes côté front.</p>
             <div class="filters">
               <div class="field">
                 <label>Région</label>
@@ -1407,23 +1410,17 @@
     }
 
     async function loadModulesCatalog() {
-      const { data, error } = await supabase
-        .from("training_modules")
-        .select("*")
-        .order("sort_order", { ascending: true })
-        .order("name", { ascending: true });
-
-      if (error) {
+      try {
+        const result = await callAdminTool("list_modules");
+        modulesCatalogData = result.modules || [];
+        renderModuleCatalog(modulesCatalogData);
+        populateModuleSelect("stageModuleInput");
+        populateModuleSelect("trainerSessionModuleInput");
+        populateTrainerModuleModuleSelect();
+      } catch (error) {
         console.error(error);
-        moduleCatalogWrap.innerHTML = `<div class="error">Impossible de charger le catalogue des modules.</div>`;
-        return;
+        moduleCatalogWrap.innerHTML = `<div class="error">Impossible de charger le catalogue des modules : ${escapeHtml(error.message || "erreur inconnue")}</div>`;
       }
-
-      modulesCatalogData = data || [];
-      renderModuleCatalog(modulesCatalogData);
-      populateModuleSelect("stageModuleInput");
-      populateModuleSelect("trainerSessionModuleInput");
-      populateTrainerModuleModuleSelect();
     }
 
     window.editModuleCatalog = (moduleId) => {
@@ -1476,7 +1473,7 @@
           return;
         }
 
-        alert("Module supprimé avec succès.");
+        alert(result.deactivated ? "Module utilisé : il a été désactivé et masqué." : "Module supprimé avec succès.");
         await loadModulesCatalog();
       } catch (error) {
         console.error(error);
@@ -1587,6 +1584,17 @@
       return data;
     }
 
+    async function callAdminTool(action, payload = {}) {
+      const headers = await getAuthHeaders();
+      const res = await fetch("/api/admin-tools", {
+        method: "POST",
+        headers,
+        body: JSON.stringify({ action, ...payload })
+      });
+
+      return await parseApiResponse(res);
+    }
+
     function showTrainerModuleFormStatus(message, isError = false) {
       trainerModuleFormStatus.classList.add("show");
       trainerModuleFormStatus.textContent = message;
@@ -1693,6 +1701,27 @@
     function getTrainerById(trainerId) {
       return trainersData.find(item => String(item.id) === String(trainerId)) || null;
     }
+
+    function getTrainerDisplay(trainerId) {
+      if (!trainerId) return "—";
+      const trainer = getTrainerById(trainerId);
+      if (!trainer) return trainerId;
+      const fullName = [trainer.first_name, trainer.last_name].filter(Boolean).join(" ").trim();
+      return `${fullName || "Formateur"}${trainer.email ? ` · ${trainer.email}` : ""}`;
+    }
+
+    window.openCreateStageForm = () => {
+      setActiveTab("formations");
+      if (typeof setCreateMode === "function") setCreateMode("stage");
+      document.getElementById("createStageForm")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    };
+
+    window.openModuleCatalogForm = () => {
+      setActiveTab("modules");
+      resetModuleCatalogForm();
+      document.getElementById("moduleCatalogForm")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      document.getElementById("moduleCatalogNameInput")?.focus();
+    };
 
     function isExpired(dateString) {
       if (!dateString) return false;
@@ -1804,12 +1833,15 @@
                     ${escapeHtml(row.status || "published")}
                   </span>
                 </td>
-                <td>${escapeHtml(row.trainer_id || "—")}</td>
+                <td>${escapeHtml(getTrainerDisplay(row.trainer_id))}</td>
                 <td>${getStageReservationCount(row.id)}</td>
                 <td>
                   <div class="action-stack">
                     <button class="btn btn-secondary" type="button" onclick="window.contactStageRegistrants('${jsArg(row.id)}', '${jsArg(row.title || "")}')">
                       Contacter les inscrits
+                    </button>
+                    <button class="btn btn-secondary" type="button" onclick="window.updateStageStatus('${jsArg(row.id)}', '${normalize(row.status) === "published" ? "pending" : "published"}')">
+                      ${normalize(row.status) === "published" ? "Mettre en attente" : "Publier"}
                     </button>
                     <button class="btn btn-danger" type="button" onclick="window.deleteStage('${jsArg(row.id)}', '${jsArg(row.title || "")}')">
                       Supprimer le stage
@@ -2377,7 +2409,8 @@
         const regionOk = !region || normalize(row.region).includes(region);
         const departmentOk = !department || normalize(row.department).includes(department);
         const cityOk = !city || normalize(row.city).includes(city);
-        const trainerOk = !trainer || normalize(row.trainer_id).includes(trainer);
+        const trainerText = normalize(`${row.trainer_id || ""} ${getTrainerDisplay(row.trainer_id)}`);
+        const trainerOk = !trainer || trainerText.includes(trainer);
         const statusOk = !status || row.status === status;
         return regionOk && departmentOk && cityOk && trainerOk && statusOk;
       });
@@ -2419,19 +2452,14 @@
     }
 
     async function loadStages() {
-      const { data, error } = await supabase
-        .from("stages")
-        .select("*")
-        .order("stage_date", { ascending: true });
-
-      if (error) {
+      try {
+        const result = await callAdminTool("list_stages");
+        stagesData = result.stages || [];
+        renderStages(stagesData);
+      } catch (error) {
         console.error(error);
-        stagesWrap.innerHTML = `<div class="error">Impossible de charger les stages.</div>`;
-        return;
+        stagesWrap.innerHTML = `<div class="error">Impossible de charger les stages : ${escapeHtml(error.message || "erreur inconnue")}</div>`;
       }
-
-      stagesData = data || [];
-      renderStages(stagesData);
     }
 
     async function loadTrainerRegistrations() {
@@ -2552,6 +2580,29 @@ VITAL PROTECT`
       );
 
       (window.VitalPageTransition ? window.VitalPageTransition.go(`mailto:?bcc=${encodeURIComponent(emails.join(","))}&subject=${subject}&body=${body}`) : (window.location.href = `mailto:?bcc=${encodeURIComponent(emails.join(","))}&subject=${subject}&body=${body}`));
+    };
+
+    window.updateStageStatus = async (stageId, status) => {
+      const label = status === "published" ? "publier" : "mettre en attente";
+      const confirmed = window.confirm(`Confirmer : ${label} ce stage ?`);
+      if (!confirmed) return;
+
+      try {
+        const result = await callAdminTool("update_stage_status", {
+          stage_id: stageId,
+          status
+        });
+
+        if (result.success) {
+          alert("Statut du stage mis à jour.");
+          await loadStages();
+        } else {
+          alert(result.error || "Erreur lors de la mise à jour du stage.");
+        }
+      } catch (error) {
+        console.error(error);
+        alert(error.message || "Erreur lors de la mise à jour du stage.");
+      }
     };
 
     window.deleteStage = async (stageId, stageTitle) => {
@@ -3096,11 +3147,11 @@ VITAL PROTECT`
 
     if (adminUser) {
       await loadReservations();
+      await loadTrainers();
+      await loadModulesCatalog();
       await loadStages();
       await loadTrainerRegistrations();
       await loadArchives();
-      await loadTrainers();
-      await loadModulesCatalog();
       await loadTrainerModules();
       await loadTrainerSessions();
     }
