@@ -1619,7 +1619,11 @@
     }
 
     body.page-entreprise-ribbon-back .vpba-compare {
-      --vpba-position: 100%;
+      --vpba-position: 50%;
+      --vpba-before-label-opacity: 1;
+      --vpba-after-label-opacity: 0;
+      --vpba-before-label-shift: 0px;
+      --vpba-after-label-shift: 8px;
       position: absolute !important;
       inset: 0 !important;
       display: block !important;
@@ -1777,18 +1781,22 @@
       backdrop-filter: blur(10px) !important;
       box-shadow: 0 10px 28px rgba(0,0,0,.22) !important;
       pointer-events: none !important;
+      transition: opacity .24s ease, transform .24s ease !important;
+      will-change: opacity, transform !important;
     }
 
     body.page-entreprise-ribbon-back .vpba-label--before {
       left: 18px !important;
-      z-index: 8 !important;
+      opacity: var(--vpba-before-label-opacity, 1) !important;
+      transform: translateY(var(--vpba-before-label-shift, 0px)) !important;
     }
 
     body.page-entreprise-ribbon-back .vpba-label--after {
       right: 18px !important;
-      z-index: 1 !important;
       background: rgba(255,255,255,.86) !important;
       color: #07111f !important;
+      opacity: var(--vpba-after-label-opacity, 0) !important;
+      transform: translateY(var(--vpba-after-label-shift, 8px)) !important;
     }
 
     @media (max-width: 860px) {
@@ -2095,7 +2103,7 @@
         </div>
 
         <figure class="vpba-hero-card" aria-label="Comparaison avant après d'une situation d'accueil public">
-          <div class="vpba-compare" data-vpba-compare style="--vpba-position: 100%;">
+          <div class="vpba-compare" data-vpba-compare style="--vpba-position: 50%;">
             <img class="vpba-img vpba-after" src="/entreprise-accueil-apres.png" alt="Après : une posture d'accueil plus stable et maîtrisée" loading="eager" decoding="async">
 
             <div class="vpba-before-layer">
@@ -2110,7 +2118,7 @@
               type="range"
               min="0"
               max="100"
-              value="100"
+              value="50"
               aria-label="Comparer la situation avant et après la posture Vital Protect"
               oninput="this.closest('[data-vpba-compare]').style.setProperty('--vpba-position', this.value + '%')"
             >
@@ -3035,9 +3043,21 @@ ${payload.message}`
 
         function setPosition(value) {
           var next = clamp(Number(value));
-          if (!Number.isFinite(next)) next = 100;
+          if (!Number.isFinite(next)) next = 50;
           range.value = String(next);
           root.style.setProperty('--vpba-position', next + '%');
+
+          /*
+            Texte uniquement : au départ le visuel reste moitié/moitié,
+            mais seul "Avant" est affiché. Quand le curseur part vers la gauche,
+            l'image Avant se raccourcit et le libellé "Après" apparaît progressivement.
+          */
+          var afterOpacity = next < 50 ? Math.min(1, (50 - next) / 30) : 0;
+          var beforeOpacity = 1 - afterOpacity;
+          root.style.setProperty('--vpba-before-label-opacity', beforeOpacity.toFixed(3));
+          root.style.setProperty('--vpba-after-label-opacity', afterOpacity.toFixed(3));
+          root.style.setProperty('--vpba-before-label-shift', afterOpacity > 0.98 ? '-8px' : '0px');
+          root.style.setProperty('--vpba-after-label-shift', afterOpacity > 0 ? '0px' : '8px');
         }
 
         function setFromClientX(clientX) {
@@ -3072,7 +3092,7 @@ ${payload.message}`
           setFromClientX(event.touches[0].clientX);
         }, { passive: true });
 
-        setPosition(range.value || 100);
+        setPosition(range.value || 50);
       }
 
       function boot() {
