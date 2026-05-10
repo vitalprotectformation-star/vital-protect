@@ -15541,3 +15541,49 @@ body.page-contact-clean .vpw-quick-link {
     display: none !important;
   }
 }
+
+/* =========================================================
+   Correctif PC final — menu qui suit le scroll
+   ---------------------------------------------------------
+   Le menu desktop doit rester attaché au viewport pendant le scroll,
+   comme demandé au départ. On corrige uniquement la position du header,
+   sans modifier les espacements de sections et sans toucher à Standard.
+   ========================================================= */
+@media (min-width: 761px) {
+  body .vpl-nav,
+  body.vpl-home .vpl-nav,
+  body.vpl-inner-page .vpl-nav,
+  body.page-methode .vpl-nav,
+  body.page-stage-redesign .vpl-nav,
+  body.page-entreprise-ribbon-back > .vpl-nav,
+  body.page-entreprise-ribbon-back > header.vpl-nav,
+  body.page-formateur-redesign .vpl-nav,
+  body.page-contact-clean .vpl-nav {
+    position: fixed !important;
+    top: 18px !important;
+    left: 50% !important;
+    right: auto !important;
+    transform: translateX(-50%) !important;
+    width: min(1280px, calc(100% - 56px)) !important;
+    max-width: 1280px !important;
+    margin: 0 !important;
+    z-index: 1000 !important;
+  }
+
+  html.vpl-scrolled body .vpl-nav,
+  html.vpl-scrolled body.vpl-home .vpl-nav,
+  html.vpl-scrolled body.page-entreprise-ribbon-back > .vpl-nav,
+  html.vpl-scrolled body.page-entreprise-ribbon-back > header.vpl-nav {
+    top: 10px !important;
+  }
+}
+
+@media (min-width: 761px) and (max-width: 1080px) {
+  body .vpl-nav,
+  body.vpl-home .vpl-nav,
+  body.vpl-inner-page .vpl-nav,
+  body.page-entreprise-ribbon-back > .vpl-nav,
+  body.page-entreprise-ribbon-back > header.vpl-nav {
+    width: min(1180px, calc(100% - 24px)) !important;
+  }
+}
