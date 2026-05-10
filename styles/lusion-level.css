@@ -15504,51 +15504,47 @@ body.page-contact-clean .vpw-quick-link {
   }
 }
 
+
 /* =========================================================
-   Correctif haut de page — Accueil + Stage
+   Correctif PC — menu fixé au viewport pendant le scroll
    ---------------------------------------------------------
-   Ces deux pages avaient encore les calques immersifs globaux
-   avant le premier hero : canvas animé, bruit, ruban et halos fixes.
-   Ils créaient une zone bleutée mouvante visible au-dessus du
-   fond réel du hero, surtout à gauche de la navigation.
-   Le premier écran redevient porté par son hero uniquement.
+   Desktop uniquement : la navigation reste toujours visible,
+   même en bas des pages longues. Aucun impact mobile.
    ========================================================= */
-body.vpl-home.page-accueil-rythme > .vpl-canvas,
-body.vpl-home.page-accueil-rythme > .vpl-noise,
-body.vpl-home.page-accueil-rythme > .vpl-scroll-ribbon,
-body.page-stage-redesign > .vpl-canvas,
-body.page-stage-redesign > .vpl-noise,
-body.page-stage-redesign > .vpl-scroll-ribbon {
-  display: none !important;
+@media (min-width: 981px) and (hover: hover) and (pointer: fine) {
+  html {
+    scroll-padding-top: 96px !important;
+  }
+
+  body .vpl-nav,
+  body.vpl-home .vpl-nav,
+  body.vpl-inner-page .vpl-nav,
+  body.page-stage-redesign .vpl-nav,
+  body.page-entreprise-ribbon-back .vpl-nav,
+  body.page-formateur-redesign .vpl-nav,
+  body.page-contact-organized .vpl-nav {
+    position: fixed !important;
+    top: 10px !important;
+    left: 50% !important;
+    right: auto !important;
+    bottom: auto !important;
+    transform: translateX(-50%) !important;
+    z-index: 2147483000 !important;
+    will-change: top, transform, opacity, background !important;
+  }
+
+  html.vpl-scrolled body .vpl-nav,
+  html.vpl-scrolled body.vpl-home .vpl-nav,
+  html.vpl-scrolled body.vpl-inner-page .vpl-nav,
+  html.vpl-scrolled body.page-stage-redesign .vpl-nav,
+  html.vpl-scrolled body.page-entreprise-ribbon-back .vpl-nav,
+  html.vpl-scrolled body.page-formateur-redesign .vpl-nav,
+  html.vpl-scrolled body.page-contact-organized .vpl-nav {
+    top: 8px !important;
+  }
 }
 
-body.vpl-home.page-accueil-rythme .vpl-page::before,
-body.vpl-home.page-accueil-rythme .vpl-page::after,
-body.page-stage-redesign.vpl-inner-page::before,
-body.page-stage-redesign.vpl-inner-page::after {
-  content: none !important;
-  display: none !important;
-}
-
-body.vpl-home.page-accueil-rythme .vpl-page {
-  background: #04111f !important;
-}
-
-body.page-stage-redesign {
-  background: #050a12 !important;
-}
-
-body.vpl-home.page-accueil-rythme .vp-home-immersive-hero,
-body.page-stage-redesign .stage-hero-redesign.stage-hero-carousel {
-  margin-top: 0 !important;
-}
-
-
-/* =========================================================
-   Correctif mobile final — drawer burger
-   - FAQ retirée via JS côté mobile
-   - CTA du drawer pleine largeur (annule les anciens max-width du bouton nav)
-   ========================================================= */
+/* Rappel du correctif mobile du drawer : ne modifie pas le PC. */
 @media (max-width: 760px) {
   .vpl-mobile-drawer .vpl-mobile-drawer-cta,
   .vpl-mobile-drawer a.vpl-mobile-drawer-cta.vpl-nav-cta,
