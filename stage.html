@@ -319,7 +319,7 @@
       flex-wrap:wrap;
       justify-content:center;
       gap:10px;
-      margin-top:clamp(24px,3vw,34px);
+      margin-top:clamp(22px,3vw,32px);
     }
     .vp-marketplace-path-btn{
       appearance:none;
@@ -342,15 +342,46 @@
       color:#0b4a8b;
       box-shadow:0 14px 38px rgba(6,26,47,.09);
     }
+    .vp-marketplace-filters{
+      display:grid;
+      grid-template-columns:repeat(3,minmax(170px,260px));
+      justify-content:center;
+      gap:12px;
+      margin:18px auto 0;
+    }
+    .vp-marketplace-filter{
+      display:grid;
+      gap:7px;
+      text-align:left;
+    }
+    .vp-marketplace-filter label{
+      color:#50647a;
+      font-size:11px;
+      font-weight:950;
+      letter-spacing:.06em;
+      text-transform:uppercase;
+    }
+    .vp-marketplace-filter select{
+      width:100%;
+      min-height:44px;
+      border:1px solid rgba(6,26,47,.12);
+      border-radius:16px;
+      background:rgba(255,255,255,.9);
+      color:#061a2f;
+      font:inherit;
+      font-size:14px;
+      font-weight:800;
+      padding:0 38px 0 14px;
+      box-shadow:0 10px 28px rgba(6,26,47,.05);
+    }
     .vp-marketplace-grid{
       display:grid;
       grid-template-columns:minmax(0,1fr);
       gap:clamp(18px,2.6vw,30px);
-      max-width:920px;
-      margin:clamp(30px,4vw,48px) auto 0;
+      max-width:1180px;
+      margin:clamp(24px,3vw,36px) auto 0;
       align-items:start;
     }
-    .vp-marketplace-column[hidden]{display:none!important}
     .vp-marketplace-column{
       position:relative;
       min-height:360px;
@@ -374,14 +405,22 @@
     .vp-marketplace-column h3{margin:0;color:#061a2f;font-size:clamp(22px,2vw,30px);line-height:1;letter-spacing:-.045em;font-weight:950}
     .vp-marketplace-column p{margin:8px 0 0;color:#50647a;font-size:14px;line-height:1.55}
     .vp-marketplace-badge{display:inline-flex;align-items:center;gap:6px;white-space:nowrap;padding:8px 10px;border-radius:999px;background:rgba(11,74,139,.08);border:1px solid rgba(11,74,139,.10);color:#0b4a8b;font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.04em}
-    .vp-marketplace-list{display:grid;gap:14px;margin-top:18px}
+    .vp-marketplace-list{
+      display:grid;
+      grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+      gap:16px;
+      margin-top:18px;
+      align-items:stretch;
+    }
     .vp-marketplace-card{
-      display:block;
+      display:flex;
+      flex-direction:column;
+      min-height:268px;
       width:100%;
       text-align:left;
       padding:18px;
       border:1px solid rgba(6,26,47,.08);
-      border-radius:22px;
+      border-radius:24px;
       background:rgba(255,255,255,.86);
       color:inherit;
       text-decoration:none;
@@ -392,18 +431,23 @@
     .vp-marketplace-card:hover,.vp-marketplace-card.is-selected{transform:translateY(-4px);border-color:rgba(47,127,202,.34);box-shadow:0 18px 45px rgba(6,26,47,.10);background:#fff}
     .vp-marketplace-card.is-disabled{opacity:.62;cursor:not-allowed;transform:none!important}
     .vp-marketplace-card-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:10px}
-    .vp-marketplace-type{color:#0b4a8b;font-size:11px;font-weight:950;text-transform:uppercase;letter-spacing:.06em}
+    .vp-marketplace-type{color:#0b4a8b;font-size:10.5px;font-weight:950;text-transform:uppercase;letter-spacing:.06em}
     .vp-marketplace-price{font-weight:950;color:#061a2f;white-space:nowrap}
-    .vp-marketplace-title{margin:0 0 10px;color:#061a2f;font-size:18px;line-height:1.1;letter-spacing:-.035em;font-weight:950}
-    .vp-marketplace-meta{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 0}
-    .vp-marketplace-meta span{display:inline-flex;align-items:center;min-height:28px;padding:6px 9px;border-radius:999px;background:rgba(6,26,47,.05);color:#50647a;font-size:12px;font-weight:750}
-    .vp-marketplace-action{display:inline-flex;align-items:center;gap:8px;margin-top:14px;color:#0b4a8b;font-size:13px;font-weight:950}
-    .vp-marketplace-empty{padding:18px;border:1px dashed rgba(11,74,139,.22);border-radius:20px;background:rgba(255,255,255,.58);color:#50647a;font-size:14px;line-height:1.55}
+    .vp-marketplace-title{margin:0 0 10px;color:#061a2f;font-size:17px;line-height:1.12;letter-spacing:-.035em;font-weight:950}
+    .vp-marketplace-card p{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+    .vp-marketplace-meta{display:flex;flex-wrap:wrap;gap:7px;margin:12px 0 0}
+    .vp-marketplace-meta span{display:inline-flex;align-items:center;min-height:26px;padding:5px 8px;border-radius:999px;background:rgba(6,26,47,.05);color:#50647a;font-size:11.5px;font-weight:750}
+    .vp-marketplace-action{display:inline-flex;align-items:center;gap:8px;margin-top:auto;padding-top:14px;color:#0b4a8b;font-size:13px;font-weight:950}
+    .vp-marketplace-empty{grid-column:1/-1;padding:18px;border:1px dashed rgba(11,74,139,.22);border-radius:20px;background:rgba(255,255,255,.58);color:#50647a;font-size:14px;line-height:1.55}
     .vp-marketplace-empty strong{display:block;margin-bottom:4px;color:#061a2f}
-    .vp-marketplace-cta{margin-top:16px;display:flex;flex-wrap:wrap;gap:10px}
+    .vp-marketplace-cta{margin-top:18px;display:flex;flex-wrap:wrap;gap:10px}
     .vp-marketplace-mini-note{margin-top:16px;padding:14px;border-radius:18px;background:rgba(11,74,139,.06);color:#50647a;font-size:13px;line-height:1.5}
-    @media(max-width:1080px){.vp-marketplace-column{min-height:auto}}
-    @media(max-width:640px){.vp-marketplace-section{padding:62px 0}.vp-marketplace-column{padding:18px;border-radius:24px}.vp-marketplace-column-head{display:block}.vp-marketplace-badge{margin-top:12px}.vp-marketplace-card{padding:16px}.vp-marketplace-card-top{display:block}.vp-marketplace-price{display:block;margin-top:6px}}
+    .vp-marketplace-private-cta{margin-top:18px;padding:18px;border-radius:22px;border:1px solid rgba(11,74,139,.14);background:linear-gradient(135deg,rgba(11,74,139,.08),rgba(255,255,255,.82));display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+    .vp-marketplace-private-cta[hidden]{display:none!important}
+    .vp-marketplace-private-cta strong{display:block;color:#061a2f;font-size:16px;font-weight:950;letter-spacing:-.02em}
+    .vp-marketplace-private-cta span{display:block;margin-top:4px;color:#50647a;font-size:13px;line-height:1.45}
+    @media(max-width:1080px){.vp-marketplace-column{min-height:auto}.vp-marketplace-filters{grid-template-columns:repeat(2,minmax(170px,1fr));max-width:640px}}
+    @media(max-width:640px){.vp-marketplace-section{padding:62px 0}.vp-marketplace-filters{grid-template-columns:1fr}.vp-marketplace-column{padding:18px;border-radius:24px}.vp-marketplace-column-head{display:block}.vp-marketplace-badge{margin-top:12px}.vp-marketplace-list{grid-template-columns:1fr}.vp-marketplace-card{padding:16px;min-height:auto}.vp-marketplace-card-top{display:block}.vp-marketplace-price{display:block;margin-top:6px}.vp-marketplace-private-cta{display:block}.vp-marketplace-private-cta .vpl-button{margin-top:12px}}
   </style>
 
 
@@ -466,7 +510,7 @@
           <div class="vpl-eyebrow" id="heroType">Stage Vital Protect</div>
           <h1 id="heroTitle">Apprendre à prévenir, éviter et réagir simplement.</h1>
           <p id="heroDescription">Vital Protect transmet des repères concrets pour lire les tensions, garder la bonne distance, désamorcer quand c’est possible et agir avec proportion.</p>
-          <div class="vpl-actions"><a class="vpl-button vpl-button-primary" href="#parcours">Choisir mon parcours</a><a class="vpl-button vpl-button-secondary" href="#marketplace" data-stage-path="public">Voir les parcours</a></div>
+          <div class="vpl-actions"><a class="vpl-button vpl-button-primary" href="#marketplace">Trouver un stage</a><a class="vpl-button vpl-button-secondary" href="#marketplace" data-stage-path="all">Voir toutes les dates</a></div>
           <p class="stage-hero-note">Les réservations ne sont ouvertes que lorsqu’une session affiche clairement le lieu, la date, le tarif, l’encadrant et les conditions de participation.</p>
           <div class="stage-hero-benefits" aria-label="Objectifs du stage"><span><b>Prévenir</b>Lire les signaux et garder une marge.</span><span><b>Éviter</b>Créer de l’espace sans sur-réagir.</span><span><b>Réagir</b>Agir simplement et reprendre le calme.</span></div>
         </div>
@@ -543,76 +587,61 @@
     <section class="vp-stage-modern vp-stage-compare">
       <div class="vpl-container vp-stage-compare-grid vp-stagger">
         <article class="vp-stage-card vp-stage-compare-card vp-tilt is-not" style="--vp-i:0"><span class="vp-stage-kicker">Ce que ce n’est pas</span><h2>Vous n’allez pas apprendre à vous prendre pour un combattant.</h2><ul><li>Pas de combat libre.</li><li>Pas de promesse d’invincibilité.</li><li>Pas de culte de la confrontation.</li><li>Pas de scénario spectaculaire ou humiliant.</li></ul></article>
-        <article class="vp-stage-card vp-stage-compare-card vp-tilt is-yes" style="--vp-i:1"><span class="vp-stage-kicker">Ce que c’est</span><h2>Un entraînement à la lucidité, à la distance et à la décision simple.</h2><p>La bonne réaction n’est pas toujours un geste. Souvent, c’est voir plus tôt, se placer mieux, parler plus court, sortir plus vite ou demander de l’aide au bon moment.</p><a class="vpl-button vpl-button-primary" href="#marketplace">Voir les stages</a></article>
+        <article class="vp-stage-card vp-stage-compare-card vp-tilt is-yes" style="--vp-i:1"><span class="vp-stage-kicker">Ce que c’est</span><h2>Un entraînement à la lucidité, à la distance et à la décision simple.</h2><p>La bonne réaction n’est pas toujours un geste. Souvent, c’est voir plus tôt, se placer mieux, parler plus court, sortir plus vite ou demander de l’aide au bon moment.</p><a class="vpl-button vpl-button-primary" href="#marketplace">Trouver une date</a></article>
       </div>
     </section>
 
     <section id="marketplace" class="vp-marketplace-section">
       <div class="vpl-container">
-        <div class="section-head section-head--center"><span class="eyebrow">Stages disponibles</span><h2 id="marketplaceTitle">Les stages s’affichent selon le parcours choisi.</h2><p id="marketplaceIntro">Choisissez “Pour moi”, “Pour mon équipe” ou “Devenir formateur” : la liste juste en dessous change automatiquement.</p></div>
+        <div class="section-head section-head--center"><span class="eyebrow">Trouver un stage</span><h2 id="marketplaceTitle">Choisissez d’abord votre zone, puis le module qui vous intéresse.</h2><p id="marketplaceIntro">La liste affiche toutes les sessions ouvertes : stages publics, sessions professionnelles standardisées et sessions formateur. Vous pouvez ensuite filtrer par région, département, module ou parcours.</p></div>
+        <div class="vp-marketplace-filters" aria-label="Rechercher les stages disponibles">
+          <div class="vp-marketplace-filter">
+            <label for="marketplaceRegionFilter">Région</label>
+            <select id="marketplaceRegionFilter">
+              <option value="">Toutes les régions</option>
+            </select>
+          </div>
+          <div class="vp-marketplace-filter">
+            <label for="marketplaceDepartmentFilter">Département</label>
+            <select id="marketplaceDepartmentFilter">
+              <option value="">Tous les départements</option>
+            </select>
+          </div>
+          <div class="vp-marketplace-filter">
+            <label for="marketplaceModuleFilter">Module</label>
+            <select id="marketplaceModuleFilter">
+              <option value="">Tous les modules</option>
+            </select>
+          </div>
+        </div>
         <div class="vp-marketplace-paths" aria-label="Filtrer les stages par parcours">
+          <button type="button" class="vp-marketplace-path-btn" data-stage-path="all">Tous les stages</button>
           <button type="button" class="vp-marketplace-path-btn" data-stage-path="public">Pour moi</button>
           <button type="button" class="vp-marketplace-path-btn" data-stage-path="team">Pour mon équipe</button>
           <button type="button" class="vp-marketplace-path-btn" data-stage-path="trainer">Devenir formateur</button>
         </div>
         <div class="vp-marketplace-grid">
-          <article id="stages-particuliers" class="vp-marketplace-column" data-marketplace-panel="public">
+          <article class="vp-marketplace-column">
             <div class="vp-marketplace-column-head">
-              <div><h3>Pour moi</h3><p>Sessions ouvertes au public. Choisissez une date, puis réservez directement.</p></div>
-              <span class="vp-marketplace-badge">Paiement direct</span>
+              <div><h3>Sessions disponibles</h3><p id="marketplaceResultText">Toutes les sessions ouvertes sont affichées ci-dessous.</p></div>
+              <span class="vp-marketplace-badge" id="marketplaceResultCount">Chargement</span>
             </div>
             <div id="publicStagesContainer" class="vp-marketplace-list">
               <div class="vp-marketplace-empty"><strong>Chargement des stages...</strong>Les sessions publiées vont apparaître ici.</div>
             </div>
-            <div class="vp-marketplace-mini-note">Une session doit surtout avoir un tarif et des places restantes pour ouvrir la réservation. Les infos manquantes restent affichées “à confirmer”.</div>
-          </article>
-
-          <article id="stages-equipe" class="vp-marketplace-column" data-marketplace-panel="team" hidden>
-            <div class="vp-marketplace-column-head">
-              <div><h3>Pour mon équipe</h3><p>Deux possibilités : inscrire vos salariés sur une session standardisée en contexte professionnel, ou organiser une session privée réservée à votre équipe.</p></div>
-              <span class="vp-marketplace-badge">Programme standardisé</span>
+            <div id="teamPrivateCta" class="vp-marketplace-private-cta" hidden>
+              <div><strong>Vous voulez une session réservée à vos salariés ?</strong><span>Le contenu reste standardisé Vital Protect. Seuls la date, le lieu et le groupe sont organisés pour votre équipe.</span></div>
+              <a class="vpl-button vpl-button-secondary" href="/contact.html?type=entreprise&objet=session-privee">Demander une session privée</a>
             </div>
-            <div class="vp-marketplace-mini-note"><strong>Important :</strong> le déroulé pédagogique Vital Protect est préfait. Il ne s’agit pas d’adapter le contenu aux infirmiers, pompiers, vendeurs ou autres métiers : seul le format change, soit en session ouverte, soit en session privée.</div>
-            <div class="vp-marketplace-list">
-              <article class="vp-marketplace-card">
-                <div class="vp-marketplace-card-top"><span class="vp-marketplace-type">Option 1</span><span class="vp-marketplace-price">Paiement direct</span></div>
-                <h4 class="vp-marketplace-title">Inscrire des salariés à une session ouverte</h4>
-                <p>Vos salariés rejoignent une session standardisée : “Faire face aux situations tendues et comportements agressifs en contexte professionnel”.</p>
-                <div class="vp-marketplace-meta"><span>Contexte professionnel</span><span>Programme identique</span><span>Places selon disponibilité</span></div>
-              </article>
-            </div>
-            <div id="teamEmployeeStagesContainer" class="vp-marketplace-list">
-              <div class="vp-marketplace-empty"><strong>Chargement des sessions professionnelles...</strong>Les sessions publiées vont apparaître ici.</div>
-            </div>
-            <div class="vp-marketplace-list">
-              <a class="vp-marketplace-card" href="/contact.html?type=entreprise&objet=session-privee">
-                <div class="vp-marketplace-card-top"><span class="vp-marketplace-type">Option 2</span><span class="vp-marketplace-price">Sur demande</span></div>
-                <h4 class="vp-marketplace-title">Organiser une session privée pour vos salariés</h4>
-                <p>La formation reste standardisée. La session est simplement réservée à votre équipe, sur une date et un lieu à organiser ensemble.</p>
-                <div class="vp-marketplace-meta"><span>Session privée</span><span>Même déroulé pédagogique</span><span>Date et lieu à définir</span></div>
-                <span class="vp-marketplace-action">Demander une session privée →</span>
-              </a>
-            </div>
-          </article>
-
-          <article id="stages-formateurs" class="vp-marketplace-column" data-marketplace-panel="trainer" hidden>
-            <div class="vp-marketplace-column-head">
-              <div><h3>Devenir formateur</h3><p>Sessions de validation interne liées aux modules d’habilitation.</p></div>
-              <span class="vp-marketplace-badge">Validation</span>
-            </div>
-            <div id="trainerSessionsContainer" class="vp-marketplace-list">
-              <div class="vp-marketplace-empty"><strong>Chargement des sessions...</strong>Les sessions formateur ouvertes vont apparaître ici.</div>
-            </div>
-            <div class="vp-marketplace-cta"><a class="vpl-button vpl-button-secondary" href="/devenir-formateur.html">Voir tout le parcours formateur</a></div>
+            <div class="vp-marketplace-mini-note">Les cartes affichées sont volontairement compactes : région, département, ville, date, module, prix et places restantes. Les infos manquantes restent “à confirmer” sans bloquer la sélection si le tarif et les places sont disponibles.</div>
           </article>
         </div>
       </div>
     </section>
 
-
     <section id="reservation" class="stage-reservation-section">
       <div class="vpl-container">
-        <div class="section-head section-head--center"><span class="eyebrow">Réservation</span><h2>Réserver le stage sélectionné.</h2><p>Choisissez d’abord une session dans “Pour moi” ou “Pour mon équipe”. Le formulaire s’active dès qu’un stage a un tarif et des places restantes.</p></div>
+        <div class="section-head section-head--center"><span class="eyebrow">Réservation</span><h2>Réserver le stage sélectionné.</h2><p>Choisissez une carte de stage dans la liste ci-dessus. Le formulaire s’active dès qu’une session réservable est sélectionnée.</p></div>
         <div class="stage-booking-grid">
           <div class="stage-booking-summary">
             <h3>Résumé de la session</h3>
@@ -658,7 +687,7 @@
         <div class="stage-final-box">
           <h2>Prévenir d’abord. Réagir seulement si nécessaire.</h2>
           <p>Choisissez un stage public, une session professionnelle pour salariés, ou découvrez les sessions formateur.</p>
-          <div class="vpl-actions"><a class="vpl-button vpl-button-primary" href="#marketplace">Voir les stages</a><a class="vpl-button vpl-button-secondary" href="/stage.html?parcours=team#marketplace">Former une équipe</a><a class="vpl-button vpl-button-secondary" href="/devenir-formateur.html">Parcours formateur</a></div>
+          <div class="vpl-actions"><a class="vpl-button vpl-button-primary" href="#marketplace">Trouver une date</a><a class="vpl-button vpl-button-secondary" href="/stage.html?parcours=team#marketplace">Former une équipe</a><a class="vpl-button vpl-button-secondary" href="/devenir-formateur.html">Parcours formateur</a></div>
         </div>
       </div>
     </section>
@@ -777,16 +806,48 @@
     const bookingForm = $("bookingForm");
     const bookingSubmitButton = $("bookingSubmitButton");
     const publicStagesContainer = $("publicStagesContainer");
-    const teamEmployeeStagesContainer = $("teamEmployeeStagesContainer");
-    const trainerSessionsContainer = $("trainerSessionsContainer");
     const marketplaceSection = $("marketplace");
     const marketplaceTitle = $("marketplaceTitle");
     const marketplaceIntro = $("marketplaceIntro");
+    const marketplaceResultText = $("marketplaceResultText");
+    const marketplaceResultCount = $("marketplaceResultCount");
+    const marketplaceRegionFilter = $("marketplaceRegionFilter");
+    const marketplaceDepartmentFilter = $("marketplaceDepartmentFilter");
+    const marketplaceModuleFilter = $("marketplaceModuleFilter");
+    const teamPrivateCta = $("teamPrivateCta");
 
     let stage = null;
     let bookingEnabled = false;
     let publicStagesData = [];
     let trainerSessionsData = [];
+
+    const FRANCE_REGIONS = [
+      { name: "Auvergne-Rhône-Alpes", departments: ["01 - Ain", "03 - Allier", "07 - Ardèche", "15 - Cantal", "26 - Drôme", "38 - Isère", "42 - Loire", "43 - Haute-Loire", "63 - Puy-de-Dôme", "69 - Rhône", "73 - Savoie", "74 - Haute-Savoie"] },
+      { name: "Bourgogne-Franche-Comté", departments: ["21 - Côte-d’Or", "25 - Doubs", "39 - Jura", "58 - Nièvre", "70 - Haute-Saône", "71 - Saône-et-Loire", "89 - Yonne", "90 - Territoire de Belfort"] },
+      { name: "Bretagne", departments: ["22 - Côtes-d’Armor", "29 - Finistère", "35 - Ille-et-Vilaine", "56 - Morbihan"] },
+      { name: "Centre-Val de Loire", departments: ["18 - Cher", "28 - Eure-et-Loir", "36 - Indre", "37 - Indre-et-Loire", "41 - Loir-et-Cher", "45 - Loiret"] },
+      { name: "Corse", departments: ["2A - Corse-du-Sud", "2B - Haute-Corse"] },
+      { name: "Grand Est", departments: ["08 - Ardennes", "10 - Aube", "51 - Marne", "52 - Haute-Marne", "54 - Meurthe-et-Moselle", "55 - Meuse", "57 - Moselle", "67 - Bas-Rhin", "68 - Haut-Rhin", "88 - Vosges"] },
+      { name: "Hauts-de-France", departments: ["02 - Aisne", "59 - Nord", "60 - Oise", "62 - Pas-de-Calais", "80 - Somme"] },
+      { name: "Île-de-France", departments: ["75 - Paris", "77 - Seine-et-Marne", "78 - Yvelines", "91 - Essonne", "92 - Hauts-de-Seine", "93 - Seine-Saint-Denis", "94 - Val-de-Marne", "95 - Val-d’Oise"] },
+      { name: "Normandie", departments: ["14 - Calvados", "27 - Eure", "50 - Manche", "61 - Orne", "76 - Seine-Maritime"] },
+      { name: "Nouvelle-Aquitaine", departments: ["16 - Charente", "17 - Charente-Maritime", "19 - Corrèze", "23 - Creuse", "24 - Dordogne", "33 - Gironde", "40 - Landes", "47 - Lot-et-Garonne", "64 - Pyrénées-Atlantiques", "79 - Deux-Sèvres", "86 - Vienne", "87 - Haute-Vienne"] },
+      { name: "Occitanie", departments: ["09 - Ariège", "11 - Aude", "12 - Aveyron", "30 - Gard", "31 - Haute-Garonne", "32 - Gers", "34 - Hérault", "46 - Lot", "48 - Lozère", "65 - Hautes-Pyrénées", "66 - Pyrénées-Orientales", "81 - Tarn", "82 - Tarn-et-Garonne"] },
+      { name: "Pays de la Loire", departments: ["44 - Loire-Atlantique", "49 - Maine-et-Loire", "53 - Mayenne", "72 - Sarthe", "85 - Vendée"] },
+      { name: "Provence-Alpes-Côte d’Azur", departments: ["04 - Alpes-de-Haute-Provence", "05 - Hautes-Alpes", "06 - Alpes-Maritimes", "13 - Bouches-du-Rhône", "83 - Var", "84 - Vaucluse"] },
+      { name: "Guadeloupe", departments: ["971 - Guadeloupe"] },
+      { name: "Martinique", departments: ["972 - Martinique"] },
+      { name: "Guyane", departments: ["973 - Guyane"] },
+      { name: "La Réunion", departments: ["974 - La Réunion"] },
+      { name: "Mayotte", departments: ["976 - Mayotte"] }
+    ];
+
+    const FRANCE_REGION_BY_DEPARTMENT = FRANCE_REGIONS.reduce((acc, region) => {
+      region.departments.forEach((department) => { acc[department] = region.name; });
+      return acc;
+    }, {});
+
+    const NORMALIZE_MAP = { "’": "'", "‘": "'", "`": "'", "´": "'", "œ": "oe", "æ": "ae" };
 
     function setText(element, value) {
       if (element) element.textContent = value;
@@ -805,6 +866,14 @@
       return date.toLocaleDateString("fr-FR", { day: "2-digit", month: "long", year: "numeric" });
     }
 
+    function formatDateRange(startDate, endDate) {
+      const start = formatDate(startDate);
+      const end = formatDate(endDate);
+      if (start === "Date non disponible" && end === "Date non disponible") return "Dates à confirmer";
+      if (start === end) return start;
+      return `${start} → ${end}`;
+    }
+
     function showBookingStatus(message, type = "info") {
       if (!bookingStatus) return;
       bookingStatus.className = `booking-status show ${type}`;
@@ -813,10 +882,6 @@
 
     function hasCompleteSession(item) {
       if (!item) return false;
-      // Pour ouvrir la réservation, Stripe et l’API ont besoin d’un stage publié,
-      // d’un identifiant, d’un prix valide et de places restantes.
-      // Les autres infos restent affichées “à confirmer” si elles manquent,
-      // mais elles ne doivent pas empêcher l’utilisateur de sélectionner le stage.
       const hasId = String(item.id || "").trim().length > 0;
       const hasPrice = Number(item.price || 0) > 0;
       const hasPlaces = Number(item.remaining_places || 0) > 0;
@@ -851,10 +916,10 @@
       setText(bookingTotal, `Total : ${formatPrice(Number(stage.price || 0) * places)}`);
     }
 
-    function showNoSessionState(message = "Aucune session complète n’est ouverte actuellement. Revenez bientôt ou contactez l’équipe pour être prévenu.") {
+    function showNoSessionState(message = "Choisissez une session dans la liste : le formulaire s’activera automatiquement si la réservation est possible.") {
       stage = null;
       setText(heroTitle, "Apprendre à prévenir, éviter et réagir simplement.");
-      setText(heroDescription, "Les prochaines dates seront publiées dès qu’une session est ouverte avec un tarif et des places disponibles. Les détails manquants peuvent rester à confirmer.");
+      setText(heroDescription, "Les prochaines dates sont publiées dès qu’une session est ouverte avec un tarif et des places disponibles. Commencez par votre région ou votre département.");
       setText(selectedStageValue, message);
       setText(bookingTotal, "Total : en attente d’une session complète");
       setText(metaCity, "À confirmer");
@@ -880,72 +945,209 @@
         .replace(/'/g, "&#039;");
     }
 
-    function formatDateRange(startDate, endDate) {
-      const start = formatDate(startDate);
-      const end = formatDate(endDate);
-      if (start === "Date non disponible" && end === "Date non disponible") return "Dates à confirmer";
-      if (start === end) return start;
-      return `${start} → ${end}`;
+    function normalizeLocationValue(value) {
+      return String(value || "")
+        .trim()
+        .toLowerCase()
+        .replace(/[’‘`´œæ]/g, (match) => NORMALIZE_MAP[match] || match)
+        .normalize("NFD")
+        .replace(/[̀-ͯ]/g, "")
+        .replace(/\s+/g, " ");
+    }
+
+    function extractDepartmentCode(value) {
+      const match = String(value || "").match(/^(\d{2,3}|2A|2B)/i);
+      return match ? match[1].toUpperCase() : "";
+    }
+
+    function sameDepartment(a, b) {
+      const codeA = extractDepartmentCode(a);
+      const codeB = extractDepartmentCode(b);
+      if (codeA && codeB) return codeA === codeB;
+      return normalizeLocationValue(a) === normalizeLocationValue(b);
+    }
+
+    function isProfessionalTeamStage(item) {
+      const blob = [item?.title, item?.training_type, item?.description, item?.audience, item?.module_name]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase();
+      return ["professionnel", "professionnelle", "entreprise", "salari", "équipe", "equipe", "agressif", "agressive", "tendu", "tendue", "conflit"].some((word) => blob.includes(word));
+    }
+
+    function stagePathForItem(item) {
+      return isProfessionalTeamStage(item) ? "team" : "public";
+    }
+
+    function labelForPath(path) {
+      if (path === "team") return "Pour mon équipe";
+      if (path === "trainer") return "Devenir formateur";
+      if (path === "public") return "Pour moi";
+      return "Tous";
+    }
+
+    function getSessionModule(item, kind = "stage") {
+      if (!item) return "Module à confirmer";
+      if (kind === "trainer") return item.module_name || item.training_module_name || item.title || "Module formateur";
+      return item.module_name || item.training_type || item.title || "Stage Vital Protect";
+    }
+
+    function formatCityPostal(item) {
+      const city = item?.city || "Ville à confirmer";
+      const postal = item?.postal_code || item?.zip_code || item?.postcode || "";
+      return postal ? `${city} (${postal})` : city;
+    }
+
+    function getCurrentLocationFilters() {
+      return {
+        region: marketplaceRegionFilter?.value || "",
+        department: marketplaceDepartmentFilter?.value || "",
+        module: marketplaceModuleFilter?.value || ""
+      };
+    }
+
+    function matchesLocationFilters(item) {
+      const filters = getCurrentLocationFilters();
+      if (!filters.region && !filters.department) return true;
+      const itemRegion = item?.region || "";
+      const itemDepartment = item?.department || item?.departement || "";
+      if (filters.region && normalizeLocationValue(itemRegion) !== normalizeLocationValue(filters.region)) return false;
+      if (filters.department && !sameDepartment(itemDepartment, filters.department)) return false;
+      return true;
+    }
+
+    function locationFilterSuffix() {
+      const filters = getCurrentLocationFilters();
+      const parts = [];
+      if (filters.region) parts.push(filters.region);
+      if (filters.department) parts.push(filters.department);
+      return parts.length ? ` dans ${parts.join(" / ")}` : "";
+    }
+
+    function updateFilterUrl() {
+      const newUrl = new URL(window.location.href);
+      const filters = getCurrentLocationFilters();
+      if (activeMarketplacePath && activeMarketplacePath !== "all") newUrl.searchParams.set("parcours", activeMarketplacePath); else newUrl.searchParams.delete("parcours");
+      if (filters.region) newUrl.searchParams.set("region", filters.region); else newUrl.searchParams.delete("region");
+      if (filters.department) newUrl.searchParams.set("departement", filters.department); else newUrl.searchParams.delete("departement");
+      if (filters.module) newUrl.searchParams.set("module", filters.module); else newUrl.searchParams.delete("module");
+      if (!stage?.id) newUrl.searchParams.delete("id");
+      newUrl.hash = "marketplace";
+      window.history.replaceState({}, "", newUrl.toString());
+    }
+
+    function populateDepartmentFilter() {
+      if (!marketplaceDepartmentFilter) return;
+      const selectedRegion = marketplaceRegionFilter?.value || "";
+      const currentValue = marketplaceDepartmentFilter.value;
+      const departments = selectedRegion
+        ? (FRANCE_REGIONS.find((item) => item.name === selectedRegion)?.departments || [])
+        : FRANCE_REGIONS.flatMap((item) => item.departments);
+      marketplaceDepartmentFilter.innerHTML = `<option value="">Tous les départements</option>${departments.map((department) => `<option value="${escapeHtml(department)}">${escapeHtml(department)}</option>`).join("")}`;
+      const shouldKeep = departments.some((department) => sameDepartment(department, currentValue));
+      marketplaceDepartmentFilter.value = shouldKeep ? currentValue : "";
+    }
+
+    function getMarketplaceItems() {
+      const stageItems = publicStagesData.map((item) => ({ kind: "stage", path: stagePathForItem(item), item, date: item.stage_date || "9999-12-31" }));
+      const trainerItems = trainerSessionsData.map((item) => ({ kind: "trainer", path: "trainer", item, date: item.start_date || "9999-12-31" }));
+      return [...stageItems, ...trainerItems].sort((a, b) => String(a.date).localeCompare(String(b.date)));
+    }
+
+    function populateModuleFilter() {
+      if (!marketplaceModuleFilter) return;
+      const currentValue = marketplaceModuleFilter.value;
+      const modules = Array.from(new Set(getMarketplaceItems().map((entry) => getSessionModule(entry.item, entry.kind)).filter(Boolean))).sort((a, b) => a.localeCompare(b, "fr"));
+      marketplaceModuleFilter.innerHTML = `<option value="">Tous les modules</option>${modules.map((module) => `<option value="${escapeHtml(module)}">${escapeHtml(module)}</option>`).join("")}`;
+      marketplaceModuleFilter.value = modules.some((module) => module === currentValue) ? currentValue : "";
+    }
+
+    function populateLocationFilters() {
+      if (!marketplaceRegionFilter) return;
+      marketplaceRegionFilter.innerHTML = `<option value="">Toutes les régions</option>${FRANCE_REGIONS.map((region) => `<option value="${escapeHtml(region.name)}">${escapeHtml(region.name)}</option>`).join("")}`;
+      const queryParams = new URLSearchParams(window.location.search);
+      const requestedRegion = queryParams.get("region") || "";
+      const requestedDepartment = queryParams.get("departement") || queryParams.get("department") || "";
+      const requestedModule = queryParams.get("module") || "";
+      if (FRANCE_REGIONS.some((region) => region.name === requestedRegion)) marketplaceRegionFilter.value = requestedRegion;
+      populateDepartmentFilter();
+      if (requestedDepartment && Array.from(marketplaceDepartmentFilter?.options || []).some((option) => option.value === requestedDepartment)) {
+        marketplaceDepartmentFilter.value = requestedDepartment;
+      }
+      if (marketplaceModuleFilter && requestedModule) marketplaceModuleFilter.dataset.initialValue = requestedModule;
+      marketplaceRegionFilter.addEventListener("change", () => {
+        populateDepartmentFilter();
+        renderMarketplaceLists();
+        updateFilterUrl();
+      });
+      marketplaceDepartmentFilter?.addEventListener("change", () => {
+        const selectedDepartment = marketplaceDepartmentFilter.value;
+        if (!marketplaceRegionFilter?.value && selectedDepartment && FRANCE_REGION_BY_DEPARTMENT[selectedDepartment]) {
+          marketplaceRegionFilter.value = FRANCE_REGION_BY_DEPARTMENT[selectedDepartment];
+          populateDepartmentFilter();
+          marketplaceDepartmentFilter.value = selectedDepartment;
+        }
+        renderMarketplaceLists();
+        updateFilterUrl();
+      });
+      marketplaceModuleFilter?.addEventListener("change", () => {
+        renderMarketplaceLists();
+        updateFilterUrl();
+      });
     }
 
     const MARKETPLACE_PATHS = {
+      all: {
+        title: "Trouvez une session près de vous",
+        intro: "Commencez par la région ou le département. La liste affiche ensuite tous les modules disponibles, quel que soit le parcours."
+      },
       public: {
-        title: "Stages ouverts au public",
-        intro: "Parcours “Pour moi” : choisissez une session publique, puis le formulaire de réservation s’active juste en dessous."
+        title: "Stages pour moi",
+        intro: "Sessions ouvertes au public avec réservation directe."
       },
       team: {
-        title: "Parcours pour votre équipe",
-        intro: "Parcours “Pour mon équipe” : choisissez une session standardisée en contexte professionnel pour vos salariés, ou demandez une session privée réservée à votre équipe."
+        title: "Sessions pour mon équipe",
+        intro: "Sessions professionnelles standardisées : inscription de salariés à une session ouverte ou demande de session privée."
       },
       trainer: {
         title: "Sessions pour devenir formateur",
-        intro: "Parcours “Devenir formateur” : seules les sessions de validation formateur ouvertes sont affichées ici."
+        intro: "Sessions de validation interne pour accéder au parcours d’habilitation formateur."
       }
     };
 
     function getInitialMarketplacePath() {
-      const params = new URLSearchParams(window.location.search);
-      const fromParam = params.get("parcours");
+      const queryParams = new URLSearchParams(window.location.search);
+      const fromParam = queryParams.get("parcours");
       if (MARKETPLACE_PATHS[fromParam]) return fromParam;
       if (window.location.hash === "#stages-equipe") return "team";
       if (window.location.hash === "#stages-formateurs") return "trainer";
       if (window.location.hash === "#stages-particuliers") return "public";
-      return "public";
+      return "all";
     }
 
     let activeMarketplacePath = getInitialMarketplacePath();
 
     function setMarketplacePath(path, options = {}) {
-      if (!MARKETPLACE_PATHS[path]) path = "public";
+      if (!MARKETPLACE_PATHS[path]) path = "all";
       activeMarketplacePath = path;
       const copy = MARKETPLACE_PATHS[path];
       setText(marketplaceTitle, copy.title);
       setText(marketplaceIntro, copy.intro);
-      document.querySelectorAll("[data-marketplace-panel]").forEach((panel) => {
-        panel.hidden = panel.dataset.marketplacePanel !== path;
-      });
       document.querySelectorAll("[data-stage-path]").forEach((control) => {
         const isActive = control.dataset.stagePath === path;
         control.classList.toggle("is-active", isActive);
         if (control.tagName === "BUTTON") control.setAttribute("aria-pressed", isActive ? "true" : "false");
       });
-      if (path === "team" && options.clearSelection !== false) {
-        showNoSessionState("Parcours équipe : choisissez une session professionnelle ouverte pour inscrire vos salariés, ou demandez une session privée réservée à votre équipe.");
-      }
       if (path === "trainer" && options.clearSelection !== false) {
-        showNoSessionState("Parcours formateur : choisissez une session dans la liste, puis finalisez l’inscription depuis la page Devenir formateur.");
-        renderPublicStages();
+        showNoSessionState("Parcours formateur : choisissez une session formateur dans la liste, puis finalisez l’inscription depuis la page Devenir formateur.");
+      } else if (path === "team" && options.clearSelection !== false) {
+        showNoSessionState("Parcours équipe : choisissez une session professionnelle ouverte pour vos salariés, ou demandez une session privée réservée à votre équipe.");
+      } else if (options.clearSelection !== false && !stage) {
+        showNoSessionState();
       }
-      if (options.updateUrl) {
-        const newUrl = new URL(window.location.href);
-        newUrl.searchParams.set("parcours", path);
-        if (path !== "public") newUrl.searchParams.delete("id");
-        newUrl.hash = "marketplace";
-        window.history.replaceState({}, "", newUrl.toString());
-      }
-      if (options.scroll && marketplaceSection) {
-        marketplaceSection.scrollIntoView({ behavior: "smooth", block: "start" });
-      }
+      renderMarketplaceLists();
+      if (options.updateUrl) updateFilterUrl();
+      if (options.scroll && marketplaceSection) marketplaceSection.scrollIntoView({ behavior: "smooth", block: "start" });
     }
 
     document.querySelectorAll("[data-stage-path]").forEach((control) => {
@@ -967,117 +1169,91 @@
       container.innerHTML = `<div class="vp-marketplace-empty"><strong>${escapeHtml(title)}</strong>${escapeHtml(text)}</div>`;
     }
 
-    function renderPublicStages() {
+    function filterMarketplaceItems(items) {
+      const filters = getCurrentLocationFilters();
+      return items.filter((entry) => {
+        if (activeMarketplacePath !== "all" && entry.path !== activeMarketplacePath) return false;
+        if (!matchesLocationFilters(entry.item)) return false;
+        if (filters.module && normalizeLocationValue(getSessionModule(entry.item, entry.kind)) !== normalizeLocationValue(filters.module)) return false;
+        return true;
+      });
+    }
+
+    function renderMarketplaceLists() {
       if (!publicStagesContainer) return;
-      if (!publicStagesData.length) {
-        renderEmpty(publicStagesContainer, "Aucun stage public ouvert", "Créez ou publiez un stage depuis l’admin pour qu’il apparaisse ici.");
+      populateModuleFilter();
+      if (marketplaceModuleFilter?.dataset.initialValue) {
+        const requestedModule = marketplaceModuleFilter.dataset.initialValue;
+        if (Array.from(marketplaceModuleFilter.options).some((option) => option.value === requestedModule)) marketplaceModuleFilter.value = requestedModule;
+        delete marketplaceModuleFilter.dataset.initialValue;
+      }
+      const allItems = getMarketplaceItems();
+      const visibleItems = filterMarketplaceItems(allItems);
+      const filters = getCurrentLocationFilters();
+      const label = activeMarketplacePath === "all" ? "tous les parcours" : labelForPath(activeMarketplacePath).toLowerCase();
+      setText(marketplaceResultText, `Affichage : ${label}${locationFilterSuffix()}${filters.module ? ` — ${filters.module}` : ""}.`);
+      setText(marketplaceResultCount, `${visibleItems.length} résultat${visibleItems.length > 1 ? "s" : ""}`);
+      if (teamPrivateCta) teamPrivateCta.hidden = !(activeMarketplacePath === "all" || activeMarketplacePath === "team");
+
+      if (!allItems.length) {
+        renderEmpty(publicStagesContainer, "Aucune session ouverte", "Publiez un stage ou une session formateur depuis l’admin pour qu’il apparaisse ici.");
+        return;
+      }
+      if (!visibleItems.length) {
+        renderEmpty(publicStagesContainer, "Aucune session trouvée", `Aucune session ne correspond à votre recherche${locationFilterSuffix()}${filters.module ? ` pour le module “${filters.module}”` : ""}.`);
         return;
       }
 
-      publicStagesContainer.innerHTML = publicStagesData.map((item) => {
+      publicStagesContainer.innerHTML = visibleItems.map((entry) => {
+        const item = entry.item;
+        const selected = entry.kind === "stage" && String(item.id) === String(stage?.id || stageId);
+        const title = item.title || getSessionModule(item, entry.kind);
+        const moduleLabel = getSessionModule(item, entry.kind);
+        const pathLabel = labelForPath(entry.path);
+        if (entry.kind === "trainer") {
+          const price = Number(item.launch_price || item.standard_price || 0);
+          const sessionUrl = `/devenir-formateur.html?session_id=${encodeURIComponent(item.id)}`;
+          return `
+            <a class="vp-marketplace-card" href="${sessionUrl}">
+              <div class="vp-marketplace-card-top"><span class="vp-marketplace-type">${escapeHtml(pathLabel)}</span><span class="vp-marketplace-price">${escapeHtml(formatPrice(price))}</span></div>
+              <h4 class="vp-marketplace-title">${escapeHtml(title)}</h4>
+              <p>Session de validation interne pour accéder au parcours d’habilitation formateur.</p>
+              <div class="vp-marketplace-meta"><span>${escapeHtml(moduleLabel)}</span><span>${escapeHtml(formatCityPostal(item))}</span><span>${escapeHtml(formatDateRange(item.start_date, item.end_date))}</span><span>${Number(item.remaining_places || 0)} place(s)</span></div>
+              <span class="vp-marketplace-action">Voir cette session →</span>
+            </a>
+          `;
+        }
         const complete = hasCompleteSession(item);
-        const selected = String(item.id) === String(stage?.id || stageId);
-        const dateLabel = formatDate(item.stage_date);
-        const title = item.title || item.training_type || "Stage Vital Protect";
-        const city = item.city || "Ville à confirmer";
         return `
-          <button type="button" class="vp-marketplace-card ${selected ? "is-selected" : ""} ${complete ? "" : "is-disabled"}" data-public-stage-id="${escapeHtml(item.id)}" ${complete ? "" : "disabled"}>
-            <div class="vp-marketplace-card-top"><span class="vp-marketplace-type">${escapeHtml(item.training_type || "Stage public")}</span><span class="vp-marketplace-price">${escapeHtml(formatPrice(item.price))}</span></div>
+          <button type="button" class="vp-marketplace-card ${selected ? "is-selected" : ""} ${complete ? "" : "is-disabled"}" data-stage-id="${escapeHtml(item.id)}" ${complete ? "" : "disabled"}>
+            <div class="vp-marketplace-card-top"><span class="vp-marketplace-type">${escapeHtml(pathLabel)}</span><span class="vp-marketplace-price">${escapeHtml(formatPrice(item.price))}</span></div>
             <h4 class="vp-marketplace-title">${escapeHtml(title)}</h4>
-            <p>${escapeHtml(item.description || "Stage Vital Protect ouvert au public.")}</p>
-            <div class="vp-marketplace-meta"><span>${escapeHtml(city)}</span><span>${escapeHtml(dateLabel)}</span><span>${escapeHtml(item.start_time || "Horaire à confirmer")}</span><span>${Number(item.remaining_places || 0)} place(s)</span></div>
-            <span class="vp-marketplace-action">${complete ? "Choisir et réserver →" : "Session à compléter"}</span>
+            <p>${escapeHtml(item.description || (entry.path === "team" ? "Session standardisée pour salariés en contexte professionnel." : "Stage Vital Protect ouvert au public."))}</p>
+            <div class="vp-marketplace-meta"><span>${escapeHtml(moduleLabel)}</span><span>${escapeHtml(formatCityPostal(item))}</span><span>${escapeHtml(formatDate(item.stage_date))}</span><span>${escapeHtml(item.start_time || "Horaire à confirmer")}</span><span>${Number(item.remaining_places || 0)} place(s)</span></div>
+            <span class="vp-marketplace-action">${complete ? (entry.path === "team" ? "Inscrire mes salariés →" : "Choisir et réserver →") : "Session à compléter"}</span>
           </button>
         `;
       }).join("");
 
-      publicStagesContainer.querySelectorAll("[data-public-stage-id]").forEach((button) => {
+      publicStagesContainer.querySelectorAll("[data-stage-id]").forEach((button) => {
         button.addEventListener("click", () => {
-          const selected = publicStagesData.find((item) => String(item.id) === String(button.dataset.publicStageId));
-          if (!selected || !hasCompleteSession(selected)) return;
-          stage = selected;
+          const selectedEntry = visibleItems.find((entry) => entry.kind === "stage" && String(entry.item.id) === String(button.dataset.stageId));
+          if (!selectedEntry || !hasCompleteSession(selectedEntry.item)) return;
+          stage = selectedEntry.item;
           const newUrl = new URL(window.location.href);
-          newUrl.searchParams.set("parcours", "public");
+          if (activeMarketplacePath !== "all") newUrl.searchParams.set("parcours", activeMarketplacePath); else newUrl.searchParams.delete("parcours");
           newUrl.searchParams.set("id", stage.id);
+          const filters = getCurrentLocationFilters();
+          if (filters.region) newUrl.searchParams.set("region", filters.region); else newUrl.searchParams.delete("region");
+          if (filters.department) newUrl.searchParams.set("departement", filters.department); else newUrl.searchParams.delete("departement");
+          if (filters.module) newUrl.searchParams.set("module", filters.module); else newUrl.searchParams.delete("module");
           newUrl.hash = "reservation";
           window.history.replaceState({}, "", newUrl.toString());
           applyStageToPage();
-          renderPublicStages();
+          renderMarketplaceLists();
           scrollToReservation();
         });
       });
-    }
-
-    function isProfessionalTeamStage(item) {
-      const blob = [item?.title, item?.training_type, item?.description, item?.audience, item?.module_name]
-        .filter(Boolean)
-        .join(" ")
-        .toLowerCase();
-      return ["professionnel", "professionnelle", "entreprise", "salari", "équipe", "equipe", "agressif", "agressive", "tendu", "tendue", "conflit"].some((word) => blob.includes(word));
-    }
-
-    function renderTeamEmployeeStages() {
-      if (!teamEmployeeStagesContainer) return;
-      const teamStages = publicStagesData.filter(isProfessionalTeamStage);
-      if (!teamStages.length) {
-        renderEmpty(teamEmployeeStagesContainer, "Aucune session professionnelle ouverte", "Publiez un stage professionnel standardisé, par exemple “Faire face aux situations tendues et comportements agressifs en contexte professionnel”, ou proposez une session privée.");
-        return;
-      }
-
-      teamEmployeeStagesContainer.innerHTML = teamStages.map((item) => {
-        const complete = hasCompleteSession(item);
-        const selected = String(item.id) === String(stage?.id || stageId);
-        const title = item.title || item.training_type || "Stage professionnel Vital Protect";
-        return `
-          <button type="button" class="vp-marketplace-card ${selected ? "is-selected" : ""} ${complete ? "" : "is-disabled"}" data-team-stage-id="${escapeHtml(item.id)}" ${complete ? "" : "disabled"}>
-            <div class="vp-marketplace-card-top"><span class="vp-marketplace-type">${escapeHtml(item.training_type || "Contexte professionnel")}</span><span class="vp-marketplace-price">${escapeHtml(formatPrice(item.price))}</span></div>
-            <h4 class="vp-marketplace-title">${escapeHtml(title)}</h4>
-            <p>${escapeHtml(item.description || "Session standardisée pour salariés en contexte professionnel.")}</p>
-            <div class="vp-marketplace-meta"><span>${escapeHtml(item.city || "Ville à confirmer")}</span><span>${escapeHtml(formatDate(item.stage_date))}</span><span>${escapeHtml(item.start_time || "Horaire à confirmer")}</span><span>${Number(item.remaining_places || 0)} place(s)</span></div>
-            <span class="vp-marketplace-action">${complete ? "Inscrire mes salariés →" : "Session à compléter"}</span>
-          </button>
-        `;
-      }).join("");
-
-      teamEmployeeStagesContainer.querySelectorAll("[data-team-stage-id]").forEach((button) => {
-        button.addEventListener("click", () => {
-          const selected = teamStages.find((item) => String(item.id) === String(button.dataset.teamStageId));
-          if (!selected || !hasCompleteSession(selected)) return;
-          stage = selected;
-          const newUrl = new URL(window.location.href);
-          newUrl.searchParams.set("parcours", "team");
-          newUrl.searchParams.set("id", stage.id);
-          newUrl.hash = "reservation";
-          window.history.replaceState({}, "", newUrl.toString());
-          applyStageToPage();
-          renderPublicStages();
-          renderTeamEmployeeStages();
-          scrollToReservation();
-        });
-      });
-    }
-
-    function renderTrainerSessions() {
-      if (!trainerSessionsContainer) return;
-      if (!trainerSessionsData.length) {
-        renderEmpty(trainerSessionsContainer, "Aucune session formateur ouverte", "Les prochaines sessions de validation interne apparaîtront ici dès publication.");
-        return;
-      }
-
-      trainerSessionsContainer.innerHTML = trainerSessionsData.map((item) => {
-        const price = Number(item.launch_price || item.standard_price || 0);
-        const title = item.title || item.module_name || "Session formateur";
-        const sessionUrl = `/devenir-formateur.html?session_id=${encodeURIComponent(item.id)}`;
-        return `
-          <a class="vp-marketplace-card" href="${sessionUrl}">
-            <div class="vp-marketplace-card-top"><span class="vp-marketplace-type">${escapeHtml(item.module_name || "Formateur")}</span><span class="vp-marketplace-price">${escapeHtml(formatPrice(price))}</span></div>
-            <h4 class="vp-marketplace-title">${escapeHtml(title)}</h4>
-            <p>Session de validation interne pour accéder au parcours d’habilitation formateur.</p>
-            <div class="vp-marketplace-meta"><span>${escapeHtml(item.city || "Ville à confirmer")}</span><span>${escapeHtml(formatDateRange(item.start_date, item.end_date))}</span><span>${item.duration_days || "—"} jour(s)</span><span>${Number(item.remaining_places || 0)} place(s)</span></div>
-            <span class="vp-marketplace-action">Voir cette session →</span>
-          </a>
-        `;
-      }).join("");
     }
 
     async function loadMarketplace() {
@@ -1089,12 +1265,10 @@
           .order("stage_date", { ascending: true });
         if (error) throw error;
         publicStagesData = (data || []).filter((item) => Number(item.remaining_places || 0) > 0);
-        renderPublicStages();
-        renderTeamEmployeeStages();
+        renderMarketplaceLists();
       } catch (error) {
         console.error("Erreur chargement marketplace stages:", error);
         renderEmpty(publicStagesContainer, "Impossible de charger les stages", "Vérifiez les règles RLS Supabase de la table stages.");
-        renderEmpty(teamEmployeeStagesContainer, "Impossible de charger les sessions professionnelles", "Vérifiez les règles RLS Supabase de la table stages.");
       }
 
       try {
@@ -1105,10 +1279,9 @@
           .order("start_date", { ascending: true });
         if (error) throw error;
         trainerSessionsData = (data || []).filter((item) => Number(item.remaining_places || 0) > 0);
-        renderTrainerSessions();
+        renderMarketplaceLists();
       } catch (error) {
         console.error("Erreur chargement marketplace formateur:", error);
-        renderEmpty(trainerSessionsContainer, "Impossible de charger les sessions formateur", "Vérifiez les règles RLS Supabase de la table trainer_sessions.");
       }
     }
 
@@ -1130,7 +1303,7 @@
       setText(practicalType, stage.training_type || "Stage Vital Protect");
       setText(selectedStageValue, `${stage.title || "Stage"} — ${stage.city || "Ville à confirmer"} — ${formatDate(stage.stage_date)}`);
       if (cityDisplay) cityDisplay.value = stage.city || "";
-      if (activeMarketplacePath === "team") {
+      if (isProfessionalTeamStage(stage)) {
         setText(audienceText, "Ce stage peut accueillir des salariés dans un cadre professionnel, sans modification du déroulé pédagogique Vital Protect.");
         setText(objectiveText, stage.description || "Programme standardisé : faire face aux situations tendues et comportements agressifs en contexte professionnel, avec des repères simples, progressifs et proportionnés.");
       } else {
@@ -1144,8 +1317,7 @@
         setBookingEnabled(true, "Stage sélectionné : vous pouvez réserver votre place.");
       }
       updateBookingTotal();
-      renderPublicStages();
-      renderTeamEmployeeStages();
+      renderMarketplaceLists();
     }
 
     async function loadStage() {
@@ -1154,9 +1326,7 @@
         return;
       }
       if (!stageId) {
-        showNoSessionState(activeMarketplacePath === "team"
-          ? "Choisissez une session professionnelle ouverte pour vos salariés, ou demandez une session privée réservée à votre équipe."
-          : "Choisissez d’abord un stage ouvert dans la section “Pour moi”, puis la réservation s’activera automatiquement.");
+        showNoSessionState("Choisissez d’abord une session dans la liste. Vous pouvez filtrer par région, département, module ou parcours.");
         return;
       }
       const { data, error } = await supabase
