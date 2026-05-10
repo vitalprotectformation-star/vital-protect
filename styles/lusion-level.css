@@ -15506,45 +15506,12 @@ body.page-contact-clean .vpw-quick-link {
 
 
 /* =========================================================
-   Correctif PC — menu fixé au viewport pendant le scroll
+   Correctif mobile final — drawer burger
    ---------------------------------------------------------
-   Desktop uniquement : la navigation reste toujours visible,
-   même en bas des pages longues. Aucun impact mobile.
+   Mobile uniquement : le CTA du drawer prend toute la largeur
+   et ne réutilise pas le style desktop compact de la navbar.
+   Aucun impact PC.
    ========================================================= */
-@media (min-width: 981px) and (hover: hover) and (pointer: fine) {
-  html {
-    scroll-padding-top: 96px !important;
-  }
-
-  body .vpl-nav,
-  body.vpl-home .vpl-nav,
-  body.vpl-inner-page .vpl-nav,
-  body.page-stage-redesign .vpl-nav,
-  body.page-entreprise-ribbon-back .vpl-nav,
-  body.page-formateur-redesign .vpl-nav,
-  body.page-contact-organized .vpl-nav {
-    position: fixed !important;
-    top: 10px !important;
-    left: 50% !important;
-    right: auto !important;
-    bottom: auto !important;
-    transform: translateX(-50%) !important;
-    z-index: 2147483000 !important;
-    will-change: top, transform, opacity, background !important;
-  }
-
-  html.vpl-scrolled body .vpl-nav,
-  html.vpl-scrolled body.vpl-home .vpl-nav,
-  html.vpl-scrolled body.vpl-inner-page .vpl-nav,
-  html.vpl-scrolled body.page-stage-redesign .vpl-nav,
-  html.vpl-scrolled body.page-entreprise-ribbon-back .vpl-nav,
-  html.vpl-scrolled body.page-formateur-redesign .vpl-nav,
-  html.vpl-scrolled body.page-contact-organized .vpl-nav {
-    top: 8px !important;
-  }
-}
-
-/* Rappel du correctif mobile du drawer : ne modifie pas le PC. */
 @media (max-width: 760px) {
   .vpl-mobile-drawer .vpl-mobile-drawer-cta,
   .vpl-mobile-drawer a.vpl-mobile-drawer-cta.vpl-nav-cta,
@@ -15572,94 +15539,5 @@ body.page-contact-clean .vpw-quick-link {
   body.vpl-home .vpl-mobile-drawer a.vpl-mobile-drawer-cta.vpl-nav-cta::after {
     content: none !important;
     display: none !important;
-  }
-}
-
-
-/* =========================================================
-   Correctif PC Entreprises — priorité supérieure aux styles inline
-   ---------------------------------------------------------
-   La page entreprises.html contient un style inline plus tardif :
-   body.page-entreprise-ribbon-back > .vpl-nav, > header { position: relative !important; }
-   Ce rappel, plus spécifique, force bien le menu desktop à rester fixé.
-   Mobile inchangé.
-   ========================================================= */
-@media (min-width: 981px) and (hover: hover) and (pointer: fine) {
-  html body.page-entreprise-ribbon-back > header.vpl-nav,
-  html body.page-entreprise-ribbon-back > .vpl-nav.vpl-nav {
-    position: fixed !important;
-    top: 10px !important;
-    left: 50% !important;
-    right: auto !important;
-    bottom: auto !important;
-    transform: translateX(-50%) !important;
-    z-index: 2147483000 !important;
-    isolation: isolate !important;
-    will-change: top, transform, opacity, background !important;
-  }
-
-  html.vpl-scrolled body.page-entreprise-ribbon-back > header.vpl-nav,
-  html.vpl-scrolled body.page-entreprise-ribbon-back > .vpl-nav.vpl-nav {
-    top: 8px !important;
-  }
-}
-
-/* =========================================================
-   Correctif PC Entreprises — reprise propre du haut de page
-   ---------------------------------------------------------
-   Ce qui manquait par rapport aux autres pages : le premier
-   hero Entreprises ne reprenait pas le dégagement standard
-   du menu fixed, car entreprises.html a un style inline plus
-   spécifique et plus tardif sur .vp-visual-story--enterprise.
-
-   On ne descend PAS le menu. Le menu reprend sa position PC
-   normale, et c'est le premier hero qui récupère le même
-   padding-top standard que les autres pages.
-   Mobile inchangé.
-   ========================================================= */
-@media (min-width: 981px) and (hover: hover) and (pointer: fine) {
-  html body.page-entreprise-ribbon-back > header.vpl-nav,
-  html body.page-entreprise-ribbon-back > .vpl-nav.vpl-nav {
-    top: 10px !important;
-  }
-
-  html.vpl-scrolled body.page-entreprise-ribbon-back > header.vpl-nav,
-  html.vpl-scrolled body.page-entreprise-ribbon-back > .vpl-nav.vpl-nav {
-    top: 8px !important;
-  }
-
-  body.page-entreprise-ribbon-back main > .vp-visual-story--enterprise:first-child {
-    margin-top: 0 !important;
-    padding-top: var(--vpl-first-screen-top, clamp(126px, 10vw, 148px)) !important;
-  }
-}
-
-/* =========================================================
-   Correctif PC Entreprises V2 — vrai dégagement du hero
-   ---------------------------------------------------------
-   Diagnostic : contrairement à Stage, le premier bloc Entreprises
-   garde dans entreprises.html un padding-top local trop faible :
-   .vp-visual-story.vp-visual-story--enterprise { padding-top: clamp(92px, 8vw, 120px) !important; }
-
-   Le menu est déjà fixed. On ne le descend pas.
-   On redonne seulement au hero Entreprises le dégagement réel d'un
-   premier écran desktop, avec un sélecteur plus précis que le style inline.
-   Mobile inchangé.
-   ========================================================= */
-@media (min-width: 981px) and (hover: hover) and (pointer: fine) {
-  html body.page-entreprise-ribbon-back > header.vpl-nav,
-  html body.page-entreprise-ribbon-back > .vpl-nav.vpl-nav {
-    top: 10px !important;
-    transform: translateX(-50%) !important;
-  }
-
-  html.vpl-scrolled body.page-entreprise-ribbon-back > header.vpl-nav,
-  html.vpl-scrolled body.page-entreprise-ribbon-back > .vpl-nav.vpl-nav {
-    top: 8px !important;
-  }
-
-  html body.page-entreprise-ribbon-back main > section.vp-visual-story.vp-visual-story--enterprise:first-of-type {
-    margin-top: 0 !important;
-    padding-top: clamp(152px, 11.2vw, 184px) !important;
   }
 }
