@@ -1093,8 +1093,7 @@ window.addEventListener('DOMContentLoaded', () => {
     sourceMenu.querySelectorAll('a').forEach((link) => {
       if (link.classList.contains('vpl-mobile-menu-cta')) return;
 
-      /* Mobile uniquement : on garde la FAQ disponible en desktop/footer,
-         mais elle ne doit plus apparaître dans le drawer burger. */
+      /* Mobile uniquement : FAQ masquée dans le menu burger, sans toucher au lien desktop/footer. */
       const href = (link.getAttribute('href') || '').toLowerCase();
       const page = (link.getAttribute('data-page') || '').toLowerCase();
       if (page === 'faq' || href.includes('faq.html')) return;
@@ -1184,3 +1183,35 @@ window.addEventListener('DOMContentLoaded', () => {
   });
   try { sessionStorage.removeItem('vpl-audio-enabled'); } catch (_) {}
 });
+
+
+/* =========================================================
+   Correctif PC — menu toujours visible au scroll
+   ---------------------------------------------------------
+   Sur l'accueil, la nav peut être placée dans .vpl-page.
+   Certains effets/parents créent alors un contexte qui empêche
+   le position: fixed de rester réellement accroché au viewport.
+   En desktop uniquement, on remonte la nav directement sous <body>.
+   ========================================================= */
+(() => {
+  const desktopNavQuery = window.matchMedia('(min-width: 981px) and (hover: hover) and (pointer: fine)');
+
+  const keepDesktopNavOnBody = () => {
+    if (!desktopNavQuery.matches) return;
+    const nav = document.querySelector('.vpl-nav');
+    if (!nav || nav.parentElement === document.body) return;
+    document.body.insertBefore(nav, document.body.firstChild);
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', keepDesktopNavOnBody, { once: true });
+  } else {
+    keepDesktopNavOnBody();
+  }
+
+  window.addEventListener('load', keepDesktopNavOnBody, { once: true });
+
+  if (typeof desktopNavQuery.addEventListener === 'function') {
+    desktopNavQuery.addEventListener('change', keepDesktopNavOnBody);
+  }
+})();
