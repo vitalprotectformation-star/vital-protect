@@ -1319,15 +1319,30 @@
     }
   </style>
 
-  <style>
-    /* Entreprises : même dégagement de premier écran que les autres pages.
-       Le menu reste géré par le CSS global ; on ne le descend pas ici. */
-    .vp-visual-story.vp-visual-story--enterprise {
-      padding-top: var(--vpl-first-screen-top, clamp(126px, 10vw, 148px)) !important;
+  <style id="vp-enterprise-header-offset-fix">
+    /*
+      Correction locale Entreprises — desktop/tablette uniquement.
+      Le CSS commun des pages internes remonte <main> sous le menu
+      (body.vpl-inner-page main { margin-top: -128px }).
+      Les pages standard compensent avec .vpl-inner-hero ; Entreprises utilise
+      un hero custom (.vp-visual-story--enterprise), il lui manquait donc
+      cette compensation. On ne touche ni au header global ni aux autres pages.
+    */
+    @media (min-width: 769px) {
+      body.page-entreprise-ribbon-back main > .vp-visual-story.vp-visual-story--enterprise:first-child {
+        margin-top: 0 !important;
+        padding-top: calc(var(--vpl-first-screen-top, clamp(126px, 10vw, 148px)) + 72px) !important;
+      }
+    }
+
+    @media (min-width: 1180px) {
+      body.page-entreprise-ribbon-back main > .vp-visual-story.vp-visual-story--enterprise:first-child {
+        padding-top: calc(var(--vpl-first-screen-top, clamp(126px, 10vw, 148px)) + 82px) !important;
+      }
     }
 
     @media (max-width: 768px) {
-      .vp-visual-story.vp-visual-story--enterprise {
+      body.page-entreprise-ribbon-back main > .vp-visual-story.vp-visual-story--enterprise:first-child {
         padding-top: 88px !important;
       }
     }
