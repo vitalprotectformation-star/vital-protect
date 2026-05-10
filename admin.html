@@ -2076,6 +2076,7 @@
               <th>Certification</th>
               <th>Affiliation</th>
               <th>Statut global</th>
+              <th>Accès</th>
             </tr>
           </thead>
           <tbody>
@@ -2099,6 +2100,11 @@
                   <td><span class="badge ${certValid ? "badge-success" : "badge-danger"}">${certValid ? "Valide" : "Expirée"}</span></td>
                   <td><span class="badge ${affValid ? "badge-success" : "badge-danger"}">${affValid ? "Active" : "Expirée"}</span></td>
                   <td><span class="badge ${globalValid ? "badge-success" : "badge-danger"}">${globalValid ? "OK" : "À traiter"}</span></td>
+                  <td>
+                    <button class="btn btn-secondary" type="button" onclick="window.setTrainerPassword('${jsArg(row.id)}', '${jsArg(row.email || '')}')">
+                      Définir mot de passe
+                    </button>
+                  </td>
                 </tr>
               `;
             }).join("")}
@@ -2585,6 +2591,58 @@ VITAL PROTECT`
       } catch (error) {
         console.error(error);
         alert(error.message || "Erreur lors de la suppression du stage.");
+      }
+    };
+
+    window.setTrainerPassword = async (trainerId, trainerEmail) => {
+      const suggestedPassword = `Vp-${Math.random().toString(36).slice(2, 8)}-${Math.random().toString(36).slice(2, 6)}!`;
+      const password = window.prompt(
+        `Définir un mot de passe temporaire pour ${trainerEmail || "ce formateur"}.\n\n` +
+        `Ce mot de passe ne sera PAS envoyé par Supabase, donc il ne consomme pas la limite email.\n` +
+        `Copiez-le et transmettez-le au formateur par votre canal habituel.`,
+        suggestedPassword
+      );
+
+      if (password === null) return;
+
+      const cleanPassword = String(password || "").trim();
+      if (cleanPassword.length < 8) {
+        alert("Le mot de passe doit contenir au moins 8 caractères.");
+        return;
+      }
+
+      const confirmed = window.confirm(
+        `Confirmer la création / réinitialisation du mot de passe pour ${trainerEmail || "ce formateur"} ?\n\n` +
+        `Le formateur pourra ensuite se connecter directement depuis formateur-login.html.`
+      );
+
+      if (!confirmed) return;
+
+      try {
+        const headers = await getAuthHeaders();
+
+        const res = await fetch("/api/set-trainer-password", {
+          method: "POST",
+          headers,
+          body: JSON.stringify({
+            trainer_id: trainerId,
+            password: cleanPassword
+          })
+        });
+
+        const result = await parseApiResponse(res);
+
+        if (result.success) {
+          alert(
+            `${result.created ? "Compte Auth créé" : "Mot de passe mis à jour"} pour ${result.email}.\n\n` +
+            `Mot de passe temporaire à transmettre :\n${cleanPassword}`
+          );
+        } else {
+          alert(result.error || "Erreur lors de la mise à jour du mot de passe.");
+        }
+      } catch (error) {
+        console.error(error);
+        alert(error.message || "Erreur lors de la mise à jour du mot de passe.");
       }
     };
 

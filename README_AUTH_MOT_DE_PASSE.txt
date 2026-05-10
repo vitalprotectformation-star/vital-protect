@@ -45,3 +45,24 @@ Après remplacement des fichiers :
 - Tester /admin-login.html.
 - Tester /formateur-login.html.
 - Tester /mot-de-passe-oublie.html avec un seul email au début pour ne pas retomber dans la rate limit.
+
+MISE À JOUR — CONTOURNER LA RATE LIMIT POUR LES FORMATEURS
+----------------------------------------------------------
+Le lien "Mot de passe oublié" utilise toujours l'email de réinitialisation Supabase.
+Avec la limite actuelle de 2 emails/h, il peut donc encore afficher une erreur de rate limit.
+
+Pour éviter ce blocage, ce correctif ajoute une action dans l'admin :
+Admin > Formateurs > bouton "Définir mot de passe".
+
+Ce bouton appelle /api/set-trainer-password et utilise la clé SUPABASE_SERVICE_ROLE_KEY côté serveur.
+Il permet de créer ou réinitialiser le compte Auth du formateur SANS envoyer d'email Supabase.
+
+Parcours conseillé :
+1. Créer / activer le formateur dans l'admin.
+2. Aller dans l'onglet Formateurs.
+3. Cliquer sur "Définir mot de passe".
+4. Copier le mot de passe temporaire proposé.
+5. Le transmettre au formateur par votre canal habituel.
+6. Le formateur se connecte sur /formateur-login.html avec email + mot de passe.
+
+Important : le reset par email reste disponible, mais seulement en dépannage.
