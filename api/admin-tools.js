@@ -65,6 +65,94 @@ async function insertWithOptionalPostalCode(table, payload) {
   return { data: null, error, usedPostalCode: false };
 }
 
+function toBoolean(value, fallback = false) {
+  if (typeof value === "boolean") return value;
+  if (value === null || value === undefined || value === "") return fallback;
+
+  const normalized = String(value).trim().toLowerCase();
+  if (["true", "1", "yes", "oui", "on"].includes(normalized)) return true;
+  if (["false", "0", "no", "non", "off"].includes(normalized)) return false;
+  return fallback;
+}
+
+function withoutUndefined(payload) {
+  return Object.fromEntries(
+    Object.entries(payload).filter(([, value]) => value !== undefined)
+  );
+}
+
+async function insertWithOptionalColumns(table, payload, optionalColumns = []) {
+  const attemptedMissingColumns = [];
+  let currentPayload = withoutUndefined({ ...payload });
+
+  for (let attempt = 0; attempt <= optionalColumns.length; attempt += 1) {
+    const { data, error } = await supabase
+      .from(table)
+      .insert(currentPayload)
+      .select()
+      .single();
+
+    if (!error) {
+      return { data, error: null, omittedColumns: attemptedMissingColumns };
+    }
+
+    const missingColumn = optionalColumns.find(
+      columnName => Object.prototype.hasOwnProperty.call(currentPayload, columnName) && isMissingColumnError(error, columnName)
+    );
+
+    if (!missingColumn) {
+      return { data: null, error, omittedColumns: attemptedMissingColumns };
+    }
+
+    attemptedMissingColumns.push(missingColumn);
+    currentPayload = { ...currentPayload };
+    delete currentPayload[missingColumn];
+  }
+
+  return {
+    data: null,
+    error: new Error("Impossible d'enregistrer : colonnes optionnelles incompatibles"),
+    omittedColumns: attemptedMissingColumns
+  };
+}
+
+async function updateWithOptionalColumns(table, payload, filters, optionalColumns = []) {
+  const attemptedMissingColumns = [];
+  let currentPayload = withoutUndefined({ ...payload });
+
+  for (let attempt = 0; attempt <= optionalColumns.length; attempt += 1) {
+    let query = supabase.from(table).update(currentPayload);
+
+    for (const filter of filters) {
+      query = query.eq(filter.column, filter.value);
+    }
+
+    const { data, error } = await query.select().single();
+
+    if (!error) {
+      return { data, error: null, omittedColumns: attemptedMissingColumns };
+    }
+
+    const missingColumn = optionalColumns.find(
+      columnName => Object.prototype.hasOwnProperty.call(currentPayload, columnName) && isMissingColumnError(error, columnName)
+    );
+
+    if (!missingColumn) {
+      return { data: null, error, omittedColumns: attemptedMissingColumns };
+    }
+
+    attemptedMissingColumns.push(missingColumn);
+    currentPayload = { ...currentPayload };
+    delete currentPayload[missingColumn];
+  }
+
+  return {
+    data: null,
+    error: new Error("Impossible de mettre à jour : colonnes optionnelles incompatibles"),
+    omittedColumns: attemptedMissingColumns
+  };
+}
+
 function addYears(dateString, years) {
   const d = new Date(dateString);
   d.setFullYear(d.getFullYear() + years);
@@ -132,11 +220,16 @@ async function requireAdmin(req) {
 async function handleCreateModule(req, res) {
   const name = sanitizeText(req.body?.name);
   const slug = sanitizeSlug(req.body?.slug || name);
+  const category = sanitizeText(req.body?.category);
   const shortDescription = sanitizeText(req.body?.short_description);
   const longDescription = sanitizeText(req.body?.long_description);
   const audience = sanitizeText(req.body?.audience);
+  const levelLabel = sanitizeText(req.body?.level_label);
+  const defaultDuration = sanitizeText(req.body?.default_duration);
   const objectives = sanitizeText(req.body?.objectives);
   const status = sanitizeText(req.body?.status || "active").toLowerCase();
+  const isActive = toBoolean(req.body?.is_active, status === "active");
+  const publicVisible = toBoolean(req.body?.public_visible, true);
   const sortOrder = Number(req.body?.sort_order || 0);
 
   if (!name) {
@@ -158,27 +251,33 @@ async function handleCreateModule(req, res) {
   const payload = {
     name,
     slug,
+    category,
     short_description: shortDescription,
     long_description: longDescription,
     audience,
+    level_label: levelLabel,
+    default_duration: defaultDuration,
     objectives,
     status,
+    is_active: isActive,
+    public_visible: publicVisible,
     sort_order: sortOrder
   };
 
-  const { data, error } = await supabase
-    .from("training_modules")
-    .insert(payload)
-    .select()
-    .single();
+  const result = await insertWithOptionalColumns(
+    "training_modules",
+    payload,
+    ["category", "level_label", "default_duration", "is_active", "public_visible"]
+  );
 
-  if (error) {
-    return res.status(500).json({ error: error.message });
+  if (result.error) {
+    return res.status(500).json({ error: result.error.message });
   }
 
   return res.status(200).json({
     success: true,
-    module: data
+    module: result.data,
+    omitted_columns: result.omittedColumns
   });
 }
 
@@ -186,11 +285,16 @@ async function handleUpdateModule(req, res) {
   const moduleId = sanitizeText(req.body?.module_id);
   const name = sanitizeText(req.body?.name);
   const slug = sanitizeSlug(req.body?.slug || name);
+  const category = sanitizeText(req.body?.category);
   const shortDescription = sanitizeText(req.body?.short_description);
   const longDescription = sanitizeText(req.body?.long_description);
   const audience = sanitizeText(req.body?.audience);
+  const levelLabel = sanitizeText(req.body?.level_label);
+  const defaultDuration = sanitizeText(req.body?.default_duration);
   const objectives = sanitizeText(req.body?.objectives);
   const status = sanitizeText(req.body?.status || "active").toLowerCase();
+  const isActive = toBoolean(req.body?.is_active, status === "active");
+  const publicVisible = toBoolean(req.body?.public_visible, true);
   const sortOrder = Number(req.body?.sort_order || 0);
 
   if (!moduleId) {
@@ -216,28 +320,34 @@ async function handleUpdateModule(req, res) {
   const payload = {
     name,
     slug,
+    category,
     short_description: shortDescription,
     long_description: longDescription,
     audience,
+    level_label: levelLabel,
+    default_duration: defaultDuration,
     objectives,
     status,
+    is_active: isActive,
+    public_visible: publicVisible,
     sort_order: sortOrder
   };
 
-  const { data, error } = await supabase
-    .from("training_modules")
-    .update(payload)
-    .eq("id", moduleId)
-    .select()
-    .single();
+  const result = await updateWithOptionalColumns(
+    "training_modules",
+    payload,
+    [{ column: "id", value: moduleId }],
+    ["category", "level_label", "default_duration", "is_active", "public_visible"]
+  );
 
-  if (error) {
-    return res.status(500).json({ error: error.message });
+  if (result.error) {
+    return res.status(500).json({ error: result.error.message });
   }
 
   return res.status(200).json({
     success: true,
-    module: data
+    module: result.data,
+    omitted_columns: result.omittedColumns
   });
 }
 
@@ -246,15 +356,6 @@ async function handleDeleteModule(req, res) {
 
   if (!moduleId) {
     return res.status(400).json({ error: "module_id manquant" });
-  }
-
-  const { data: linkedTrainerModules, error: trainerModulesError } = await supabase
-    .from("trainer_modules")
-    .select("id")
-    .eq("module_name", moduleId);
-
-  if (trainerModulesError) {
-    return res.status(500).json({ error: trainerModulesError.message });
   }
 
   const { data: moduleRow, error: moduleFetchError } = await supabase
@@ -298,13 +399,32 @@ async function handleDeleteModule(req, res) {
     return res.status(500).json({ error: sessionsError.message });
   }
 
-  if (
+  const isUsed = Boolean(
     (linkedTrainerModulesByName && linkedTrainerModulesByName.length) ||
     (linkedStages && linkedStages.length) ||
     (linkedSessions && linkedSessions.length)
-  ) {
-    return res.status(400).json({
-      error: "Impossible de supprimer ce module : il est déjà utilisé"
+  );
+
+  if (isUsed) {
+    const result = await updateWithOptionalColumns(
+      "training_modules",
+      {
+        status: "inactive",
+        is_active: false,
+        public_visible: false
+      },
+      [{ column: "id", value: moduleId }],
+      ["is_active", "public_visible"]
+    );
+
+    if (result.error) {
+      return res.status(500).json({ error: result.error.message });
+    }
+
+    return res.status(200).json({
+      success: true,
+      deactivated: true,
+      message: "Module utilisé : il a été désactivé et masqué au lieu d'être supprimé."
     });
   }
 
@@ -317,7 +437,34 @@ async function handleDeleteModule(req, res) {
     return res.status(500).json({ error: error.message });
   }
 
-  return res.status(200).json({ success: true });
+  return res.status(200).json({ success: true, deleted: true });
+}
+
+async function handleListModules(req, res) {
+  const { data, error } = await supabase
+    .from("training_modules")
+    .select("*")
+    .order("sort_order", { ascending: true })
+    .order("name", { ascending: true });
+
+  if (error) {
+    return res.status(500).json({ error: error.message });
+  }
+
+  return res.status(200).json({ success: true, modules: data || [] });
+}
+
+async function handleListStages(req, res) {
+  const { data, error } = await supabase
+    .from("stages")
+    .select("*")
+    .order("stage_date", { ascending: true });
+
+  if (error) {
+    return res.status(500).json({ error: error.message });
+  }
+
+  return res.status(200).json({ success: true, stages: data || [] });
 }
 
 async function handleCreateStage(req, res) {
@@ -500,6 +647,32 @@ async function handleDeleteStage(req, res) {
   return res.status(200).json({ success: true });
 }
 
+async function handleUpdateStageStatus(req, res) {
+  const stageId = sanitizeText(req.body?.stage_id);
+  const status = sanitizeText(req.body?.status || "").toLowerCase();
+
+  if (!stageId) {
+    return res.status(400).json({ error: "stage_id manquant" });
+  }
+
+  if (!["published", "pending", "draft", "cancelled"].includes(status)) {
+    return res.status(400).json({ error: "status invalide" });
+  }
+
+  const { data, error } = await supabase
+    .from("stages")
+    .update({ status })
+    .eq("id", stageId)
+    .select()
+    .single();
+
+  if (error) {
+    return res.status(500).json({ error: error.message });
+  }
+
+  return res.status(200).json({ success: true, stage: data });
+}
+
 async function handleUpsertTrainerModule(req, res) {
   const trainerId = sanitizeText(req.body?.trainer_id);
   const moduleName = sanitizeText(req.body?.module_name);
@@ -667,6 +840,10 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: "action manquante" });
     }
 
+    if (action === "list_modules") {
+      return await handleListModules(req, res);
+    }
+
     if (action === "create_module") {
       return await handleCreateModule(req, res);
     }
@@ -679,12 +856,20 @@ export default async function handler(req, res) {
       return await handleDeleteModule(req, res);
     }
 
+    if (action === "list_stages") {
+      return await handleListStages(req, res);
+    }
+
     if (action === "create_stage") {
       return await handleCreateStage(req, res);
     }
 
     if (action === "create_trainer_session") {
       return await handleCreateTrainerSession(req, res);
+    }
+
+    if (action === "update_stage_status") {
+      return await handleUpdateStageStatus(req, res);
     }
 
     if (action === "delete_stage") {
