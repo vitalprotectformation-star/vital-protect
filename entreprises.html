@@ -1657,6 +1657,12 @@
       -webkit-user-drag: none !important;
     }
 
+    /* Avant en noir et blanc uniquement — l'image Après reste en couleur. */
+    body.page-entreprise-ribbon-back .vpba-before {
+      filter: grayscale(1) contrast(1.04) !important;
+      -webkit-filter: grayscale(1) contrast(1.04) !important;
+    }
+
     body.page-entreprise-ribbon-back .vpba-after {
       z-index: 1 !important;
       width: 100% !important;
