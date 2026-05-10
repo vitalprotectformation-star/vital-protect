@@ -564,6 +564,35 @@
   }
 </style>
 
+
+
+<style id="vptr-formateur-header-offset-local-fix">
+  /*
+    Correctif local Formateurs — PC/tablette uniquement.
+    Le header est fixed via le CSS commun ; ce hero standard partait trop haut
+    sous le menu sur cette page. On ajoute uniquement le dégagement manquant
+    au premier hero Formateurs, sans toucher aux autres pages ni au CSS global.
+  */
+  @media (min-width: 769px) {
+    body.page-formateur-redesign main > .vpl-inner-hero:first-child {
+      margin-top: 0 !important;
+      padding-top: calc(var(--vpl-first-screen-top, clamp(126px, 10vw, 148px)) + 72px) !important;
+    }
+  }
+
+  @media (min-width: 1180px) {
+    body.page-formateur-redesign main > .vpl-inner-hero:first-child {
+      padding-top: calc(var(--vpl-first-screen-top, clamp(126px, 10vw, 148px)) + 82px) !important;
+    }
+  }
+
+  @media (max-width: 768px) {
+    body.page-formateur-redesign main > .vpl-inner-hero:first-child {
+      padding-top: 88px !important;
+    }
+  }
+</style>
+
 </head>
 <body class="vpl-inner-page page-editorial-light page-formateur-redesign">
 <div class="vptr-background-orbs" aria-hidden="true"><span class="vptr-orb vptr-orb-one"></span><span class="vptr-orb vptr-orb-two"></span><span class="vptr-orb vptr-orb-three"></span></div>
