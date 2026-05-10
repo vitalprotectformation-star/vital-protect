@@ -482,10 +482,10 @@
     <section id="parcours" class="vp-stage-modern vp-stage-access">
       <div class="vp-stage-access-orbit" aria-hidden="true"><svg viewBox="0 0 1100 360" fill="none"><path class="vp-stage-orbit-line" d="M14 240 C 240 22, 420 380, 632 108 S 1000 90, 1110 250" stroke="rgba(11,74,139,.24)" stroke-width="2"></path><path d="M80 300 C 310 110, 460 420, 720 170 S 1030 120, 1160 300" stroke="rgba(11,74,139,.10)" stroke-width="2"></path><g fill="#fff" stroke="#7db8ff" stroke-width="4"><circle cx="348" cy="111" r="8"></circle><circle cx="560" cy="281" r="8"></circle><circle cx="760" cy="72" r="8"></circle></g></svg></div>
       <div class="vpl-container">
-        <div class="vp-stage-access-top"><div class="vp-stage-head vp-reveal"><span class="vp-stage-kicker">Choisir le bon accès</span><h2 class="vp-stage-title">Quel parcours<br>vous correspond&nbsp;?</h2><p class="vp-stage-lead">Avant de parler date ou réservation, orientez-vous vers l’espace adapté à votre besoin.</p></div><span class="vp-motion-chip" aria-hidden="true">Stagger reveal</span></div>
+        <div class="vp-stage-access-top"><div class="vp-stage-head vp-reveal"><span class="vp-stage-kicker">Choisir le bon accès</span><h2 class="vp-stage-title">Quel parcours<br>vous correspond&nbsp;?</h2><p class="vp-stage-lead">Avant de parler date ou réservation, choisissez simplement le parcours correspondant à votre besoin.</p></div><span class="vp-motion-chip" aria-hidden="true">Stagger reveal</span></div>
         <div class="vp-stage-access-grid vp-stagger">
           <a href="#marketplace" class="vp-stage-card vp-stage-access-card vp-tilt" data-stage-path="public" style="--vp-i:0"><div class="vp-stage-access-card-top"><span class="vp-stage-num">01</span><span class="vp-stage-icon" aria-hidden="true">▣</span></div><h3>Pour moi</h3><p>Voir les stages ouverts au public, choisir une date, puis réserver sa place.</p><b class="vp-stage-link">Voir les stages <span>→</span></b></a>
-          <a href="#marketplace" class="vp-stage-card vp-stage-access-card vp-tilt" data-stage-path="team" style="--vp-i:1"><div class="vp-stage-access-card-top"><span class="vp-stage-num">02</span><span class="vp-stage-icon" aria-hidden="true">✉</span></div><h3>Pour mon équipe</h3><p>Comparer le parcours entreprise et demander une intervention adaptée à votre terrain.</p><b class="vp-stage-link">Voir le parcours <span>→</span></b></a>
+          <a href="#marketplace" class="vp-stage-card vp-stage-access-card vp-tilt" data-stage-path="team" style="--vp-i:1"><div class="vp-stage-access-card-top"><span class="vp-stage-num">02</span><span class="vp-stage-icon" aria-hidden="true">✉</span></div><h3>Pour mon équipe</h3><p>Voir les sessions standardisées pour salariés ou demander une session privée pour votre équipe.</p><b class="vp-stage-link">Voir le parcours <span>→</span></b></a>
           <a href="#marketplace" class="vp-stage-card vp-stage-access-card vp-tilt" data-stage-path="trainer" style="--vp-i:2"><div class="vp-stage-access-card-top"><span class="vp-stage-num">03</span><span class="vp-stage-icon" aria-hidden="true">◌</span></div><h3>Devenir formateur</h3><p>Voir les sessions de validation interne et accéder au parcours d’habilitation.</p><b class="vp-stage-link">Voir les sessions <span>→</span></b></a>
         </div>
       </div>
@@ -569,23 +569,28 @@
 
           <article id="stages-equipe" class="vp-marketplace-column" data-marketplace-panel="team" hidden>
             <div class="vp-marketplace-column-head">
-              <div><h3>Pour mon équipe</h3><p>Interventions adaptées à votre métier, votre site, vos horaires et votre effectif.</p></div>
-              <span class="vp-marketplace-badge">Sur mesure</span>
+              <div><h3>Pour mon équipe</h3><p>Deux possibilités : inscrire vos salariés sur une session standardisée en contexte professionnel, ou organiser une session privée réservée à votre équipe.</p></div>
+              <span class="vp-marketplace-badge">Programme standardisé</span>
+            </div>
+            <div class="vp-marketplace-mini-note"><strong>Important :</strong> le déroulé pédagogique Vital Protect est préfait. Il ne s’agit pas d’adapter le contenu aux infirmiers, pompiers, vendeurs ou autres métiers : seul le format change, soit en session ouverte, soit en session privée.</div>
+            <div class="vp-marketplace-list">
+              <article class="vp-marketplace-card">
+                <div class="vp-marketplace-card-top"><span class="vp-marketplace-type">Option 1</span><span class="vp-marketplace-price">Paiement direct</span></div>
+                <h4 class="vp-marketplace-title">Inscrire des salariés à une session ouverte</h4>
+                <p>Vos salariés rejoignent une session standardisée : “Faire face aux situations tendues et comportements agressifs en contexte professionnel”.</p>
+                <div class="vp-marketplace-meta"><span>Contexte professionnel</span><span>Programme identique</span><span>Places selon disponibilité</span></div>
+              </article>
+            </div>
+            <div id="teamEmployeeStagesContainer" class="vp-marketplace-list">
+              <div class="vp-marketplace-empty"><strong>Chargement des sessions professionnelles...</strong>Les sessions publiées vont apparaître ici.</div>
             </div>
             <div class="vp-marketplace-list">
-              <a class="vp-marketplace-card" href="/entreprises.html">
-                <div class="vp-marketplace-card-top"><span class="vp-marketplace-type">Entreprise</span><span class="vp-marketplace-price">Devis</span></div>
-                <h4 class="vp-marketplace-title">Intervention pour une équipe</h4>
-                <p>Demandez une formation adaptée à vos collaborateurs : accueil, terrain, commerce, santé, sport ou service.</p>
-                <div class="vp-marketplace-meta"><span>Sur site</span><span>Date à définir</span><span>Format adapté</span></div>
-                <span class="vp-marketplace-action">Demander un échange →</span>
-              </a>
-              <a class="vp-marketplace-card" href="/contact.html?type=entreprise">
-                <div class="vp-marketplace-card-top"><span class="vp-marketplace-type">Besoin précis</span><span class="vp-marketplace-price">Contact</span></div>
-                <h4 class="vp-marketplace-title">Créer une session privée</h4>
-                <p>Pour une équipe, le plus fiable est de valider le contexte, le nombre de personnes, le lieu et les objectifs avant d’ouvrir une session.</p>
-                <div class="vp-marketplace-meta"><span>Privé</span><span>Brief préalable</span><span>Programme ciblé</span></div>
-                <span class="vp-marketplace-action">Contacter Vital Protect →</span>
+              <a class="vp-marketplace-card" href="/contact.html?type=entreprise&objet=session-privee">
+                <div class="vp-marketplace-card-top"><span class="vp-marketplace-type">Option 2</span><span class="vp-marketplace-price">Devis</span></div>
+                <h4 class="vp-marketplace-title">Organiser une session privée pour vos salariés</h4>
+                <p>La formation reste standardisée. La session est simplement réservée à votre équipe, sur une date et un lieu à organiser ensemble.</p>
+                <div class="vp-marketplace-meta"><span>Session privée</span><span>Même déroulé pédagogique</span><span>Date et lieu à définir</span></div>
+                <span class="vp-marketplace-action">Demander une session privée →</span>
               </a>
             </div>
           </article>
@@ -772,6 +777,7 @@
     const bookingForm = $("bookingForm");
     const bookingSubmitButton = $("bookingSubmitButton");
     const publicStagesContainer = $("publicStagesContainer");
+    const teamEmployeeStagesContainer = $("teamEmployeeStagesContainer");
     const trainerSessionsContainer = $("trainerSessionsContainer");
     const marketplaceSection = $("marketplace");
     const marketplaceTitle = $("marketplaceTitle");
@@ -889,7 +895,7 @@
       },
       team: {
         title: "Parcours pour votre équipe",
-        intro: "Parcours “Pour mon équipe” : il s’agit d’une demande sur mesure, avec échange préalable avant d’ouvrir une session privée."
+        intro: "Parcours “Pour mon équipe” : choisissez une session standardisée en contexte professionnel pour vos salariés, ou demandez une session privée réservée à votre équipe."
       },
       trainer: {
         title: "Sessions pour devenir formateur",
@@ -923,11 +929,11 @@
         control.classList.toggle("is-active", isActive);
         if (control.tagName === "BUTTON") control.setAttribute("aria-pressed", isActive ? "true" : "false");
       });
-      if (path !== "public" && options.clearSelection !== false) {
-        const message = path === "team"
-          ? "Parcours équipe : la réservation directe est remplacée par une demande d’intervention sur mesure."
-          : "Parcours formateur : choisissez une session dans la liste, puis finalisez l’inscription depuis la page Devenir formateur.";
-        showNoSessionState(message);
+      if (path === "team" && options.clearSelection !== false) {
+        showNoSessionState("Parcours équipe : choisissez une session professionnelle ouverte pour inscrire vos salariés, ou demandez une session privée réservée à votre équipe.");
+      }
+      if (path === "trainer" && options.clearSelection !== false) {
+        showNoSessionState("Parcours formateur : choisissez une session dans la liste, puis finalisez l’inscription depuis la page Devenir formateur.");
         renderPublicStages();
       }
       if (options.updateUrl) {
@@ -1002,6 +1008,55 @@
       });
     }
 
+    function isProfessionalTeamStage(item) {
+      const blob = [item?.title, item?.training_type, item?.description, item?.audience, item?.module_name]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase();
+      return ["professionnel", "professionnelle", "entreprise", "salari", "équipe", "equipe", "agressif", "agressive", "tendu", "tendue", "conflit"].some((word) => blob.includes(word));
+    }
+
+    function renderTeamEmployeeStages() {
+      if (!teamEmployeeStagesContainer) return;
+      const teamStages = publicStagesData.filter(isProfessionalTeamStage);
+      if (!teamStages.length) {
+        renderEmpty(teamEmployeeStagesContainer, "Aucune session professionnelle ouverte", "Publiez un stage professionnel standardisé, par exemple “Faire face aux situations tendues et comportements agressifs en contexte professionnel”, ou proposez une session privée.");
+        return;
+      }
+
+      teamEmployeeStagesContainer.innerHTML = teamStages.map((item) => {
+        const complete = hasCompleteSession(item);
+        const selected = String(item.id) === String(stage?.id || stageId);
+        const title = item.title || item.training_type || "Stage professionnel Vital Protect";
+        return `
+          <button type="button" class="vp-marketplace-card ${selected ? "is-selected" : ""} ${complete ? "" : "is-disabled"}" data-team-stage-id="${escapeHtml(item.id)}" ${complete ? "" : "disabled"}>
+            <div class="vp-marketplace-card-top"><span class="vp-marketplace-type">${escapeHtml(item.training_type || "Contexte professionnel")}</span><span class="vp-marketplace-price">${escapeHtml(formatPrice(item.price))}</span></div>
+            <h4 class="vp-marketplace-title">${escapeHtml(title)}</h4>
+            <p>${escapeHtml(item.description || "Session standardisée pour salariés en contexte professionnel.")}</p>
+            <div class="vp-marketplace-meta"><span>${escapeHtml(item.city || "Ville à confirmer")}</span><span>${escapeHtml(formatDate(item.stage_date))}</span><span>${escapeHtml(item.start_time || "Horaire à confirmer")}</span><span>${Number(item.remaining_places || 0)} place(s)</span></div>
+            <span class="vp-marketplace-action">${complete ? "Inscrire mes salariés →" : "Session à compléter"}</span>
+          </button>
+        `;
+      }).join("");
+
+      teamEmployeeStagesContainer.querySelectorAll("[data-team-stage-id]").forEach((button) => {
+        button.addEventListener("click", () => {
+          const selected = teamStages.find((item) => String(item.id) === String(button.dataset.teamStageId));
+          if (!selected || !hasCompleteSession(selected)) return;
+          stage = selected;
+          const newUrl = new URL(window.location.href);
+          newUrl.searchParams.set("parcours", "team");
+          newUrl.searchParams.set("id", stage.id);
+          newUrl.hash = "reservation";
+          window.history.replaceState({}, "", newUrl.toString());
+          applyStageToPage();
+          renderPublicStages();
+          renderTeamEmployeeStages();
+          scrollToReservation();
+        });
+      });
+    }
+
     function renderTrainerSessions() {
       if (!trainerSessionsContainer) return;
       if (!trainerSessionsData.length) {
@@ -1035,9 +1090,11 @@
         if (error) throw error;
         publicStagesData = (data || []).filter((item) => Number(item.remaining_places || 0) > 0);
         renderPublicStages();
+        renderTeamEmployeeStages();
       } catch (error) {
         console.error("Erreur chargement marketplace stages:", error);
         renderEmpty(publicStagesContainer, "Impossible de charger les stages", "Vérifiez les règles RLS Supabase de la table stages.");
+        renderEmpty(teamEmployeeStagesContainer, "Impossible de charger les sessions professionnelles", "Vérifiez les règles RLS Supabase de la table stages.");
       }
 
       try {
@@ -1073,8 +1130,13 @@
       setText(practicalType, stage.training_type || "Stage Vital Protect");
       setText(selectedStageValue, `${stage.title || "Stage"} — ${stage.city || "Ville à confirmer"} — ${formatDate(stage.stage_date)}`);
       if (cityDisplay) cityDisplay.value = stage.city || "";
-      setText(audienceText, "Ce stage s’adresse aux personnes qui veulent développer des repères concrets de sécurité personnelle dans un cadre accessible, progressif et sérieux.");
-      setText(objectiveText, stage.description || "Ce stage s’inscrit dans la méthode Vital Protect : comprendre le risque, améliorer la lecture des situations, prévenir l’escalade et développer des réponses simples et réalistes.");
+      if (activeMarketplacePath === "team") {
+        setText(audienceText, "Ce stage peut accueillir des salariés dans un cadre professionnel, sans modification du déroulé pédagogique Vital Protect.");
+        setText(objectiveText, stage.description || "Programme standardisé : faire face aux situations tendues et comportements agressifs en contexte professionnel, avec des repères simples, progressifs et proportionnés.");
+      } else {
+        setText(audienceText, "Ce stage s’adresse aux personnes qui veulent développer des repères concrets de sécurité personnelle dans un cadre accessible, progressif et sérieux.");
+        setText(objectiveText, stage.description || "Ce stage s’inscrit dans la méthode Vital Protect : comprendre le risque, améliorer la lecture des situations, prévenir l’escalade et développer des réponses simples et réalistes.");
+      }
 
       if (!hasCompleteSession(stage)) {
         setBookingEnabled(false, "Réservation désactivée : le stage n’a pas encore de tarif valide ou de place restante.");
@@ -1083,17 +1145,18 @@
       }
       updateBookingTotal();
       renderPublicStages();
+      renderTeamEmployeeStages();
     }
 
     async function loadStage() {
-      if (activeMarketplacePath !== "public") {
-        showNoSessionState(activeMarketplacePath === "team"
-          ? "Parcours équipe : utilisez la demande d’intervention, pas la réservation directe."
-          : "Parcours formateur : choisissez une session formateur, puis poursuivez depuis la page Devenir formateur.");
+      if (activeMarketplacePath === "trainer") {
+        showNoSessionState("Parcours formateur : choisissez une session formateur, puis poursuivez depuis la page Devenir formateur.");
         return;
       }
       if (!stageId) {
-        showNoSessionState("Choisissez d’abord un stage ouvert dans la section “Pour moi”, puis la réservation s’activera automatiquement.");
+        showNoSessionState(activeMarketplacePath === "team"
+          ? "Choisissez une session professionnelle ouverte pour vos salariés, ou demandez une session privée réservée à votre équipe."
+          : "Choisissez d’abord un stage ouvert dans la section “Pour moi”, puis la réservation s’activera automatiquement.");
         return;
       }
       const { data, error } = await supabase
