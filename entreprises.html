@@ -1619,7 +1619,7 @@
     }
 
     body.page-entreprise-ribbon-back .vpba-compare {
-      --vpba-position: 50%;
+      --vpba-position: 100%;
       position: absolute !important;
       inset: 0 !important;
       display: block !important;
@@ -1779,9 +1779,14 @@
       pointer-events: none !important;
     }
 
-    body.page-entreprise-ribbon-back .vpba-label--before { left: 18px !important; }
+    body.page-entreprise-ribbon-back .vpba-label--before {
+      left: 18px !important;
+      z-index: 8 !important;
+    }
+
     body.page-entreprise-ribbon-back .vpba-label--after {
       right: 18px !important;
+      z-index: 1 !important;
       background: rgba(255,255,255,.86) !important;
       color: #07111f !important;
     }
@@ -2090,7 +2095,7 @@
         </div>
 
         <figure class="vpba-hero-card" aria-label="Comparaison avant après d'une situation d'accueil public">
-          <div class="vpba-compare" data-vpba-compare style="--vpba-position: 50%;">
+          <div class="vpba-compare" data-vpba-compare style="--vpba-position: 100%;">
             <img class="vpba-img vpba-after" src="/entreprise-accueil-apres.png" alt="Après : une posture d'accueil plus stable et maîtrisée" loading="eager" decoding="async">
 
             <div class="vpba-before-layer">
@@ -2105,7 +2110,7 @@
               type="range"
               min="0"
               max="100"
-              value="50"
+              value="100"
               aria-label="Comparer la situation avant et après la posture Vital Protect"
               oninput="this.closest('[data-vpba-compare]').style.setProperty('--vpba-position', this.value + '%')"
             >
@@ -3030,7 +3035,7 @@ ${payload.message}`
 
         function setPosition(value) {
           var next = clamp(Number(value));
-          if (!Number.isFinite(next)) next = 50;
+          if (!Number.isFinite(next)) next = 100;
           range.value = String(next);
           root.style.setProperty('--vpba-position', next + '%');
         }
@@ -3067,7 +3072,7 @@ ${payload.message}`
           setFromClientX(event.touches[0].clientX);
         }, { passive: true });
 
-        setPosition(range.value || 50);
+        setPosition(range.value || 100);
       }
 
       function boot() {
