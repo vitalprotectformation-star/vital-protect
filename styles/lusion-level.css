@@ -15626,3 +15626,29 @@ body.page-contact-clean .vpw-quick-link {
     padding-top: calc(clamp(72px, 8vw, 126px) + 46px) !important;
   }
 }
+
+/* =========================================================
+   Ajustement PC Entreprises — menu encore plus bas
+   ---------------------------------------------------------
+   Demande : ajouter environ 2 à 3 cm d'air au-dessus du menu.
+   Desktop uniquement : mobile inchangé.
+   ========================================================= */
+@media (min-width: 981px) and (hover: hover) and (pointer: fine) {
+  html body.page-entreprise-ribbon-back > header.vpl-nav,
+  html body.page-entreprise-ribbon-back > .vpl-nav.vpl-nav {
+    top: 84px !important;
+  }
+
+  html.vpl-scrolled body.page-entreprise-ribbon-back > header.vpl-nav,
+  html.vpl-scrolled body.page-entreprise-ribbon-back > .vpl-nav.vpl-nav {
+    top: 76px !important;
+  }
+
+  body.page-entreprise-ribbon-back main > .vp-visual-story--enterprise:first-child {
+    padding-top: calc(clamp(72px, 8vw, 126px) + 132px) !important;
+  }
+
+  html {
+    scroll-padding-top: 178px !important;
+  }
+}
