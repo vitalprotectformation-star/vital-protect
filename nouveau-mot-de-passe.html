@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-
   <script>
     (function () {
       try {
@@ -28,14 +27,12 @@
       document.write('<script src="page-transition.js"><\/script>');
     }
   </script>
-<meta charset="UTF-8" />
+  <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Connexion formateur — VITAL PROTECT</title>
-
+  <title>Nouveau mot de passe — VITAL PROTECT</title>
   <style>
     :root {
       --navy: #0b2e59;
-      --navy-dark: #08203d;
       --blue: #1f6feb;
       --bg: #f4f7fb;
       --card: #ffffff;
@@ -47,9 +44,9 @@
       --shadow: 0 10px 30px rgba(11, 46, 89, 0.08);
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
+
+    html, body { max-width: 100%; overflow-x: hidden; }
 
     body {
       margin: 0;
@@ -64,18 +61,11 @@
       padding: 24px;
     }
 
-    .logo {
-      margin-bottom: 24px;
-    }
-
-    .logo img {
-      width: min(260px, 60vw);
-      height: auto;
-      display: block;
-    }
+    .logo { margin-bottom: 24px; }
+    .logo img { width: min(260px, 60vw); height: auto; display: block; }
 
     .card {
-      width: min(480px, 100%);
+      width: min(520px, 100%);
       background: var(--card);
       border: 1px solid var(--border);
       border-radius: 24px;
@@ -83,33 +73,27 @@
       padding: 28px;
     }
 
-    h1 {
-      margin: 0 0 8px;
-      font-size: 2rem;
+    .card, .card *, .status, .footer-link {
+      min-width: 0;
+      max-width: 100%;
+      overflow-wrap: break-word;
+      word-break: normal;
+      hyphens: auto;
     }
 
-    p {
-      margin: 0 0 18px;
-      color: var(--muted);
-      line-height: 1.6;
-    }
+    h1 { margin: 0 0 8px; font-size: 2rem; }
+    p { margin: 0 0 18px; color: var(--muted); line-height: 1.6; }
 
-    .field {
-      margin-bottom: 14px;
-    }
+    .field { margin-bottom: 14px; }
+    label { display: block; margin-bottom: 6px; font-weight: 700; }
 
-    label {
-      display: block;
-      margin-bottom: 6px;
-      font-weight: 700;
-    }
-
-    input {
+    input, select {
       width: 100%;
       padding: 12px;
       border: 1px solid var(--border);
       border-radius: 12px;
       font-size: 1rem;
+      background: white;
     }
 
     .btn {
@@ -122,12 +106,13 @@
       background: var(--blue);
       color: white;
       width: 100%;
+      height: auto;
+      white-space: normal;
+      line-height: 1.25;
+      text-align: center;
     }
 
-    .btn:disabled {
-      opacity: 0.7;
-      cursor: not-allowed;
-    }
+    .btn:disabled { opacity: 0.7; cursor: not-allowed; }
 
     .status {
       margin-top: 14px;
@@ -136,54 +121,33 @@
       color: var(--muted);
     }
 
-    .status.success {
-      color: var(--success);
+    .status.success { color: var(--success); }
+    .status.error { color: var(--danger); }
+
+    .footer-link { margin-top: 16px; text-align: center; }
+    .footer-link a { color: var(--navy); text-decoration: none; font-weight: 700; }
+
+    .hint {
+      border: 1px solid var(--border);
+      background: #f8fbff;
+      border-radius: 14px;
+      padding: 12px;
+      margin: 0 0 18px;
+      color: var(--muted);
+      line-height: 1.5;
+      font-size: 0.95rem;
     }
 
-    .status.error {
-      color: var(--danger);
-    }
-
-    .footer-link {
-      margin-top: 16px;
-      text-align: center;
-    }
-
-    .footer-link a {
-      color: var(--navy);
-      text-decoration: none;
-      font-weight: 700;
-    }
-  
-
-    /* V31 — anti-débordement textes/boutons */
-    html, body { max-width: 100%; overflow-x: hidden; }
-    .card, .card *, .status, .footer-link {
-      min-width: 0;
-      max-width: 100%;
-      overflow-wrap: break-word;
-      word-break: normal;
-      hyphens: auto;
-    }
-    .btn, .footer-link a {
-      height: auto;
-      white-space: normal;
-      line-height: 1.25;
-      text-align: center;
-    }
-
-
-    /* Mobile hardening login */
     @media (max-width: 480px) {
       body { padding: 18px; justify-content: flex-start; padding-top: 42px; }
       .logo { margin-bottom: 18px; }
       .logo img { width: min(190px, 58vw); }
       .card { padding: 22px; border-radius: 20px; }
       h1 { font-size: 1.55rem; line-height: 1.15; }
-      input { font-size: 16px; }
+      input, select { font-size: 16px; }
       .btn { min-height: 46px; }
     }
-</style>
+  </style>
 </head>
 
 <body>
@@ -192,46 +156,47 @@
   </div>
 
   <div class="card">
-    <h1>Connexion formateur</h1>
-    <p>Accès réservé aux formateurs habilités Vital Protect. Connectez-vous avec votre email et votre mot de passe. Aucun email de connexion n’est envoyé.</p>
-    <p style="margin-top:10px;color:var(--muted);line-height:1.6;">Vous souhaitez rejoindre le réseau ? <a href="/devenir-formateur.html">Consultez le parcours formateur</a>.</p>
+    <h1>Nouveau mot de passe</h1>
+    <p>Choisissez un nouveau mot de passe pour votre compte VITAL PROTECT.</p>
 
-    <form id="loginForm">
-      <div class="field">
-        <label for="email">Email formateur</label>
-        <input
-          type="email"
-          id="email"
-          required
-          placeholder="formateur@vital-protect.fr"
-          autocomplete="email"
-        />
-      </div>
+    <div class="hint">
+      Cette page fonctionne uniquement depuis le lien de réinitialisation reçu par email.
+    </div>
 
+    <form id="passwordForm" style="display:none;">
       <div class="field">
-        <label for="password">Mot de passe</label>
+        <label for="password">Nouveau mot de passe</label>
         <input
           type="password"
           id="password"
           required
-          placeholder="Votre mot de passe"
-          autocomplete="current-password"
+          minlength="8"
+          placeholder="Minimum 8 caractères"
+          autocomplete="new-password"
+        />
+      </div>
+
+      <div class="field">
+        <label for="confirmPassword">Confirmer le mot de passe</label>
+        <input
+          type="password"
+          id="confirmPassword"
+          required
+          minlength="8"
+          placeholder="Répétez le mot de passe"
+          autocomplete="new-password"
         />
       </div>
 
       <button type="submit" class="btn" id="submitBtn">
-        Se connecter
+        Enregistrer le nouveau mot de passe
       </button>
     </form>
 
-    <div class="status" id="status"></div>
+    <div class="status" id="status">Vérification du lien en cours...</div>
 
     <div class="footer-link">
-      <a href="/mot-de-passe-oublie.html?type=formateur">Mot de passe oublié ?</a>
-    </div>
-
-    <div class="footer-link">
-      <a href="/">← Retour au site</a>
+      <a href="/mot-de-passe-oublie.html">Demander un nouveau lien</a>
     </div>
   </div>
 
@@ -243,98 +208,94 @@
       "sb_publishable_VlTpYjzJ3DKpFA1Un_EFHQ_FW-mYK4U"
     );
 
-    const form = document.getElementById("loginForm");
+    const params = new URLSearchParams(window.location.search);
+    const allowedNext = ["/admin-login.html", "/formateur-login.html"];
+    const requestedNext = params.get("next") || "/formateur-login.html";
+    const nextPath = allowedNext.includes(requestedNext) ? requestedNext : "/formateur-login.html";
+
+    const form = document.getElementById("passwordForm");
     const status = document.getElementById("status");
     const submitBtn = document.getElementById("submitBtn");
+
+    let recoveryReady = false;
 
     function setStatus(message, type = "") {
       status.textContent = message;
       status.className = `status${type ? " " + type : ""}`;
     }
 
-    async function checkExistingSession() {
-      const {
-        data: { session }
-      } = await supabase.auth.getSession();
+    function showForm() {
+      if (recoveryReady) return;
+      recoveryReady = true;
+      form.style.display = "block";
+      setStatus("Lien vérifié. Vous pouvez choisir un nouveau mot de passe.", "success");
+    }
 
-      const email = session?.user?.email?.trim().toLowerCase();
-      if (!email) return;
+    supabase.auth.onAuthStateChange((event, session) => {
+      if (event === "PASSWORD_RECOVERY" || session?.user) {
+        showForm();
+      }
+    });
 
+    setTimeout(async () => {
+      if (recoveryReady) return;
       try {
-        const allowed = await checkTrainerAccess(email);
-        if (allowed) {
-          (window.VitalPageTransition ? window.VitalPageTransition.go("/espace-formateur.html") : (window.location.href = "/espace-formateur.html"));
-        } else {
-          await supabase.auth.signOut();
+        const { data: { session }, error } = await supabase.auth.getSession();
+        if (error) throw error;
+        if (session?.user) {
+          showForm();
+          return;
         }
+        setStatus("Lien invalide ou expiré. Demandez un nouveau lien de réinitialisation.", "error");
       } catch (error) {
-        console.error("Erreur vérification session formateur:", error);
+        console.error("Erreur vérification lien reset:", error);
+        setStatus("Impossible de vérifier le lien. Demandez un nouveau lien de réinitialisation.", "error");
       }
-    }
-
-    async function checkTrainerAccess(email) {
-      const { data: trainer, error } = await supabase
-        .from("trainers")
-        .select("id, email, certification_status, affiliation_status")
-        .ilike("email", email)
-        .maybeSingle();
-
-      if (error) {
-        throw new Error(error.message || "Erreur lors de la vérification formateur.");
-      }
-
-      return Boolean(trainer);
-    }
+    }, 1200);
 
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
 
-      const email = document.getElementById("email").value.trim().toLowerCase();
       const password = document.getElementById("password").value;
+      const confirmPassword = document.getElementById("confirmPassword").value;
 
-      if (!email || !password) {
-        setStatus("Veuillez saisir votre email et votre mot de passe.", "error");
+      if (password.length < 8) {
+        setStatus("Le mot de passe doit contenir au moins 8 caractères.", "error");
+        return;
+      }
+
+      if (password !== confirmPassword) {
+        setStatus("Les deux mots de passe ne correspondent pas.", "error");
         return;
       }
 
       submitBtn.disabled = true;
-      setStatus("Connexion en cours...");
+      setStatus("Mise à jour du mot de passe...");
 
       try {
-        const { error } = await supabase.auth.signInWithPassword({
-          email,
+        const { error } = await supabase.auth.updateUser({
           password
         });
 
         if (error) {
-          console.error("Erreur connexion formateur:", error);
-          setStatus("Email ou mot de passe incorrect.", "error");
+          console.error("Erreur update password:", error);
+          setStatus(error.message || "Impossible de modifier le mot de passe.", "error");
+          submitBtn.disabled = false;
           return;
         }
 
-        const allowed = await checkTrainerAccess(email);
-
-        if (!allowed) {
-          await supabase.auth.signOut();
-          setStatus("Accès refusé : aucun profil formateur ne correspond à cet email.", "error");
-          return;
-        }
-
-        setStatus("✅ Connexion validée. Redirection...", "success");
-        form.reset();
+        await supabase.auth.signOut();
+        setStatus("✅ Mot de passe modifié. Redirection vers la connexion...", "success");
 
         setTimeout(() => {
-          (window.VitalPageTransition ? window.VitalPageTransition.go("/espace-formateur.html") : (window.location.href = "/espace-formateur.html"));
-        }, 450);
+          window.location.href = nextPath;
+        }, 900);
       } catch (error) {
-        console.error("Erreur login formateur:", error);
+        console.error("Erreur nouveau mot de passe:", error);
         setStatus(error.message || "Erreur réseau ou serveur.", "error");
-      } finally {
         submitBtn.disabled = false;
       }
     });
-
-    checkExistingSession();
   </script>
 </body>
 </html>

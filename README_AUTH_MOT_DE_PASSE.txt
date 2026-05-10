@@ -1,31 +1,47 @@
-PASSAGE EN CONNEXION EMAIL + MOT DE PASSE
-========================================
+AUTH MOT DE PASSE + MOT DE PASSE OUBLIE - VITAL PROTECT
 
-Fichiers modifiés :
+Fichiers inclus :
 - admin-login.html
 - formateur-login.html
+- mot-de-passe-oublie.html
+- nouveau-mot-de-passe.html
+- README_AUTH_MOT_DE_PASSE.txt
 
-Ce qui change :
-- Le bouton n'envoie plus de magic link.
-- La connexion utilise Supabase Auth avec signInWithPassword({ email, password }).
-- Les limites d'envoi d'emails Supabase ne bloquent plus les connexions quotidiennes.
+Ce que fait cette version :
+1. Les connexions admin et formateur utilisent email + mot de passe avec supabase.auth.signInWithPassword().
+2. Les pages admin-login.html et formateur-login.html contiennent un lien "Mot de passe oublié ?".
+3. La page mot-de-passe-oublie.html envoie un email de réinitialisation via supabase.auth.resetPasswordForEmail().
+4. La page nouveau-mot-de-passe.html permet de définir un nouveau mot de passe via supabase.auth.updateUser().
 
-À faire dans Supabase avant test :
-1. Aller dans Authentication > Users.
-2. Créer ou modifier l'utilisateur admin avec :
-   - le même email que dans la table public.admin_users ;
-   - un mot de passe ;
-   - email confirmé / auto-confirmé.
-3. Pour chaque formateur :
-   - créer un utilisateur Auth avec le même email que dans la table public.trainers ;
-   - définir un mot de passe ;
-   - confirmer l'email / auto-confirmer l'utilisateur.
+IMPORTANT :
+- La connexion normale ne déclenche plus d'email Supabase.
+- Le mot de passe oublié déclenche quand même un email Supabase. Avec l'email par défaut Supabase, la limite peut rester à 2 emails/heure.
+- Pour éviter cette limite sur les resets, il faudra un SMTP personnalisé plus tard.
 
-Important :
-- Si un utilisateur existe déjà mais n'a pas de mot de passe, il faudra lui définir un mot de passe dans Supabase.
-- Le reset de mot de passe par email utilise encore les emails Supabase. Sans SMTP personnalisé, il reste limité.
-- Les fichiers auth-callback.html et formateur-callback.html peuvent rester dans le projet, mais ils ne sont plus utilisés par cette connexion par mot de passe.
+A FAIRE DANS SUPABASE :
+1. Authentication > Providers > Email
+   - Vérifier que Email provider est activé.
+   - Vérifier que la connexion par mot de passe est autorisée.
 
-Test rapide :
-- /admin-login.html : email admin + mot de passe -> /admin.html
-- /formateur-login.html : email formateur + mot de passe -> /espace-formateur.html
+2. Authentication > URL Configuration
+   Ajouter dans les Redirect URLs autorisées :
+   - https://TON-DOMAINE.fr/nouveau-mot-de-passe.html
+   - https://www.TON-DOMAINE.fr/nouveau-mot-de-passe.html
+   - éventuellement l'URL Vercel de preview si tu testes dessus.
+
+3. Authentication > Users
+   Pour chaque admin/formateur :
+   - le compte doit exister dans Auth Users ;
+   - l'email doit être confirmé ;
+   - l'email doit correspondre à public.admin_users pour un admin ;
+   - l'email doit correspondre à public.trainers pour un formateur.
+
+Premier mot de passe :
+- Méthode simple : créer/modifier l'utilisateur dans Authentication > Users et définir un mot de passe temporaire.
+- Méthode utilisateur : envoyer le lien depuis /mot-de-passe-oublie.html pour que la personne définisse elle-même son mot de passe.
+
+Après remplacement des fichiers :
+- Déployer sur Vercel.
+- Tester /admin-login.html.
+- Tester /formateur-login.html.
+- Tester /mot-de-passe-oublie.html avec un seul email au début pour ne pas retomber dans la rate limit.
