@@ -543,6 +543,7 @@ async function handleCreateTrainerSession(req, res) {
   const title = sanitizeText(req.body?.title || moduleName);
   const city = sanitizeText(req.body?.city);
   const department = sanitizeText(req.body?.department);
+  const region = sanitizeText(req.body?.region);
   const postalCode = sanitizeText(req.body?.postal_code);
   const address = sanitizeText(req.body?.address);
   const startDate = sanitizeText(req.body?.start_date);
@@ -579,6 +580,7 @@ async function handleCreateTrainerSession(req, res) {
     title,
     city,
     department,
+    region,
     postal_code: postalCode,
     address,
     start_date: startDate,
@@ -591,7 +593,7 @@ async function handleCreateTrainerSession(req, res) {
     status
   };
 
-  const insertResult = await insertWithOptionalPostalCode("trainer_sessions", payload);
+  const insertResult = await insertWithOptionalColumns("trainer_sessions", payload, ["postal_code", "region"]);
 
   if (insertResult.error) {
     return res.status(500).json({ error: insertResult.error.message });
@@ -600,8 +602,7 @@ async function handleCreateTrainerSession(req, res) {
   return res.status(200).json({
     success: true,
     trainer_session: insertResult.data,
-    postal_code_saved: insertResult.usedPostalCode,
-    postal_code_fallback: insertResult.postalCodeFallback || false
+    omitted_columns: insertResult.omittedColumns || []
   });
 }
 
