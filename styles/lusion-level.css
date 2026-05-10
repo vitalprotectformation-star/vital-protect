@@ -15574,3 +15574,32 @@ body.page-contact-clean .vpw-quick-link {
     display: none !important;
   }
 }
+
+
+/* =========================================================
+   Correctif PC Entreprises — priorité supérieure aux styles inline
+   ---------------------------------------------------------
+   La page entreprises.html contient un style inline plus tardif :
+   body.page-entreprise-ribbon-back > .vpl-nav, > header { position: relative !important; }
+   Ce rappel, plus spécifique, force bien le menu desktop à rester fixé.
+   Mobile inchangé.
+   ========================================================= */
+@media (min-width: 981px) and (hover: hover) and (pointer: fine) {
+  html body.page-entreprise-ribbon-back > header.vpl-nav,
+  html body.page-entreprise-ribbon-back > .vpl-nav.vpl-nav {
+    position: fixed !important;
+    top: 10px !important;
+    left: 50% !important;
+    right: auto !important;
+    bottom: auto !important;
+    transform: translateX(-50%) !important;
+    z-index: 2147483000 !important;
+    isolation: isolate !important;
+    will-change: top, transform, opacity, background !important;
+  }
+
+  html.vpl-scrolled body.page-entreprise-ribbon-back > header.vpl-nav,
+  html.vpl-scrolled body.page-entreprise-ribbon-back > .vpl-nav.vpl-nav {
+    top: 8px !important;
+  }
+}
