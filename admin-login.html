@@ -163,7 +163,7 @@
 
   <div class="card">
     <h1>Connexion admin</h1>
-    <p>Accédez au cockpit VITAL PROTECT via votre email autorisé.</p>
+    <p>Accédez au cockpit VITAL PROTECT avec votre email autorisé et votre mot de passe. Aucun email de connexion n’est envoyé.</p>
 
     <form id="loginForm">
       <div class="field">
@@ -177,8 +177,19 @@
         />
       </div>
 
+      <div class="field">
+        <label for="password">Mot de passe</label>
+        <input
+          type="password"
+          id="password"
+          required
+          placeholder="Votre mot de passe"
+          autocomplete="current-password"
+        />
+      </div>
+
       <button type="submit" class="btn" id="submitBtn">
-        Recevoir mon lien de connexion
+        Se connecter
       </button>
     </form>
 
@@ -202,42 +213,89 @@
       status.className = `status${type ? " " + type : ""}`;
     }
 
+    async function checkAdminAccess(email) {
+      const { data: adminUser, error } = await supabase
+        .from("admin_users")
+        .select("id, email")
+        .eq("email", email)
+        .maybeSingle();
+
+      if (error) {
+        throw new Error(error.message || "Erreur lors de la vérification admin.");
+      }
+
+      return Boolean(adminUser);
+    }
+
+    async function checkExistingSession() {
+      const {
+        data: { session }
+      } = await supabase.auth.getSession();
+
+      const email = session?.user?.email?.trim().toLowerCase();
+      if (!email) return;
+
+      try {
+        const allowed = await checkAdminAccess(email);
+        if (allowed) {
+          (window.VitalPageTransition ? window.VitalPageTransition.go("/admin.html") : (window.location.href = "/admin.html"));
+        } else {
+          await supabase.auth.signOut();
+        }
+      } catch (error) {
+        console.error("Erreur vérification session admin:", error);
+      }
+    }
+
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
 
       const email = document.getElementById("email").value.trim().toLowerCase();
+      const password = document.getElementById("password").value;
 
-      if (!email) {
-        setStatus("Veuillez saisir votre email.", "error");
+      if (!email || !password) {
+        setStatus("Veuillez saisir votre email et votre mot de passe.", "error");
         return;
       }
 
       submitBtn.disabled = true;
-      setStatus("Envoi du lien de connexion...");
+      setStatus("Connexion en cours...");
 
       try {
-        const { error } = await supabase.auth.signInWithOtp({
+        const { error } = await supabase.auth.signInWithPassword({
           email,
-          options: {
-            emailRedirectTo: `${window.location.origin}/auth-callback.html`
-          }
+          password
         });
 
         if (error) {
-          console.error("Erreur OTP admin:", error);
-          setStatus(`Erreur : ${error.message}`, "error");
+          console.error("Erreur connexion admin:", error);
+          setStatus("Email ou mot de passe incorrect.", "error");
           return;
         }
 
-        setStatus("✅ Lien envoyé. Vérifiez votre email.", "success");
+        const allowed = await checkAdminAccess(email);
+
+        if (!allowed) {
+          await supabase.auth.signOut();
+          setStatus("Accès refusé : cet email n’est pas autorisé comme admin.", "error");
+          return;
+        }
+
+        setStatus("✅ Connexion validée. Redirection...", "success");
         form.reset();
+
+        setTimeout(() => {
+          (window.VitalPageTransition ? window.VitalPageTransition.go("/admin.html") : (window.location.href = "/admin.html"));
+        }, 450);
       } catch (error) {
         console.error("Erreur login admin:", error);
-        setStatus("Erreur réseau ou serveur.", "error");
+        setStatus(error.message || "Erreur réseau ou serveur.", "error");
       } finally {
         submitBtn.disabled = false;
       }
     });
+
+    checkExistingSession();
   </script>
 </body>
 </html>
