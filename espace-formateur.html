@@ -415,6 +415,7 @@
     </div>
   </footer>
 
+  <script src="/fr-location.js"></script>
   <script type="module">
     import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
@@ -635,13 +636,20 @@
               </div>
 
               <div class="field">
-                <label for="stageDepartment">Département</label>
-                <input id="stageDepartment" type="text" required />
+                <label for="stagePostalCode">Code postal</label>
+                <input id="stagePostalCode" type="text" placeholder="13001" />
               </div>
 
               <div class="field">
                 <label for="stageRegion">Région</label>
-                <input id="stageRegion" type="text" required />
+                <select id="stageRegion" required></select>
+              </div>
+            </div>
+
+            <div class="grid-3">
+              <div class="field">
+                <label for="stageDepartment">Département</label>
+                <select id="stageDepartment" required></select>
               </div>
             </div>
 
@@ -704,6 +712,15 @@
 
       if (!form || !statusBox) return;
 
+      window.VP_FRANCE_LOCATION?.setupRegionDepartment({
+        regionId: "stageRegion",
+        departmentId: "stageDepartment",
+        regionPlaceholder: "Sélectionner une région",
+        departmentPlaceholder: "Sélectionner un département",
+        includeAllDepartmentsWhenNoRegion: false
+      });
+      window.VP_FRANCE_LOCATION?.setupPostalCode("stagePostalCode");
+
       form.addEventListener("submit", async (e) => {
         e.preventDefault();
 
@@ -729,6 +746,7 @@
           training_type: trainingType,
           description: document.getElementById("stageDescription").value.trim(),
           city,
+          postal_code: document.getElementById("stagePostalCode").value.trim(),
           department: document.getElementById("stageDepartment").value.trim(),
           region: document.getElementById("stageRegion").value.trim(),
           address: document.getElementById("stageAddress").value.trim(),

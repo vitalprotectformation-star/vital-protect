@@ -1079,6 +1079,10 @@
 <input id="city" required="" type="text" autocomplete="address-level2" placeholder="Votre ville"/>
 </div>
 <div class="form-field">
+<label for="postalCode">Code postal</label>
+<input id="postalCode" type="text" autocomplete="postal-code" placeholder="13001"/>
+</div>
+<div class="form-field">
 <label for="trainingType">Module</label>
 <select id="trainingType" required="">
 <option value="">Choisissez un module</option>
@@ -1236,6 +1240,7 @@
   })();
 </script>
 
+<script src="/fr-location.js"></script>
 <script type="module">
     import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
@@ -1680,6 +1685,8 @@
       renderSessions();
     });
 
+    window.VP_FRANCE_LOCATION?.setupPostalCode("postalCode");
+
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
 
@@ -1710,6 +1717,7 @@
         email: document.getElementById("email").value.trim(),
         phone: document.getElementById("phone").value.trim(),
         city: document.getElementById("city").value.trim(),
+        postal_code: document.getElementById("postalCode").value.trim(),
         training_type: trainingTypeSelect.value.trim(),
         message: document.getElementById("message").value.trim(),
         session_id: selectedSessionId
