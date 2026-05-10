@@ -22,7 +22,6 @@
   </style>
 <link as="image" href="transition-screen.png" media="(min-width: 769px)" rel="preload"/>
 <link as="image" href="transition-screen-mobile.jpg" media="(max-width: 768px), (pointer: coarse) and (orientation: portrait)" rel="preload"/>
-<link as="image" href="/photo-test-reseau-formateur.jpg" rel="preload"/>
 <script src="/page-transition.js"></script>
 <script>
     if (!window.VitalPageTransition) {
@@ -592,151 +591,6 @@
     }
   }
 </style>
-
-
-
-<style id="vptr-formateur-hero-visual-premium">
-  /* Hero Formateurs — remplacement local du bloc visuel droit uniquement. */
-  body.page-formateur-redesign .hero-visual {
-    position: relative !important;
-    width: min(520px, 100%) !important;
-    justify-self: end !important;
-    display: block !important;
-    min-height: 0 !important;
-    align-content: initial !important;
-    justify-items: initial !important;
-    isolation: isolate !important;
-  }
-
-  body.page-formateur-redesign .hero-visual::before {
-    content: "";
-    position: absolute;
-    z-index: 0;
-    inset: -40px -30px auto auto;
-    width: 280px;
-    height: 280px;
-    border-radius: 999px;
-    background: radial-gradient(circle, rgba(56, 189, 248, 0.28), transparent 65%);
-    filter: blur(10px);
-    pointer-events: none;
-  }
-
-  body.page-formateur-redesign .hero-image-card {
-    position: relative !important;
-    z-index: 1 !important;
-    width: 100% !important;
-    aspect-ratio: 16 / 9 !important;
-    overflow: hidden !important;
-    border-radius: 32px !important;
-    border: 1px solid rgba(255, 255, 255, 0.16) !important;
-    background: rgba(7, 17, 31, 0.72) !important;
-    box-shadow: 0 34px 80px rgba(0, 0, 0, 0.36) !important;
-  }
-
-  body.page-formateur-redesign .hero-image-card .hero-image,
-  body.page-formateur-redesign .vpl-inner-visual .hero-image-card .hero-image {
-    position: static !important;
-    inset: auto !important;
-    display: block !important;
-    width: 100% !important;
-    max-width: none !important;
-    height: 100% !important;
-    max-height: none !important;
-    aspect-ratio: auto !important;
-    object-fit: cover !important;
-    object-position: center center !important;
-    border: 0 !important;
-    border-radius: 0 !important;
-    box-shadow: none !important;
-    transform: none !important;
-  }
-
-  body.page-formateur-redesign .hero-badge {
-    position: absolute;
-    z-index: 2;
-    left: 20px;
-    bottom: 20px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 10px 14px;
-    border-radius: 999px;
-    background: rgba(5, 15, 28, 0.72);
-    color: #fff;
-    font-size: 13px;
-    line-height: 1;
-    font-weight: 850;
-    letter-spacing: -0.01em;
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255,255,255,0.18);
-    box-shadow: 0 12px 30px rgba(0,0,0,.22);
-  }
-
-  body.page-formateur-redesign .hero-info-card {
-    position: relative;
-    z-index: 2;
-    width: 100%;
-    margin-top: 18px;
-    padding: 22px 24px;
-    border-radius: 26px;
-    background: linear-gradient(135deg, #ffffff, #e9eef5);
-    box-shadow: 0 24px 54px rgba(0, 0, 0, 0.22);
-    color: #06111f;
-  }
-
-  body.page-formateur-redesign .hero-info-card h3 {
-    margin: 0 0 8px;
-    color: #06111f;
-    font-size: 18px;
-    line-height: 1.25;
-    letter-spacing: -0.035em;
-    font-weight: 900;
-  }
-
-  body.page-formateur-redesign .hero-info-card p {
-    margin: 0;
-    color: #5b6573;
-    font-size: 15px;
-    line-height: 1.6;
-  }
-
-  @media (max-width: 900px) {
-    body.page-formateur-redesign .hero-visual {
-      width: 100% !important;
-      max-width: 580px !important;
-      justify-self: stretch !important;
-      margin: 36px auto 0 !important;
-    }
-
-    body.page-formateur-redesign .hero-image-card {
-      border-radius: 26px !important;
-    }
-
-    body.page-formateur-redesign .hero-info-card {
-      border-radius: 22px;
-      padding: 20px 20px;
-    }
-  }
-
-  @media (max-width: 560px) {
-    body.page-formateur-redesign .hero-badge {
-      left: 14px;
-      bottom: 14px;
-      padding: 9px 12px;
-      font-size: 12px;
-    }
-
-    body.page-formateur-redesign .hero-info-card h3 {
-      font-size: 17px;
-    }
-
-    body.page-formateur-redesign .hero-info-card p {
-      font-size: 14.5px;
-    }
-  }
-</style>
-
 </head>
 <body class="vpl-inner-page page-editorial-light page-formateur-redesign">
 <div class="vptr-background-orbs" aria-hidden="true"><span class="vptr-orb vptr-orb-one"></span><span class="vptr-orb vptr-orb-two"></span><span class="vptr-orb vptr-orb-three"></span></div>
@@ -788,17 +642,6 @@
 <a class="vpl-button vpl-button-primary" href="/stage.html">Trouver un stage</a>
 <a class="vpl-button vpl-button-secondary" href="/contact.html">Nous contacter</a>
 </div>
-</div>
-<div class="vpl-inner-visual hero-visual">
-  <div class="hero-image-card">
-    <img src="/photo-test-reseau-formateur.jpg" alt="Groupe de formateurs Vital Protect en échange professionnel" class="hero-image" />
-    <span class="hero-badge">Réseau formateurs</span>
-  </div>
-
-  <div class="hero-info-card">
-    <h3>Fiabilité. Supervisé. Maintenu à jour.</h3>
-    <p>La qualité ne dépend pas d’une personne, mais d’un standard commun.</p>
-  </div>
 </div>
 </div>
 </section>
