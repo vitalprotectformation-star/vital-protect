@@ -314,13 +314,43 @@
       border-bottom:1px solid rgba(6,26,47,.06);
       color:var(--vp-stage-navy);
     }
+    .vp-marketplace-paths{
+      display:flex;
+      flex-wrap:wrap;
+      justify-content:center;
+      gap:10px;
+      margin-top:clamp(24px,3vw,34px);
+    }
+    .vp-marketplace-path-btn{
+      appearance:none;
+      border:1px solid rgba(6,26,47,.10);
+      border-radius:999px;
+      background:rgba(255,255,255,.72);
+      color:#50647a;
+      cursor:pointer;
+      font:inherit;
+      font-size:13px;
+      font-weight:900;
+      padding:11px 16px;
+      box-shadow:0 10px 30px rgba(6,26,47,.05);
+      transition:transform .24s ease,box-shadow .24s ease,border-color .24s ease,background .24s ease,color .24s ease;
+    }
+    .vp-marketplace-path-btn:hover,.vp-marketplace-path-btn.is-active{
+      transform:translateY(-2px);
+      border-color:rgba(47,127,202,.34);
+      background:#fff;
+      color:#0b4a8b;
+      box-shadow:0 14px 38px rgba(6,26,47,.09);
+    }
     .vp-marketplace-grid{
       display:grid;
-      grid-template-columns:repeat(3,minmax(0,1fr));
+      grid-template-columns:minmax(0,1fr);
       gap:clamp(18px,2.6vw,30px);
-      margin-top:clamp(30px,4vw,48px);
+      max-width:920px;
+      margin:clamp(30px,4vw,48px) auto 0;
       align-items:start;
     }
+    .vp-marketplace-column[hidden]{display:none!important}
     .vp-marketplace-column{
       position:relative;
       min-height:360px;
@@ -372,7 +402,7 @@
     .vp-marketplace-empty strong{display:block;margin-bottom:4px;color:#061a2f}
     .vp-marketplace-cta{margin-top:16px;display:flex;flex-wrap:wrap;gap:10px}
     .vp-marketplace-mini-note{margin-top:16px;padding:14px;border-radius:18px;background:rgba(11,74,139,.06);color:#50647a;font-size:13px;line-height:1.5}
-    @media(max-width:1080px){.vp-marketplace-grid{grid-template-columns:1fr}.vp-marketplace-column{min-height:auto}}
+    @media(max-width:1080px){.vp-marketplace-column{min-height:auto}}
     @media(max-width:640px){.vp-marketplace-section{padding:62px 0}.vp-marketplace-column{padding:18px;border-radius:24px}.vp-marketplace-column-head{display:block}.vp-marketplace-badge{margin-top:12px}.vp-marketplace-card{padding:16px}.vp-marketplace-card-top{display:block}.vp-marketplace-price{display:block;margin-top:6px}}
   </style>
 
@@ -436,7 +466,7 @@
           <div class="vpl-eyebrow" id="heroType">Stage Vital Protect</div>
           <h1 id="heroTitle">Apprendre à prévenir, éviter et réagir simplement.</h1>
           <p id="heroDescription">Vital Protect transmet des repères concrets pour lire les tensions, garder la bonne distance, désamorcer quand c’est possible et agir avec proportion.</p>
-          <div class="vpl-actions"><a class="vpl-button vpl-button-primary" href="#parcours">Choisir mon parcours</a><a class="vpl-button vpl-button-secondary" href="#marketplace">Voir les stages</a></div>
+          <div class="vpl-actions"><a class="vpl-button vpl-button-primary" href="#parcours">Choisir mon parcours</a><a class="vpl-button vpl-button-secondary" href="#marketplace" data-stage-path="public">Voir les stages</a></div>
           <p class="stage-hero-note">Les réservations ne sont ouvertes que lorsqu’une session affiche clairement le lieu, la date, le tarif, l’encadrant et les conditions de participation.</p>
           <div class="stage-hero-benefits" aria-label="Objectifs du stage"><span><b>Prévenir</b>Lire les signaux et garder une marge.</span><span><b>Éviter</b>Créer de l’espace sans sur-réagir.</span><span><b>Réagir</b>Agir simplement et reprendre le calme.</span></div>
         </div>
@@ -454,61 +484,9 @@
       <div class="vpl-container">
         <div class="vp-stage-access-top"><div class="vp-stage-head vp-reveal"><span class="vp-stage-kicker">Choisir le bon accès</span><h2 class="vp-stage-title">Quel parcours<br>vous correspond&nbsp;?</h2><p class="vp-stage-lead">Avant de parler date ou réservation, orientez-vous vers l’espace adapté à votre besoin.</p></div><span class="vp-motion-chip" aria-hidden="true">Stagger reveal</span></div>
         <div class="vp-stage-access-grid vp-stagger">
-          <a href="#stages-particuliers" class="vp-stage-card vp-stage-access-card vp-tilt" style="--vp-i:0"><div class="vp-stage-access-card-top"><span class="vp-stage-num">01</span><span class="vp-stage-icon" aria-hidden="true">▣</span></div><h3>Pour moi</h3><p>Voir les stages ouverts au public, choisir une date, puis réserver sa place.</p><b class="vp-stage-link">Voir les stages <span>→</span></b></a>
-          <a href="#stages-equipe" class="vp-stage-card vp-stage-access-card vp-tilt" style="--vp-i:1"><div class="vp-stage-access-card-top"><span class="vp-stage-num">02</span><span class="vp-stage-icon" aria-hidden="true">✉</span></div><h3>Pour mon équipe</h3><p>Comparer le parcours entreprise et demander une intervention adaptée à votre terrain.</p><b class="vp-stage-link">Voir le parcours <span>→</span></b></a>
-          <a href="#stages-formateurs" class="vp-stage-card vp-stage-access-card vp-tilt" style="--vp-i:2"><div class="vp-stage-access-card-top"><span class="vp-stage-num">03</span><span class="vp-stage-icon" aria-hidden="true">◌</span></div><h3>Devenir formateur</h3><p>Voir les sessions de validation interne et accéder au parcours d’habilitation.</p><b class="vp-stage-link">Voir les sessions <span>→</span></b></a>
-        </div>
-      </div>
-    </section>
-
-    <section id="marketplace" class="vp-marketplace-section">
-      <div class="vpl-container">
-        <div class="section-head section-head--center"><span class="eyebrow">Marketplace</span><h2>Voir les stages selon votre parcours.</h2><p>Le site sépare maintenant les besoins : réservation individuelle, demande équipe, ou parcours formateur.</p></div>
-        <div class="vp-marketplace-grid">
-          <article id="stages-particuliers" class="vp-marketplace-column">
-            <div class="vp-marketplace-column-head">
-              <div><h3>Pour moi</h3><p>Sessions ouvertes au public. Choisissez une date, puis réservez directement.</p></div>
-              <span class="vp-marketplace-badge">Paiement direct</span>
-            </div>
-            <div id="publicStagesContainer" class="vp-marketplace-list">
-              <div class="vp-marketplace-empty"><strong>Chargement des stages...</strong>Les sessions publiées vont apparaître ici.</div>
-            </div>
-            <div class="vp-marketplace-mini-note">Une session doit avoir une ville, une date, un lieu, un tarif et des places restantes pour ouvrir la réservation.</div>
-          </article>
-
-          <article id="stages-equipe" class="vp-marketplace-column">
-            <div class="vp-marketplace-column-head">
-              <div><h3>Pour mon équipe</h3><p>Interventions adaptées à votre métier, votre site, vos horaires et votre effectif.</p></div>
-              <span class="vp-marketplace-badge">Sur mesure</span>
-            </div>
-            <div class="vp-marketplace-list">
-              <a class="vp-marketplace-card" href="/entreprises.html">
-                <div class="vp-marketplace-card-top"><span class="vp-marketplace-type">Entreprise</span><span class="vp-marketplace-price">Devis</span></div>
-                <h4 class="vp-marketplace-title">Intervention pour une équipe</h4>
-                <p>Demandez une formation adaptée à vos collaborateurs : accueil, terrain, commerce, santé, sport ou service.</p>
-                <div class="vp-marketplace-meta"><span>Sur site</span><span>Date à définir</span><span>Format adapté</span></div>
-                <span class="vp-marketplace-action">Demander un échange →</span>
-              </a>
-              <a class="vp-marketplace-card" href="/contact.html?type=entreprise">
-                <div class="vp-marketplace-card-top"><span class="vp-marketplace-type">Besoin précis</span><span class="vp-marketplace-price">Contact</span></div>
-                <h4 class="vp-marketplace-title">Créer une session privée</h4>
-                <p>Pour une équipe, le plus fiable est de valider le contexte, le nombre de personnes, le lieu et les objectifs avant d’ouvrir une session.</p>
-                <div class="vp-marketplace-meta"><span>Privé</span><span>Brief préalable</span><span>Programme ciblé</span></div>
-                <span class="vp-marketplace-action">Contacter Vital Protect →</span>
-              </a>
-            </div>
-          </article>
-
-          <article id="stages-formateurs" class="vp-marketplace-column">
-            <div class="vp-marketplace-column-head">
-              <div><h3>Devenir formateur</h3><p>Sessions de validation interne liées aux modules d’habilitation.</p></div>
-              <span class="vp-marketplace-badge">Validation</span>
-            </div>
-            <div id="trainerSessionsContainer" class="vp-marketplace-list">
-              <div class="vp-marketplace-empty"><strong>Chargement des sessions...</strong>Les sessions formateur ouvertes vont apparaître ici.</div>
-            </div>
-            <div class="vp-marketplace-cta"><a class="vpl-button vpl-button-secondary" href="/devenir-formateur.html">Voir tout le parcours formateur</a></div>
-          </article>
+          <a href="#marketplace" class="vp-stage-card vp-stage-access-card vp-tilt" data-stage-path="public" style="--vp-i:0"><div class="vp-stage-access-card-top"><span class="vp-stage-num">01</span><span class="vp-stage-icon" aria-hidden="true">▣</span></div><h3>Pour moi</h3><p>Voir les stages ouverts au public, choisir une date, puis réserver sa place.</p><b class="vp-stage-link">Voir les stages <span>→</span></b></a>
+          <a href="#marketplace" class="vp-stage-card vp-stage-access-card vp-tilt" data-stage-path="team" style="--vp-i:1"><div class="vp-stage-access-card-top"><span class="vp-stage-num">02</span><span class="vp-stage-icon" aria-hidden="true">✉</span></div><h3>Pour mon équipe</h3><p>Comparer le parcours entreprise et demander une intervention adaptée à votre terrain.</p><b class="vp-stage-link">Voir le parcours <span>→</span></b></a>
+          <a href="#marketplace" class="vp-stage-card vp-stage-access-card vp-tilt" data-stage-path="trainer" style="--vp-i:2"><div class="vp-stage-access-card-top"><span class="vp-stage-num">03</span><span class="vp-stage-icon" aria-hidden="true">◌</span></div><h3>Devenir formateur</h3><p>Voir les sessions de validation interne et accéder au parcours d’habilitation.</p><b class="vp-stage-link">Voir les sessions <span>→</span></b></a>
         </div>
       </div>
     </section>
@@ -568,6 +546,64 @@
         <article class="vp-stage-card vp-stage-compare-card vp-tilt is-yes" style="--vp-i:1"><span class="vp-stage-kicker">Ce que c’est</span><h2>Un entraînement à la lucidité, à la distance et à la décision simple.</h2><p>La bonne réaction n’est pas toujours un geste. Souvent, c’est voir plus tôt, se placer mieux, parler plus court, sortir plus vite ou demander de l’aide au bon moment.</p><a class="vpl-button vpl-button-primary" href="#marketplace">Voir les stages</a></article>
       </div>
     </section>
+
+    <section id="marketplace" class="vp-marketplace-section">
+      <div class="vpl-container">
+        <div class="section-head section-head--center"><span class="eyebrow">Stages disponibles</span><h2 id="marketplaceTitle">Les stages s’affichent selon le parcours choisi.</h2><p id="marketplaceIntro">Choisissez “Pour moi”, “Pour mon équipe” ou “Devenir formateur” : la liste juste en dessous change automatiquement.</p></div>
+        <div class="vp-marketplace-paths" aria-label="Filtrer les stages par parcours">
+          <button type="button" class="vp-marketplace-path-btn" data-stage-path="public">Pour moi</button>
+          <button type="button" class="vp-marketplace-path-btn" data-stage-path="team">Pour mon équipe</button>
+          <button type="button" class="vp-marketplace-path-btn" data-stage-path="trainer">Devenir formateur</button>
+        </div>
+        <div class="vp-marketplace-grid">
+          <article id="stages-particuliers" class="vp-marketplace-column" data-marketplace-panel="public">
+            <div class="vp-marketplace-column-head">
+              <div><h3>Pour moi</h3><p>Sessions ouvertes au public. Choisissez une date, puis réservez directement.</p></div>
+              <span class="vp-marketplace-badge">Paiement direct</span>
+            </div>
+            <div id="publicStagesContainer" class="vp-marketplace-list">
+              <div class="vp-marketplace-empty"><strong>Chargement des stages...</strong>Les sessions publiées vont apparaître ici.</div>
+            </div>
+            <div class="vp-marketplace-mini-note">Une session doit avoir une ville, une date, un lieu, un tarif et des places restantes pour ouvrir la réservation.</div>
+          </article>
+
+          <article id="stages-equipe" class="vp-marketplace-column" data-marketplace-panel="team" hidden>
+            <div class="vp-marketplace-column-head">
+              <div><h3>Pour mon équipe</h3><p>Interventions adaptées à votre métier, votre site, vos horaires et votre effectif.</p></div>
+              <span class="vp-marketplace-badge">Sur mesure</span>
+            </div>
+            <div class="vp-marketplace-list">
+              <a class="vp-marketplace-card" href="/entreprises.html">
+                <div class="vp-marketplace-card-top"><span class="vp-marketplace-type">Entreprise</span><span class="vp-marketplace-price">Devis</span></div>
+                <h4 class="vp-marketplace-title">Intervention pour une équipe</h4>
+                <p>Demandez une formation adaptée à vos collaborateurs : accueil, terrain, commerce, santé, sport ou service.</p>
+                <div class="vp-marketplace-meta"><span>Sur site</span><span>Date à définir</span><span>Format adapté</span></div>
+                <span class="vp-marketplace-action">Demander un échange →</span>
+              </a>
+              <a class="vp-marketplace-card" href="/contact.html?type=entreprise">
+                <div class="vp-marketplace-card-top"><span class="vp-marketplace-type">Besoin précis</span><span class="vp-marketplace-price">Contact</span></div>
+                <h4 class="vp-marketplace-title">Créer une session privée</h4>
+                <p>Pour une équipe, le plus fiable est de valider le contexte, le nombre de personnes, le lieu et les objectifs avant d’ouvrir une session.</p>
+                <div class="vp-marketplace-meta"><span>Privé</span><span>Brief préalable</span><span>Programme ciblé</span></div>
+                <span class="vp-marketplace-action">Contacter Vital Protect →</span>
+              </a>
+            </div>
+          </article>
+
+          <article id="stages-formateurs" class="vp-marketplace-column" data-marketplace-panel="trainer" hidden>
+            <div class="vp-marketplace-column-head">
+              <div><h3>Devenir formateur</h3><p>Sessions de validation interne liées aux modules d’habilitation.</p></div>
+              <span class="vp-marketplace-badge">Validation</span>
+            </div>
+            <div id="trainerSessionsContainer" class="vp-marketplace-list">
+              <div class="vp-marketplace-empty"><strong>Chargement des sessions...</strong>Les sessions formateur ouvertes vont apparaître ici.</div>
+            </div>
+            <div class="vp-marketplace-cta"><a class="vpl-button vpl-button-secondary" href="/devenir-formateur.html">Voir tout le parcours formateur</a></div>
+          </article>
+        </div>
+      </div>
+    </section>
+
 
     <section id="reservation" class="stage-reservation-section">
       <div class="vpl-container">
@@ -737,6 +773,9 @@
     const bookingSubmitButton = $("bookingSubmitButton");
     const publicStagesContainer = $("publicStagesContainer");
     const trainerSessionsContainer = $("trainerSessionsContainer");
+    const marketplaceSection = $("marketplace");
+    const marketplaceTitle = $("marketplaceTitle");
+    const marketplaceIntro = $("marketplaceIntro");
 
     let stage = null;
     let bookingEnabled = false;
@@ -839,6 +878,75 @@
       return `${start} → ${end}`;
     }
 
+    const MARKETPLACE_PATHS = {
+      public: {
+        title: "Stages ouverts au public",
+        intro: "Parcours “Pour moi” : choisissez une session publique, puis le formulaire de réservation s’active juste en dessous."
+      },
+      team: {
+        title: "Parcours pour votre équipe",
+        intro: "Parcours “Pour mon équipe” : il s’agit d’une demande sur mesure, avec échange préalable avant d’ouvrir une session privée."
+      },
+      trainer: {
+        title: "Sessions pour devenir formateur",
+        intro: "Parcours “Devenir formateur” : seules les sessions de validation formateur ouvertes sont affichées ici."
+      }
+    };
+
+    function getInitialMarketplacePath() {
+      const params = new URLSearchParams(window.location.search);
+      const fromParam = params.get("parcours");
+      if (MARKETPLACE_PATHS[fromParam]) return fromParam;
+      if (window.location.hash === "#stages-equipe") return "team";
+      if (window.location.hash === "#stages-formateurs") return "trainer";
+      if (window.location.hash === "#stages-particuliers") return "public";
+      return "public";
+    }
+
+    let activeMarketplacePath = getInitialMarketplacePath();
+
+    function setMarketplacePath(path, options = {}) {
+      if (!MARKETPLACE_PATHS[path]) path = "public";
+      activeMarketplacePath = path;
+      const copy = MARKETPLACE_PATHS[path];
+      setText(marketplaceTitle, copy.title);
+      setText(marketplaceIntro, copy.intro);
+      document.querySelectorAll("[data-marketplace-panel]").forEach((panel) => {
+        panel.hidden = panel.dataset.marketplacePanel !== path;
+      });
+      document.querySelectorAll("[data-stage-path]").forEach((control) => {
+        const isActive = control.dataset.stagePath === path;
+        control.classList.toggle("is-active", isActive);
+        if (control.tagName === "BUTTON") control.setAttribute("aria-pressed", isActive ? "true" : "false");
+      });
+      if (path !== "public" && options.clearSelection !== false) {
+        const message = path === "team"
+          ? "Parcours équipe : la réservation directe est remplacée par une demande d’intervention sur mesure."
+          : "Parcours formateur : choisissez une session dans la liste, puis finalisez l’inscription depuis la page Devenir formateur.";
+        showNoSessionState(message);
+        renderPublicStages();
+      }
+      if (options.updateUrl) {
+        const newUrl = new URL(window.location.href);
+        newUrl.searchParams.set("parcours", path);
+        if (path !== "public") newUrl.searchParams.delete("id");
+        newUrl.hash = "marketplace";
+        window.history.replaceState({}, "", newUrl.toString());
+      }
+      if (options.scroll && marketplaceSection) {
+        marketplaceSection.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }
+
+    document.querySelectorAll("[data-stage-path]").forEach((control) => {
+      control.addEventListener("click", (event) => {
+        const path = control.dataset.stagePath;
+        if (!MARKETPLACE_PATHS[path]) return;
+        event.preventDefault();
+        setMarketplacePath(path, { scroll: true, updateUrl: true });
+      });
+    });
+
     function scrollToReservation() {
       const target = document.getElementById("reservation");
       if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -879,6 +987,7 @@
           if (!selected || !hasCompleteSession(selected)) return;
           stage = selected;
           const newUrl = new URL(window.location.href);
+          newUrl.searchParams.set("parcours", "public");
           newUrl.searchParams.set("id", stage.id);
           newUrl.hash = "reservation";
           window.history.replaceState({}, "", newUrl.toString());
@@ -973,6 +1082,12 @@
     }
 
     async function loadStage() {
+      if (activeMarketplacePath !== "public") {
+        showNoSessionState(activeMarketplacePath === "team"
+          ? "Parcours équipe : utilisez la demande d’intervention, pas la réservation directe."
+          : "Parcours formateur : choisissez une session formateur, puis poursuivez depuis la page Devenir formateur.");
+        return;
+      }
       if (!stageId) {
         showNoSessionState("Choisissez d’abord un stage ouvert dans la section “Pour moi”, puis la réservation s’activera automatiquement.");
         return;
@@ -1043,6 +1158,7 @@
     }
 
     placesInput?.addEventListener("input", updateBookingTotal);
+    setMarketplacePath(activeMarketplacePath, { clearSelection: false });
     Promise.allSettled([loadMarketplace(), loadStage()]);
   </script>
 <script src="/lusion-level.js"></script>
