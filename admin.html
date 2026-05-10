@@ -1676,6 +1676,7 @@
     function archiveReasonLabel(reason) {
       if (reason === "dossier_rejected") return "Dossier refusé";
       if (reason === "training_failed") return "Formation recalée";
+      if (reason === "deleted_by_admin") return "Supprimé par admin";
       return reason || "—";
     }
 
@@ -1892,9 +1893,12 @@
         `);
       }
 
-      if (!actions.length) {
-        return `<button class="btn btn-secondary" disabled>Aucune action</button>`;
-      }
+      const candidateName = `${row.first_name || ""} ${row.last_name || ""}`.trim() || row.email || "ce candidat";
+      actions.push(`
+        <button class="btn btn-danger" type="button" onclick="window.deleteTrainerCandidate('${jsArg(row.id)}', '${jsArg(candidateName)}')">
+          Supprimer candidat
+        </button>
+      `);
 
       return `<div class="action-stack">${actions.join("")}</div>`;
     }
@@ -2643,6 +2647,47 @@ VITAL PROTECT`
       } catch (error) {
         console.error(error);
         alert(error.message || "Erreur lors du refus du dossier.");
+      }
+    };
+
+    window.deleteTrainerCandidate = async (registrationId, candidateName) => {
+      const confirmed = window.confirm(
+        `Supprimer définitivement ${candidateName || "ce candidat"} ?\n\n` +
+        `Si son paiement est seulement autorisé, l'autorisation Stripe sera annulée.\n` +
+        `Si son paiement est déjà encaissé, la suppression sera bloquée pour éviter une erreur comptable.\n\n` +
+        `Cette action est irréversible.`
+      );
+
+      if (!confirmed) return;
+
+      try {
+        const headers = await getAuthHeaders();
+
+        const res = await fetch("/api/delete-trainer-candidate", {
+          method: "POST",
+          headers,
+          body: JSON.stringify({
+            registration_id: registrationId
+          })
+        });
+
+        const result = await parseApiResponse(res);
+
+        if (result.success) {
+          alert(result.stripe_authorization_canceled
+            ? "Candidat supprimé et autorisation Stripe annulée."
+            : "Candidat supprimé."
+          );
+          await loadTrainerRegistrations();
+          await loadArchives();
+          await loadTrainers();
+          updateFinance();
+        } else {
+          alert(result.error || "Erreur lors de la suppression du candidat.");
+        }
+      } catch (error) {
+        console.error(error);
+        alert(error.message || "Erreur lors de la suppression du candidat.");
       }
     };
 
