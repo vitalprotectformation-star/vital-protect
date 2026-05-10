@@ -15605,50 +15605,31 @@ body.page-contact-clean .vpw-quick-link {
 }
 
 /* =========================================================
-   Ajustement PC Entreprises — marge sous le menu fixé
+   Correctif PC Entreprises — reprise propre du haut de page
    ---------------------------------------------------------
-   Le menu reste fixed, mais le premier hero récupère de l'air
-   pour éviter que la nav flotte collée sur l'image/titre.
-   Desktop uniquement : mobile inchangé.
+   Ce qui manquait par rapport aux autres pages : le premier
+   hero Entreprises ne reprenait pas le dégagement standard
+   du menu fixed, car entreprises.html a un style inline plus
+   spécifique et plus tardif sur .vp-visual-story--enterprise.
+
+   On ne descend PAS le menu. Le menu reprend sa position PC
+   normale, et c'est le premier hero qui récupère le même
+   padding-top standard que les autres pages.
+   Mobile inchangé.
    ========================================================= */
 @media (min-width: 981px) and (hover: hover) and (pointer: fine) {
   html body.page-entreprise-ribbon-back > header.vpl-nav,
   html body.page-entreprise-ribbon-back > .vpl-nav.vpl-nav {
-    top: 18px !important;
+    top: 10px !important;
   }
 
   html.vpl-scrolled body.page-entreprise-ribbon-back > header.vpl-nav,
   html.vpl-scrolled body.page-entreprise-ribbon-back > .vpl-nav.vpl-nav {
-    top: 14px !important;
+    top: 8px !important;
   }
 
   body.page-entreprise-ribbon-back main > .vp-visual-story--enterprise:first-child {
-    padding-top: calc(clamp(72px, 8vw, 126px) + 46px) !important;
-  }
-}
-
-/* =========================================================
-   Ajustement PC Entreprises — menu encore plus bas
-   ---------------------------------------------------------
-   Demande : ajouter environ 2 à 3 cm d'air au-dessus du menu.
-   Desktop uniquement : mobile inchangé.
-   ========================================================= */
-@media (min-width: 981px) and (hover: hover) and (pointer: fine) {
-  html body.page-entreprise-ribbon-back > header.vpl-nav,
-  html body.page-entreprise-ribbon-back > .vpl-nav.vpl-nav {
-    top: 84px !important;
-  }
-
-  html.vpl-scrolled body.page-entreprise-ribbon-back > header.vpl-nav,
-  html.vpl-scrolled body.page-entreprise-ribbon-back > .vpl-nav.vpl-nav {
-    top: 76px !important;
-  }
-
-  body.page-entreprise-ribbon-back main > .vp-visual-story--enterprise:first-child {
-    padding-top: calc(clamp(72px, 8vw, 126px) + 132px) !important;
-  }
-
-  html {
-    scroll-padding-top: 178px !important;
+    margin-top: 0 !important;
+    padding-top: var(--vpl-first-screen-top, clamp(126px, 10vw, 148px)) !important;
   }
 }
