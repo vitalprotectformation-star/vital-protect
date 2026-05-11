@@ -1310,6 +1310,44 @@
       });
     }
 
+    function classifyVitalModule(...values) {
+      const text = values
+        .filter(Boolean)
+        .map((value) => normalizeModuleSearch(value))
+        .join(" ");
+      if (!text.trim()) return "module1";
+      if (text.includes("professionnel") || text.includes("professionnelle") || text.includes("entreprise") || text.includes("salarie") || text.includes("salaries") || text.includes("equipe") || text.includes("agressif") || text.includes("agressive") || text.includes("tendu") || text.includes("tendue") || text.includes("comportement")) return "pro";
+      if (text.includes("niveau 2") || text.includes("niv 2") || text.includes("module 2")) return "module2";
+      return "module1";
+    }
+
+    function publicModuleName(rawOrObject) {
+      const type = typeof rawOrObject === "object" && rawOrObject !== null
+        ? classifyVitalModule(rawOrObject.name, rawOrObject.slug, rawOrObject.module_name, rawOrObject.title, rawOrObject.short_description, rawOrObject.long_description)
+        : classifyVitalModule(rawOrObject);
+      if (type === "module2") return "Prévenir, éviter, réagir – Module 2";
+      if (type === "pro") return "Faire face aux situations tendues et comportements agressifs en milieu professionnel";
+      return "Prévenir, éviter, réagir – Module 1";
+    }
+
+    function trainerModuleName(rawOrObject) {
+      const type = typeof rawOrObject === "object" && rawOrObject !== null
+        ? classifyVitalModule(rawOrObject.name, rawOrObject.slug, rawOrObject.module_name, rawOrObject.title, rawOrObject.short_description, rawOrObject.long_description)
+        : classifyVitalModule(rawOrObject);
+      if (type === "module2") return "Formateur Vital Protect – Prévenir, éviter, réagir Module 2";
+      if (type === "pro") return "Formateur Vital Protect – Situations tendues et comportements agressifs en milieu professionnel";
+      return "Formateur Vital Protect – Prévenir, éviter, réagir Module 1";
+    }
+
+    function trainerModuleDescription(rawOrObject) {
+      const type = typeof rawOrObject === "object" && rawOrObject !== null
+        ? classifyVitalModule(rawOrObject.name, rawOrObject.slug, rawOrObject.module_name, rawOrObject.title, rawOrObject.short_description, rawOrObject.long_description)
+        : classifyVitalModule(rawOrObject);
+      if (type === "module2") return "Habilitation pour transmettre le module 2 : contraintes de face, création d’espace, dégagements et reprise de distance.";
+      if (type === "pro") return "Habilitation pour transmettre le module professionnel standardisé : posture, distance, désescalade et protection simple en situation de travail.";
+      return "Habilitation pour transmettre le module 1 : prévention, distance, posture, réactions simples et sortie de zone.";
+    }
+
     function getAvailabilityClass(remainingPlaces) {
       return Number(remainingPlaces || 0) <= 3 ? "warning" : "success";
     }
@@ -1364,7 +1402,7 @@
       trainingTypeSelect.innerHTML = `
         <option value="">Choisissez un module</option>
         ${modulesData.map((module) => `
-          <option value="${escapeHtml(module.name)}">${escapeHtml(module.name)}</option>
+          <option value="${escapeHtml(module.name)}">${escapeHtml(trainerModuleName(module))}</option>
         `).join("")}
       `;
 
@@ -1377,7 +1415,7 @@
 
     function lockTrainingType(moduleName) {
       trainingTypeSelect.innerHTML = `
-        <option value="${escapeHtml(moduleName)}">${escapeHtml(moduleName)}</option>
+        <option value="${escapeHtml(moduleName)}">${escapeHtml(trainerModuleName(moduleName))}</option>
       `;
       trainingTypeSelect.value = moduleName;
       trainingTypeSelect.disabled = true;
@@ -1409,13 +1447,13 @@
             <div class="module-flip-inner">
               <div class="module-flip-face front">
                 <div class="module-dot" aria-hidden="true"></div>
-                <h3>${escapeHtml(module.name)}</h3>
-                <p>${escapeHtml(module.short_description || module.long_description || "Module disponible au catalogue Vital Protect.")}</p>
+                <h3>${escapeHtml(trainerModuleName(module))}</h3>
+                <p>${escapeHtml(trainerModuleDescription(module))}</p>
                 <p class="module-flip-hint">Survolez ou cliquez pour voir l’action</p>
               </div>
               <div class="module-flip-face back">
                 <div>
-                  <h3>${escapeHtml(module.name)}</h3>
+                  <h3>${escapeHtml(trainerModuleName(module))}</h3>
                   ${chips ? `<div class="module-card__meta">${chips}</div>` : ""}
                 </div>
                 <button
@@ -1480,7 +1518,7 @@
         return;
       }
 
-      const label = `${session.title || "Session formateur"} — ${session.city || "Ville"} — ${formatDate(session.end_date)}`;
+      const label = `${trainerModuleName(session.module_name || session.title)} — ${session.city || "Ville"} — ${formatDate(session.end_date)}`;
       updateSelectedSessionBox(label);
 
       const newUrl = new URL(window.location.href);
@@ -1515,7 +1553,7 @@
       if (!filteredSessions.length) {
         sessionsContainer.innerHTML = `
           <div class="empty-state">
-            Aucune session ouverte pour le module <strong>${escapeHtml(selectedTrainingType)}</strong>.
+            Aucune session ouverte pour le module <strong>${escapeHtml(trainerModuleName(selectedTrainingType))}</strong>.
           </div>
         `;
         return;
@@ -1527,8 +1565,8 @@
         <article class="session-card">
           <div class="session-top">
             <div>
-              <div class="session-type">${escapeHtml(session.module_name || "Validation interne")}</div>
-              <h3 class="session-title">${escapeHtml(session.title || "Session formateur")}</h3>
+              <div class="session-type">${escapeHtml(trainerModuleName(session.module_name || session.title))}</div>
+              <h3 class="session-title">${escapeHtml(trainerModuleName(session.module_name || session.title))}</h3>
             </div>
             <div class="session-price">${formatPrice(session.launch_price || session.standard_price || 0)}</div>
           </div>
@@ -1536,7 +1574,7 @@
           <div class="session-body">
             <div class="session-description">
               ${escapeHtml(
-                modulesData.find((module) => module.name === session.module_name)?.short_description ||
+                trainerModuleDescription(session.module_name || session.title) ||
                 "Intégration au cadre Vital Protect : logique de méthode, cohérence de transmission, exigence pédagogique, sécurité et activation progressive dans le réseau."
               )}
             </div>
@@ -1653,7 +1691,7 @@
         return;
       }
 
-      sessionsData = (data || []).filter((session) => !isHiddenTrainerModule(session.module_name));
+      sessionsData = (data || []).filter((session) => !isHiddenTrainerModule(session));
 
       if (selectedSessionId) {
         const preselected = sessionsData.find((item) => item.id === selectedSessionId);
