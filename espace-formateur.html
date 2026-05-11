@@ -281,6 +281,142 @@
       white-space: pre-wrap;
     }
 
+    .diagnostic {
+      display: none;
+    }
+
+    .dashboard-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .dashboard-kpis {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin: 16px 0;
+    }
+
+    .kpi-card {
+      background: #f8fbff;
+      border: 1px solid #e5edf7;
+      border-radius: 18px;
+      padding: 16px;
+    }
+
+    .kpi-label {
+      display: block;
+      color: var(--muted);
+      font-size: 0.84rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .kpi-value {
+      font-size: 1.6rem;
+      font-weight: 900;
+      color: var(--navy);
+    }
+
+    .dashboard-toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin: 14px 0;
+    }
+
+    .dashboard-toolbar select {
+      max-width: 260px;
+    }
+
+    .table-wrap {
+      width: 100%;
+      overflow-x: auto;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      background: white;
+    }
+
+    table {
+      width: 100%;
+      min-width: 920px;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 14px 12px;
+      text-align: left;
+      border-bottom: 1px solid #edf2f7;
+      vertical-align: top;
+    }
+
+    th {
+      color: var(--muted);
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      background: #f8fbff;
+    }
+
+    td span {
+      display: block;
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin-top: 4px;
+    }
+
+    .progress-track {
+      width: 150px;
+      height: 10px;
+      border-radius: 999px;
+      background: #e8eef6;
+      overflow: hidden;
+      margin: 8px 0 4px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      border-radius: inherit;
+      background: var(--blue);
+    }
+
+    .action-stack {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .btn-small {
+      padding: 9px 11px;
+      font-size: 0.88rem;
+      border-radius: 10px;
+    }
+
+    .empty-state {
+      border: 1px dashed #cbd6e5;
+      border-radius: 18px;
+      padding: 20px;
+      background: #fbfdff;
+      color: var(--muted);
+    }
+
+    .stage-details-panel {
+      margin-top: 14px;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 18px;
+      background: #fbfdff;
+    }
+
+    .stage-details-panel:empty {
+      display: none;
+    }
+
     .section-title {
       margin-bottom: 12px;
     }
@@ -359,7 +495,8 @@
 
     @media (max-width: 900px) {
       .grid,
-      .grid-3 {
+      .grid-3,
+      .dashboard-kpis {
         grid-template-columns: 1fr;
       }
     }
@@ -425,6 +562,9 @@
     );
 
     let certifiedModules = [];
+    let dashboardStages = [];
+    let dashboardReservations = [];
+    let latestTrainerDashboard = null;
 
     function normalize(value) {
       return String(value || "").trim().toLowerCase();
@@ -452,6 +592,85 @@
         month: "2-digit",
         year: "numeric"
       });
+    }
+
+    function formatDateTime(dateString) {
+      if (!dateString) return "—";
+      const date = new Date(dateString);
+      if (Number.isNaN(date.getTime())) return "—";
+      return date.toLocaleString("fr-FR", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit"
+      });
+    }
+
+    function formatPrice(value) {
+      const amount = Number(value || 0);
+      return new Intl.NumberFormat("fr-FR", {
+        style: "currency",
+        currency: "EUR",
+        maximumFractionDigits: 0
+      }).format(Number.isFinite(amount) ? amount : 0);
+    }
+
+    function isPastStage(dateString) {
+      if (!dateString) return false;
+      const date = new Date(dateString);
+      if (Number.isNaN(date.getTime())) return false;
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      date.setHours(0, 0, 0, 0);
+      return date < today;
+    }
+
+    function getStatusLabel(status) {
+      const value = normalize(status || "pending");
+      const labels = {
+        published: "Publié",
+        pending: "En validation",
+        draft: "Brouillon",
+        cancelled: "Annulé",
+        completed: "Réalisé"
+      };
+      return labels[value] || status || "En validation";
+    }
+
+    function getStatusBadgeClass(status) {
+      const value = normalize(status || "pending");
+      if (value === "published" || value === "completed") return "badge-success";
+      if (value === "cancelled") return "badge-danger";
+      return "badge-warning";
+    }
+
+    function reservationsForStage(stageId) {
+      return dashboardReservations.filter(row => row.stage_id === stageId);
+    }
+
+    function paidReservationsForStage(stageId) {
+      return reservationsForStage(stageId).filter(row => normalize(row.payment_status || "paid") === "paid");
+    }
+
+    function paidPlacesForStage(stageId) {
+      return paidReservationsForStage(stageId).reduce((sum, row) => sum + Number(row.places || 0), 0);
+    }
+
+    function revenueForStage(stageId) {
+      return paidReservationsForStage(stageId).reduce((sum, row) => sum + Number(row.total_amount || 0), 0);
+    }
+
+    function getStageCapacity(stage) {
+      const maxParticipants = Number(stage.max_participants || 0);
+      if (maxParticipants > 0) return maxParticipants;
+      return Number(stage.remaining_places || 0) + paidPlacesForStage(stage.id);
+    }
+
+    function getFillPercent(stage) {
+      const capacity = getStageCapacity(stage);
+      if (!capacity) return 0;
+      return Math.min(100, Math.round((paidPlacesForStage(stage.id) / capacity) * 100));
     }
 
     function isFutureOrToday(dateString) {
@@ -597,6 +816,409 @@
         .map(item => item.module_name);
     }
 
+    async function loadTrainerDashboardData() {
+      const headers = await getTrainerAuthHeaders();
+      const res = await fetch("/api/trainer-tools", {
+        method: "POST",
+        headers,
+        body: JSON.stringify({ action: "dashboard" })
+      });
+
+      const data = await parseApiResponse(res);
+      dashboardStages = data.stages || [];
+      dashboardReservations = data.reservations || [];
+      latestTrainerDashboard = data;
+      return data;
+    }
+
+    function buildTrainerDashboardSection(data) {
+      if (!data?.success) {
+        return `
+          <div class="card" id="trainerDashboardMount">
+            <h2 class="section-title">Mes stages et inscriptions</h2>
+            <div class="alert alert-warning">
+              <p>Impossible de charger le tableau de bord formateur pour le moment.</p>
+              <p>${escapeHtml(data?.error || "Réessayez après actualisation de la page.")}</p>
+            </div>
+          </div>
+        `;
+      }
+
+      const stats = data.stats || {};
+      const stages = data.stages || [];
+
+      return `
+        <div class="card" id="trainerDashboardMount">
+          <div class="dashboard-header">
+            <div>
+              <h2 class="section-title">Mes stages et inscriptions</h2>
+              <p class="muted">Suivez vos dates, vos inscrits, votre taux de remplissage et vos actions utiles.</p>
+            </div>
+            <button class="btn btn-secondary btn-small" type="button" data-dashboard-refresh>Actualiser</button>
+          </div>
+
+          <div class="dashboard-kpis">
+            <div class="kpi-card">
+              <span class="kpi-label">Stages créés</span>
+              <div class="kpi-value">${Number(stats.stages_total || 0)}</div>
+            </div>
+            <div class="kpi-card">
+              <span class="kpi-label">Stages à venir</span>
+              <div class="kpi-value">${Number(stats.stages_upcoming || 0)}</div>
+            </div>
+            <div class="kpi-card">
+              <span class="kpi-label">Places vendues</span>
+              <div class="kpi-value">${Number(stats.registrations_total || 0)}</div>
+            </div>
+            <div class="kpi-card">
+              <span class="kpi-label">CA payé</span>
+              <div class="kpi-value">${formatPrice(stats.revenue_paid || 0)}</div>
+            </div>
+          </div>
+
+          ${stages.length ? `
+            <div class="dashboard-toolbar">
+              <select id="trainerStageFilter" aria-label="Filtrer mes stages">
+                <option value="all">Tous mes stages</option>
+                <option value="upcoming">À venir</option>
+                <option value="published">Publiés</option>
+                <option value="pending">En validation</option>
+                <option value="draft">Brouillons</option>
+                <option value="cancelled">Annulés</option>
+                <option value="past">Passés</option>
+              </select>
+              <span class="muted" id="trainerStageCountLabel"></span>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Stage</th>
+                    <th>Date / lieu</th>
+                    <th>Statut</th>
+                    <th>Remplissage</th>
+                    <th>CA</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="trainerStagesTableBody"></tbody>
+              </table>
+            </div>
+            <div id="stageDetailsPanel" class="stage-details-panel"></div>
+          ` : `
+            <div class="empty-state">
+              <strong>Aucun stage créé pour le moment.</strong>
+              <p>Créez votre première date depuis le formulaire ci-dessous. Elle sera soumise à validation avant publication publique.</p>
+            </div>
+          `}
+        </div>
+      `;
+    }
+
+    function sortStagesForDashboard(stages) {
+      return [...stages].sort((a, b) => {
+        const aDate = new Date(a.stage_date || "9999-12-31").getTime();
+        const bDate = new Date(b.stage_date || "9999-12-31").getTime();
+        return aDate - bDate;
+      });
+    }
+
+    function filterDashboardStages(filterValue) {
+      const value = filterValue || "all";
+      return sortStagesForDashboard(dashboardStages).filter(stage => {
+        const status = normalize(stage.status || "pending");
+        if (value === "all") return true;
+        if (value === "upcoming") return !isPastStage(stage.stage_date) && status !== "cancelled";
+        if (value === "past") return isPastStage(stage.stage_date);
+        return status === value;
+      });
+    }
+
+    function renderTrainerStagesTable() {
+      const body = document.getElementById("trainerStagesTableBody");
+      const filter = document.getElementById("trainerStageFilter");
+      const countLabel = document.getElementById("trainerStageCountLabel");
+
+      if (!body) return;
+
+      const rows = filterDashboardStages(filter?.value || "all");
+      if (countLabel) {
+        countLabel.textContent = `${rows.length} stage${rows.length > 1 ? "s" : ""} affiché${rows.length > 1 ? "s" : ""}`;
+      }
+
+      if (!rows.length) {
+        body.innerHTML = `
+          <tr>
+            <td colspan="6">
+              <div class="empty-state">Aucun stage ne correspond à ce filtre.</div>
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      body.innerHTML = rows.map(stage => {
+        const capacity = getStageCapacity(stage);
+        const paidPlaces = paidPlacesForStage(stage.id);
+        const percent = getFillPercent(stage);
+        const remaining = Number(stage.remaining_places || 0);
+        const status = normalize(stage.status || "pending");
+        const canContact = paidReservationsForStage(stage.id).length > 0;
+        const canCancel = !["cancelled", "completed"].includes(status);
+        const canSubmit = status === "draft";
+
+        return `
+          <tr>
+            <td>
+              <strong>${escapeHtml(stage.title || stage.training_type || "Stage")}</strong>
+              <span>${escapeHtml(stage.training_type || "Module non renseigné")}</span>
+            </td>
+            <td>
+              ${formatDate(stage.stage_date)}${stage.start_time ? ` · ${escapeHtml(stage.start_time)}` : ""}
+              <span>${escapeHtml(stage.city || "Ville non renseignée")}${stage.postal_code ? ` · ${escapeHtml(stage.postal_code)}` : ""}</span>
+            </td>
+            <td>
+              <span class="badge ${getStatusBadgeClass(status)}">${escapeHtml(getStatusLabel(status))}</span>
+            </td>
+            <td>
+              <strong>${paidPlaces} / ${capacity || "—"}</strong>
+              <div class="progress-track" aria-label="Taux de remplissage ${percent}%">
+                <div class="progress-fill" style="width:${percent}%;"></div>
+              </div>
+              <span>${percent}% · ${remaining} place${remaining > 1 ? "s" : ""} restante${remaining > 1 ? "s" : ""}</span>
+            </td>
+            <td>
+              <strong>${formatPrice(revenueForStage(stage.id))}</strong>
+              <span>${paidReservationsForStage(stage.id).length} réservation${paidReservationsForStage(stage.id).length > 1 ? "s" : ""}</span>
+            </td>
+            <td>
+              <div class="action-stack">
+                <button class="btn btn-secondary btn-small" type="button" data-stage-details="${escapeAttr(stage.id)}">Détails</button>
+                <button class="btn btn-secondary btn-small" type="button" data-stage-export="${escapeAttr(stage.id)}" ${canContact ? "" : "disabled"}>Exporter</button>
+                <button class="btn btn-secondary btn-small" type="button" data-stage-contact="${escapeAttr(stage.id)}" ${canContact ? "" : "disabled"}>Contacter</button>
+                ${canSubmit ? `<button class="btn btn-primary btn-small" type="button" data-stage-submit="${escapeAttr(stage.id)}">Soumettre</button>` : ""}
+                ${canCancel ? `<button class="btn btn-secondary btn-small" type="button" data-stage-cancel="${escapeAttr(stage.id)}">Annuler</button>` : ""}
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join("");
+
+      attachTrainerStageRowButtons();
+    }
+
+    function showStageDetails(stageId) {
+      const panel = document.getElementById("stageDetailsPanel");
+      if (!panel) return;
+
+      const stage = dashboardStages.find(item => item.id === stageId);
+      if (!stage) return;
+
+      const reservations = paidReservationsForStage(stageId);
+
+      panel.innerHTML = `
+        <h3>${escapeHtml(stage.title || "Stage")}</h3>
+        <div class="grid">
+          <div class="info-box">
+            <span class="label">Module</span>
+            <div class="value">${escapeHtml(stage.training_type || "—")}</div>
+          </div>
+          <div class="info-box">
+            <span class="label">Date</span>
+            <div class="value">${formatDate(stage.stage_date)}${stage.start_time ? ` · ${escapeHtml(stage.start_time)}` : ""}</div>
+          </div>
+          <div class="info-box">
+            <span class="label">Lieu</span>
+            <div class="value">${escapeHtml(stage.address || stage.city || "—")}</div>
+          </div>
+          <div class="info-box">
+            <span class="label">Prix</span>
+            <div class="value">${formatPrice(stage.price || 0)}</div>
+          </div>
+        </div>
+        <h3 style="margin-top:18px;">Inscrits payés</h3>
+        ${reservations.length ? `
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Participant</th>
+                  <th>Contact</th>
+                  <th>Places</th>
+                  <th>Montant</th>
+                  <th>Date inscription</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${reservations.map(row => `
+                  <tr>
+                    <td><strong>${escapeHtml(row.first_name || "")} ${escapeHtml(row.last_name || "")}</strong></td>
+                    <td>${escapeHtml(row.email || "—")}<span>${escapeHtml(row.phone || "—")}</span></td>
+                    <td>${Number(row.places || 0)}</td>
+                    <td>${formatPrice(row.total_amount || 0)}</td>
+                    <td>${formatDateTime(row.created_at)}</td>
+                  </tr>
+                `).join("")}
+              </tbody>
+            </table>
+          </div>
+        ` : `<div class="empty-state">Aucun inscrit payé pour ce stage.</div>`}
+      `;
+
+      panel.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    function exportStageReservations(stageId) {
+      const stage = dashboardStages.find(item => item.id === stageId);
+      const reservations = paidReservationsForStage(stageId);
+
+      if (!stage || !reservations.length) {
+        alert("Aucun inscrit à exporter pour ce stage.");
+        return;
+      }
+
+      const rows = [
+        ["Stage", "Date", "Prénom", "Nom", "Email", "Téléphone", "Places", "Montant", "Paiement", "Inscription"],
+        ...reservations.map(row => [
+          stage.title || "Stage",
+          formatDate(stage.stage_date),
+          row.first_name || "",
+          row.last_name || "",
+          row.email || "",
+          row.phone || "",
+          row.places || 0,
+          row.total_amount || 0,
+          row.payment_status || "paid",
+          formatDateTime(row.created_at)
+        ])
+      ];
+
+      const csv = rows
+        .map(cols => cols.map(value => `"${String(value).replace(/"/g, '""')}"`).join(";"))
+        .join("\n");
+
+      const blob = new Blob(["\ufeff" + csv], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `inscrits-${(stage.title || "stage").toLowerCase().replace(/[^a-z0-9]+/gi, "-").replace(/^-|-$/g, "")}.csv`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    function contactStageReservations(stageId) {
+      const stage = dashboardStages.find(item => item.id === stageId);
+      const emails = [...new Set(paidReservationsForStage(stageId).map(row => normalize(row.email)).filter(Boolean))];
+
+      if (!stage || !emails.length) {
+        alert("Aucun email d’inscrit disponible pour ce stage.");
+        return;
+      }
+
+      const subject = `Information stage VITAL PROTECT - ${stage.title || "Stage"}`;
+      const body = `Bonjour,
+
+Nous vous contactons concernant le stage suivant :
+${stage.title || "Stage VITAL PROTECT"}
+Date : ${formatDate(stage.stage_date)}${stage.start_time ? ` à ${stage.start_time}` : ""}
+Lieu : ${stage.address || stage.city || "à confirmer"}
+
+Cordialement,
+VITAL PROTECT`;
+
+      const mailto = `mailto:?bcc=${encodeURIComponent(emails.join(","))}&subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+      window.location.href = mailto;
+    }
+
+    async function updateTrainerStageStatus(stageId, status) {
+      const label = status === "cancelled" ? "annuler" : "soumettre à validation";
+      if (!window.confirm(`Confirmer : ${label} ce stage ?`)) return;
+
+      try {
+        const headers = await getTrainerAuthHeaders();
+        const res = await fetch("/api/trainer-tools", {
+          method: "POST",
+          headers,
+          body: JSON.stringify({
+            action: "update_stage_status",
+            stage_id: stageId,
+            status
+          })
+        });
+
+        const result = await parseApiResponse(res);
+        if (!result.success) {
+          alert(result.error || "Mise à jour impossible.");
+          return;
+        }
+
+        await refreshTrainerDashboard();
+      } catch (error) {
+        console.error(error);
+        alert(error.message || "Erreur lors de la mise à jour du stage.");
+      }
+    }
+
+    function attachTrainerStageRowButtons() {
+      document.querySelectorAll("[data-stage-details]").forEach(button => {
+        button.addEventListener("click", () => showStageDetails(button.dataset.stageDetails));
+      });
+
+      document.querySelectorAll("[data-stage-export]").forEach(button => {
+        button.addEventListener("click", () => exportStageReservations(button.dataset.stageExport));
+      });
+
+      document.querySelectorAll("[data-stage-contact]").forEach(button => {
+        button.addEventListener("click", () => contactStageReservations(button.dataset.stageContact));
+      });
+
+      document.querySelectorAll("[data-stage-submit]").forEach(button => {
+        button.addEventListener("click", () => updateTrainerStageStatus(button.dataset.stageSubmit, "pending"));
+      });
+
+      document.querySelectorAll("[data-stage-cancel]").forEach(button => {
+        button.addEventListener("click", () => updateTrainerStageStatus(button.dataset.stageCancel, "cancelled"));
+      });
+    }
+
+    function attachTrainerDashboardActions() {
+      const filter = document.getElementById("trainerStageFilter");
+      if (filter) {
+        filter.addEventListener("change", renderTrainerStagesTable);
+      }
+
+      const refreshBtn = document.querySelector("[data-dashboard-refresh]");
+      if (refreshBtn) {
+        refreshBtn.addEventListener("click", refreshTrainerDashboard);
+      }
+
+      renderTrainerStagesTable();
+    }
+
+    async function refreshTrainerDashboard() {
+      const mount = document.getElementById("trainerDashboardMount");
+      if (!mount) return;
+
+      mount.innerHTML = `
+        <h2 class="section-title">Mes stages et inscriptions</h2>
+        <p class="muted">Actualisation en cours...</p>
+      `;
+
+      try {
+        const data = await loadTrainerDashboardData();
+        mount.outerHTML = buildTrainerDashboardSection(data);
+        attachTrainerDashboardActions();
+      } catch (error) {
+        console.error(error);
+        mount.innerHTML = `
+          <h2 class="section-title">Mes stages et inscriptions</h2>
+          <div class="alert alert-warning">Impossible d’actualiser le tableau de bord : ${escapeHtml(error.message)}</div>
+        `;
+      }
+    }
+
     function buildCreateStageSection(trainer) {
       if (!certifiedModules.length) {
         return `
@@ -613,7 +1235,7 @@
       return `
         <div class="card">
           <h2 class="section-title">Créer un stage</h2>
-          <p class="muted">Vous pouvez publier un stage uniquement sur un module pour lequel vous êtes habilité et à jour.</p>
+          <p class="muted">Vous pouvez proposer un stage uniquement sur un module pour lequel vous êtes habilité et à jour. Il sera soumis à validation avant publication publique.</p>
 
           <form id="createStageForm">
             <div class="field">
@@ -693,11 +1315,11 @@
             </div>
 
             <div class="actions">
-              <button class="btn btn-primary" type="submit">Publier le stage</button>
+              <button class="btn btn-primary" type="submit">Soumettre le stage</button>
             </div>
 
             <div class="form-note">
-              Le titre du stage est généré automatiquement côté serveur à partir du module, de la ville et de la date.
+              Le titre du stage est généré automatiquement côté serveur. La publication publique est validée par l’administrateur.
             </div>
           </form>
 
@@ -774,8 +1396,9 @@
             return;
           }
 
-          statusBox.textContent = `✅ Stage créé avec succès. Titre généré : ${result.stage?.title || "Stage publié"}`;
+          statusBox.textContent = `✅ ${result.message || "Stage soumis avec succès."} Titre généré : ${result.stage?.title || "Stage"}`;
           form.reset();
+          await refreshTrainerDashboard();
         } catch (error) {
           console.error("Erreur création stage:", error);
           statusBox.textContent = `Erreur : ${escapeHtml(error.message)}`;
@@ -786,6 +1409,15 @@
     async function renderFullActiveView(trainer, sessionEmail, certValid, affiliationValid) {
       const app = document.getElementById("app");
       const affiliationFeedback = buildAffiliationFeedback();
+
+      try {
+        await loadTrainerDashboardData();
+      } catch (error) {
+        console.error("Erreur dashboard formateur:", error);
+        latestTrainerDashboard = { success: false, error: error.message };
+        dashboardStages = [];
+        dashboardReservations = [];
+      }
 
       app.innerHTML = `
         <h1>Espace formateur</h1>
@@ -834,9 +1466,11 @@
           </div>
         </div>
 
+        ${buildTrainerDashboardSection(latestTrainerDashboard)}
+
         ${buildCreateStageSection(trainer)}
 
-        <div class="debug">Email session : ${escapeHtml(sessionEmail)}
+        <div class="debug diagnostic">Email session : ${escapeHtml(sessionEmail)}
 Email trouvé : ${trainer.email}
 ID formateur : ${escapeHtml(trainer.id)}
 Habilitation valide : ${certValid}
@@ -845,6 +1479,7 @@ Modules habilités valides : ${escapeHtml(certifiedModules.join(", ") || "aucun"
       `;
 
       attachLogoutButtons();
+      attachTrainerDashboardActions();
       await handleCreateStageSubmit();
     }
 
@@ -913,7 +1548,7 @@ Modules habilités valides : ${escapeHtml(certifiedModules.join(", ") || "aucun"
             </div>
           </div>
 
-          <div class="debug">Email session : ${escapeHtml(sessionEmail)}
+          <div class="debug diagnostic">Email session : ${escapeHtml(sessionEmail)}
 Email trouvé : ${trainer.email}
 ID formateur : ${escapeHtml(trainer.id)}
 Habilitation valide : ${certValid}
@@ -979,7 +1614,7 @@ Affiliation end : ${escapeHtml(trainer.affiliation_end || "—")}</div>
             <button id="logoutBtn" class="btn btn-secondary" type="button">Déconnexion</button>
           </div>
 
-          <div class="debug">Email session : ${escapeHtml(sessionEmail)}
+          <div class="debug diagnostic">Email session : ${escapeHtml(sessionEmail)}
 Email trouvé : ${trainer.email}
 ID formateur : ${escapeHtml(trainer.id)}
 Habilitation valide : ${certValid}
@@ -1025,7 +1660,7 @@ Date fin habilitation : ${escapeHtml(trainer.certification_expiry || "—")}</di
         app.innerHTML = `
           <h1>Erreur de chargement</h1>
           <p class="muted">Impossible de charger les données du formateur.</p>
-          <div class="debug">${escapeHtml(error.message)}</div>
+          <div class="debug diagnostic">${escapeHtml(error.message)}</div>
         `;
         attachLogoutButtons();
         return;
@@ -1036,7 +1671,7 @@ Date fin habilitation : ${escapeHtml(trainer.certification_expiry || "—")}</di
         app.innerHTML = `
           <h1>Profil formateur introuvable</h1>
           <p class="muted">Aucun profil formateur ne correspond à votre session.</p>
-          <div class="debug">Email session : ${escapeHtml(sessionEmail)}</div>
+          <div class="debug diagnostic">Email session : ${escapeHtml(sessionEmail)}</div>
         `;
         attachLogoutButtons();
         setTimeout(() => {
