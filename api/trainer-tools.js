@@ -36,6 +36,68 @@ function parseNumber(value, fallback = 0) {
   return Number.isFinite(n) ? n : fallback;
 }
 
+function firstFiniteAmount(source, fieldNames) {
+  if (!source) return null;
+
+  for (const fieldName of fieldNames) {
+    const value = source[fieldName];
+    if (value === null || value === undefined || value === "") continue;
+
+    const amount = Number(value);
+    if (Number.isFinite(amount)) {
+      return amount;
+    }
+  }
+
+  return null;
+}
+
+function getTrainerPayoutAmount(reservation, stage) {
+  const reservationAmount = firstFiniteAmount(reservation, [
+    "trainer_payout_amount",
+    "trainer_amount",
+    "payout_amount",
+    "amount_to_pay_trainer",
+    "trainer_fee_amount",
+    "vital_protect_payout_amount"
+  ]);
+
+  if (reservationAmount !== null) {
+    return reservationAmount;
+  }
+
+  const perPlaceAmount = firstFiniteAmount(stage, [
+    "trainer_payout_per_place",
+    "trainer_amount_per_place",
+    "payout_per_place",
+    "amount_to_pay_trainer_per_place",
+    "trainer_fee_per_place",
+    "vital_protect_payout_per_place"
+  ]);
+
+  if (perPlaceAmount !== null) {
+    return perPlaceAmount * Number(reservation?.places || 0);
+  }
+
+  return null;
+}
+
+function sanitizeReservationForTrainer(row, stage) {
+  return {
+    id: row.id,
+    stage_id: row.stage_id,
+    stage_title: row.stage_title,
+    first_name: row.first_name,
+    last_name: row.last_name,
+    email: row.email,
+    phone: row.phone,
+    places: row.places,
+    payment_status: row.payment_status,
+    created_at: row.created_at,
+    trainer_payout_amount: getTrainerPayoutAmount(row, stage)
+  };
+}
+
 function isMissingColumnError(error, columnName) {
   const message = String(error?.message || "").toLowerCase();
   return message.includes(String(columnName || "").toLowerCase()) && message.includes("column");
@@ -204,7 +266,9 @@ async function handleCreateStage(req, res, trainer) {
   const duration = sanitizeText(req.body?.duration);
   const maxParticipants = parseNumber(req.body?.max_participants, 20);
   const remainingPlaces = parseNumber(req.body?.remaining_places, maxParticipants);
-  const price = parseNumber(req.body?.price, 0);
+  // Le tarif public est fixé/validé par VITAL PROTECT avant publication.
+  // Un formateur ne peut donc pas définir le prix encaissé sur le site depuis son espace.
+  const price = 0;
 
   const moduleRow = await resolveTrainingModule({
     moduleSlug,
@@ -229,10 +293,6 @@ async function handleCreateStage(req, res, trainer) {
 
   if (!stageDate || !isValidDate(stageDate)) {
     return res.status(400).json({ error: "stage_date invalide" });
-  }
-
-  if (Number.isNaN(price) || price < 0) {
-    return res.status(400).json({ error: "price invalide" });
   }
 
   if (!Number.isFinite(maxParticipants) || maxParticipants < 1) {
@@ -344,7 +404,8 @@ async function handleDashboard(req, res, trainer) {
         stages_total: 0,
         stages_upcoming: 0,
         registrations_total: 0,
-        revenue_paid: 0
+        trainer_payout_due: 0,
+        trainer_payout_available: true
       }
     });
   }
@@ -360,6 +421,8 @@ async function handleDashboard(req, res, trainer) {
   }
 
   const reservationRows = reservations || [];
+  const stageById = new Map(stageRows.map(stage => [stage.id, stage]));
+  const safeReservationRows = reservationRows.map(row => sanitizeReservationForTrainer(row, stageById.get(row.stage_id)));
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
@@ -370,23 +433,27 @@ async function handleDashboard(req, res, trainer) {
     return !Number.isNaN(stageDate.getTime()) && stageDate >= today;
   }).length;
 
-  const registrationsTotal = reservationRows
-    .filter(row => normalize(row.payment_status || "paid") === "paid")
+  const paidReservationRows = safeReservationRows.filter(row => normalize(row.payment_status || "paid") === "paid");
+
+  const registrationsTotal = paidReservationRows
     .reduce((sum, row) => sum + Number(row.places || 0), 0);
 
-  const revenuePaid = reservationRows
-    .filter(row => normalize(row.payment_status || "paid") === "paid")
-    .reduce((sum, row) => sum + Number(row.total_amount || 0), 0);
+  const trainerPayoutAvailable = paidReservationRows.every(row => row.trainer_payout_amount !== null && row.trainer_payout_amount !== undefined);
+
+  const trainerPayoutDue = trainerPayoutAvailable
+    ? paidReservationRows.reduce((sum, row) => sum + Number(row.trainer_payout_amount || 0), 0)
+    : null;
 
   return res.status(200).json({
     success: true,
     stages: stageRows,
-    reservations: reservationRows,
+    reservations: safeReservationRows,
     stats: {
       stages_total: stageRows.length,
       stages_upcoming: stagesUpcoming,
       registrations_total: registrationsTotal,
-      revenue_paid: revenuePaid
+      trainer_payout_due: trainerPayoutDue,
+      trainer_payout_available: trainerPayoutAvailable
     }
   });
 }

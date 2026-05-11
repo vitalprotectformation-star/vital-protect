@@ -55,6 +55,61 @@ function formatDateOnly(date) {
   return new Date(date).toISOString().split("T")[0];
 }
 
+function firstFiniteAmount(source, fieldNames) {
+  if (!source) return null;
+
+  for (const fieldName of fieldNames) {
+    const value = source[fieldName];
+    if (value === null || value === undefined || value === "") continue;
+
+    const amount = Number(value);
+    if (Number.isFinite(amount)) {
+      return amount;
+    }
+  }
+
+  return null;
+}
+
+function getTrainerPayoutAmount(reservation, stage) {
+  const reservationAmount = firstFiniteAmount(reservation, [
+    "trainer_payout_amount",
+    "trainer_amount",
+    "payout_amount",
+    "amount_to_pay_trainer",
+    "trainer_fee_amount",
+    "vital_protect_payout_amount"
+  ]);
+
+  if (reservationAmount !== null) {
+    return reservationAmount;
+  }
+
+  const perPlaceAmount = firstFiniteAmount(stage, [
+    "trainer_payout_per_place",
+    "trainer_amount_per_place",
+    "payout_per_place",
+    "amount_to_pay_trainer_per_place",
+    "trainer_fee_per_place",
+    "vital_protect_payout_per_place"
+  ]);
+
+  if (perPlaceAmount !== null) {
+    return perPlaceAmount * Number(reservation?.places || 0);
+  }
+
+  return null;
+}
+
+function formatEuroAmount(value) {
+  const amount = Number(value || 0);
+  return new Intl.NumberFormat("fr-FR", {
+    style: "currency",
+    currency: "EUR",
+    maximumFractionDigits: 0
+  }).format(Number.isFinite(amount) ? amount : 0);
+}
+
 function addYears(date, years) {
   const d = new Date(date);
   d.setFullYear(d.getFullYear() + years);
@@ -240,6 +295,11 @@ async function notifyTrainerStageReservation({ stage, reservation, newRemainingP
     const fillPercent = capacity > 0 ? Math.min(100, Math.round((soldPlaces / capacity) * 100)) : null;
     const previousPercent = capacity > 0 ? Math.min(100, Math.round(((capacity - previousRemaining) / capacity) * 100)) : 0;
 
+    const trainerPayoutAmount = getTrainerPayoutAmount(reservation, stage);
+    const trainerPayoutLine = trainerPayoutAmount !== null
+      ? `<li><strong>Versement VITAL PROTECT estimé :</strong> ${escapeHtml(formatEuroAmount(trainerPayoutAmount))}</li>`
+      : `<li><strong>Versement VITAL PROTECT :</strong> à définir / communiqué par VITAL PROTECT</li>`;
+
     let subject = "Nouvelle inscription à votre stage VITAL PROTECT";
     if (fillPercent === 100) {
       subject = "Votre stage VITAL PROTECT est complet";
@@ -266,7 +326,7 @@ async function notifyTrainerStageReservation({ stage, reservation, newRemainingP
           <li><strong>Email :</strong> ${escapeHtml(reservation.email || "—")}</li>
           <li><strong>Téléphone :</strong> ${escapeHtml(reservation.phone || "—")}</li>
           <li><strong>Places réservées :</strong> ${escapeHtml(reservation.places)}</li>
-          <li><strong>Montant :</strong> ${escapeHtml(reservation.totalAmount)} €</li>
+          ${trainerPayoutLine}
           ${capacity > 0 ? `<li><strong>Remplissage :</strong> ${soldPlaces}/${capacity} place(s), soit ${fillPercent} %</li>` : ""}
           <li><strong>Places restantes :</strong> ${escapeHtml(remaining)}</li>
         </ul>
@@ -333,7 +393,7 @@ async function handleStageCheckout(session) {
 
   const { data: stage, error: stageError } = await supabase
     .from("stages")
-    .select("id, title, trainer_id, city, stage_date, start_time, max_participants, remaining_places")
+    .select("*")
     .eq("id", stageId)
     .single();
 
