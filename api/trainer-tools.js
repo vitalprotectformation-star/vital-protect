@@ -235,6 +235,14 @@ async function handleCreateStage(req, res, trainer) {
     return res.status(400).json({ error: "price invalide" });
   }
 
+  if (!Number.isFinite(maxParticipants) || maxParticipants < 1) {
+    return res.status(400).json({ error: "max_participants invalide" });
+  }
+
+  if (!Number.isFinite(remainingPlaces) || remainingPlaces < 0 || remainingPlaces > maxParticipants) {
+    return res.status(400).json({ error: "remaining_places invalide" });
+  }
+
   if (
     normalize(trainer.affiliation_status) !== "active" ||
     !isFutureOrToday(trainer.affiliation_end)
@@ -295,7 +303,7 @@ async function handleCreateStage(req, res, trainer) {
     max_participants: maxParticipants,
     remaining_places: remainingPlaces,
     price,
-    status: "published"
+    status: "pending"
   };
 
   const insertResult = await insertWithOptionalPostalCode("stages", payload);
@@ -307,9 +315,124 @@ async function handleCreateStage(req, res, trainer) {
   return res.status(200).json({
     success: true,
     stage: insertResult.data,
+    message: "Stage soumis à validation. Il sera visible publiquement après publication par l’administrateur.",
     postal_code_saved: insertResult.usedPostalCode,
     postal_code_fallback: insertResult.postalCodeFallback || false
   });
+}
+
+async function handleDashboard(req, res, trainer) {
+  const { data: stages, error: stagesError } = await supabase
+    .from("stages")
+    .select("*")
+    .eq("trainer_id", trainer.id)
+    .order("stage_date", { ascending: true });
+
+  if (stagesError) {
+    return res.status(500).json({ error: stagesError.message });
+  }
+
+  const stageRows = stages || [];
+  const stageIds = stageRows.map(stage => stage.id).filter(Boolean);
+
+  if (!stageIds.length) {
+    return res.status(200).json({
+      success: true,
+      stages: [],
+      reservations: [],
+      stats: {
+        stages_total: 0,
+        stages_upcoming: 0,
+        registrations_total: 0,
+        revenue_paid: 0
+      }
+    });
+  }
+
+  const { data: reservations, error: reservationsError } = await supabase
+    .from("reservations")
+    .select("*")
+    .in("stage_id", stageIds)
+    .order("created_at", { ascending: false });
+
+  if (reservationsError) {
+    return res.status(500).json({ error: reservationsError.message });
+  }
+
+  const reservationRows = reservations || [];
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const stagesUpcoming = stageRows.filter(stage => {
+    if (!stage.stage_date) return false;
+    const stageDate = new Date(stage.stage_date);
+    stageDate.setHours(0, 0, 0, 0);
+    return !Number.isNaN(stageDate.getTime()) && stageDate >= today;
+  }).length;
+
+  const registrationsTotal = reservationRows
+    .filter(row => normalize(row.payment_status || "paid") === "paid")
+    .reduce((sum, row) => sum + Number(row.places || 0), 0);
+
+  const revenuePaid = reservationRows
+    .filter(row => normalize(row.payment_status || "paid") === "paid")
+    .reduce((sum, row) => sum + Number(row.total_amount || 0), 0);
+
+  return res.status(200).json({
+    success: true,
+    stages: stageRows,
+    reservations: reservationRows,
+    stats: {
+      stages_total: stageRows.length,
+      stages_upcoming: stagesUpcoming,
+      registrations_total: registrationsTotal,
+      revenue_paid: revenuePaid
+    }
+  });
+}
+
+async function handleUpdateStageStatus(req, res, trainer) {
+  const stageId = sanitizeText(req.body?.stage_id);
+  const status = sanitizeText(req.body?.status).toLowerCase();
+
+  if (!stageId) {
+    return res.status(400).json({ error: "stage_id manquant" });
+  }
+
+  if (!["draft", "pending", "cancelled"].includes(status)) {
+    return res.status(400).json({
+      error: "Statut non autorisé depuis l’espace formateur"
+    });
+  }
+
+  const { data: stage, error: stageFetchError } = await supabase
+    .from("stages")
+    .select("id, trainer_id, status")
+    .eq("id", stageId)
+    .eq("trainer_id", trainer.id)
+    .maybeSingle();
+
+  if (stageFetchError) {
+    return res.status(500).json({ error: stageFetchError.message });
+  }
+
+  if (!stage) {
+    return res.status(404).json({ error: "Stage introuvable pour ce formateur" });
+  }
+
+  const { data, error } = await supabase
+    .from("stages")
+    .update({ status })
+    .eq("id", stageId)
+    .eq("trainer_id", trainer.id)
+    .select()
+    .single();
+
+  if (error) {
+    return res.status(500).json({ error: error.message });
+  }
+
+  return res.status(200).json({ success: true, stage: data });
 }
 
 export default async function handler(req, res) {
@@ -332,6 +455,14 @@ export default async function handler(req, res) {
 
     if (action === "create_stage") {
       return await handleCreateStage(req, res, trainerCheck.trainer);
+    }
+
+    if (action === "dashboard") {
+      return await handleDashboard(req, res, trainerCheck.trainer);
+    }
+
+    if (action === "update_stage_status") {
+      return await handleUpdateStageStatus(req, res, trainerCheck.trainer);
     }
 
     return res.status(400).json({ error: "action inconnue" });

@@ -31,6 +31,26 @@ function normalizeEmail(value) {
   return String(value || "").trim().toLowerCase();
 }
 
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+function formatDateForEmail(value) {
+  if (!value) return "à confirmer";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return String(value);
+  return date.toLocaleDateString("fr-FR", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric"
+  });
+}
+
 function formatDateOnly(date) {
   return new Date(date).toISOString().split("T")[0];
 }
@@ -196,6 +216,69 @@ async function handleTrainerCheckout(session) {
   });
 }
 
+async function notifyTrainerStageReservation({ stage, reservation, newRemainingPlaces, previousRemainingPlaces }) {
+  try {
+    if (!stage?.trainer_id) return;
+
+    const { data: trainer, error: trainerError } = await supabase
+      .from("trainers")
+      .select("email, first_name, last_name")
+      .eq("id", stage.trainer_id)
+      .maybeSingle();
+
+    if (trainerError) {
+      console.error("Supabase trainer notification fetch error:", trainerError);
+      return;
+    }
+
+    if (!trainer?.email) return;
+
+    const capacity = Number(stage.max_participants || 0);
+    const previousRemaining = Number(previousRemainingPlaces || 0);
+    const remaining = Number(newRemainingPlaces || 0);
+    const soldPlaces = capacity > 0 ? Math.max(0, capacity - remaining) : null;
+    const fillPercent = capacity > 0 ? Math.min(100, Math.round((soldPlaces / capacity) * 100)) : null;
+    const previousPercent = capacity > 0 ? Math.min(100, Math.round(((capacity - previousRemaining) / capacity) * 100)) : 0;
+
+    let subject = "Nouvelle inscription à votre stage VITAL PROTECT";
+    if (fillPercent === 100) {
+      subject = "Votre stage VITAL PROTECT est complet";
+    } else if (previousPercent < 80 && fillPercent >= 80) {
+      subject = "Votre stage VITAL PROTECT atteint 80 % de remplissage";
+    } else if (previousPercent < 50 && fillPercent >= 50) {
+      subject = "Votre stage VITAL PROTECT atteint 50 % de remplissage";
+    }
+
+    await sendEmailSafe({
+      from: "VITAL PROTECT <contact@vital-protect.fr>",
+      to: trainer.email,
+      replyTo: "contact@vital-protect.fr",
+      subject,
+      html: `
+        <h2>Nouvelle inscription ✅</h2>
+        <p>Bonjour ${escapeHtml(trainer.first_name || "")},</p>
+        <p>Une nouvelle réservation payée vient d’être enregistrée pour votre stage.</p>
+        <ul>
+          <li><strong>Stage :</strong> ${escapeHtml(stage.title || reservation.stageTitle || "Stage VITAL PROTECT")}</li>
+          <li><strong>Date :</strong> ${escapeHtml(formatDateForEmail(stage.stage_date))}${stage.start_time ? ` à ${escapeHtml(stage.start_time)}` : ""}</li>
+          <li><strong>Ville :</strong> ${escapeHtml(stage.city || "à confirmer")}</li>
+          <li><strong>Participant :</strong> ${escapeHtml(reservation.firstName || "")} ${escapeHtml(reservation.lastName || "")}</li>
+          <li><strong>Email :</strong> ${escapeHtml(reservation.email || "—")}</li>
+          <li><strong>Téléphone :</strong> ${escapeHtml(reservation.phone || "—")}</li>
+          <li><strong>Places réservées :</strong> ${escapeHtml(reservation.places)}</li>
+          <li><strong>Montant :</strong> ${escapeHtml(reservation.totalAmount)} €</li>
+          ${capacity > 0 ? `<li><strong>Remplissage :</strong> ${soldPlaces}/${capacity} place(s), soit ${fillPercent} %</li>` : ""}
+          <li><strong>Places restantes :</strong> ${escapeHtml(remaining)}</li>
+        </ul>
+        <p>Vous pouvez retrouver le suivi complet depuis votre espace formateur.</p>
+        <p><strong>VITAL PROTECT</strong></p>
+      `
+    });
+  } catch (error) {
+    console.error("Erreur notification formateur:", error);
+  }
+}
+
 async function handleStageCheckout(session) {
   const metadata = session.metadata || {};
 
@@ -250,7 +333,7 @@ async function handleStageCheckout(session) {
 
   const { data: stage, error: stageError } = await supabase
     .from("stages")
-    .select("remaining_places")
+    .select("id, title, trainer_id, city, stage_date, start_time, max_participants, remaining_places")
     .eq("id", stageId)
     .single();
 
@@ -282,18 +365,33 @@ async function handleStageCheckout(session) {
       subject: "Confirmation de votre réservation",
       html: `
         <h2>Réservation confirmée ✅</h2>
-        <p>Bonjour ${firstName || ""} ${lastName || ""},</p>
+        <p>Bonjour ${escapeHtml(firstName || "")} ${escapeHtml(lastName || "")},</p>
         <p>Votre réservation a bien été enregistrée sur <strong>VITAL PROTECT</strong>.</p>
         <ul>
-          <li><strong>Stage :</strong> ${stageTitle}</li>
-          <li><strong>Places :</strong> ${places}</li>
-          <li><strong>Montant :</strong> ${totalAmount} €</li>
+          <li><strong>Stage :</strong> ${escapeHtml(stageTitle)}</li>
+          <li><strong>Places :</strong> ${escapeHtml(places)}</li>
+          <li><strong>Montant :</strong> ${escapeHtml(totalAmount)} €</li>
         </ul>
         <p>Merci pour votre confiance.</p>
         <p><strong>VITAL PROTECT</strong></p>
       `
     });
   }
+
+  await notifyTrainerStageReservation({
+    stage,
+    reservation: {
+      stageTitle,
+      firstName,
+      lastName,
+      email,
+      phone,
+      places,
+      totalAmount
+    },
+    previousRemainingPlaces: Number(stage.remaining_places || 0),
+    newRemainingPlaces
+  });
 }
 
 export default async function handler(req, res) {
