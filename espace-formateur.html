@@ -657,8 +657,38 @@
       return paidReservationsForStage(stageId).reduce((sum, row) => sum + Number(row.places || 0), 0);
     }
 
-    function revenueForStage(stageId) {
-      return paidReservationsForStage(stageId).reduce((sum, row) => sum + Number(row.total_amount || 0), 0);
+    function getReservationTrainerPayout(row) {
+      if (!row || row.trainer_payout_amount === null || row.trainer_payout_amount === undefined || row.trainer_payout_amount === "") {
+        return null;
+      }
+
+      const amount = Number(row.trainer_payout_amount);
+      return Number.isFinite(amount) ? amount : null;
+    }
+
+    function payoutSummaryForStage(stageId) {
+      const reservations = paidReservationsForStage(stageId);
+      if (!reservations.length) {
+        return { known: true, amount: 0 };
+      }
+
+      let total = 0;
+      for (const row of reservations) {
+        const amount = getReservationTrainerPayout(row);
+        if (amount === null) {
+          return { known: false, amount: null };
+        }
+        total += amount;
+      }
+
+      return { known: true, amount: total };
+    }
+
+    function formatTrainerPayout(summary) {
+      if (!summary || summary.known === false || summary.amount === null || summary.amount === undefined) {
+        return "À définir";
+      }
+      return formatPrice(summary.amount);
     }
 
     function getStageCapacity(stage) {
@@ -852,7 +882,7 @@
           <div class="dashboard-header">
             <div>
               <h2 class="section-title">Mes stages et inscriptions</h2>
-              <p class="muted">Suivez vos dates, vos inscrits, votre taux de remplissage et vos actions utiles.</p>
+              <p class="muted">Suivez vos dates, vos inscrits, votre taux de remplissage et le versement prévu par VITAL PROTECT.</p>
             </div>
             <button class="btn btn-secondary btn-small" type="button" data-dashboard-refresh>Actualiser</button>
           </div>
@@ -871,8 +901,8 @@
               <div class="kpi-value">${Number(stats.registrations_total || 0)}</div>
             </div>
             <div class="kpi-card">
-              <span class="kpi-label">CA payé</span>
-              <div class="kpi-value">${formatPrice(stats.revenue_paid || 0)}</div>
+              <span class="kpi-label">Versement estimé</span>
+              <div class="kpi-value">${stats.trainer_payout_available === false ? "À définir" : formatPrice(stats.trainer_payout_due || 0)}</div>
             </div>
           </div>
 
@@ -897,7 +927,7 @@
                     <th>Date / lieu</th>
                     <th>Statut</th>
                     <th>Remplissage</th>
-                    <th>CA</th>
+                    <th>Versement VP</th>
                     <th>Actions</th>
                   </tr>
                 </thead>
@@ -963,7 +993,9 @@
         const percent = getFillPercent(stage);
         const remaining = Number(stage.remaining_places || 0);
         const status = normalize(stage.status || "pending");
-        const canContact = paidReservationsForStage(stage.id).length > 0;
+        const paidReservations = paidReservationsForStage(stage.id);
+        const payoutSummary = payoutSummaryForStage(stage.id);
+        const canContact = paidReservations.length > 0;
         const canCancel = !["cancelled", "completed"].includes(status);
         const canSubmit = status === "draft";
 
@@ -988,8 +1020,8 @@
               <span>${percent}% · ${remaining} place${remaining > 1 ? "s" : ""} restante${remaining > 1 ? "s" : ""}</span>
             </td>
             <td>
-              <strong>${formatPrice(revenueForStage(stage.id))}</strong>
-              <span>${paidReservationsForStage(stage.id).length} réservation${paidReservationsForStage(stage.id).length > 1 ? "s" : ""}</span>
+              <strong>${formatTrainerPayout(payoutSummary)}</strong>
+              <span>${paidReservations.length} réservation${paidReservations.length > 1 ? "s" : ""} payée${paidReservations.length > 1 ? "s" : ""}</span>
             </td>
             <td>
               <div class="action-stack">
@@ -1015,6 +1047,7 @@
       if (!stage) return;
 
       const reservations = paidReservationsForStage(stageId);
+      const payoutSummary = payoutSummaryForStage(stageId);
 
       panel.innerHTML = `
         <h3>${escapeHtml(stage.title || "Stage")}</h3>
@@ -1032,8 +1065,8 @@
             <div class="value">${escapeHtml(stage.address || stage.city || "—")}</div>
           </div>
           <div class="info-box">
-            <span class="label">Prix</span>
-            <div class="value">${formatPrice(stage.price || 0)}</div>
+            <span class="label">Versement VITAL PROTECT</span>
+            <div class="value">${formatTrainerPayout(payoutSummary)}</div>
           </div>
         </div>
         <h3 style="margin-top:18px;">Inscrits payés</h3>
@@ -1045,7 +1078,7 @@
                   <th>Participant</th>
                   <th>Contact</th>
                   <th>Places</th>
-                  <th>Montant</th>
+                  <th>Versement VP</th>
                   <th>Date inscription</th>
                 </tr>
               </thead>
@@ -1055,7 +1088,7 @@
                     <td><strong>${escapeHtml(row.first_name || "")} ${escapeHtml(row.last_name || "")}</strong></td>
                     <td>${escapeHtml(row.email || "—")}<span>${escapeHtml(row.phone || "—")}</span></td>
                     <td>${Number(row.places || 0)}</td>
-                    <td>${formatPrice(row.total_amount || 0)}</td>
+                    <td>${formatTrainerPayout({ known: getReservationTrainerPayout(row) !== null, amount: getReservationTrainerPayout(row) })}</td>
                     <td>${formatDateTime(row.created_at)}</td>
                   </tr>
                 `).join("")}
@@ -1078,7 +1111,7 @@
       }
 
       const rows = [
-        ["Stage", "Date", "Prénom", "Nom", "Email", "Téléphone", "Places", "Montant", "Paiement", "Inscription"],
+        ["Stage", "Date", "Prénom", "Nom", "Email", "Téléphone", "Places", "Versement Vital Protect estimé", "Paiement", "Inscription"],
         ...reservations.map(row => [
           stage.title || "Stage",
           formatDate(stage.stage_date),
@@ -1087,7 +1120,7 @@
           row.email || "",
           row.phone || "",
           row.places || 0,
-          row.total_amount || 0,
+          getReservationTrainerPayout(row) ?? "À définir",
           row.payment_status || "paid",
           formatDateTime(row.created_at)
         ])
@@ -1299,11 +1332,6 @@ VITAL PROTECT`;
 
             <div class="grid-3">
               <div class="field">
-                <label for="stagePrice">Prix (€)</label>
-                <input id="stagePrice" type="number" min="0" required />
-              </div>
-
-              <div class="field">
                 <label for="stageMaxParticipants">Places max</label>
                 <input id="stageMaxParticipants" type="number" min="1" value="20" required />
               </div>
@@ -1319,7 +1347,7 @@ VITAL PROTECT`;
             </div>
 
             <div class="form-note">
-              Le titre du stage est généré automatiquement côté serveur. La publication publique est validée par l’administrateur.
+              Le titre, le tarif public, les conditions de versement formateur et la publication publique sont validés par l’administrateur VITAL PROTECT.
             </div>
           </form>
 
@@ -1377,7 +1405,7 @@ VITAL PROTECT`;
           duration: document.getElementById("stageDuration").value.trim(),
           max_participants: Number(document.getElementById("stageMaxParticipants").value || 20),
           remaining_places: Number(document.getElementById("stageRemainingPlaces").value || 20),
-          price: Number(document.getElementById("stagePrice").value || 0)
+          price: 0
         };
 
         try {
