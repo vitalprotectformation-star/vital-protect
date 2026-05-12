@@ -1,0 +1,2189 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <script>
+    (function () {
+      try {
+        if (sessionStorage.getItem('vpl-route-transition-next') !== '1') return;
+        var root = document.documentElement;
+        var origin = JSON.parse(sessionStorage.getItem('vpl-route-transition-origin') || '{}');
+        if (Number.isFinite(origin.x)) root.style.setProperty('--vpl-transition-x', (Math.max(0, Math.min(1, origin.x)) * 100) + '%');
+        if (Number.isFinite(origin.y)) root.style.setProperty('--vpl-transition-y', (Math.max(0, Math.min(1, origin.y)) * 100) + '%');
+        root.classList.add('vpl-route-preload-transition');
+      } catch (_) {}
+    })();
+  </script>
+  <style>
+    html{--vpl-transition-image:url("transition-screen.png");--vpl-transition-bg-size:cover}
+    html.vpl-route-preload-transition,html.vpl-route-preload-transition body{background:#2f6f9f!important}
+    html.vpl-route-preload-transition::before{content:"";position:fixed;inset:0;z-index:2147482998;pointer-events:none;background-color:#2f6f9f;background-image:var(--vpl-transition-image);background-position:center;background-size:var(--vpl-transition-bg-size);background-repeat:no-repeat;opacity:1}
+    @media (max-width: 768px), (pointer: coarse) and (orientation: portrait){html{--vpl-transition-image:url("transition-screen-mobile.jpg");--vpl-transition-bg-size:cover}}
+
+    /* Cards marketplace : image complète en fond, texte au recto, détails au verso par clic. */
+    .vp-marketplace-card{background-size:cover!important;background-position:center center!important;background-repeat:no-repeat!important;}
+    .vp-marketplace-card > .vp-marketplace-card-content{position:absolute!important;left:0!important;right:0!important;bottom:0!important;top:auto!important;z-index:9999!important;color:#fff!important;opacity:1!important;visibility:visible!important;display:flex!important;}
+    .vp-marketplace-card > .vp-marketplace-card-content *{opacity:1!important;visibility:visible!important;}
+  </style>
+  <link rel="preload" as="image" href="transition-screen.png" media="(min-width: 769px)" />
+  <link rel="preload" as="image" href="transition-screen-mobile.jpg" media="(max-width: 768px), (pointer: coarse) and (orientation: portrait)" />
+  <script src="/page-transition.js"></script>
+  <script>
+    if (!window.VitalPageTransition) {
+      document.write('<script src="page-transition.js"><\/script>');
+    }
+  </script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Stages Vital Protect — Sécurité personnelle réaliste</title>
+  <meta name="description" content="Découvrez les stages Vital Protect : une méthode claire pour prévenir, éviter, réagir et reprendre le calme, avec des sessions publiées uniquement quand les conditions sont confirmées." />
+  <link rel="canonical" href="https://vital-protect.fr/stage.html" />
+  <link rel="icon" href="/logo.png" type="image/png" />
+  <link rel="preload" as="image" href="vp-card-prevenir-module.webp?v=vpforeground1" />
+  <link rel="preload" as="image" href="vp-card-self-pro.webp?v=vpforeground1" />
+  <link rel="preload" as="image" href="vp-card-formateur-reseau.webp?v=vpforeground1" />
+  <link rel="stylesheet" href="/styles/tokens.css" />
+  <link rel="stylesheet" href="/styles/base.css" />
+  <link rel="stylesheet" href="/styles/components.css" />
+  <link rel="stylesheet" href="/styles/lusion-level.css" />
+
+  <style id="vp-stage-animated-replacement">
+    :root{
+      --vp-stage-navy:#061a2f;--vp-stage-blue:#0b4a8b;--vp-stage-card:rgba(255,255,255,.88);
+      --vp-stage-border:rgba(6,26,47,.09);--vp-stage-muted:#50647a;
+      --vp-stage-shadow:0 26px 80px rgba(6,26,47,.12);--vp-stage-ease:cubic-bezier(.2,.8,.2,1);
+      --vp-stage-radius:26px;
+    }
+    .page-stage-redesign main{overflow:clip;background:radial-gradient(circle at 14% 8%,rgba(109,183,255,.18),transparent 32rem),linear-gradient(180deg,#f5faff 0%,#edf6fc 44%,#f7fbff 100%)}
+    .vp-stage-modern{position:relative;isolation:isolate;padding:clamp(78px,8vw,124px) 0;color:var(--vp-stage-navy)}
+    .vp-stage-modern *{box-sizing:border-box}
+    .vp-stage-modern::before{content:"";position:absolute;inset:0;z-index:-2;pointer-events:none;background:radial-gradient(circle at 18% 10%,rgba(109,183,255,.18),transparent 26rem),radial-gradient(circle at 84% 48%,rgba(11,74,139,.10),transparent 30rem)}
+    .vp-stage-kicker{display:inline-flex;align-items:center;gap:8px;width:fit-content;padding:7px 12px;border-radius:999px;background:rgba(11,74,139,.10);color:var(--vp-stage-blue);border:1px solid rgba(11,74,139,.08);font-size:12px;font-weight:850;letter-spacing:-.01em}
+    .vp-stage-head{max-width:720px}.vp-stage-head.center{margin-inline:auto;text-align:center}
+    .vp-stage-title{margin:14px 0 0;font-size:clamp(42px,5.8vw,82px);line-height:.88;letter-spacing:-.075em;font-weight:950;color:var(--vp-stage-navy)}
+    .vp-stage-title.medium{font-size:clamp(36px,4.6vw,64px);line-height:.92}
+    .vp-stage-lead{margin:18px 0 0;max-width:640px;color:var(--vp-stage-muted);font-size:16px;line-height:1.68}
+    .vp-stage-head.center .vp-stage-lead{margin-inline:auto}
+    .vp-stage-card{position:relative;overflow:hidden;background:var(--vp-stage-card);border:1px solid var(--vp-stage-border);border-radius:var(--vp-stage-radius);box-shadow:0 18px 58px rgba(6,26,47,.09);backdrop-filter:blur(16px);transition:transform .55s var(--vp-stage-ease),box-shadow .55s var(--vp-stage-ease),border-color .55s var(--vp-stage-ease),background .55s var(--vp-stage-ease);will-change:transform}
+    .vp-stage-card::before{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(circle at var(--mx,50%) var(--my,50%),rgba(47,127,202,.18),transparent 16rem);opacity:0;transition:opacity .35s var(--vp-stage-ease)}
+    .vp-stage-card:hover{transform:translateY(-10px) scale(1.01);border-color:rgba(47,127,202,.30);box-shadow:var(--vp-stage-shadow)}
+    .vp-stage-card:hover::before{opacity:1}
+    .vp-stage-num{display:inline-grid;place-items:center;min-width:42px;height:42px;padding-inline:11px;border-radius:12px;color:#fff;background:linear-gradient(135deg,#07366b,#0a58a5);box-shadow:inset 0 1px 0 rgba(255,255,255,.24),0 12px 26px rgba(11,74,139,.24);font-size:14px;font-weight:950}
+    .vp-stage-icon{display:grid;place-items:center;width:48px;height:48px;border-radius:999px;background:rgba(11,74,139,.08);color:var(--vp-stage-blue);font-weight:900;transition:transform .35s var(--vp-stage-ease),background .35s var(--vp-stage-ease)}
+    .vp-stage-card:hover .vp-stage-icon{transform:scale(1.08) rotate(4deg);background:rgba(11,74,139,.13)}
+    .vp-stage-link{display:inline-flex;align-items:center;gap:10px;margin-top:24px;color:var(--vp-stage-blue);font-size:14px;font-weight:900;text-decoration:none}
+    .vp-stage-link span{display:inline-block;transition:transform .32s var(--vp-stage-ease)}.vp-stage-link:hover span{transform:translateX(6px)}
+    .vp-reveal,.vp-stagger>*{opacity:0;transform:translateY(36px) scale(.985);transition:opacity .84s var(--vp-stage-ease),transform .84s var(--vp-stage-ease);transition-delay:calc(var(--vp-i,0)*110ms)}
+    .vp-reveal.is-visible,.vp-stagger.is-visible>*{opacity:1;transform:translateY(0) scale(1)}
+    .vp-motion-chip{display:inline-flex;align-items:center;gap:8px;padding:8px 11px;border-radius:999px;background:rgba(255,255,255,.72);border:1px solid rgba(11,74,139,.12);color:rgba(11,74,139,.78);font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.05em;box-shadow:0 12px 35px rgba(6,26,47,.08)}
+    .vp-motion-chip::before{content:"";width:7px;height:7px;border-radius:999px;background:#2d8cff;box-shadow:0 0 0 6px rgba(45,140,255,.12);animation:vp-stage-pulse 1.8s infinite}
+    @keyframes vp-stage-pulse{0%,100%{transform:scale(.9);opacity:.9}50%{transform:scale(1.2);opacity:.55}}
+    .vp-stage-access{padding-top:clamp(90px,9vw,140px);min-height:680px}
+    .vp-stage-access-orbit{position:absolute;inset:clamp(150px,16vw,220px) -8% auto 18%;height:350px;z-index:-1;pointer-events:none;opacity:.92}
+    .vp-stage-access-orbit svg{width:100%;height:100%;overflow:visible}.vp-stage-orbit-line{stroke-dasharray:8 14;animation:vp-stage-dash 20s linear infinite}
+    @keyframes vp-stage-dash{to{stroke-dashoffset:-220}}
+    .vp-stage-access-top{position:relative;display:flex;justify-content:space-between;gap:24px;align-items:flex-start;margin-bottom:clamp(36px,5vw,70px)}
+    .vp-stage-access-top .vp-motion-chip{margin-top:40px;flex:0 0 auto}
+    .vp-stage-access-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(18px,3vw,34px);perspective:1100px}
+    .vp-stage-access-card{min-height:260px;padding:clamp(24px,3vw,34px);text-decoration:none;color:inherit}
+    .vp-stage-access-card:nth-child(2){margin-top:-28px}.vp-stage-access-card:nth-child(3){margin-top:-66px}
+    .vp-stage-access-card-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:44px}
+    .vp-stage-access-card h3,.vp-stage-problem-card h3,.vp-stage-reflex-card h3,.vp-stage-step h3{margin:0 0 10px;color:var(--vp-stage-navy);font-size:21px;line-height:1.08;letter-spacing:-.035em;font-weight:950}
+    .vp-stage-access-card p,.vp-stage-problem-card p,.vp-stage-reflex-card p,.vp-stage-step p{margin:0;color:var(--vp-stage-muted);font-size:14.5px;line-height:1.55}
+    .vp-stage-problem{border-top:1px solid rgba(6,26,47,.06)}
+    .vp-stage-problem-layout{display:grid;grid-template-columns:.92fr 1.08fr;gap:clamp(44px,7vw,96px);align-items:center}
+    .vp-stage-problem-stack{position:relative;display:grid;gap:24px;padding-left:72px}
+    .vp-stage-problem-stack::before{content:"";position:absolute;left:26px;top:20px;bottom:20px;width:2px;border-radius:999px;background:linear-gradient(180deg,transparent,rgba(47,127,202,.42),rgba(47,127,202,.08));transform:scaleY(0);transform-origin:top;transition:transform 1.1s var(--vp-stage-ease)}
+    .vp-stage-problem-stack.is-visible::before{transform:scaleY(1)}
+    .vp-stage-problem-card{display:grid;grid-template-columns:auto 1fr auto;gap:20px;align-items:center;min-height:118px;padding:24px}
+    .vp-stage-problem-card::after{content:"";position:absolute;left:-53px;top:50%;width:15px;height:15px;border-radius:999px;transform:translateY(-50%);background:#fff;border:3px solid #7db8ff;box-shadow:0 0 0 8px rgba(125,184,255,.16),0 0 30px rgba(47,127,202,.28)}
+    .vp-stage-problem-card:nth-child(2){margin-left:38px}.vp-stage-problem-card:nth-child(3){margin-left:76px}
+    .vp-stage-reflexes{background:linear-gradient(180deg,rgba(255,255,255,.50),rgba(237,246,255,.64));border-top:1px solid rgba(6,26,47,.06);border-bottom:1px solid rgba(6,26,47,.06)}
+    .vp-stage-reflex-wrap{position:relative}.vp-stage-hover-chip{position:absolute;right:0;top:32px}
+    .vp-stage-reflex-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px;margin-top:clamp(34px,4.8vw,56px)}
+    .vp-stage-reflex-card{display:grid;grid-template-columns:auto 1fr auto;gap:18px;align-items:start;min-height:164px;padding:25px}
+    .vp-stage-reflex-card .vp-stage-num{min-width:34px;height:34px;border-radius:10px;font-size:13px}.vp-stage-reflex-card.accent .vp-stage-num{background:linear-gradient(135deg,#1f977b,#4fc3a4)}
+    .vp-stage-process-layout{display:grid;grid-template-columns:.72fr 1.28fr;gap:clamp(40px,6vw,84px);align-items:center}
+    .vp-stage-process-list{position:relative;display:grid;gap:16px;padding-left:26px}
+    .vp-stage-process-list::before{content:"";position:absolute;left:45px;top:30px;bottom:30px;width:2px;z-index:-1;background:linear-gradient(180deg,rgba(47,127,202,.10),rgba(47,127,202,.45),rgba(47,127,202,.10));background-size:100% 180%;animation:vp-stage-flow-line 3.8s linear infinite}
+    @keyframes vp-stage-flow-line{from{background-position:0 180%}to{background-position:0 0}}
+    .vp-stage-step{display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:center;padding:21px 24px}
+    .vp-stage-step .vp-stage-num{position:relative;border-radius:999px;min-width:40px;height:40px}
+    .vp-stage-step .vp-stage-num::after{content:"";position:absolute;inset:-8px;border-radius:inherit;border:1px dashed rgba(47,127,202,.28);animation:vp-stage-spin 10s linear infinite}
+    @keyframes vp-stage-spin{to{transform:rotate(360deg)}}.vp-stage-process-actions{margin-top:28px}
+    .vp-stage-visual{position:relative;isolation:isolate;overflow:hidden;padding:clamp(80px,9vw,132px) 0;background:radial-gradient(circle at 78% 18%,rgba(47,127,202,.30),transparent 32rem),linear-gradient(135deg,#06182a 0%,#071f36 48%,#04111f 100%);color:#fff}
+    .vp-stage-visual::before{content:"";position:absolute;right:clamp(20px,8vw,120px);bottom:clamp(30px,7vw,96px);width:170px;height:170px;opacity:.32;background-image:radial-gradient(rgba(255,255,255,.72) 1px,transparent 1px);background-size:15px 15px;animation:vp-stage-dots-float 8s ease-in-out infinite;pointer-events:none}
+    @keyframes vp-stage-dots-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-16px)}}
+    .vp-stage-visual-grid{display:grid;grid-template-columns:1.04fr .96fr;gap:clamp(38px,6vw,78px);align-items:center}
+    .vp-stage-photo-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;min-height:430px}
+    .vp-stage-photo{position:relative;min-height:360px;margin:0;overflow:hidden;border-radius:28px;border:1px solid rgba(255,255,255,.18);box-shadow:0 36px 90px rgba(0,0,0,.34);transform:translateY(var(--vp-parallax,0px));transition:opacity .82s var(--vp-stage-ease),transform .2s linear,box-shadow .45s var(--vp-stage-ease),border-color .45s var(--vp-stage-ease)}
+    .vp-stage-photo:nth-child(2){margin-top:82px}.vp-stage-photo::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 42%,rgba(6,26,47,.50));pointer-events:none}
+    .vp-stage-photo img{width:100%;height:100%;min-height:inherit;object-fit:cover;transform:scale(1.045);transition:transform 1.1s var(--vp-stage-ease),filter .6s var(--vp-stage-ease)}
+    .vp-stage-photo:hover{border-color:rgba(255,255,255,.34);box-shadow:0 44px 110px rgba(0,0,0,.42)}.vp-stage-photo:hover img{transform:scale(1.085);filter:saturate(1.06) contrast(1.03)}
+    .vp-stage-photo-label{position:absolute;left:18px;bottom:18px;z-index:2;padding:8px 12px;border-radius:999px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.24);backdrop-filter:blur(12px);color:#fff;font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.04em}
+    .vp-stage-visual .vp-stage-kicker{color:#cfe5ff;background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.18)}
+    .vp-stage-visual .vp-stage-title{color:#fff}.vp-stage-visual .vp-stage-lead{color:rgba(255,255,255,.76)}
+    .vp-stage-proof{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}.vp-stage-proof span{padding:9px 13px;border-radius:999px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:rgba(255,255,255,.92);backdrop-filter:blur(10px);font-size:13px;font-weight:850;transition:transform .35s var(--vp-stage-ease),background .35s var(--vp-stage-ease)}.vp-stage-proof span:hover{transform:translateY(-3px);background:rgba(255,255,255,.14)}
+    .vp-stage-compare{padding-top:clamp(78px,8vw,122px);padding-bottom:clamp(78px,8vw,122px)}
+    .vp-stage-compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:28px}.vp-stage-compare-card{min-height:430px;padding:clamp(32px,4vw,54px)}
+    .vp-stage-compare-card h2{margin:14px 0 0;font-size:clamp(34px,4.1vw,58px);line-height:.92;letter-spacing:-.065em;font-weight:950;color:var(--vp-stage-navy)}
+    .vp-stage-compare-card p{margin:22px 0 0;max-width:610px;color:var(--vp-stage-muted);line-height:1.68}
+    .vp-stage-compare-card ul{list-style:none;padding:0;margin:30px 0 0;display:grid;gap:13px;color:var(--vp-stage-muted);font-weight:650}
+    .vp-stage-compare-card li{display:flex;gap:12px;align-items:flex-start}.vp-stage-compare-card li::before{content:"—";color:#db684b;font-weight:950}
+    .vp-stage-compare-card.is-not::after,.vp-stage-compare-card.is-yes::after{position:absolute;right:32px;bottom:28px;display:grid;place-items:center;width:82px;height:82px;border-radius:999px;font-size:42px;font-weight:900;opacity:.72;pointer-events:none}
+    .vp-stage-compare-card.is-not::after{content:"×";color:#db684b;background:rgba(219,104,75,.11)}.vp-stage-compare-card.is-yes::after{content:"✓";color:#1f977b;background:rgba(31,151,123,.12)}
+    .vp-stage-compare-card .vpl-button{margin-top:28px}
+    .page-stage-redesign .stage-reservation-section .section-head,.page-stage-redesign .stage-faq-section .section-head,.page-stage-redesign .stage-final-box,.page-stage-redesign .faq-grid>*{opacity:0;transform:translateY(34px);transition:opacity .84s var(--vp-stage-ease),transform .84s var(--vp-stage-ease)}
+    .page-stage-redesign .stage-reservation-section .section-head.is-visible,.page-stage-redesign .stage-faq-section .section-head.is-visible,.page-stage-redesign .stage-final-box.is-visible,.page-stage-redesign .faq-grid.is-visible>*{opacity:1;transform:translateY(0)}
+    .page-stage-redesign .faq-grid>*{transition-delay:calc(var(--vp-i,0)*100ms)}.page-stage-redesign .faq-grid>:nth-child(1){--vp-i:0}.page-stage-redesign .faq-grid>:nth-child(2){--vp-i:1}.page-stage-redesign .faq-grid>:nth-child(3){--vp-i:2}.page-stage-redesign .faq-grid>:nth-child(4){--vp-i:3}
+    @media (max-width:980px){.vp-stage-access-top,.vp-stage-problem-layout,.vp-stage-process-layout,.vp-stage-visual-grid,.vp-stage-compare-grid{grid-template-columns:1fr;display:grid}.vp-stage-access-top{display:block}.vp-stage-access-top .vp-motion-chip{margin-top:24px}.vp-stage-access-grid,.vp-stage-reflex-grid{grid-template-columns:1fr 1fr}.vp-stage-access-card:nth-child(2),.vp-stage-access-card:nth-child(3),.vp-stage-problem-card:nth-child(2),.vp-stage-problem-card:nth-child(3){margin-top:0;margin-left:0}.vp-stage-problem-stack{padding-left:0}.vp-stage-problem-stack::before,.vp-stage-problem-card::after{display:none}}
+    @media (max-width:700px){.vp-stage-modern{padding:64px 0}.vp-stage-title,.vp-stage-title.medium,.vp-stage-compare-card h2{letter-spacing:-.052em}.vp-stage-access-grid,.vp-stage-reflex-grid,.vp-stage-photo-grid{grid-template-columns:1fr}.vp-stage-photo:nth-child(2){margin-top:0}.vp-stage-photo{min-height:280px}.vp-stage-problem-card,.vp-stage-reflex-card{grid-template-columns:auto 1fr}.vp-stage-problem-card .vp-stage-icon,.vp-stage-reflex-card .vp-stage-icon,.vp-stage-access-orbit,.vp-stage-hover-chip,.vp-stage-process-list::before{display:none}.vp-stage-process-list{padding-left:0}.vp-stage-step{align-items:start}}
+    @media (prefers-reduced-motion:reduce){.page-stage-redesign *,.page-stage-redesign *::before,.page-stage-redesign *::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}.vp-reveal,.vp-stagger>*,.page-stage-redesign .stage-reservation-section .section-head,.page-stage-redesign .stage-faq-section .section-head,.page-stage-redesign .stage-final-box,.page-stage-redesign .faq-grid>*{opacity:1!important;transform:none!important}}
+  </style>
+
+<style id="vp-stage-hero-carousel-style">
+  /* Carrousel Stage — palette sombre d'origine conservée */
+  .stage-hero-redesign.stage-hero-carousel{
+    position:relative;
+    isolation:isolate;
+    overflow:hidden;
+    padding-top:clamp(160px,15vw,220px)!important;
+    padding-bottom:clamp(96px,10vw,150px)!important;
+    color:#fff;
+    background:
+      radial-gradient(circle at 78% 26%, rgba(62,137,206,.22), transparent 28%),
+      radial-gradient(circle at 18% 78%, rgba(255,255,255,.06), transparent 26%),
+      linear-gradient(135deg, #050a12 0%, #081522 48%, #0b2135 100%);
+  }
+  .stage-hero-redesign.stage-hero-carousel:before{
+    content:"";
+    position:absolute;
+    inset:0;
+    z-index:-1;
+    pointer-events:none;
+    background:
+      linear-gradient(rgba(87,175,244,.045) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(87,175,244,.032) 1px,transparent 1px);
+    background-size:78px 78px;
+    mask-image:radial-gradient(circle at 55% 38%,black,transparent 78%);
+    opacity:.52;
+  }
+  .stage-hero-carousel-grid{
+    display:grid;
+    grid-template-columns:minmax(0,.96fr) minmax(520px,.98fr);
+    align-items:center;
+    gap:clamp(36px,7vw,92px);
+  }
+  .stage-hero-carousel .stage-hero-copy{min-width:0}
+  .stage-hero-carousel .stage-pill-row{margin-bottom:22px}
+  .stage-hero-carousel h1{
+    max-width:10.6ch;
+    margin:18px 0 0;
+    color:#fff;
+    font-size:clamp(3.6rem,7.1vw,7.4rem);
+    line-height:.88;
+    letter-spacing:-.075em;
+    font-weight:950;
+  }
+  .stage-hero-carousel #heroDescription{
+    max-width:56ch;
+    margin:24px 0 0;
+    color:rgba(255,255,255,.78);
+    font-size:clamp(1rem,1.3vw,1.14rem);
+    line-height:1.7;
+  }
+  .stage-hero-carousel .stage-hero-note{
+    max-width:48ch!important;
+    margin-top:18px!important;
+    color:rgba(255,255,255,.68)!important;
+    font-size:.9rem!important;
+  }
+  .stage-hero-benefits{
+    display:grid;
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:12px;
+    margin-top:28px;
+    max-width:610px;
+  }
+  .stage-hero-benefits span{
+    min-height:88px;
+    display:grid;
+    align-content:center;
+    gap:6px;
+    padding:16px;
+    border-radius:22px;
+    border:1px solid rgba(87,175,244,.28);
+    background:rgba(255,255,255,.08);
+    box-shadow:0 14px 38px rgba(0,0,0,.16);
+    color:rgba(255,255,255,.72);
+    font-size:13px;
+    line-height:1.35;
+    backdrop-filter:blur(12px);
+  }
+  .stage-hero-benefits b{color:#fff;font-size:15px;letter-spacing:-.025em}
+  .stage-carousel-shell{
+    min-width:0;
+    padding:14px;
+    border:1px solid rgba(87,175,244,.52);
+    border-radius:34px;
+    background:rgba(2,9,18,.52);
+    box-shadow:0 34px 110px rgba(29,125,213,.22);
+  }
+  .stage-carousel{
+    position:relative;
+    height:clamp(560px,58vw,760px);
+    overflow:hidden;
+    border-radius:24px;
+    background:#061a2f;
+    isolation:isolate;
+  }
+  .stage-carousel-track{height:100%;display:flex;transition:transform .75s cubic-bezier(.2,.8,.2,1);will-change:transform}
+  .stage-carousel-slide{position:relative;min-width:100%;height:100%;overflow:hidden}
+  .stage-carousel-slide:after{
+    content:"";
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    background:
+      linear-gradient(90deg,rgba(3,14,27,.78),rgba(3,14,27,.26) 48%,rgba(3,14,27,.04) 78%),
+      linear-gradient(0deg,rgba(3,14,27,.64),transparent 54%);
+    z-index:1;
+  }
+  .stage-carousel-slide img{
+    width:100%;
+    height:100%;
+    display:block;
+    object-fit:cover;
+    object-position:var(--stage-slide-position,center center);
+    filter:saturate(1.05) contrast(1.03);
+    transform:scale(1.03);
+    animation:stageHeroKen 9s ease-in-out infinite alternate;
+  }
+  .stage-carousel-caption{
+    position:absolute;
+    z-index:2;
+    left:clamp(22px,4.2vw,56px);
+    bottom:clamp(24px,4.5vw,58px);
+    width:min(520px,calc(100% - 106px));
+    display:grid;
+    gap:11px;
+    padding:clamp(18px,2.2vw,26px);
+    border-radius:24px;
+    border:1px solid rgba(255,255,255,.18);
+    background:rgba(3,15,26,.62);
+    color:#fff;
+    backdrop-filter:blur(18px) saturate(1.12);
+    box-shadow:0 24px 70px rgba(0,0,0,.34);
+  }
+  .stage-carousel-caption small{color:#83e6ff;letter-spacing:.15em;text-transform:uppercase;font-size:12px;font-weight:900}
+  .stage-carousel-caption strong{font-size:clamp(28px,3.3vw,48px);line-height:.95;letter-spacing:-.055em;font-weight:950}
+  .stage-carousel-caption span{color:rgba(255,255,255,.84);font-size:clamp(14px,1.15vw,17px);line-height:1.48}
+  .stage-carousel-nav{
+    position:absolute;
+    z-index:4;
+    top:50%;
+    transform:translateY(-50%);
+    width:54px;
+    height:54px;
+    display:grid;
+    place-items:center;
+    border:1px solid rgba(255,255,255,.26);
+    border-radius:999px;
+    background:rgba(255,255,255,.16);
+    color:#fff;
+    font:inherit;
+    font-size:40px;
+    line-height:1;
+    backdrop-filter:blur(12px);
+    cursor:pointer;
+    transition:transform .22s ease,background .22s ease,border-color .22s ease;
+  }
+  .stage-carousel-nav:hover{transform:translateY(-50%) scale(1.06);background:rgba(109,223,255,.20);border-color:rgba(109,223,255,.72)}
+  .stage-carousel-nav.prev{left:20px}
+  .stage-carousel-nav.next{right:20px}
+  .stage-carousel-dots{position:absolute;z-index:4;right:26px;bottom:24px;display:flex;flex-wrap:wrap;justify-content:flex-end;gap:8px;max-width:min(360px,calc(100% - 52px))}
+  .stage-carousel-dots button{width:9px;height:9px;padding:0;border:0;border-radius:999px;background:rgba(255,255,255,.50);cursor:pointer;transition:width .28s ease,background .28s ease,box-shadow .28s ease}
+  .stage-carousel-dots button.active{width:31px;background:#83e6ff;box-shadow:0 0 18px rgba(109,223,255,.75)}
+  @keyframes stageHeroKen{from{transform:scale(1.01)}to{transform:scale(1.08)}}
+  @media(max-width:1180px){.stage-hero-carousel-grid{grid-template-columns:1fr}.stage-carousel{height:min(82vw,760px);min-height:540px}.stage-hero-carousel h1{max-width:12ch}}
+  @media(max-width:720px){.stage-hero-redesign.stage-hero-carousel{padding-top:132px!important;padding-bottom:64px!important}.stage-hero-benefits{grid-template-columns:1fr}.stage-carousel-shell{padding:8px;border-radius:26px}.stage-carousel{height:74vh;min-height:560px;border-radius:20px}.stage-carousel-caption{left:14px;right:14px;bottom:62px;width:auto;padding:18px;border-radius:18px}.stage-carousel-caption strong{font-size:32px}.stage-carousel-nav{width:46px;height:46px;font-size:32px}.stage-carousel-nav.prev{left:12px}.stage-carousel-nav.next{right:12px}.stage-carousel-dots{left:18px;right:auto;bottom:22px;justify-content:flex-start}}
+  @media(prefers-reduced-motion:reduce){.stage-carousel-slide img{animation:none}.stage-carousel-track,.stage-carousel-nav,.stage-carousel-dots button{transition:none}}
+</style>
+
+
+  <style id="vp-stage-marketplace-style">
+    .vp-marketplace-section{
+      position:relative;
+      isolation:isolate;
+      padding:clamp(76px,8vw,122px) 0;
+      background:
+        radial-gradient(circle at 16% 16%,rgba(109,183,255,.18),transparent 32rem),
+        linear-gradient(180deg,#f7fbff 0%,#edf6fc 100%);
+      border-top:1px solid rgba(6,26,47,.06);
+      border-bottom:1px solid rgba(6,26,47,.06);
+      color:var(--vp-stage-navy);
+    }
+    .vp-marketplace-paths{
+      display:flex;
+      flex-wrap:wrap;
+      justify-content:center;
+      gap:10px;
+      margin-top:clamp(22px,3vw,32px);
+    }
+    .vp-marketplace-path-btn{
+      appearance:none;
+      border:1px solid rgba(6,26,47,.10);
+      border-radius:999px;
+      background:rgba(255,255,255,.72);
+      color:#50647a;
+      cursor:pointer;
+      font:inherit;
+      font-size:13px;
+      font-weight:900;
+      padding:11px 16px;
+      box-shadow:0 10px 30px rgba(6,26,47,.05);
+      transition:transform .24s ease,box-shadow .24s ease,border-color .24s ease,background .24s ease,color .24s ease;
+    }
+    .vp-marketplace-path-btn:hover,.vp-marketplace-path-btn.is-active{
+      transform:translateY(-2px);
+      border-color:rgba(47,127,202,.34);
+      background:#fff;
+      color:#0b4a8b;
+      box-shadow:0 14px 38px rgba(6,26,47,.09);
+    }
+    .vp-marketplace-filters{
+      display:grid;
+      grid-template-columns:repeat(3,minmax(170px,260px));
+      justify-content:center;
+      gap:12px;
+      margin:18px auto 0;
+    }
+    .vp-marketplace-filter{
+      display:grid;
+      gap:7px;
+      text-align:left;
+    }
+    .vp-marketplace-filter label{
+      color:#50647a;
+      font-size:11px;
+      font-weight:950;
+      letter-spacing:.06em;
+      text-transform:uppercase;
+    }
+    .vp-marketplace-filter select{
+      width:100%;
+      min-height:44px;
+      border:1px solid rgba(6,26,47,.12);
+      border-radius:16px;
+      background:rgba(255,255,255,.9);
+      color:#061a2f;
+      font:inherit;
+      font-size:14px;
+      font-weight:800;
+      padding:0 38px 0 14px;
+      box-shadow:0 10px 28px rgba(6,26,47,.05);
+    }
+    .vp-marketplace-grid{
+      display:grid;
+      grid-template-columns:minmax(0,1fr);
+      gap:clamp(18px,2.6vw,30px);
+      max-width:1180px;
+      margin:clamp(24px,3vw,36px) auto 0;
+      align-items:start;
+    }
+    .vp-marketplace-column{
+      position:relative;
+      min-height:360px;
+      padding:clamp(20px,2.4vw,28px);
+      border:1px solid rgba(6,26,47,.08);
+      border-radius:30px;
+      background:rgba(255,255,255,.82);
+      box-shadow:0 18px 58px rgba(6,26,47,.08);
+      backdrop-filter:blur(16px);
+      overflow:hidden;
+    }
+    .vp-marketplace-column::before{
+      content:"";
+      position:absolute;
+      inset:0 0 auto;
+      height:6px;
+      background:linear-gradient(90deg,#07366b,#2f7fca,#8cc8ff);
+      opacity:.85;
+    }
+    .vp-marketplace-column-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:18px}
+    .vp-marketplace-column h3{margin:0;color:#061a2f;font-size:clamp(22px,2vw,30px);line-height:1;letter-spacing:-.045em;font-weight:950}
+    .vp-marketplace-column p{margin:8px 0 0;color:#50647a;font-size:14px;line-height:1.55}
+    .vp-marketplace-badge{display:inline-flex;align-items:center;gap:6px;white-space:nowrap;padding:8px 10px;border-radius:999px;background:rgba(11,74,139,.08);border:1px solid rgba(11,74,139,.10);color:#0b4a8b;font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.04em}
+    .vp-marketplace-list{
+      display:grid;
+      grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+      gap:16px;
+      margin-top:18px;
+      align-items:stretch;
+    }
+    .vp-marketplace-card{
+      position:relative;
+      display:flex;
+      flex-direction:column;
+      justify-content:flex-end;
+      height:520px;
+      width:100%;
+      text-align:left;
+      padding:0;
+      border:1px solid rgba(6,26,47,.18);
+      border-radius:24px;
+      background-color:#061a2f;
+      background-image:var(--vp-card-image);
+      background-size:cover;
+      background-position:center center;
+      background-repeat:no-repeat;
+      color:#fff;
+      text-decoration:none;
+      box-shadow:0 18px 46px rgba(6,26,47,.16);
+      overflow:hidden;
+      cursor:pointer;
+      transition:transform .28s ease,box-shadow .28s ease,border-color .28s ease,filter .28s ease;
+      isolation:isolate;
+    }
+    .vp-marketplace-card-visual,
+    .vp-marketplace-card-bg{display:none!important;}
+    .vp-marketplace-card::before,
+    .vp-marketplace-card::after{display:none!important;content:none!important;}
+    .vp-marketplace-card-content{
+      position:relative!important;
+      z-index:20!important;
+      display:flex!important;
+      flex-direction:column!important;
+      width:100%!important;
+      max-height:46%!important;
+      box-sizing:border-box!important;
+      margin-top:auto!important;
+      padding:0 18px 14px!important;
+      color:#fff!important;
+      opacity:1!important;
+      visibility:visible!important;
+      overflow:hidden!important;
+      text-shadow:0 2px 10px rgba(0,0,0,.42);
+      pointer-events:none;
+    }
+    .vp-marketplace-card-content *{
+      opacity:1!important;
+      visibility:visible!important;
+    }
+    button.vp-marketplace-card{cursor:pointer;font:inherit}
+    .vp-marketplace-card:hover,.vp-marketplace-card.is-selected{transform:translateY(-6px);border-color:rgba(140,200,255,.42);box-shadow:0 22px 56px rgba(6,26,47,.22);filter:saturate(1.05)}
+    .vp-marketplace-card.is-selected{outline:2px solid rgba(109,183,255,.46);outline-offset:3px}
+    .vp-marketplace-card.is-disabled{opacity:.62;cursor:not-allowed;transform:none!important}
+    .vp-marketplace-card-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:8px}
+    .vp-marketplace-type{color:#a8d5ff!important;font-size:10px;font-weight:950;text-transform:uppercase;letter-spacing:.06em}
+    .vp-marketplace-price{font-weight:950;color:#fff!important;white-space:nowrap;font-size:16px}
+    .vp-marketplace-title{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;margin:0 0 9px;color:#fff!important;font-size:17px;line-height:1.06;letter-spacing:-.04em;font-weight:950;text-wrap:balance}
+    .vp-marketplace-desc{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;color:rgba(255,255,255,.82)!important;font-size:12.5px;line-height:1.42;margin:0}
+    .vp-marketplace-meta{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0;overflow:hidden}
+    .vp-marketplace-meta span{display:inline-flex;align-items:center;min-height:22px;padding:4px 7px;border-radius:999px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.10);color:rgba(255,255,255,.86)!important;font-size:10.5px;font-weight:800;line-height:1.05}
+    .vp-marketplace-action{display:inline-flex;align-items:center;gap:8px;margin-top:auto;padding-top:10px;color:#a8d5ff!important;font-size:12.5px;font-weight:950}
+    .vp-marketplace-empty{grid-column:1/-1;padding:18px;border:1px dashed rgba(11,74,139,.22);border-radius:20px;background:rgba(255,255,255,.58);color:#50647a;font-size:14px;line-height:1.55}
+    .vp-marketplace-empty strong{display:block;margin-bottom:4px;color:#061a2f}
+    .vp-marketplace-cta{margin-top:18px;display:flex;flex-wrap:wrap;gap:10px}
+    .vp-marketplace-mini-note{margin-top:16px;padding:14px;border-radius:18px;background:rgba(11,74,139,.06);color:#50647a;font-size:13px;line-height:1.5}
+    .vp-marketplace-private-cta{margin-top:18px;padding:18px;border-radius:22px;border:1px solid rgba(11,74,139,.14);background:linear-gradient(135deg,rgba(11,74,139,.08),rgba(255,255,255,.82));display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+    .vp-marketplace-private-cta[hidden]{display:none!important}
+    .vp-marketplace-private-cta strong{display:block;color:#061a2f;font-size:16px;font-weight:950;letter-spacing:-.02em}
+    .vp-marketplace-private-cta span{display:block;margin-top:4px;color:#50647a;font-size:13px;line-height:1.45}
+
+    .vp-card-face{
+      position:absolute!important;
+      left:0!important;
+      right:0!important;
+      bottom:0!important;
+      z-index:30!important;
+      box-sizing:border-box!important;
+      min-height:39%!important;
+      max-height:46%!important;
+      display:flex!important;
+      flex-direction:column!important;
+      padding:0 18px 16px!important;
+      color:#fff!important;
+      text-shadow:0 2px 12px rgba(0,0,0,.48);
+      transition:opacity .24s ease, transform .24s ease;
+      pointer-events:none!important;
+      overflow:hidden!important;
+    }
+    .vp-card-face *{color:inherit!important;box-sizing:border-box!important}
+    .vp-card-face-front{opacity:1!important;transform:rotateY(0deg) translateY(0)!important;backface-visibility:hidden!important;transform-origin:center center!important}
+    .vp-card-face-back{opacity:0!important;transform:rotateY(180deg) translateY(10px)!important;backface-visibility:hidden!important;transform-origin:center center!important}
+    .vp-marketplace-card.is-flipped .vp-card-face-front{opacity:0!important;transform:rotateY(-180deg) translateY(-6px)!important;pointer-events:none!important}
+    .vp-marketplace-card.is-flipped .vp-card-face-back{opacity:1!important;transform:rotateY(0deg) translateY(0)!important}
+    .vp-marketplace-card.is-flipped{border-color:rgba(140,200,255,.46);box-shadow:0 22px 56px rgba(6,26,47,.24);filter:saturate(1.04)}
+    .vp-card-mainline{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:8px}
+    .vp-card-kicker{font-size:10px;font-weight:950;text-transform:uppercase;letter-spacing:.075em;color:#a8d5ff!important;line-height:1.1}
+    .vp-card-price{font-size:17px;font-weight:950;white-space:nowrap;line-height:1;color:#fff!important}
+    .vp-card-title{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;margin:0 0 10px;font-size:17px;line-height:1.05;font-weight:950;letter-spacing:-.045em;color:#fff!important;text-wrap:balance}
+    .vp-card-location{display:flex;align-items:center;gap:7px;margin:0 0 8px;font-size:12px;line-height:1.25;font-weight:850;color:rgba(255,255,255,.9)!important}
+    .vp-card-location::before{content:"";width:7px;height:7px;flex:0 0 auto;border-radius:999px;background:#8cc8ff;box-shadow:0 0 0 4px rgba(140,200,255,.12)}
+    .vp-card-front-meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:2px}
+    .vp-card-chip{display:inline-flex;align-items:center;min-height:22px;padding:4px 7px;border-radius:999px;background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.12);font-size:10.5px;font-weight:850;line-height:1.05;color:rgba(255,255,255,.9)!important;max-width:100%;overflow:hidden;text-overflow:ellipsis}
+    .vp-card-action{display:inline-flex;align-items:center;gap:8px;margin-top:auto;padding-top:9px;color:#a8d5ff!important;font-size:12.5px;font-weight:950;line-height:1.1}
+    .vp-card-back-title{margin:0 0 7px;font-size:12px;font-weight:950;text-transform:uppercase;letter-spacing:.07em;color:#a8d5ff!important}
+    .vp-card-back-desc{display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical;overflow:hidden;margin:0;color:rgba(255,255,255,.88)!important;font-size:12px;line-height:1.36;font-weight:700}
+    .vp-card-back-meta{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0}
+    @media(max-width:1080px){.vp-marketplace-column{min-height:auto}.vp-marketplace-filters{grid-template-columns:repeat(2,minmax(170px,1fr));max-width:640px}}
+    @media(max-width:640px){.vp-marketplace-section{padding:62px 0}.vp-marketplace-filters{grid-template-columns:1fr}.vp-marketplace-column{padding:18px;border-radius:24px}.vp-marketplace-column-head{display:block}.vp-marketplace-badge{margin-top:12px}.vp-marketplace-list{grid-template-columns:1fr}.vp-marketplace-card{height:500px}.vp-marketplace-card-content{max-height:47%!important;padding:0 16px 14px!important}.vp-marketplace-card-top{display:flex}.vp-marketplace-price{display:block}.vp-marketplace-private-cta{display:block}.vp-marketplace-private-cta .vpl-button{margin-top:12px}}
+  </style>
+
+
+  <style id="vp-stage-mobile-final-check-fix">
+    /* Vérification mobile finale : garde le grand titre lisible sans lignes collées. */
+    @media (max-width: 720px) {
+      .stage-hero-carousel h1 {
+        font-size: clamp(46px, 12vw, 58px) !important;
+        line-height: .96 !important;
+        letter-spacing: -0.065em !important;
+        max-width: 10.8ch !important;
+      }
+    }
+
+    @media (max-width: 380px) {
+      .stage-hero-carousel h1 {
+        font-size: clamp(42px, 11.6vw, 52px) !important;
+        line-height: .98 !important;
+      }
+    }
+  </style>
+
+
+  <style id="vp-real-flip-cards-final">
+    /* VRAI RECTO/VERSO AU CLIC — pas de faux patch :
+       - la carte est un conteneur 3D
+       - .vp-flip-inner tourne à 180°
+       - recto = image complète fournie + infos principales seulement
+       - verso = panneau bleu indépendant + description et infos secondaires
+    */
+    .vp-marketplace-list{
+      grid-template-columns:repeat(auto-fill,minmax(250px,1fr)) !important;
+      gap:18px !important;
+      perspective:1200px !important;
+    }
+    .vp-marketplace-card{
+      position:relative !important;
+      display:block !important;
+      width:100% !important;
+      height:520px !important;
+      min-height:520px !important;
+      padding:0 !important;
+      border:0 !important;
+      border-radius:24px !important;
+      background:none !important;
+      background-image:none !important;
+      overflow:visible !important;
+      color:#fff !important;
+      text-align:left !important;
+      text-decoration:none !important;
+      cursor:pointer !important;
+      perspective:1200px !important;
+      transform:none !important;
+      box-shadow:none !important;
+      isolation:isolate !important;
+    }
+    .vp-marketplace-card:hover,
+    .vp-marketplace-card.is-selected{
+      transform:none !important;
+      filter:none !important;
+      box-shadow:none !important;
+    }
+    .vp-marketplace-card.is-disabled{
+      opacity:.6 !important;
+      cursor:not-allowed !important;
+      pointer-events:none !important;
+    }
+    .vp-flip-inner{
+      position:relative !important;
+      width:100% !important;
+      height:100% !important;
+      min-height:100% !important;
+      transform-style:preserve-3d !important;
+      transition:transform .72s cubic-bezier(.2,.72,.15,1) !important;
+      border-radius:24px !important;
+      box-shadow:0 18px 46px rgba(6,26,47,.16) !important;
+      will-change:transform !important;
+    }
+    .vp-marketplace-card:hover .vp-flip-inner{
+      box-shadow:0 24px 58px rgba(6,26,47,.22) !important;
+      transform:translateY(-4px) !important;
+    }
+    .vp-marketplace-card.is-flipped .vp-flip-inner,
+    .vp-marketplace-card.is-flipped:hover .vp-flip-inner{
+      transform:rotateY(180deg) !important;
+    }
+    .vp-marketplace-card.is-selected .vp-flip-inner{
+      outline:2px solid rgba(140,200,255,.55) !important;
+      outline-offset:4px !important;
+    }
+    .vp-card-face{
+      position:absolute !important;
+      inset:0 !important;
+      z-index:auto !important;
+      display:block !important;
+      width:100% !important;
+      height:100% !important;
+      min-height:100% !important;
+      max-height:none !important;
+      padding:0 !important;
+      border:1px solid rgba(6,26,47,.18) !important;
+      border-radius:24px !important;
+      overflow:hidden !important;
+      backface-visibility:hidden !important;
+      -webkit-backface-visibility:hidden !important;
+      transform-style:preserve-3d !important;
+      opacity:1 !important;
+      visibility:visible !important;
+      pointer-events:none !important;
+      color:#fff !important;
+      text-shadow:0 2px 12px rgba(0,0,0,.5) !important;
+      box-sizing:border-box !important;
+    }
+    .vp-card-face *{box-sizing:border-box !important;color:inherit !important;}
+    .vp-card-face-front{
+      transform:rotateY(0deg) !important;
+      background-image:var(--vp-card-bg) !important;
+      background-size:cover !important;
+      background-position:center center !important;
+      background-repeat:no-repeat !important;
+      background-color:#061a2f !important;
+    }
+    .vp-card-face-back{
+      transform:rotateY(180deg) !important;
+      background:
+        radial-gradient(circle at 15% 10%,rgba(82,158,236,.22),transparent 28%),
+        radial-gradient(circle at 85% 85%,rgba(31,99,166,.24),transparent 34%),
+        linear-gradient(160deg,#071b31 0%,#082744 52%,#061827 100%) !important;
+    }
+    .vp-card-face-back::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:
+        linear-gradient(130deg,rgba(255,255,255,.12),transparent 22%,transparent 70%,rgba(140,200,255,.10)),
+        url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="360" height="360" viewBox="0 0 360 360"><path d="M180 30 285 76v78c0 74-42 139-105 176C117 293 75 228 75 154V76l105-46Z" fill="none" stroke="rgba(140,200,255,.16)" stroke-width="10"/><path d="M180 62 254 94v56c0 54-30 101-74 130-44-29-74-76-74-130V94l74-32Z" fill="none" stroke="rgba(140,200,255,.09)" stroke-width="8"/></svg>') left -92px bottom -84px / 230px 230px no-repeat;
+      opacity:.72;
+      pointer-events:none;
+    }
+    .vp-card-front-content{
+      position:absolute !important;
+      left:18px !important;
+      right:18px !important;
+      bottom:18px !important;
+      z-index:3 !important;
+      display:flex !important;
+      flex-direction:column !important;
+      gap:8px !important;
+      max-height:44% !important;
+      overflow:hidden !important;
+      color:#fff !important;
+      pointer-events:none !important;
+    }
+    .vp-card-back-content{
+      position:absolute !important;
+      inset:0 !important;
+      z-index:3 !important;
+      display:flex !important;
+      flex-direction:column !important;
+      justify-content:flex-start !important;
+      padding:24px 20px 20px !important;
+      color:#fff !important;
+      pointer-events:none !important;
+    }
+    .vp-card-mainline{
+      display:flex !important;
+      align-items:flex-start !important;
+      justify-content:space-between !important;
+      gap:10px !important;
+      margin:0 !important;
+    }
+    .vp-card-kicker{
+      display:block !important;
+      font-size:10px !important;
+      line-height:1.1 !important;
+      font-weight:950 !important;
+      text-transform:uppercase !important;
+      letter-spacing:.075em !important;
+      color:#a8d5ff !important;
+    }
+    .vp-card-price{
+      display:block !important;
+      font-size:18px !important;
+      line-height:1 !important;
+      font-weight:950 !important;
+      color:#fff !important;
+      white-space:nowrap !important;
+    }
+    .vp-card-title{
+      display:-webkit-box !important;
+      -webkit-line-clamp:3 !important;
+      -webkit-box-orient:vertical !important;
+      overflow:hidden !important;
+      margin:0 !important;
+      font-size:19px !important;
+      line-height:1.02 !important;
+      font-weight:950 !important;
+      letter-spacing:-.045em !important;
+      color:#fff !important;
+      text-wrap:balance !important;
+    }
+    .vp-card-location,
+    .vp-card-date{
+      display:flex !important;
+      align-items:center !important;
+      gap:7px !important;
+      margin:0 !important;
+      font-size:12.5px !important;
+      line-height:1.2 !important;
+      font-weight:900 !important;
+      color:rgba(255,255,255,.92) !important;
+    }
+    .vp-card-location::before{
+      content:"";
+      width:7px;
+      height:7px;
+      border-radius:999px;
+      background:#8cc8ff;
+      box-shadow:0 0 0 4px rgba(140,200,255,.14);
+      flex:0 0 auto;
+    }
+    .vp-card-date{
+      width:max-content !important;
+      max-width:100% !important;
+      min-height:24px !important;
+      padding:5px 8px !important;
+      border-radius:999px !important;
+      background:rgba(255,255,255,.14) !important;
+      border:1px solid rgba(255,255,255,.12) !important;
+      color:rgba(255,255,255,.92) !important;
+    }
+    .vp-card-action{
+      display:inline-flex !important;
+      align-items:center !important;
+      gap:8px !important;
+      width:max-content !important;
+      max-width:100% !important;
+      margin-top:4px !important;
+      color:#a8d5ff !important;
+      font-size:13px !important;
+      font-weight:950 !important;
+      line-height:1.1 !important;
+    }
+    .vp-card-back-title{
+      margin:0 0 10px !important;
+      color:#a8d5ff !important;
+      font-size:11px !important;
+      font-weight:950 !important;
+      letter-spacing:.08em !important;
+      text-transform:uppercase !important;
+    }
+    .vp-card-back-heading{
+      display:-webkit-box !important;
+      -webkit-line-clamp:3 !important;
+      -webkit-box-orient:vertical !important;
+      overflow:hidden !important;
+      margin:0 0 12px !important;
+      color:#fff !important;
+      font-size:22px !important;
+      line-height:1.02 !important;
+      font-weight:950 !important;
+      letter-spacing:-.05em !important;
+    }
+    .vp-card-back-desc{
+      display:-webkit-box !important;
+      -webkit-line-clamp:8 !important;
+      -webkit-box-orient:vertical !important;
+      overflow:hidden !important;
+      margin:0 !important;
+      color:rgba(255,255,255,.86) !important;
+      font-size:13px !important;
+      line-height:1.42 !important;
+      font-weight:700 !important;
+    }
+    .vp-card-back-meta{
+      display:flex !important;
+      flex-wrap:wrap !important;
+      gap:7px !important;
+      margin:14px 0 0 !important;
+      overflow:hidden !important;
+    }
+    .vp-card-chip{
+      display:inline-flex !important;
+      align-items:center !important;
+      min-height:24px !important;
+      max-width:100% !important;
+      padding:5px 8px !important;
+      border-radius:999px !important;
+      background:rgba(255,255,255,.12) !important;
+      border:1px solid rgba(255,255,255,.12) !important;
+      color:rgba(255,255,255,.9) !important;
+      font-size:11px !important;
+      font-weight:850 !important;
+      line-height:1.05 !important;
+      overflow:hidden !important;
+      text-overflow:ellipsis !important;
+    }
+    .vp-card-back-content .vp-card-action{
+      margin-top:auto !important;
+      padding-top:12px !important;
+      font-size:14px !important;
+    }
+    @media(max-width:640px){
+      .vp-marketplace-card{height:500px !important;min-height:500px !important;}
+      .vp-card-front-content{left:16px !important;right:16px !important;bottom:16px !important;max-height:46% !important;}
+      .vp-card-title{font-size:18px !important;}
+      .vp-card-back-heading{font-size:20px !important;}
+      .vp-card-back-desc{-webkit-line-clamp:7 !important;}
+    }
+  </style>
+
+
+  <style id="vp-card-back-blue-definitive-fix">
+    /* Correctif définitif dos des cards : vrai verso bleu, texte blanc visible, sans modifier l'API. */
+    .vp-marketplace-list{
+      perspective:1400px !important;
+    }
+    .vp-marketplace-card{
+      position:relative !important;
+      display:block !important;
+      height:520px !important;
+      min-height:520px !important;
+      padding:0 !important;
+      border:0 !important;
+      border-radius:24px !important;
+      background:transparent !important;
+      overflow:visible !important;
+      color:#fff !important;
+      text-decoration:none !important;
+      perspective:1400px !important;
+      isolation:isolate !important;
+    }
+    .vp-flip-inner{
+      position:relative !important;
+      width:100% !important;
+      height:100% !important;
+      min-height:100% !important;
+      border-radius:24px !important;
+      transform-style:preserve-3d !important;
+      transition:transform .72s cubic-bezier(.2,.72,.15,1) !important;
+      box-shadow:0 18px 46px rgba(6,26,47,.18) !important;
+    }
+    .vp-marketplace-card:hover .vp-flip-inner{
+      box-shadow:0 24px 58px rgba(6,26,47,.24) !important;
+    }
+    .vp-marketplace-card.is-flipped .vp-flip-inner{
+      transform:rotateY(180deg) !important;
+    }
+    .vp-card-face{
+      position:absolute !important;
+      inset:0 !important;
+      width:100% !important;
+      height:100% !important;
+      min-height:100% !important;
+      max-height:none !important;
+      display:block !important;
+      padding:0 !important;
+      border:1px solid rgba(6,26,47,.18) !important;
+      border-radius:24px !important;
+      overflow:hidden !important;
+      backface-visibility:hidden !important;
+      -webkit-backface-visibility:hidden !important;
+      transform-style:preserve-3d !important;
+      opacity:1 !important;
+      visibility:visible !important;
+      pointer-events:none !important;
+      color:#fff !important;
+      box-sizing:border-box !important;
+    }
+    .vp-card-face-front,
+    .vp-marketplace-card.is-flipped .vp-card-face-front{
+      transform:rotateY(0deg) !important;
+      opacity:1 !important;
+      visibility:visible !important;
+      background-image:var(--vp-card-bg) !important;
+      background-size:cover !important;
+      background-position:center center !important;
+      background-repeat:no-repeat !important;
+      background-color:#061a2f !important;
+    }
+    .vp-card-face-back,
+    .vp-marketplace-card.is-flipped .vp-card-face-back{
+      transform:rotateY(180deg) !important;
+      opacity:1 !important;
+      visibility:visible !important;
+      background:
+        radial-gradient(circle at 20% 8%, rgba(124,196,255,.24), transparent 28%),
+        radial-gradient(circle at 88% 88%, rgba(28,94,160,.26), transparent 34%),
+        linear-gradient(155deg, #06172b 0%, #082947 52%, #04111f 100%) !important;
+      text-shadow:none !important;
+    }
+    .vp-card-face-back::before{
+      content:"" !important;
+      position:absolute !important;
+      inset:0 !important;
+      background:
+        linear-gradient(125deg, rgba(255,255,255,.13), transparent 23%, transparent 72%, rgba(140,200,255,.10)),
+        url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="420" height="420" viewBox="0 0 420 420"><path d="M210 42 332 94v92c0 86-48 162-122 206C136 348 88 272 88 186V94l122-52Z" fill="none" stroke="rgba(140,200,255,.18)" stroke-width="11"/><path d="M210 78 296 116v68c0 63-36 118-86 151-50-33-86-88-86-151v-68l86-38Z" fill="none" stroke="rgba(140,200,255,.10)" stroke-width="8"/></svg>') left -92px bottom -90px / 255px 255px no-repeat !important;
+      opacity:.78 !important;
+      pointer-events:none !important;
+    }
+    .vp-card-face-back::after{
+      content:"" !important;
+      position:absolute !important;
+      inset:0 !important;
+      background:linear-gradient(180deg, rgba(255,255,255,.04), transparent 34%, rgba(0,0,0,.10)) !important;
+      pointer-events:none !important;
+    }
+    .vp-card-front-content{
+      position:absolute !important;
+      left:18px !important;
+      right:18px !important;
+      bottom:18px !important;
+      z-index:5 !important;
+      display:flex !important;
+      flex-direction:column !important;
+      gap:8px !important;
+      max-height:43% !important;
+      overflow:hidden !important;
+      color:#fff !important;
+      text-shadow:0 2px 14px rgba(0,0,0,.58) !important;
+      pointer-events:none !important;
+    }
+    .vp-card-back-content{
+      position:absolute !important;
+      inset:0 !important;
+      z-index:5 !important;
+      display:flex !important;
+      flex-direction:column !important;
+      justify-content:flex-start !important;
+      gap:12px !important;
+      padding:26px 22px 22px !important;
+      color:#fff !important;
+      text-shadow:none !important;
+      pointer-events:none !important;
+      overflow:hidden !important;
+      transform:translateZ(1px) !important;
+    }
+    .vp-card-back-content *{
+      color:inherit !important;
+      visibility:visible !important;
+      opacity:1 !important;
+      box-sizing:border-box !important;
+    }
+    .vp-card-back-title{
+      margin:0 !important;
+      color:#a8d5ff !important;
+      font-size:11px !important;
+      line-height:1.15 !important;
+      font-weight:950 !important;
+      letter-spacing:.09em !important;
+      text-transform:uppercase !important;
+    }
+    .vp-card-back-heading{
+      display:block !important;
+      margin:0 !important;
+      color:#fff !important;
+      font-size:22px !important;
+      line-height:1.03 !important;
+      font-weight:950 !important;
+      letter-spacing:-.05em !important;
+      text-wrap:balance !important;
+    }
+    .vp-card-back-desc{
+      display:block !important;
+      margin:0 !important;
+      color:rgba(255,255,255,.88) !important;
+      font-size:13px !important;
+      line-height:1.45 !important;
+      font-weight:700 !important;
+      overflow:hidden !important;
+      max-height:198px !important;
+    }
+    .vp-card-back-meta{
+      display:flex !important;
+      flex-wrap:wrap !important;
+      gap:7px !important;
+      margin:2px 0 0 !important;
+      overflow:hidden !important;
+    }
+    .vp-card-chip{
+      display:inline-flex !important;
+      align-items:center !important;
+      min-height:24px !important;
+      max-width:100% !important;
+      padding:5px 8px !important;
+      border-radius:999px !important;
+      background:rgba(255,255,255,.13) !important;
+      border:1px solid rgba(255,255,255,.13) !important;
+      color:rgba(255,255,255,.92) !important;
+      font-size:11px !important;
+      font-weight:850 !important;
+      line-height:1.05 !important;
+      overflow:hidden !important;
+      text-overflow:ellipsis !important;
+    }
+    .vp-card-back-content .vp-card-action{
+      margin-top:auto !important;
+      padding-top:12px !important;
+      color:#a8d5ff !important;
+      font-size:14px !important;
+      font-weight:950 !important;
+      text-shadow:none !important;
+    }
+    @media(max-width:640px){
+      .vp-marketplace-card{height:500px !important;min-height:500px !important;}
+      .vp-card-front-content{left:16px !important;right:16px !important;bottom:16px !important;max-height:44% !important;}
+      .vp-card-back-content{padding:23px 19px 19px !important;}
+      .vp-card-back-heading{font-size:20px !important;}
+      .vp-card-back-desc{font-size:12.5px !important;max-height:178px !important;}
+    }
+  </style>
+
+</head>
+<body class="vpl-inner-page page-editorial-light page-stage page-stage-redesign">
+  <canvas class="vpl-canvas" aria-hidden="true"></canvas>
+  <div class="vpl-noise" aria-hidden="true"></div>
+  <div class="vpl-scroll-ribbon" aria-hidden="true">
+    <svg class="vpl-scroll-ribbon-svg" viewBox="0 0 1000 1600" preserveAspectRatio="none">
+      <defs><linearGradient id="vplRibbonGradient" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#d8ecff" stop-opacity="0.96"></stop><stop offset="38%" stop-color="#6db7ff" stop-opacity="0.94"></stop><stop offset="72%" stop-color="#2f7fca" stop-opacity="0.94"></stop><stop offset="100%" stop-color="#0b3a6f" stop-opacity="0.92"></stop></linearGradient></defs>
+      <path class="vpl-ribbon-base" pathLength="1" d="M920 -80 C980 130 700 120 760 330 C820 520 990 560 860 760 C700 1010 240 930 300 1180 C360 1420 760 1350 680 1580 C640 1680 560 1710 430 1750"></path>
+      <path class="vpl-ribbon-progress" pathLength="1" d="M920 -80 C980 130 700 120 760 330 C820 520 990 560 860 760 C700 1010 240 930 300 1180 C360 1420 760 1350 680 1580 C640 1680 560 1710 430 1750"></path>
+      <circle class="vpl-ribbon-dot" cx="920" cy="-80" r="18"></circle>
+    </svg>
+  </div>
+
+  <header class="vpl-nav">
+    <a href="/index.html" class="vpl-brand" aria-label="Accueil Vital Protect">
+      <img src="/logo.png" alt="Vital Protect" />
+      <div><b>VITAL PROTECT</b><span>Standard sécurité personnelle</span></div>
+    </a>
+    <nav class="vpl-menu" aria-label="Navigation principale">
+      <a href="/index.html" data-page="index">Accueil</a>
+      <a href="/methode.html" data-page="methode">Standard</a>
+      <a href="/stage.html" data-page="stage" class="active">Stages</a>
+      <a href="/entreprises.html" data-page="entreprises">Entreprises</a>
+      <a href="/devenir-formateur.html" data-page="devenir-formateur">Devenir formateur</a>
+      <a href="/faq.html" data-page="faq">FAQ</a>
+      <a href="/contact.html" data-page="contact">Contact</a>
+      <a href="/formateur-login.html" class="vpl-nav-ghost">Espace</a>
+    </nav>
+    <a href="#marketplace" class="vpl-nav-cta">Voir les stages</a>
+  </header>
+
+  <main>
+
+    <section class="stage-hero-redesign stage-hero-carousel">
+      <div class="vpl-container stage-hero-carousel-grid">
+        <div class="stage-hero-copy">
+          <div class="stage-pill-row" aria-label="Points clés"><span>Sécurité personnelle réaliste</span><span>Débutants bienvenus</span><span>Pas de folklore martial</span></div>
+          <div class="vpl-eyebrow" id="heroType">Stage Vital Protect</div>
+          <h1 id="heroTitle">Apprendre à prévenir, éviter et réagir simplement.</h1>
+          <p id="heroDescription">Vital Protect transmet des repères concrets pour lire les tensions, garder la bonne distance, désamorcer quand c’est possible et agir avec proportion.</p>
+          <div class="vpl-actions"><a class="vpl-button vpl-button-primary" href="#marketplace">Trouver un stage</a><a class="vpl-button vpl-button-secondary" href="#marketplace" data-stage-path="all">Voir toutes les dates</a></div>
+          <p class="stage-hero-note">Les réservations ne sont ouvertes que lorsqu’une session affiche clairement le lieu, la date, le tarif, l’encadrant et les conditions de participation.</p>
+          <div class="stage-hero-benefits" aria-label="Objectifs du stage"><span><b>Prévenir</b>Lire les signaux et garder une marge.</span><span><b>Éviter</b>Créer de l’espace sans sur-réagir.</span><span><b>Réagir</b>Agir simplement et reprendre le calme.</span></div>
+        </div>
+        <div class="stage-carousel-shell"><div class="stage-carousel" data-stage-carousel aria-label="Carrousel des stages Vital Protect"><div class="stage-carousel-track">
+              <article class="stage-carousel-slide" style="--stage-slide-position:center 42%;"><img src="/vital-protect-slide-1.webp" alt="Brief pédagogique Vital Protect avec un groupe assis"><div class="stage-carousel-caption"><small>Brief pédagogique</small><strong>Comprendre avant de pratiquer.</strong><span>On pose le cadre, les objectifs et les repères avant de passer aux exercices.</span></div></article>
+              <article class="stage-carousel-slide" style="--stage-slide-position:center 34%;"><img src="/vital-protect-slide-2.webp" alt="Formatrice Vital Protect en démonstration de mise à distance"><div class="stage-carousel-caption"><small>Mise à distance</small><strong>Créer de l’espace sans agressivité.</strong><span>Une limite claire, visible et proportionnée, sans entrer dans la confrontation.</span></div></article>
+              <article class="stage-carousel-slide" style="--stage-slide-position:center center;"><img src="/vital-protect-slide-3.webp" alt="Briefing sécurité en extérieur avec un groupe"><div class="stage-carousel-caption"><small>Observation terrain</small><strong>Observer avant d’agir.</strong><span>Lire l’environnement, anticiper les signaux et garder une marge de décision.</span></div></article>
+              <article class="stage-carousel-slide" style="--stage-slide-position:center center;"><img src="/vital-protect-slide-4.webp" alt="Exercice concret Vital Protect en salle"><div class="stage-carousel-caption"><small>Situation concrète</small><strong>Réagir juste, sans sur-réagir.</strong><span>Des exercices simples pour protéger, se dégager et reprendre le contrôle.</span></div></article>
+              <article class="stage-carousel-slide" style="--stage-slide-position:center center;"><img src="/visuel-massage-cardiaque.webp" alt="Atelier d’assistance et de mise en sécurité pendant une formation"><div class="stage-carousel-caption"><small>Sécurité</small><strong>Protéger sans improviser.</strong><span>Le cadre reste clair : sécurité du groupe, consignes simples et débrief.</span></div></article>            </div><button class="stage-carousel-nav prev" type="button" aria-label="Image précédente">‹</button><button class="stage-carousel-nav next" type="button" aria-label="Image suivante">›</button><div class="stage-carousel-dots" aria-label="Navigation du carrousel"></div></div></div>
+      </div>
+    </section>
+
+    <section id="parcours" class="vp-stage-modern vp-stage-access">
+      <div class="vp-stage-access-orbit" aria-hidden="true"><svg viewBox="0 0 1100 360" fill="none"><path class="vp-stage-orbit-line" d="M14 240 C 240 22, 420 380, 632 108 S 1000 90, 1110 250" stroke="rgba(11,74,139,.24)" stroke-width="2"></path><path d="M80 300 C 310 110, 460 420, 720 170 S 1030 120, 1160 300" stroke="rgba(11,74,139,.10)" stroke-width="2"></path><g fill="#fff" stroke="#7db8ff" stroke-width="4"><circle cx="348" cy="111" r="8"></circle><circle cx="560" cy="281" r="8"></circle><circle cx="760" cy="72" r="8"></circle></g></svg></div>
+      <div class="vpl-container">
+        <div class="vp-stage-access-top"><div class="vp-stage-head vp-reveal"><span class="vp-stage-kicker">Choisir le bon accès</span><h2 class="vp-stage-title">Quel parcours<br>vous correspond&nbsp;?</h2><p class="vp-stage-lead">Avant de parler date ou réservation, choisissez simplement le parcours correspondant à votre besoin.</p></div><span class="vp-motion-chip" aria-hidden="true">Stagger reveal</span></div>
+        <div class="vp-stage-access-grid vp-stagger">
+          <a href="#marketplace" class="vp-stage-card vp-stage-access-card vp-tilt" data-stage-path="public" style="--vp-i:0"><div class="vp-stage-access-card-top"><span class="vp-stage-num">01</span><span class="vp-stage-icon" aria-hidden="true">▣</span></div><h3>Pour moi</h3><p>Voir les stages ouverts au public, choisir une date, puis réserver sa place.</p><b class="vp-stage-link">Voir les stages <span>→</span></b></a>
+          <a href="#marketplace" class="vp-stage-card vp-stage-access-card vp-tilt" data-stage-path="team" style="--vp-i:1"><div class="vp-stage-access-card-top"><span class="vp-stage-num">02</span><span class="vp-stage-icon" aria-hidden="true">✉</span></div><h3>Pour mon équipe</h3><p>Voir les sessions standardisées pour salariés ou demander une session privée pour votre équipe.</p><b class="vp-stage-link">Voir le parcours <span>→</span></b></a>
+          <a href="#marketplace" class="vp-stage-card vp-stage-access-card vp-tilt" data-stage-path="trainer" style="--vp-i:2"><div class="vp-stage-access-card-top"><span class="vp-stage-num">03</span><span class="vp-stage-icon" aria-hidden="true">◌</span></div><h3>Devenir formateur</h3><p>Voir les sessions de validation interne et accéder au parcours d’habilitation.</p><b class="vp-stage-link">Voir les sessions <span>→</span></b></a>
+        </div>
+      </div>
+    </section>
+
+    <section class="vp-stage-modern vp-stage-problem">
+      <div class="vpl-container vp-stage-problem-layout">
+        <div class="vp-stage-head vp-reveal"><span class="vp-stage-kicker">Le problème</span><h2 class="vp-stage-title medium">Une sécurité personnelle souvent mal expliquée.</h2><p class="vp-stage-lead">Vital Protect prend le chemin inverse : pas de promesse d’invincibilité, pas de scénario humiliant, pas de jargon inutile. Le stage doit donner des repères concrets et mémorisables.</p></div>
+        <div class="vp-stage-problem-stack vp-stagger">
+          <article class="vp-stage-card vp-stage-problem-card vp-tilt" style="--vp-i:0"><span class="vp-stage-num">01</span><div><h3>Trop flou</h3><p>On parle de confiance sans expliquer quoi faire concrètement.</p></div><span class="vp-stage-icon" aria-hidden="true">♢</span></article>
+          <article class="vp-stage-card vp-stage-problem-card vp-tilt" style="--vp-i:1"><span class="vp-stage-num">02</span><div><h3>Trop spectaculaire</h3><p>Des gestes impressionnants deviennent inutiles sous stress.</p></div><span class="vp-stage-icon" aria-hidden="true">✦</span></article>
+          <article class="vp-stage-card vp-stage-problem-card vp-tilt" style="--vp-i:2"><span class="vp-stage-num">03</span><div><h3>Trop anxiogène</h3><p>La peur ne remplace pas une progression claire et calme.</p></div><span class="vp-stage-icon" aria-hidden="true">◡</span></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="vp-stage-modern vp-stage-reflexes">
+      <div class="vpl-container vp-stage-reflex-wrap">
+        <div class="vp-stage-head center vp-reveal"><span class="vp-stage-kicker">Ce que vous apprenez</span><h2 class="vp-stage-title medium">Des réflexes simples à retenir.</h2><p class="vp-stage-lead">Une progression courte : comprendre, prévenir, se positionner, réagir, sécuriser l’après.</p></div>
+        <span class="vp-motion-chip vp-stage-hover-chip" aria-hidden="true">Hover lift</span>
+        <div class="vp-stage-reflex-grid vp-stagger">
+          <article class="vp-stage-card vp-stage-reflex-card vp-tilt" style="--vp-i:0"><span class="vp-stage-num">1</span><div><h3>Comprendre</h3><p>Identifier les contextes sensibles et les erreurs qui aggravent une situation.</p></div><span class="vp-stage-icon" aria-hidden="true">⌕</span></article>
+          <article class="vp-stage-card vp-stage-reflex-card vp-tilt" style="--vp-i:1"><span class="vp-stage-num">2</span><div><h3>Prévenir</h3><p>Anticiper les impasses et choisir une sortie quand elle existe.</p></div><span class="vp-stage-icon" aria-hidden="true">◈</span></article>
+          <article class="vp-stage-card vp-stage-reflex-card vp-tilt" style="--vp-i:2"><span class="vp-stage-num">3</span><div><h3>Se positionner</h3><p>Travailler la distance, l’angle, la posture, la voix et la place du corps.</p></div><span class="vp-stage-icon" aria-hidden="true">♙</span></article>
+          <article class="vp-stage-card vp-stage-reflex-card vp-tilt" style="--vp-i:3"><span class="vp-stage-num">4</span><div><h3>Réagir</h3><p>Utiliser des réponses simples, proportionnées et compatibles avec un public débutant.</p></div><span class="vp-stage-icon" aria-hidden="true">ϟ</span></article>
+          <article class="vp-stage-card vp-stage-reflex-card vp-tilt" style="--vp-i:4"><span class="vp-stage-num">5</span><div><h3>Sécuriser l’après</h3><p>Sortir de la zone, alerter, transmettre les informations utiles et retrouver du calme.</p></div><span class="vp-stage-icon" aria-hidden="true">✓</span></article>
+          <article class="vp-stage-card vp-stage-reflex-card vp-tilt accent" style="--vp-i:5"><span class="vp-stage-num">✓</span><div><h3>Rester réaliste</h3><p>La méthode ne remplace ni la fuite possible, ni l’appel à l’aide, ni le cadre légal applicable.</p></div><span class="vp-stage-icon" aria-hidden="true">⚖</span></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="vp-stage-modern vp-stage-process">
+      <div class="vpl-container vp-stage-process-layout">
+        <div class="vp-stage-head vp-reveal"><span class="vp-stage-kicker">Déroulé d’une séance</span><h2 class="vp-stage-title medium">Une progression encadrée, sans mise en danger.</h2><p class="vp-stage-lead">Une session doit rester lisible : comprendre avant de pratiquer, pratiquer avant de complexifier, débriefer avant de repartir.</p></div>
+        <div class="vp-stage-process-list vp-stagger">
+          <article class="vp-stage-card vp-stage-step vp-tilt" style="--vp-i:0"><span class="vp-stage-num">1</span><div><h3>Briefing</h3><p>Objectifs, règles de sécurité, contexte et niveau du groupe.</p></div></article>
+          <article class="vp-stage-card vp-stage-step vp-tilt" style="--vp-i:1"><span class="vp-stage-num">2</span><div><h3>Démonstration</h3><p>Les repères sont montrés simplement avant d’être pratiqués.</p></div></article>
+          <article class="vp-stage-card vp-stage-step vp-tilt" style="--vp-i:2"><span class="vp-stage-num">3</span><div><h3>Pratique guidée</h3><p>Distance, déplacement, parole courte et sortie possible.</p></div></article>
+          <article class="vp-stage-card vp-stage-step vp-tilt" style="--vp-i:3"><span class="vp-stage-num">4</span><div><h3>Mises en situation</h3><p>Exercices progressifs, encadrés, sans humiliation ni recherche de performance.</p></div></article>
+          <article class="vp-stage-card vp-stage-step vp-tilt" style="--vp-i:4"><span class="vp-stage-num">5</span><div><h3>Débrief</h3><p>Ce qui a été compris, ce qui reste à travailler, quoi faire après une situation réelle.</p></div></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="vp-stage-visual" aria-labelledby="stage-visual-title">
+      <div class="vpl-container vp-stage-visual-grid">
+        <div class="vp-stage-photo-grid vp-stagger">
+          <figure class="vp-stage-photo" data-vp-parallax="-18" style="--vp-i:0"><img src="/visuel-briefing-crossfit.webp" alt="Briefing avec un groupe assis pendant une formation Vital Protect" loading="lazy" /><figcaption class="vp-stage-photo-label">Parallax</figcaption></figure>
+          <figure class="vp-stage-photo" data-vp-parallax="18" style="--vp-i:1"><img src="/visuel-massage-cardiaque.webp" alt="Atelier d'assistance et de mise en sécurité pendant une formation" loading="lazy" /><figcaption class="vp-stage-photo-label">Image reveal</figcaption></figure>
+        </div>
+        <div class="vp-stage-head vp-reveal"><span class="vp-stage-kicker">Ambiance de stage</span><h2 id="stage-visual-title" class="vp-stage-title medium">Voir, pratiquer, puis revenir au calme.</h2><p class="vp-stage-lead">Une session doit rester progressive : explication, pratique guidée, situation simple, puis débrief. Le but est de créer des repères, pas une démonstration de force.</p><div class="vp-stage-proof"><span>Progression</span><span>Sécurité</span><span>Lucidité</span></div></div>
+      </div>
+    </section>
+
+    <section class="vp-stage-modern vp-stage-compare">
+      <div class="vpl-container vp-stage-compare-grid vp-stagger">
+        <article class="vp-stage-card vp-stage-compare-card vp-tilt is-not" style="--vp-i:0"><span class="vp-stage-kicker">Ce que ce n’est pas</span><h2>Vous n’allez pas apprendre à vous prendre pour un combattant.</h2><ul><li>Pas de combat libre.</li><li>Pas de promesse d’invincibilité.</li><li>Pas de culte de la confrontation.</li><li>Pas de scénario spectaculaire ou humiliant.</li></ul></article>
+        <article class="vp-stage-card vp-stage-compare-card vp-tilt is-yes" style="--vp-i:1"><span class="vp-stage-kicker">Ce que c’est</span><h2>Un entraînement à la lucidité, à la distance et à la décision simple.</h2><p>La bonne réaction n’est pas toujours un geste. Souvent, c’est voir plus tôt, se placer mieux, parler plus court, sortir plus vite ou demander de l’aide au bon moment.</p><a class="vpl-button vpl-button-primary" href="#marketplace">Trouver une date</a></article>
+      </div>
+    </section>
+
+    <section id="marketplace" class="vp-marketplace-section">
+      <div class="vpl-container">
+        <div class="section-head section-head--center"><span class="eyebrow">Trouver un stage</span><h2 id="marketplaceTitle">Choisissez d’abord votre zone, puis le module qui vous intéresse.</h2><p id="marketplaceIntro">La liste affiche toutes les sessions ouvertes : stages publics, sessions professionnelles standardisées et sessions formateur. Vous pouvez ensuite filtrer par région, département, module ou parcours.</p></div>
+        <div class="vp-marketplace-filters" aria-label="Rechercher les stages disponibles">
+          <div class="vp-marketplace-filter">
+            <label for="marketplaceRegionFilter">Région</label>
+            <select id="marketplaceRegionFilter">
+              <option value="">Toutes les régions</option>
+            </select>
+          </div>
+          <div class="vp-marketplace-filter">
+            <label for="marketplaceDepartmentFilter">Département</label>
+            <select id="marketplaceDepartmentFilter">
+              <option value="">Tous les départements</option>
+            </select>
+          </div>
+          <div class="vp-marketplace-filter">
+            <label for="marketplaceModuleFilter">Module</label>
+            <select id="marketplaceModuleFilter">
+              <option value="">Tous les modules</option>
+            </select>
+          </div>
+        </div>
+        <div class="vp-marketplace-paths" aria-label="Filtrer les stages par parcours">
+          <button type="button" class="vp-marketplace-path-btn" data-stage-path="all">Tous les stages</button>
+          <button type="button" class="vp-marketplace-path-btn" data-stage-path="public">Pour moi</button>
+          <button type="button" class="vp-marketplace-path-btn" data-stage-path="team">Pour mon équipe</button>
+          <button type="button" class="vp-marketplace-path-btn" data-stage-path="trainer">Devenir formateur</button>
+        </div>
+        <div class="vp-marketplace-grid">
+          <article class="vp-marketplace-column">
+            <div class="vp-marketplace-column-head">
+              <div><h3>Sessions disponibles</h3><p id="marketplaceResultText">Toutes les sessions ouvertes sont affichées ci-dessous.</p></div>
+              <span class="vp-marketplace-badge" id="marketplaceResultCount">Chargement</span>
+            </div>
+            <div id="publicStagesContainer" class="vp-marketplace-list">
+              <div class="vp-marketplace-empty"><strong>Chargement des stages...</strong>Les sessions publiées vont apparaître ici.</div>
+            </div>
+            <div id="teamPrivateCta" class="vp-marketplace-private-cta" hidden>
+              <div><strong>Vous voulez une session réservée à vos salariés ?</strong><span>Le contenu reste standardisé Vital Protect. Seuls la date, le lieu et le groupe sont organisés pour votre équipe.</span></div>
+              <a class="vpl-button vpl-button-secondary" href="/contact.html?type=entreprise&objet=session-privee">Demander une session privée</a>
+            </div>
+            <div class="vp-marketplace-mini-note">Les cartes affichées sont volontairement compactes : région, département, ville, date, module, prix et places restantes. Les infos manquantes restent “à confirmer” sans bloquer la sélection si le tarif et les places sont disponibles.</div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="reservation" class="stage-reservation-section">
+      <div class="vpl-container">
+        <div class="section-head section-head--center"><span class="eyebrow">Réservation</span><h2>Réserver le stage sélectionné.</h2><p>Choisissez une carte de stage dans la liste ci-dessus. Le formulaire s’active dès qu’une session réservable est sélectionnée.</p></div>
+        <div class="stage-booking-grid">
+          <div class="stage-booking-summary">
+            <h3>Résumé de la session</h3>
+            <div class="selected-stage-box"><span class="selected-stage-label">Stage sélectionné</span><div class="selected-stage-value" id="selectedStageValue">Aucune session complète sélectionnée pour le moment.</div></div>
+            <div class="stage-detail-list">
+              <div><strong>Adresse</strong><span id="practicalAddress">—</span></div><div><strong>Heure</strong><span id="practicalTime">—</span></div><div><strong>Durée</strong><span id="practicalDuration">—</span></div><div><strong>Type</strong><span id="practicalType">—</span></div><div><strong>Niveau</strong><span id="practicalLevel">Accessible à tous</span></div>
+            </div>
+            <div class="booking-total" id="bookingTotal">Total : en attente d’une session complète</div><div class="booking-status" id="bookingStatus"></div>
+          </div>
+          <div class="stage-booking-form-card">
+            <form id="bookingForm">
+              <div class="form-grid">
+                <div class="form-field"><label for="firstName">Prénom</label><input id="firstName" type="text" required /></div>
+                <div class="form-field"><label for="lastName">Nom</label><input id="lastName" type="text" required /></div>
+                <div class="form-field"><label for="email">Email</label><input id="email" type="email" required /></div>
+                <div class="form-field"><label for="phone">Téléphone</label><input id="phone" type="tel" required /></div>
+                <div class="form-field"><label for="places">Nombre de places</label><input id="places" type="number" min="1" value="1" required /></div>
+                <div class="form-field"><label for="cityDisplay">Ville du stage</label><input id="cityDisplay" type="text" disabled /></div>
+                <div class="form-field full"><label for="notes">Message complémentaire</label><textarea id="notes" placeholder="Optionnel"></textarea></div>
+              </div>
+              <button class="vpl-button vpl-button-primary" id="bookingSubmitButton" type="submit" disabled>Réservation indisponible pour le moment</button>
+              <p class="form-rgpd-note">Les informations transmises via ce formulaire sont utilisées uniquement pour répondre à votre demande. Vous pouvez exercer vos droits en écrivant à vitalprotectformation@gmail.com.</p>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="stage-faq-section">
+      <div class="vpl-container">
+        <div class="section-head section-head--center"><span class="eyebrow">Questions utiles</span><h2>Avant de demander une date.</h2><p>Les réponses essentielles, sans surcharge.</p></div>
+        <div class="faq-grid">
+          <article class="faq-card"><h3>Est-ce adapté aux débutants ?</h3><p>Oui. La méthode est pensée pour un public adulte non spécialiste, sans prérequis martial.</p></article>
+          <article class="faq-card"><h3>Faut-il une condition physique particulière ?</h3><p>La progression doit respecter les limites des participants. Toute contrainte physique doit être signalée avant la session.</p></article>
+          <article class="faq-card"><h3>Est-ce un cours de combat ?</h3><p>Non. Le cœur de l’approche est la prévention, la distance, la désescalade, la sortie possible et la réaction proportionnée.</p></article>
+          <article class="faq-card"><h3>Quel âge minimum ?</h3><p>Les conditions d’âge doivent être affichées sur chaque session. Tant que cette information manque, l’inscription ne doit pas être ouverte.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="stage-final-cta">
+      <div class="vpl-container">
+        <div class="stage-final-box">
+          <h2>Prévenir d’abord. Réagir seulement si nécessaire.</h2>
+          <p>Choisissez un stage public, une session professionnelle pour salariés, ou découvrez les sessions formateur.</p>
+          <div class="vpl-actions"><a class="vpl-button vpl-button-primary" href="#marketplace">Trouver une date</a><a class="vpl-button vpl-button-secondary" href="/stage.html?parcours=team#marketplace">Former une équipe</a><a class="vpl-button vpl-button-secondary" href="/devenir-formateur.html">Parcours formateur</a></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container site-footer__grid">
+      <div class="site-footer__brand"><strong>VITAL PROTECT</strong><p>Une méthode structurée de sécurité personnelle fondée sur la prévention, l’évitement, la réaction réaliste, la pédagogie progressive et l’habilitation des formateurs.</p></div>
+      <div class="site-footer__links"><a href="/methode.html">La méthode</a><a href="/entreprises.html">Entreprises</a><a href="/devenir-formateur.html">Devenir formateur</a><a href="/faq.html">FAQ</a><a href="/contact.html">Contact</a></div>
+    </div>
+  </footer>
+
+
+<script>
+  (function(){
+    const root=document.querySelector('[data-stage-carousel]');
+    if(!root)return;
+    const track=root.querySelector('.stage-carousel-track');
+    const slides=[...root.querySelectorAll('.stage-carousel-slide')];
+    const dots=root.querySelector('.stage-carousel-dots');
+    const prev=root.querySelector('.stage-carousel-nav.prev');
+    const next=root.querySelector('.stage-carousel-nav.next');
+    const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if(!track||!slides.length||!dots)return;
+    let index=0,timer=null,startX=0,down=false;
+    slides.forEach((_,n)=>{const b=document.createElement('button');b.type='button';b.setAttribute('aria-label',`Voir l’image ${n+1}`);b.addEventListener('click',()=>go(n,true));dots.appendChild(b);});
+    function paint(){[...dots.children].forEach((d,n)=>d.classList.toggle('active',n===index));}
+    function go(n,manual){index=(n+slides.length)%slides.length;track.style.transform=`translateX(${-index*100}%)`;paint();if(manual)restart();}
+    function stop(){if(timer)clearInterval(timer);timer=null;}
+    function start(){if(reduced||slides.length<2)return;stop();timer=setInterval(()=>go(index+1,false),5200);}
+    function restart(){stop();start();}
+    prev?.addEventListener('click',()=>go(index-1,true));next?.addEventListener('click',()=>go(index+1,true));
+    root.addEventListener('mouseenter',stop);root.addEventListener('mouseleave',start);root.addEventListener('focusin',stop);root.addEventListener('focusout',start);
+    root.addEventListener('pointerdown',e=>{down=true;startX=e.clientX;},{passive:true});
+    root.addEventListener('pointerup',e=>{if(!down)return;down=false;const dx=e.clientX-startX;if(Math.abs(dx)>42)go(index+(dx<0?1:-1),true);},{passive:true});
+    document.addEventListener('keydown',e=>{if(!root.matches(':hover')&&document.activeElement?.closest('[data-stage-carousel]')!==root)return;if(e.key==='ArrowLeft')go(index-1,true);if(e.key==='ArrowRight')go(index+1,true);});
+    go(0,false);start();
+  })();
+</script>
+
+<script>
+  (function () {
+    const revealSelector = ['.vp-reveal','.vp-stagger','.vp-marketplace-section .section-head','.vp-marketplace-column','.stage-reservation-section .section-head','.stage-faq-section .section-head','.faq-grid','.stage-final-box'].join(',');
+    const revealElements = document.querySelectorAll(revealSelector);
+    if ('IntersectionObserver' in window) {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          entry.target.classList.add('is-visible');
+          observer.unobserve(entry.target);
+        });
+      }, { threshold: 0.16, rootMargin: '0px 0px -8% 0px' });
+      revealElements.forEach((element) => observer.observe(element));
+    } else {
+      revealElements.forEach((element) => element.classList.add('is-visible'));
+    }
+
+    document.querySelectorAll('.vp-tilt').forEach((card) => {
+      card.addEventListener('pointermove', (event) => {
+        const rect = card.getBoundingClientRect();
+        card.style.setProperty('--mx', `${event.clientX - rect.left}px`);
+        card.style.setProperty('--my', `${event.clientY - rect.top}px`);
+      });
+    });
+
+    const parallaxImages = document.querySelectorAll('[data-vp-parallax]');
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    function updateParallax() {
+      if (reducedMotion) return;
+      const viewportHeight = window.innerHeight || 1;
+      parallaxImages.forEach((element) => {
+        const rect = element.getBoundingClientRect();
+        const centerDelta = (rect.top + rect.height / 2 - viewportHeight / 2) / viewportHeight;
+        const strength = Number(element.dataset.vpParallax || 0);
+        element.style.setProperty('--vp-parallax', `${centerDelta * strength}px`);
+      });
+    }
+    window.addEventListener('scroll', updateParallax, { passive: true });
+    window.addEventListener('resize', updateParallax);
+    updateParallax();
+  })();
+</script>
+
+<script type="module">
+    import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
+    const supabase = createClient(
+      "https://zsraqxzneghkzaozzuci.supabase.co",
+      "sb_publishable_VlTpYjzJ3DKpFA1Un_EFHQ_FW-mYK4U"
+    );
+
+    const params = new URLSearchParams(window.location.search);
+    const stageId = params.get("id") || "";
+
+    const $ = (id) => document.getElementById(id);
+    const heroType = $("heroType");
+    const heroTitle = $("heroTitle");
+    const heroDescription = $("heroDescription");
+    const metaCity = $("metaCity");
+    const metaDate = $("metaDate");
+    const metaPrice = $("metaPrice");
+    const metaPlaces = $("metaPlaces");
+    const metaRegion = $("metaRegion");
+    const metaDepartment = $("metaDepartment");
+    const practicalAddress = $("practicalAddress");
+    const practicalTime = $("practicalTime");
+    const practicalDuration = $("practicalDuration");
+    const practicalType = $("practicalType");
+    const audienceText = $("audienceText");
+    const objectiveText = $("objectiveText");
+    const selectedStageValue = $("selectedStageValue");
+    const cityDisplay = $("cityDisplay");
+    const bookingTotal = $("bookingTotal");
+    const bookingStatus = $("bookingStatus");
+    const placesInput = $("places");
+    const bookingForm = $("bookingForm");
+    const bookingSubmitButton = $("bookingSubmitButton");
+    const publicStagesContainer = $("publicStagesContainer");
+    const marketplaceSection = $("marketplace");
+    const marketplaceTitle = $("marketplaceTitle");
+    const marketplaceIntro = $("marketplaceIntro");
+    const marketplaceResultText = $("marketplaceResultText");
+    const marketplaceResultCount = $("marketplaceResultCount");
+    const marketplaceRegionFilter = $("marketplaceRegionFilter");
+    const marketplaceDepartmentFilter = $("marketplaceDepartmentFilter");
+    const marketplaceModuleFilter = $("marketplaceModuleFilter");
+    const teamPrivateCta = $("teamPrivateCta");
+
+    let stage = null;
+    let bookingEnabled = false;
+    let publicStagesData = [];
+    let trainerSessionsData = [];
+    let modulesCatalogData = [];
+
+    const FRANCE_REGIONS = [
+      { name: "Auvergne-Rhône-Alpes", departments: ["01 - Ain", "03 - Allier", "07 - Ardèche", "15 - Cantal", "26 - Drôme", "38 - Isère", "42 - Loire", "43 - Haute-Loire", "63 - Puy-de-Dôme", "69 - Rhône", "73 - Savoie", "74 - Haute-Savoie"] },
+      { name: "Bourgogne-Franche-Comté", departments: ["21 - Côte-d’Or", "25 - Doubs", "39 - Jura", "58 - Nièvre", "70 - Haute-Saône", "71 - Saône-et-Loire", "89 - Yonne", "90 - Territoire de Belfort"] },
+      { name: "Bretagne", departments: ["22 - Côtes-d’Armor", "29 - Finistère", "35 - Ille-et-Vilaine", "56 - Morbihan"] },
+      { name: "Centre-Val de Loire", departments: ["18 - Cher", "28 - Eure-et-Loir", "36 - Indre", "37 - Indre-et-Loire", "41 - Loir-et-Cher", "45 - Loiret"] },
+      { name: "Corse", departments: ["2A - Corse-du-Sud", "2B - Haute-Corse"] },
+      { name: "Grand Est", departments: ["08 - Ardennes", "10 - Aube", "51 - Marne", "52 - Haute-Marne", "54 - Meurthe-et-Moselle", "55 - Meuse", "57 - Moselle", "67 - Bas-Rhin", "68 - Haut-Rhin", "88 - Vosges"] },
+      { name: "Hauts-de-France", departments: ["02 - Aisne", "59 - Nord", "60 - Oise", "62 - Pas-de-Calais", "80 - Somme"] },
+      { name: "Île-de-France", departments: ["75 - Paris", "77 - Seine-et-Marne", "78 - Yvelines", "91 - Essonne", "92 - Hauts-de-Seine", "93 - Seine-Saint-Denis", "94 - Val-de-Marne", "95 - Val-d’Oise"] },
+      { name: "Normandie", departments: ["14 - Calvados", "27 - Eure", "50 - Manche", "61 - Orne", "76 - Seine-Maritime"] },
+      { name: "Nouvelle-Aquitaine", departments: ["16 - Charente", "17 - Charente-Maritime", "19 - Corrèze", "23 - Creuse", "24 - Dordogne", "33 - Gironde", "40 - Landes", "47 - Lot-et-Garonne", "64 - Pyrénées-Atlantiques", "79 - Deux-Sèvres", "86 - Vienne", "87 - Haute-Vienne"] },
+      { name: "Occitanie", departments: ["09 - Ariège", "11 - Aude", "12 - Aveyron", "30 - Gard", "31 - Haute-Garonne", "32 - Gers", "34 - Hérault", "46 - Lot", "48 - Lozère", "65 - Hautes-Pyrénées", "66 - Pyrénées-Orientales", "81 - Tarn", "82 - Tarn-et-Garonne"] },
+      { name: "Pays de la Loire", departments: ["44 - Loire-Atlantique", "49 - Maine-et-Loire", "53 - Mayenne", "72 - Sarthe", "85 - Vendée"] },
+      { name: "Provence-Alpes-Côte d’Azur", departments: ["04 - Alpes-de-Haute-Provence", "05 - Hautes-Alpes", "06 - Alpes-Maritimes", "13 - Bouches-du-Rhône", "83 - Var", "84 - Vaucluse"] },
+      { name: "Guadeloupe", departments: ["971 - Guadeloupe"] },
+      { name: "Martinique", departments: ["972 - Martinique"] },
+      { name: "Guyane", departments: ["973 - Guyane"] },
+      { name: "La Réunion", departments: ["974 - La Réunion"] },
+      { name: "Mayotte", departments: ["976 - Mayotte"] }
+    ];
+
+    const FRANCE_REGION_BY_DEPARTMENT = FRANCE_REGIONS.reduce((acc, region) => {
+      region.departments.forEach((department) => { acc[department] = region.name; });
+      return acc;
+    }, {});
+
+    const NORMALIZE_MAP = { "’": "'", "‘": "'", "`": "'", "´": "'", "œ": "oe", "æ": "ae" };
+
+    function setText(element, value) {
+      if (element) element.textContent = value;
+    }
+
+    function formatPrice(price) {
+      const amount = Number(price || 0);
+      if (!Number.isFinite(amount) || amount <= 0) return "Prix à confirmer";
+      return `${amount.toFixed(0)} €`;
+    }
+
+    function formatDate(dateString) {
+      if (!dateString) return "Date non disponible";
+      const date = new Date(dateString);
+      if (Number.isNaN(date.getTime())) return "Date non disponible";
+      return date.toLocaleDateString("fr-FR", { day: "2-digit", month: "long", year: "numeric" });
+    }
+
+    function formatDateRange(startDate, endDate) {
+      const start = formatDate(startDate);
+      const end = formatDate(endDate);
+      if (start === "Date non disponible" && end === "Date non disponible") return "Dates à confirmer";
+      if (start === end) return start;
+      return `${start} → ${end}`;
+    }
+
+    function showBookingStatus(message, type = "info") {
+      if (!bookingStatus) return;
+      bookingStatus.className = `booking-status show ${type}`;
+      bookingStatus.textContent = message;
+    }
+
+    function hasCompleteSession(item) {
+      if (!item) return false;
+      const hasId = String(item.id || "").trim().length > 0;
+      const hasPrice = Number(item.price || 0) > 0;
+      const hasPlaces = Number(item.remaining_places || 0) > 0;
+      const isPublished = !item.status || String(item.status).toLowerCase() === "published";
+      return hasId && hasPrice && hasPlaces && isPublished;
+    }
+
+    function setBookingEnabled(enabled, message = "") {
+      bookingEnabled = Boolean(enabled);
+      if (bookingForm) {
+        bookingForm.querySelectorAll("input, select, textarea").forEach((field) => {
+          if (field.id === "cityDisplay") {
+            field.disabled = true;
+          } else {
+            field.disabled = !bookingEnabled;
+          }
+        });
+      }
+      if (bookingSubmitButton) {
+        bookingSubmitButton.disabled = !bookingEnabled;
+        bookingSubmitButton.textContent = bookingEnabled ? "Procéder au paiement" : "Réservation indisponible pour le moment";
+      }
+      if (message) showBookingStatus(message, bookingEnabled ? "success" : "info");
+    }
+
+    function updateBookingTotal() {
+      if (!stage || !hasCompleteSession(stage)) {
+        setText(bookingTotal, "Total : en attente d’une session complète");
+        return;
+      }
+      const places = Math.max(1, Number(placesInput?.value || 1));
+      setText(bookingTotal, `Total : ${formatPrice(Number(stage.price || 0) * places)}`);
+    }
+
+    function showNoSessionState(message = "Choisissez une session dans la liste : le formulaire s’activera automatiquement si la réservation est possible.") {
+      stage = null;
+      setText(heroTitle, "Apprendre à prévenir, éviter et réagir simplement.");
+      setText(heroDescription, "Les prochaines dates sont publiées dès qu’une session est ouverte avec un tarif et des places disponibles. Commencez par votre région ou votre département.");
+      setText(selectedStageValue, message);
+      setText(bookingTotal, "Total : en attente d’une session complète");
+      setText(metaCity, "À confirmer");
+      setText(metaDate, "Date à venir");
+      setText(metaPrice, "Prix à confirmer");
+      setText(metaPlaces, "—");
+      setText(metaRegion, "Région à confirmer");
+      setText(metaDepartment, "Département à confirmer");
+      setText(practicalAddress, "Adresse publiée avec la session");
+      setText(practicalTime, "Horaires publiés avec la session");
+      setText(practicalDuration, "Durée publiée avec la session");
+      setText(practicalType, "Stage Vital Protect");
+      if (cityDisplay) cityDisplay.value = "";
+      setBookingEnabled(false, message);
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function normalizeLocationValue(value) {
+      return String(value || "")
+        .trim()
+        .toLowerCase()
+        .replace(/[’‘`´œæ]/g, (match) => NORMALIZE_MAP[match] || match)
+        .normalize("NFD")
+        .replace(/[̀-ͯ]/g, "")
+        .replace(/\s+/g, " ");
+    }
+
+    function extractDepartmentCode(value) {
+      const match = String(value || "").match(/^(\d{2,3}|2A|2B)/i);
+      return match ? match[1].toUpperCase() : "";
+    }
+
+    function sameDepartment(a, b) {
+      const codeA = extractDepartmentCode(a);
+      const codeB = extractDepartmentCode(b);
+      if (codeA && codeB) return codeA === codeB;
+      return normalizeLocationValue(a) === normalizeLocationValue(b);
+    }
+
+    function isAdsTestSession(item) {
+      const values = typeof item === "object" && item !== null
+        ? Object.values(item).filter((value) => ["string", "number"].includes(typeof value))
+        : [item];
+      return values.some((value) => {
+        const normalized = normalizeLocationValue(value).replace(/[^a-z0-9]+/g, " ").trim();
+        if (!normalized) return false;
+        const words = normalized.split(/\s+/);
+        return normalized === "ads" || words.includes("ads") || normalized.startsWith("ads ") || normalized.endsWith(" ads");
+      });
+    }
+
+    function classifyVitalModule(...values) {
+      const text = values
+        .filter(Boolean)
+        .map((value) => normalizeLocationValue(value).replace(/[^a-z0-9]+/g, " "))
+        .join(" ");
+      if (!text.trim()) return "unknown";
+      if (text.includes("professionnel") || text.includes("professionnelle") || text.includes("entreprise") || text.includes("salarie") || text.includes("salaries") || text.includes("equipe") || text.includes("agressif") || text.includes("agressive") || text.includes("tendu") || text.includes("tendue") || text.includes("comportement")) return "pro";
+      if (text.includes("niveau 2") || text.includes("niv 2") || text.includes("module 2")) return "module2";
+      if (text.includes("niveau 1") || text.includes("niv 1") || text.includes("module 1")) return "module1";
+      if (text.includes("self defense essentielle") || text.includes("self defense") || text.includes("securite personnelle") || text.includes("prevenir eviter reagir")) return "module1";
+      return "unknown";
+    }
+
+    function modulePublicName(type) {
+      if (type === "module2") return "Prévenir, éviter, réagir – Module 2";
+      if (type === "pro") return "Faire face aux situations tendues et comportements agressifs en milieu professionnel";
+      return "Prévenir, éviter, réagir – Module 1";
+    }
+
+    function moduleTrainerName(type) {
+      if (type === "module2") return "Formateur Vital Protect – Prévenir, éviter, réagir Module 2";
+      if (type === "pro") return "Formateur Vital Protect – Situations tendues et comportements agressifs en milieu professionnel";
+      return "Formateur Vital Protect – Prévenir, éviter, réagir Module 1";
+    }
+
+    function moduleSummary(type, path = "public") {
+      if (path === "trainer") return "Session d’habilitation pour transmettre ce module selon le standard Vital Protect.";
+      if (type === "pro") return "Formation standardisée pour salariés : posture, distance, désescalade et protection simple en situation de travail.";
+      if (type === "module2") return "Base renforcée : contraintes de face, création d’espace, dégagements et reprise de distance.";
+      return "Base essentielle : prévention, distance, posture, réactions simples et sortie de zone.";
+    }
+
+    function getItemModuleType(item) {
+      return classifyVitalModule(item?.module_name, item?.training_module_name, item?.training_type, item?.title, item?.description, item?.audience, item?.slug);
+    }
+
+    function getDisplayModuleName(item, kind = "stage") {
+      const type = getItemModuleType(item);
+      if (kind === "trainer") return moduleTrainerName(type);
+      return modulePublicName(type);
+    }
+
+    function getDisplaySessionTitle(item, kind = "stage") {
+      if (kind === "trainer") return getDisplayModuleName(item, "trainer");
+      return getDisplayModuleName(item, "stage");
+    }
+
+    function getCardVisualClass(entry) {
+      if (entry.kind === "trainer") return "vp-card-visual-trainer";
+      const type = getItemModuleType(entry.item);
+      if (type === "pro" || entry.path === "team") return "vp-card-visual-pro";
+      return "vp-card-visual-module";
+    }
+
+    function getCardVisualSrc(entry) {
+      if (entry.kind === "trainer") return "vp-card-formateur-reseau.webp?v=vpforeground1";
+      const type = getItemModuleType(entry.item);
+      if (type === "pro" || entry.path === "team") return "vp-card-self-pro.webp?v=vpforeground1";
+      return "vp-card-prevenir-module.webp?v=vpforeground1";
+    }
+
+    function moduleDefaultDescription(type, path = "public") {
+      if (path === "trainer") {
+        if (type === "pro") return "Habilitation destinée aux futurs formateurs qui souhaitent transmettre le module professionnel Vital Protect selon un cadre standardisé, sécurisé et commun à tout le réseau.";
+        if (type === "module2") return "Habilitation destinée aux futurs formateurs qui souhaitent transmettre le module 2 : contraintes de face, création d’espace, dégagements et reprise de distance.";
+        return "Habilitation destinée aux futurs formateurs qui souhaitent transmettre le module 1 : prévention, distance, posture, réactions simples et sortie de zone.";
+      }
+      if (type === "pro") return "Formation standardisée pour les salariés exposés à des tensions ou comportements agressifs : posture professionnelle, maintien de la distance, désescalade, protection simple et sortie de situation.";
+      if (type === "module2") return "Module de base renforcée pour apprendre à réagir lorsque la distance est rompue : contraintes de face, stabilisation, création d’espace, dégagements et reprise de distance.";
+      return "Module socle pour acquérir les bases Vital Protect : lire une situation qui dégénère, garder la distance, adopter une posture protectrice, réagir simplement et quitter la zone.";
+    }
+
+    function getModuleCatalogCandidates(item, kind = "stage") {
+      const type = getItemModuleType(item);
+      const candidates = [
+        item?.module_name,
+        item?.training_module_name,
+        item?.training_type,
+        item?.title,
+        item?.slug,
+        getDisplayModuleName(item, kind),
+        kind === "trainer" ? moduleTrainerName(type) : modulePublicName(type),
+        modulePublicName(type),
+        moduleTrainerName(type)
+      ];
+      if (type === "module1") candidates.push("Self Défense Essentielle", "Self Defense Essentielle", "Self Défense Essentielle Niveau 1", "Prévenir, éviter, réagir – Module 1");
+      if (type === "module2") candidates.push("Self Défense Essentielle Niveau 2", "Self Defense Essentielle Niveau 2", "Prévenir, éviter, réagir – Module 2");
+      if (type === "pro") candidates.push("Self Défense en entreprise", "Self Pro", "Faire face aux situations tendues et comportements agressifs en milieu professionnel");
+      return candidates.filter(Boolean).map((value) => normalizeLocationValue(value));
+    }
+
+    function getCatalogModuleForItem(item, kind = "stage") {
+      if (!modulesCatalogData.length) return null;
+      const candidates = getModuleCatalogCandidates(item, kind);
+      return modulesCatalogData.find((module) => {
+        const values = [module?.name, module?.slug, module?.short_description].filter(Boolean).map((value) => normalizeLocationValue(value));
+        return values.some((value) => candidates.includes(value));
+      }) || null;
+    }
+
+    function getModuleDescriptionForCard(item, kind = "stage", path = "public") {
+      const type = getItemModuleType(item);
+      const moduleRow = getCatalogModuleForItem(item, kind);
+      return (
+        moduleRow?.long_description ||
+        moduleRow?.short_description ||
+        item?.module_description ||
+        item?.training_module_description ||
+        item?.description ||
+        moduleDefaultDescription(type, path)
+      );
+    }
+
+    function getShortFrontLocation(item) {
+      const city = formatCityPostal(item);
+      if (city && city !== "Lieu à confirmer") return city;
+      if (item?.department) return item.department;
+      if (item?.region) return item.region;
+      return "Lieu à confirmer";
+    }
+
+    function renderMarketplaceCardFaces({ entry, item, title, moduleLabel, pathLabel, price, location, dateText, timeText, placesText, actionText }) {
+      const description = getModuleDescriptionForCard(item, entry.kind, entry.path);
+      const moduleChip = moduleLabel || title;
+      return `
+        <div class="vp-flip-inner" aria-hidden="false">
+          <div class="vp-card-face vp-card-face-front">
+            <div class="vp-card-front-content">
+              <div class="vp-card-mainline"><span class="vp-card-kicker">${escapeHtml(pathLabel)}</span><span class="vp-card-price">${escapeHtml(price)}</span></div>
+              <h3 class="vp-card-title">${escapeHtml(title)}</h3>
+              <div class="vp-card-location">${escapeHtml(location)}</div>
+              <div class="vp-card-date">${escapeHtml(dateText)}</div>
+              <div class="vp-card-action">Voir les détails →</div>
+            </div>
+          </div>
+          <div class="vp-card-face vp-card-face-back">
+            <div class="vp-card-back-content">
+              <div class="vp-card-back-title">Description du module</div>
+              <h3 class="vp-card-back-heading">${escapeHtml(title)}</h3>
+              <p class="vp-card-back-desc">${escapeHtml(description)}</p>
+              <div class="vp-card-back-meta"><span class="vp-card-chip">${escapeHtml(moduleChip)}</span><span class="vp-card-chip">${escapeHtml(timeText)}</span><span class="vp-card-chip">${escapeHtml(placesText)}</span></div>
+              <div class="vp-card-action">${escapeHtml(actionText)}</div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function isProfessionalTeamStage(item) {
+      return getItemModuleType(item) === "pro";
+    }
+
+    function stagePathForItem(item) {
+      return isProfessionalTeamStage(item) ? "team" : "public";
+    }
+
+    function labelForPath(path) {
+      if (path === "team") return "Pour mon équipe";
+      if (path === "trainer") return "Devenir formateur";
+      if (path === "public") return "Pour moi";
+      return "Tous";
+    }
+
+    function getSessionModule(item, kind = "stage") {
+      if (!item) return "Module à confirmer";
+      return getDisplayModuleName(item, kind);
+    }
+
+    function formatCityPostal(item) {
+      const city = item?.city || "Ville à confirmer";
+      const postal = item?.postal_code || item?.zip_code || item?.postcode || "";
+      return postal ? `${city} (${postal})` : city;
+    }
+
+    function getCurrentLocationFilters() {
+      return {
+        region: marketplaceRegionFilter?.value || "",
+        department: marketplaceDepartmentFilter?.value || "",
+        module: marketplaceModuleFilter?.value || ""
+      };
+    }
+
+    function matchesLocationFilters(item) {
+      const filters = getCurrentLocationFilters();
+      if (!filters.region && !filters.department) return true;
+      const itemRegion = item?.region || "";
+      const itemDepartment = item?.department || item?.departement || "";
+      if (filters.region && normalizeLocationValue(itemRegion) !== normalizeLocationValue(filters.region)) return false;
+      if (filters.department && !sameDepartment(itemDepartment, filters.department)) return false;
+      return true;
+    }
+
+    function locationFilterSuffix() {
+      const filters = getCurrentLocationFilters();
+      const parts = [];
+      if (filters.region) parts.push(filters.region);
+      if (filters.department) parts.push(filters.department);
+      return parts.length ? ` dans ${parts.join(" / ")}` : "";
+    }
+
+    function updateFilterUrl() {
+      const newUrl = new URL(window.location.href);
+      const filters = getCurrentLocationFilters();
+      if (activeMarketplacePath && activeMarketplacePath !== "all") newUrl.searchParams.set("parcours", activeMarketplacePath); else newUrl.searchParams.delete("parcours");
+      if (filters.region) newUrl.searchParams.set("region", filters.region); else newUrl.searchParams.delete("region");
+      if (filters.department) newUrl.searchParams.set("departement", filters.department); else newUrl.searchParams.delete("departement");
+      if (filters.module) newUrl.searchParams.set("module", filters.module); else newUrl.searchParams.delete("module");
+      if (!stage?.id) newUrl.searchParams.delete("id");
+      newUrl.hash = "marketplace";
+      window.history.replaceState({}, "", newUrl.toString());
+    }
+
+    function populateDepartmentFilter() {
+      if (!marketplaceDepartmentFilter) return;
+      const selectedRegion = marketplaceRegionFilter?.value || "";
+      const currentValue = marketplaceDepartmentFilter.value;
+      const departments = selectedRegion
+        ? (FRANCE_REGIONS.find((item) => item.name === selectedRegion)?.departments || [])
+        : FRANCE_REGIONS.flatMap((item) => item.departments);
+      marketplaceDepartmentFilter.innerHTML = `<option value="">Tous les départements</option>${departments.map((department) => `<option value="${escapeHtml(department)}">${escapeHtml(department)}</option>`).join("")}`;
+      const shouldKeep = departments.some((department) => sameDepartment(department, currentValue));
+      marketplaceDepartmentFilter.value = shouldKeep ? currentValue : "";
+    }
+
+    function getMarketplaceItems() {
+      const stageItems = publicStagesData
+        .filter((item) => !isAdsTestSession(item))
+        .map((item) => ({ kind: "stage", path: stagePathForItem(item), item, date: item.stage_date || "9999-12-31" }));
+      const trainerItems = trainerSessionsData
+        .filter((item) => !isAdsTestSession(item))
+        .map((item) => ({ kind: "trainer", path: "trainer", item, date: item.start_date || "9999-12-31" }));
+      return [...stageItems, ...trainerItems].sort((a, b) => String(a.date).localeCompare(String(b.date)));
+    }
+
+    function populateModuleFilter() {
+      if (!marketplaceModuleFilter) return;
+      const currentValue = marketplaceModuleFilter.value;
+      const modules = Array.from(new Set(getMarketplaceItems().map((entry) => getSessionModule(entry.item, entry.kind)).filter(Boolean))).sort((a, b) => a.localeCompare(b, "fr"));
+      marketplaceModuleFilter.innerHTML = `<option value="">Tous les modules</option>${modules.map((module) => `<option value="${escapeHtml(module)}">${escapeHtml(module)}</option>`).join("")}`;
+      marketplaceModuleFilter.value = modules.some((module) => module === currentValue) ? currentValue : "";
+    }
+
+    function populateLocationFilters() {
+      if (!marketplaceRegionFilter) return;
+      marketplaceRegionFilter.innerHTML = `<option value="">Toutes les régions</option>${FRANCE_REGIONS.map((region) => `<option value="${escapeHtml(region.name)}">${escapeHtml(region.name)}</option>`).join("")}`;
+      const queryParams = new URLSearchParams(window.location.search);
+      const requestedRegion = queryParams.get("region") || "";
+      const requestedDepartment = queryParams.get("departement") || queryParams.get("department") || "";
+      const requestedModule = queryParams.get("module") || "";
+      if (FRANCE_REGIONS.some((region) => region.name === requestedRegion)) marketplaceRegionFilter.value = requestedRegion;
+      populateDepartmentFilter();
+      if (requestedDepartment && Array.from(marketplaceDepartmentFilter?.options || []).some((option) => option.value === requestedDepartment)) {
+        marketplaceDepartmentFilter.value = requestedDepartment;
+      }
+      if (marketplaceModuleFilter && requestedModule) marketplaceModuleFilter.dataset.initialValue = requestedModule;
+      marketplaceRegionFilter.addEventListener("change", () => {
+        populateDepartmentFilter();
+        renderMarketplaceLists();
+        updateFilterUrl();
+      });
+      marketplaceDepartmentFilter?.addEventListener("change", () => {
+        const selectedDepartment = marketplaceDepartmentFilter.value;
+        if (!marketplaceRegionFilter?.value && selectedDepartment && FRANCE_REGION_BY_DEPARTMENT[selectedDepartment]) {
+          marketplaceRegionFilter.value = FRANCE_REGION_BY_DEPARTMENT[selectedDepartment];
+          populateDepartmentFilter();
+          marketplaceDepartmentFilter.value = selectedDepartment;
+        }
+        renderMarketplaceLists();
+        updateFilterUrl();
+      });
+      marketplaceModuleFilter?.addEventListener("change", () => {
+        renderMarketplaceLists();
+        updateFilterUrl();
+      });
+    }
+
+    const MARKETPLACE_PATHS = {
+      all: {
+        title: "Trouvez une session près de vous",
+        intro: "Commencez par la région ou le département. La liste affiche ensuite tous les modules disponibles, quel que soit le parcours."
+      },
+      public: {
+        title: "Stages pour moi",
+        intro: "Sessions ouvertes au public avec réservation directe."
+      },
+      team: {
+        title: "Sessions pour mon équipe",
+        intro: "Sessions professionnelles standardisées : inscription de salariés à une session ouverte ou demande de session privée."
+      },
+      trainer: {
+        title: "Sessions pour devenir formateur",
+        intro: "Sessions de validation interne pour accéder au parcours d’habilitation formateur."
+      }
+    };
+
+    function getInitialMarketplacePath() {
+      const queryParams = new URLSearchParams(window.location.search);
+      const fromParam = queryParams.get("parcours");
+      if (MARKETPLACE_PATHS[fromParam]) return fromParam;
+      if (window.location.hash === "#stages-equipe") return "team";
+      if (window.location.hash === "#stages-formateurs") return "trainer";
+      if (window.location.hash === "#stages-particuliers") return "public";
+      return "all";
+    }
+
+    let activeMarketplacePath = getInitialMarketplacePath();
+
+    function setMarketplacePath(path, options = {}) {
+      if (!MARKETPLACE_PATHS[path]) path = "all";
+      activeMarketplacePath = path;
+      const copy = MARKETPLACE_PATHS[path];
+      setText(marketplaceTitle, copy.title);
+      setText(marketplaceIntro, copy.intro);
+      document.querySelectorAll("[data-stage-path]").forEach((control) => {
+        const isActive = control.dataset.stagePath === path;
+        control.classList.toggle("is-active", isActive);
+        if (control.tagName === "BUTTON") control.setAttribute("aria-pressed", isActive ? "true" : "false");
+      });
+      if (path === "trainer" && options.clearSelection !== false) {
+        showNoSessionState("Parcours formateur : choisissez une session formateur dans la liste, puis finalisez l’inscription depuis la page Devenir formateur.");
+      } else if (path === "team" && options.clearSelection !== false) {
+        showNoSessionState("Parcours équipe : choisissez une session professionnelle ouverte pour vos salariés, ou demandez une session privée réservée à votre équipe.");
+      } else if (options.clearSelection !== false && !stage) {
+        showNoSessionState();
+      }
+      renderMarketplaceLists();
+      if (options.updateUrl) updateFilterUrl();
+      if (options.scroll && marketplaceSection) marketplaceSection.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    document.querySelectorAll("[data-stage-path]").forEach((control) => {
+      control.addEventListener("click", (event) => {
+        const path = control.dataset.stagePath;
+        if (!MARKETPLACE_PATHS[path]) return;
+        event.preventDefault();
+        setMarketplacePath(path, { scroll: true, updateUrl: true });
+      });
+    });
+
+    function scrollToReservation() {
+      const target = document.getElementById("reservation");
+      if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    function renderEmpty(container, title, text) {
+      if (!container) return;
+      container.innerHTML = `<div class="vp-marketplace-empty"><strong>${escapeHtml(title)}</strong>${escapeHtml(text)}</div>`;
+    }
+
+    function filterMarketplaceItems(items) {
+      const filters = getCurrentLocationFilters();
+      return items.filter((entry) => {
+        if (activeMarketplacePath !== "all" && entry.path !== activeMarketplacePath) return false;
+        if (!matchesLocationFilters(entry.item)) return false;
+        if (filters.module && normalizeLocationValue(getSessionModule(entry.item, entry.kind)) !== normalizeLocationValue(filters.module)) return false;
+        return true;
+      });
+    }
+
+    function renderMarketplaceLists() {
+      if (!publicStagesContainer) return;
+      populateModuleFilter();
+      if (marketplaceModuleFilter?.dataset.initialValue) {
+        const requestedModule = marketplaceModuleFilter.dataset.initialValue;
+        if (Array.from(marketplaceModuleFilter.options).some((option) => option.value === requestedModule)) marketplaceModuleFilter.value = requestedModule;
+        delete marketplaceModuleFilter.dataset.initialValue;
+      }
+      const allItems = getMarketplaceItems();
+      const visibleItems = filterMarketplaceItems(allItems);
+      const filters = getCurrentLocationFilters();
+      const label = activeMarketplacePath === "all" ? "tous les parcours" : labelForPath(activeMarketplacePath).toLowerCase();
+      setText(marketplaceResultText, `Affichage : ${label}${locationFilterSuffix()}${filters.module ? ` — ${filters.module}` : ""}.`);
+      setText(marketplaceResultCount, `${visibleItems.length} résultat${visibleItems.length > 1 ? "s" : ""}`);
+      if (teamPrivateCta) teamPrivateCta.hidden = !(activeMarketplacePath === "all" || activeMarketplacePath === "team");
+
+      if (!allItems.length) {
+        renderEmpty(publicStagesContainer, "Aucune session ouverte", "Publiez un stage ou une session formateur depuis l’admin pour qu’il apparaisse ici.");
+        return;
+      }
+      if (!visibleItems.length) {
+        renderEmpty(publicStagesContainer, "Aucune session trouvée", `Aucune session ne correspond à votre recherche${locationFilterSuffix()}${filters.module ? ` pour le module “${filters.module}”` : ""}.`);
+        return;
+      }
+
+      publicStagesContainer.innerHTML = visibleItems.map((entry) => {
+        const item = entry.item;
+        const selected = entry.kind === "stage" && String(item.id) === String(stage?.id || stageId);
+        const moduleType = getItemModuleType(item);
+        const title = getDisplaySessionTitle(item, entry.kind);
+        const moduleLabel = getSessionModule(item, entry.kind);
+        const pathLabel = labelForPath(entry.path);
+        const cardVisualClass = getCardVisualClass(entry);
+        const cardVisualSrc = getCardVisualSrc(entry);
+        if (entry.kind === "trainer") {
+          const price = Number(item.launch_price || item.standard_price || 0);
+          const sessionUrl = `/devenir-formateur.html?session_id=${encodeURIComponent(item.id)}`;
+          return `
+            <a class="vp-marketplace-card ${escapeHtml(cardVisualClass)}" href="${sessionUrl}" data-flip-card="true" aria-expanded="false" style="--vp-card-bg:url('${escapeHtml(cardVisualSrc)}');">
+              ${renderMarketplaceCardFaces({
+                entry,
+                item,
+                title,
+                moduleLabel,
+                pathLabel,
+                price: formatPrice(price),
+                location: getShortFrontLocation(item),
+                dateText: formatDateRange(item.start_date, item.end_date),
+                timeText: item.start_time || item.duration_days ? `${item.duration_days || 3} jour(s)` : "Durée à confirmer",
+                placesText: `${Number(item.remaining_places || 0)} place(s)`,
+                actionText: "Voir cette session →"
+              })}
+            </a>
+          `;
+        }
+        const complete = hasCompleteSession(item);
+        return `
+          <button type="button" class="vp-marketplace-card ${escapeHtml(cardVisualClass)} ${selected ? "is-selected" : ""} ${complete ? "" : "is-disabled"}" data-flip-card="true" aria-expanded="false" data-stage-id="${escapeHtml(item.id)}" style="--vp-card-bg:url('${escapeHtml(cardVisualSrc)}');" ${complete ? "" : "disabled"}>
+            ${renderMarketplaceCardFaces({
+              entry,
+              item,
+              title,
+              moduleLabel,
+              pathLabel,
+              price: formatPrice(item.price),
+              location: getShortFrontLocation(item),
+              dateText: formatDate(item.stage_date),
+              timeText: item.start_time || "Horaire à confirmer",
+              placesText: `${Number(item.remaining_places || 0)} place(s)`,
+              actionText: complete ? (entry.path === "team" ? "Inscrire mes salariés →" : "Choisir et réserver →") : "Session à compléter"
+            })}
+          </button>
+        `;
+      }).join("");
+
+      publicStagesContainer.querySelectorAll(".vp-marketplace-card[data-flip-card]").forEach((card) => {
+        card.addEventListener("click", (event) => {
+          if (card.classList.contains("is-disabled") || card.disabled) return;
+          if (!card.classList.contains("is-flipped")) {
+            event.preventDefault();
+            event.stopImmediatePropagation();
+            publicStagesContainer.querySelectorAll(".vp-marketplace-card.is-flipped").forEach((other) => {
+              if (other !== card) {
+                other.classList.remove("is-flipped");
+                other.setAttribute("aria-expanded", "false");
+              }
+            });
+            card.classList.add("is-flipped");
+            card.setAttribute("aria-expanded", "true");
+          }
+        });
+      });
+
+      publicStagesContainer.querySelectorAll("[data-stage-id]").forEach((button) => {
+        button.addEventListener("click", () => {
+          const selectedEntry = visibleItems.find((entry) => entry.kind === "stage" && String(entry.item.id) === String(button.dataset.stageId));
+          if (!selectedEntry || !hasCompleteSession(selectedEntry.item)) return;
+          stage = selectedEntry.item;
+          const newUrl = new URL(window.location.href);
+          if (activeMarketplacePath !== "all") newUrl.searchParams.set("parcours", activeMarketplacePath); else newUrl.searchParams.delete("parcours");
+          newUrl.searchParams.set("id", stage.id);
+          const filters = getCurrentLocationFilters();
+          if (filters.region) newUrl.searchParams.set("region", filters.region); else newUrl.searchParams.delete("region");
+          if (filters.department) newUrl.searchParams.set("departement", filters.department); else newUrl.searchParams.delete("departement");
+          if (filters.module) newUrl.searchParams.set("module", filters.module); else newUrl.searchParams.delete("module");
+          newUrl.hash = "reservation";
+          window.history.replaceState({}, "", newUrl.toString());
+          applyStageToPage();
+          renderMarketplaceLists();
+          scrollToReservation();
+        });
+      });
+    }
+
+    async function loadMarketplace() {
+      try {
+        const { data, error } = await supabase
+          .from("training_modules")
+          .select("*")
+          .order("sort_order", { ascending: true })
+          .order("name", { ascending: true });
+        if (!error) modulesCatalogData = (data || []).filter((module) => module && module.is_active !== false && module.public_visible !== false);
+      } catch (error) {
+        console.warn("Catalogue modules inaccessible côté public, fallback descriptions activé:", error);
+      }
+
+      try {
+        const { data, error } = await supabase
+          .from("stages")
+          .select("*")
+          .eq("status", "published")
+          .order("stage_date", { ascending: true });
+        if (error) throw error;
+        publicStagesData = (data || []).filter((item) => Number(item.remaining_places || 0) > 0 && !isAdsTestSession(item));
+        renderMarketplaceLists();
+      } catch (error) {
+        console.error("Erreur chargement marketplace stages:", error);
+        renderEmpty(publicStagesContainer, "Impossible de charger les stages", "Vérifiez les règles RLS Supabase de la table stages.");
+      }
+
+      try {
+        const { data, error } = await supabase
+          .from("trainer_sessions")
+          .select("*")
+          .eq("status", "open")
+          .order("start_date", { ascending: true });
+        if (error) throw error;
+        trainerSessionsData = (data || []).filter((item) => Number(item.remaining_places || 0) > 0 && !isAdsTestSession(item));
+        renderMarketplaceLists();
+      } catch (error) {
+        console.error("Erreur chargement marketplace formateur:", error);
+      }
+    }
+
+    function applyStageToPage() {
+      if (!stage) return;
+      const cleanTitle = getDisplaySessionTitle(stage, "stage");
+      const cleanModule = getSessionModule(stage, "stage");
+      document.title = `${cleanTitle || "Stage"} — Vital Protect`;
+      setText(heroType, cleanModule || "Stage Vital Protect");
+      setText(heroTitle, cleanTitle || "Stage Vital Protect");
+      setText(heroDescription, stage.description || moduleSummary(getItemModuleType(stage), stagePathForItem(stage)));
+      setText(metaCity, stage.city || "À confirmer");
+      setText(metaDate, formatDate(stage.stage_date));
+      setText(metaPrice, formatPrice(stage.price));
+      setText(metaPlaces, String(stage.remaining_places ?? "—"));
+      setText(metaRegion, stage.region || "Région à confirmer");
+      setText(metaDepartment, stage.department || "Département à confirmer");
+      setText(practicalAddress, stage.address || "Adresse à confirmer");
+      setText(practicalTime, stage.start_time || "Horaire à confirmer");
+      setText(practicalDuration, stage.duration || "Durée à confirmer");
+      setText(practicalType, cleanModule || "Stage Vital Protect");
+      setText(selectedStageValue, `${cleanTitle || "Stage"} — ${stage.city || "Ville à confirmer"} — ${formatDate(stage.stage_date)}`);
+      if (cityDisplay) cityDisplay.value = stage.city || "";
+      if (isProfessionalTeamStage(stage)) {
+        setText(audienceText, "Ce stage peut accueillir des salariés dans un cadre professionnel, sans modification du déroulé pédagogique Vital Protect.");
+        setText(objectiveText, stage.description || "Programme standardisé : faire face aux situations tendues et comportements agressifs en milieu professionnel, avec des repères simples, progressifs et proportionnés.");
+      } else {
+        setText(audienceText, "Ce stage s’adresse aux personnes qui veulent développer des repères concrets de sécurité personnelle dans un cadre accessible, progressif et sérieux.");
+        setText(objectiveText, stage.description || "Ce stage s’inscrit dans la méthode Vital Protect : comprendre le risque, améliorer la lecture des situations, prévenir l’escalade et développer des réponses simples et réalistes.");
+      }
+
+      if (!hasCompleteSession(stage)) {
+        setBookingEnabled(false, "Réservation désactivée : le stage n’a pas encore de tarif valide ou de place restante.");
+      } else {
+        setBookingEnabled(true, "Stage sélectionné : vous pouvez réserver votre place.");
+      }
+      updateBookingTotal();
+      renderMarketplaceLists();
+    }
+
+    async function loadStage() {
+      if (activeMarketplacePath === "trainer") {
+        showNoSessionState("Parcours formateur : choisissez une session formateur, puis poursuivez depuis la page Devenir formateur.");
+        return;
+      }
+      if (!stageId) {
+        showNoSessionState("Choisissez d’abord une session dans la liste. Vous pouvez filtrer par région, département, module ou parcours.");
+        return;
+      }
+      const { data, error } = await supabase
+        .from("stages")
+        .select("*")
+        .eq("id", stageId)
+        .eq("status", "published")
+        .maybeSingle();
+      if (error || !data) {
+        console.error("Erreur chargement stage:", error);
+        showNoSessionState();
+        return;
+      }
+      if (isAdsTestSession(data)) {
+        showNoSessionState("Cette session de test n’est plus disponible. Choisissez une session publiée dans la liste.");
+        return;
+      }
+      stage = data;
+      applyStageToPage();
+    }
+
+    if (bookingForm) {
+      bookingForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        if (!stage || !bookingEnabled || !hasCompleteSession(stage)) {
+          showBookingStatus("Impossible de réserver : le stage n’est plus disponible ou n’a pas de tarif/place restante.", "error");
+          return;
+        }
+        const firstName = $("firstName")?.value.trim();
+        const lastName = $("lastName")?.value.trim();
+        const email = $("email")?.value.trim();
+        const phone = $("phone")?.value.trim();
+        const places = Math.max(1, Number($("places")?.value || 1));
+        if (!firstName || !lastName || !email || !phone) {
+          showBookingStatus("Merci de remplir tous les champs obligatoires.", "error");
+          return;
+        }
+        if (places > Number(stage.remaining_places || 0)) {
+          showBookingStatus("Le nombre de places demandé dépasse les places restantes.", "error");
+          return;
+        }
+        showBookingStatus("Redirection vers le paiement Stripe...", "info");
+        try {
+          const res = await fetch("/api/create-checkout-session", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              stage_id: stage.id,
+              stage_title: stage.title || "",
+              first_name: firstName,
+              last_name: lastName,
+              email,
+              phone,
+              places,
+              unit_price: Number(stage.price || 0)
+            })
+          });
+          const result = await res.json();
+          if (result.url) {
+            (window.VitalPageTransition ? window.VitalPageTransition.go(result.url) : (window.location.href = result.url));
+          } else {
+            showBookingStatus(result.error || "Erreur lors de la redirection vers Stripe.", "error");
+            console.error(result);
+          }
+        } catch (error) {
+          showBookingStatus("Erreur réseau.", "error");
+          console.error(error);
+        }
+      });
+    }
+
+    placesInput?.addEventListener("input", updateBookingTotal);
+    populateLocationFilters();
+    setMarketplacePath(activeMarketplacePath, { clearSelection: false });
+    Promise.allSettled([loadMarketplace(), loadStage()]);
+  </script>
+<script src="/lusion-level.js"></script>
+</body>
+</html>
