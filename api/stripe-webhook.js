@@ -497,7 +497,7 @@ async function handleTrainerCheckout(session) {
         <li><strong>Sessions :</strong> à choisir ensuite selon les disponibilités</li>
         <li><strong>Validation :</strong> en attente</li>
       </ul>
-      <p>Vous recevrez la suite des étapes prochainement, notamment le choix ou la confirmation des sessions de validation.</p>
+      <p>Vous recevrez la suite des étapes prochainement, notamment les dates de validation disponibles pour vos modules.</p>
       <p><strong>VITAL PROTECT</strong></p>
     `
   });
