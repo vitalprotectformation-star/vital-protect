@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://vital-protect.fr/sitemap.xml
