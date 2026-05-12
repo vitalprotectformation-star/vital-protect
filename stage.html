@@ -19,7 +19,7 @@
     html.vpl-route-preload-transition::before{content:"";position:fixed;inset:0;z-index:2147482998;pointer-events:none;background-color:#2f6f9f;background-image:var(--vpl-transition-image);background-position:center;background-size:var(--vpl-transition-bg-size);background-repeat:no-repeat;opacity:1}
     @media (max-width: 768px), (pointer: coarse) and (orientation: portrait){html{--vpl-transition-image:url("transition-screen-mobile.jpg");--vpl-transition-bg-size:cover}}
 
-    /* Correctif définitif : l’image complète est le fond de la card, le texte est forcé au premier plan en inline + CSS. */
+    /* Cards marketplace : image complète en fond, texte au recto, détails au verso par clic. */
     .vp-marketplace-card{background-size:cover!important;background-position:center center!important;background-repeat:no-repeat!important;}
     .vp-marketplace-card > .vp-marketplace-card-content{position:absolute!important;left:0!important;right:0!important;bottom:0!important;top:auto!important;z-index:9999!important;color:#fff!important;opacity:1!important;visibility:visible!important;display:flex!important;}
     .vp-marketplace-card > .vp-marketplace-card-content *{opacity:1!important;visibility:visible!important;}
@@ -509,11 +509,11 @@
       overflow:hidden!important;
     }
     .vp-card-face *{color:inherit!important;box-sizing:border-box!important}
-    .vp-card-face-back{opacity:0!important;transform:translateY(12px)!important}
-    .vp-marketplace-card:hover .vp-card-face-front,
-    .vp-marketplace-card:focus-visible .vp-card-face-front{opacity:0!important;transform:translateY(-10px)!important}
-    .vp-marketplace-card:hover .vp-card-face-back,
-    .vp-marketplace-card:focus-visible .vp-card-face-back{opacity:1!important;transform:translateY(0)!important}
+    .vp-card-face-front{opacity:1!important;transform:rotateY(0deg) translateY(0)!important;backface-visibility:hidden!important;transform-origin:center center!important}
+    .vp-card-face-back{opacity:0!important;transform:rotateY(180deg) translateY(10px)!important;backface-visibility:hidden!important;transform-origin:center center!important}
+    .vp-marketplace-card.is-flipped .vp-card-face-front{opacity:0!important;transform:rotateY(-180deg) translateY(-6px)!important;pointer-events:none!important}
+    .vp-marketplace-card.is-flipped .vp-card-face-back{opacity:1!important;transform:rotateY(0deg) translateY(0)!important}
+    .vp-marketplace-card.is-flipped{border-color:rgba(140,200,255,.46);box-shadow:0 22px 56px rgba(6,26,47,.24);filter:saturate(1.04)}
     .vp-card-mainline{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:8px}
     .vp-card-kicker{font-size:10px;font-weight:950;text-transform:uppercase;letter-spacing:.075em;color:#a8d5ff!important;line-height:1.1}
     .vp-card-price{font-size:17px;font-weight:950;white-space:nowrap;line-height:1;color:#fff!important}
@@ -526,8 +526,6 @@
     .vp-card-back-title{margin:0 0 7px;font-size:12px;font-weight:950;text-transform:uppercase;letter-spacing:.07em;color:#a8d5ff!important}
     .vp-card-back-desc{display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical;overflow:hidden;margin:0;color:rgba(255,255,255,.88)!important;font-size:12px;line-height:1.36;font-weight:700}
     .vp-card-back-meta{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0}
-    @media(hover:none){.vp-marketplace-card:active .vp-card-face-front{opacity:0!important;transform:translateY(-10px)!important}.vp-marketplace-card:active .vp-card-face-back{opacity:1!important;transform:translateY(0)!important}}
-
     @media(max-width:1080px){.vp-marketplace-column{min-height:auto}.vp-marketplace-filters{grid-template-columns:repeat(2,minmax(170px,1fr));max-width:640px}}
     @media(max-width:640px){.vp-marketplace-section{padding:62px 0}.vp-marketplace-filters{grid-template-columns:1fr}.vp-marketplace-column{padding:18px;border-radius:24px}.vp-marketplace-column-head{display:block}.vp-marketplace-badge{margin-top:12px}.vp-marketplace-list{grid-template-columns:1fr}.vp-marketplace-card{height:500px}.vp-marketplace-card-content{max-height:47%!important;padding:0 16px 14px!important}.vp-marketplace-card-top{display:flex}.vp-marketplace-price{display:block}.vp-marketplace-private-cta{display:block}.vp-marketplace-private-cta .vpl-button{margin-top:12px}}
   </style>
@@ -1452,7 +1450,7 @@
           const price = Number(item.launch_price || item.standard_price || 0);
           const sessionUrl = `/devenir-formateur.html?session_id=${encodeURIComponent(item.id)}`;
           return `
-            <a class="vp-marketplace-card ${escapeHtml(cardVisualClass)}" href="${sessionUrl}" style="background-image:url('${escapeHtml(cardVisualSrc)}');background-size:cover;background-position:center center;background-repeat:no-repeat;">
+            <a class="vp-marketplace-card ${escapeHtml(cardVisualClass)}" href="${sessionUrl}" data-flip-card="true" aria-expanded="false" style="background-image:url('${escapeHtml(cardVisualSrc)}');background-size:cover;background-position:center center;background-repeat:no-repeat;">
               ${renderMarketplaceCardFaces({
                 entry,
                 item,
@@ -1471,7 +1469,7 @@
         }
         const complete = hasCompleteSession(item);
         return `
-          <button type="button" class="vp-marketplace-card ${escapeHtml(cardVisualClass)} ${selected ? "is-selected" : ""} ${complete ? "" : "is-disabled"}" data-stage-id="${escapeHtml(item.id)}" style="background-image:url('${escapeHtml(cardVisualSrc)}');background-size:cover;background-position:center center;background-repeat:no-repeat;" ${complete ? "" : "disabled"}>
+          <button type="button" class="vp-marketplace-card ${escapeHtml(cardVisualClass)} ${selected ? "is-selected" : ""} ${complete ? "" : "is-disabled"}" data-flip-card="true" aria-expanded="false" data-stage-id="${escapeHtml(item.id)}" style="background-image:url('${escapeHtml(cardVisualSrc)}');background-size:cover;background-position:center center;background-repeat:no-repeat;" ${complete ? "" : "disabled"}>
             ${renderMarketplaceCardFaces({
               entry,
               item,
@@ -1488,6 +1486,24 @@
           </button>
         `;
       }).join("");
+
+      publicStagesContainer.querySelectorAll(".vp-marketplace-card[data-flip-card]").forEach((card) => {
+        card.addEventListener("click", (event) => {
+          if (card.classList.contains("is-disabled") || card.disabled) return;
+          if (!card.classList.contains("is-flipped")) {
+            event.preventDefault();
+            event.stopImmediatePropagation();
+            publicStagesContainer.querySelectorAll(".vp-marketplace-card.is-flipped").forEach((other) => {
+              if (other !== card) {
+                other.classList.remove("is-flipped");
+                other.setAttribute("aria-expanded", "false");
+              }
+            });
+            card.classList.add("is-flipped");
+            card.setAttribute("aria-expanded", "true");
+          }
+        });
+      });
 
       publicStagesContainer.querySelectorAll("[data-stage-id]").forEach((button) => {
         button.addEventListener("click", () => {
