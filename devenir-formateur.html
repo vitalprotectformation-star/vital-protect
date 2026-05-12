@@ -787,6 +787,127 @@
   }
 </style>
 
+
+<style id="vptr-module-card-cadrage-v13">
+  /* Correctif cadrage v13 — catalogue modules Devenir formateur.
+     Objectif : 3 cartes alignées, faces de même hauteur, titres longs sans césure agressive, bouton toujours visible. */
+  body.page-formateur-redesign #catalogue-modules + .module-grid,
+  body.page-formateur-redesign .module-grid {
+    align-items: stretch !important;
+    grid-auto-rows: 1fr !important;
+  }
+
+  body.page-formateur-redesign .module-card {
+    height: 100% !important;
+    min-height: 304px !important;
+  }
+
+  body.page-formateur-redesign .module-flip-inner {
+    height: 100% !important;
+    min-height: 304px !important;
+  }
+
+  body.page-formateur-redesign .module-flip-face {
+    min-height: 304px !important;
+    height: 100% !important;
+    box-sizing: border-box !important;
+    padding: 26px 24px 24px !important;
+  }
+
+  body.page-formateur-redesign .module-flip-face h3 {
+    max-width: 100% !important;
+    font-size: clamp(.98rem, 1.02vw, 1.12rem) !important;
+    line-height: 1.28 !important;
+    letter-spacing: -0.028em !important;
+    text-wrap: balance !important;
+    overflow-wrap: normal !important;
+    word-break: normal !important;
+    hyphens: none !important;
+  }
+
+  body.page-formateur-redesign .module-flip-face p {
+    font-size: .98rem !important;
+    line-height: 1.55 !important;
+    overflow-wrap: normal !important;
+    word-break: normal !important;
+    hyphens: none !important;
+  }
+
+  body.page-formateur-redesign .module-flip-face.front {
+    justify-content: flex-start !important;
+  }
+
+  body.page-formateur-redesign .module-flip-face.front .module-flip-hint {
+    margin-top: auto !important;
+    padding-top: 14px !important;
+    font-size: .76rem !important;
+    line-height: 1.25 !important;
+  }
+
+  body.page-formateur-redesign .module-flip-face.back {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    gap: 14px !important;
+  }
+
+  body.page-formateur-redesign .module-flip-face.back > div {
+    min-width: 0 !important;
+  }
+
+  body.page-formateur-redesign .module-card__meta {
+    margin: 14px 0 0 !important;
+    gap: 7px !important;
+  }
+
+  body.page-formateur-redesign .module-chip {
+    font-size: .66rem !important;
+    line-height: 1.15 !important;
+    padding: .34rem .52rem !important;
+  }
+
+  body.page-formateur-redesign .module-flip-face.back .btn {
+    width: 100% !important;
+    min-height: 46px !important;
+    margin-top: auto !important;
+    flex: 0 0 auto !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    white-space: nowrap !important;
+  }
+
+  @media (min-width: 921px) and (max-width: 1180px) {
+    body.page-formateur-redesign .module-card,
+    body.page-formateur-redesign .module-flip-inner,
+    body.page-formateur-redesign .module-flip-face {
+      min-height: 324px !important;
+    }
+
+    body.page-formateur-redesign .module-flip-face {
+      padding: 24px 22px 22px !important;
+    }
+
+    body.page-formateur-redesign .module-flip-face h3 {
+      font-size: .98rem !important;
+      line-height: 1.3 !important;
+    }
+
+    body.page-formateur-redesign .module-flip-face p {
+      font-size: .94rem !important;
+      line-height: 1.5 !important;
+    }
+  }
+
+  @media (max-width: 920px) {
+    body.page-formateur-redesign .module-card,
+    body.page-formateur-redesign .module-flip-inner,
+    body.page-formateur-redesign .module-flip-face {
+      min-height: 292px !important;
+    }
+  }
+</style>
+
 </head>
 <body class="vpl-inner-page page-editorial-light page-formateur-redesign">
 <div class="vptr-background-orbs" aria-hidden="true"><span class="vptr-orb vptr-orb-one"></span><span class="vptr-orb vptr-orb-two"></span><span class="vptr-orb vptr-orb-three"></span></div>
