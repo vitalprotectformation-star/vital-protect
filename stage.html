@@ -489,6 +489,45 @@
     .vp-marketplace-private-cta[hidden]{display:none!important}
     .vp-marketplace-private-cta strong{display:block;color:#061a2f;font-size:16px;font-weight:950;letter-spacing:-.02em}
     .vp-marketplace-private-cta span{display:block;margin-top:4px;color:#50647a;font-size:13px;line-height:1.45}
+
+    .vp-card-face{
+      position:absolute!important;
+      left:0!important;
+      right:0!important;
+      bottom:0!important;
+      z-index:30!important;
+      box-sizing:border-box!important;
+      min-height:39%!important;
+      max-height:46%!important;
+      display:flex!important;
+      flex-direction:column!important;
+      padding:0 18px 16px!important;
+      color:#fff!important;
+      text-shadow:0 2px 12px rgba(0,0,0,.48);
+      transition:opacity .24s ease, transform .24s ease;
+      pointer-events:none!important;
+      overflow:hidden!important;
+    }
+    .vp-card-face *{color:inherit!important;box-sizing:border-box!important}
+    .vp-card-face-back{opacity:0!important;transform:translateY(12px)!important}
+    .vp-marketplace-card:hover .vp-card-face-front,
+    .vp-marketplace-card:focus-visible .vp-card-face-front{opacity:0!important;transform:translateY(-10px)!important}
+    .vp-marketplace-card:hover .vp-card-face-back,
+    .vp-marketplace-card:focus-visible .vp-card-face-back{opacity:1!important;transform:translateY(0)!important}
+    .vp-card-mainline{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:8px}
+    .vp-card-kicker{font-size:10px;font-weight:950;text-transform:uppercase;letter-spacing:.075em;color:#a8d5ff!important;line-height:1.1}
+    .vp-card-price{font-size:17px;font-weight:950;white-space:nowrap;line-height:1;color:#fff!important}
+    .vp-card-title{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;margin:0 0 10px;font-size:17px;line-height:1.05;font-weight:950;letter-spacing:-.045em;color:#fff!important;text-wrap:balance}
+    .vp-card-location{display:flex;align-items:center;gap:7px;margin:0 0 8px;font-size:12px;line-height:1.25;font-weight:850;color:rgba(255,255,255,.9)!important}
+    .vp-card-location::before{content:"";width:7px;height:7px;flex:0 0 auto;border-radius:999px;background:#8cc8ff;box-shadow:0 0 0 4px rgba(140,200,255,.12)}
+    .vp-card-front-meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:2px}
+    .vp-card-chip{display:inline-flex;align-items:center;min-height:22px;padding:4px 7px;border-radius:999px;background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.12);font-size:10.5px;font-weight:850;line-height:1.05;color:rgba(255,255,255,.9)!important;max-width:100%;overflow:hidden;text-overflow:ellipsis}
+    .vp-card-action{display:inline-flex;align-items:center;gap:8px;margin-top:auto;padding-top:9px;color:#a8d5ff!important;font-size:12.5px;font-weight:950;line-height:1.1}
+    .vp-card-back-title{margin:0 0 7px;font-size:12px;font-weight:950;text-transform:uppercase;letter-spacing:.07em;color:#a8d5ff!important}
+    .vp-card-back-desc{display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical;overflow:hidden;margin:0;color:rgba(255,255,255,.88)!important;font-size:12px;line-height:1.36;font-weight:700}
+    .vp-card-back-meta{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0}
+    @media(hover:none){.vp-marketplace-card:active .vp-card-face-front{opacity:0!important;transform:translateY(-10px)!important}.vp-marketplace-card:active .vp-card-face-back{opacity:1!important;transform:translateY(0)!important}}
+
     @media(max-width:1080px){.vp-marketplace-column{min-height:auto}.vp-marketplace-filters{grid-template-columns:repeat(2,minmax(170px,1fr));max-width:640px}}
     @media(max-width:640px){.vp-marketplace-section{padding:62px 0}.vp-marketplace-filters{grid-template-columns:1fr}.vp-marketplace-column{padding:18px;border-radius:24px}.vp-marketplace-column-head{display:block}.vp-marketplace-badge{margin-top:12px}.vp-marketplace-list{grid-template-columns:1fr}.vp-marketplace-card{height:500px}.vp-marketplace-card-content{max-height:47%!important;padding:0 16px 14px!important}.vp-marketplace-card-top{display:flex}.vp-marketplace-price{display:block}.vp-marketplace-private-cta{display:block}.vp-marketplace-private-cta .vpl-button{margin-top:12px}}
   </style>
@@ -863,6 +902,7 @@
     let bookingEnabled = false;
     let publicStagesData = [];
     let trainerSessionsData = [];
+    let modulesCatalogData = [];
 
     const FRANCE_REGIONS = [
       { name: "Auvergne-Rhône-Alpes", departments: ["01 - Ain", "03 - Allier", "07 - Ardèche", "15 - Cantal", "26 - Drôme", "38 - Isère", "42 - Loire", "43 - Haute-Loire", "63 - Puy-de-Dôme", "69 - Rhône", "73 - Savoie", "74 - Haute-Savoie"] },
@@ -1081,6 +1121,86 @@
       const type = getItemModuleType(entry.item);
       if (type === "pro" || entry.path === "team") return "vp-card-self-pro.webp?v=vpforeground1";
       return "vp-card-prevenir-module.webp?v=vpforeground1";
+    }
+
+    function moduleDefaultDescription(type, path = "public") {
+      if (path === "trainer") {
+        if (type === "pro") return "Habilitation destinée aux futurs formateurs qui souhaitent transmettre le module professionnel Vital Protect selon un cadre standardisé, sécurisé et commun à tout le réseau.";
+        if (type === "module2") return "Habilitation destinée aux futurs formateurs qui souhaitent transmettre le module 2 : contraintes de face, création d’espace, dégagements et reprise de distance.";
+        return "Habilitation destinée aux futurs formateurs qui souhaitent transmettre le module 1 : prévention, distance, posture, réactions simples et sortie de zone.";
+      }
+      if (type === "pro") return "Formation standardisée pour les salariés exposés à des tensions ou comportements agressifs : posture professionnelle, maintien de la distance, désescalade, protection simple et sortie de situation.";
+      if (type === "module2") return "Module de base renforcée pour apprendre à réagir lorsque la distance est rompue : contraintes de face, stabilisation, création d’espace, dégagements et reprise de distance.";
+      return "Module socle pour acquérir les bases Vital Protect : lire une situation qui dégénère, garder la distance, adopter une posture protectrice, réagir simplement et quitter la zone.";
+    }
+
+    function getModuleCatalogCandidates(item, kind = "stage") {
+      const type = getItemModuleType(item);
+      const candidates = [
+        item?.module_name,
+        item?.training_module_name,
+        item?.training_type,
+        item?.title,
+        item?.slug,
+        getDisplayModuleName(item, kind),
+        kind === "trainer" ? moduleTrainerName(type) : modulePublicName(type),
+        modulePublicName(type),
+        moduleTrainerName(type)
+      ];
+      if (type === "module1") candidates.push("Self Défense Essentielle", "Self Defense Essentielle", "Self Défense Essentielle Niveau 1", "Prévenir, éviter, réagir – Module 1");
+      if (type === "module2") candidates.push("Self Défense Essentielle Niveau 2", "Self Defense Essentielle Niveau 2", "Prévenir, éviter, réagir – Module 2");
+      if (type === "pro") candidates.push("Self Défense en entreprise", "Self Pro", "Faire face aux situations tendues et comportements agressifs en milieu professionnel");
+      return candidates.filter(Boolean).map((value) => normalizeLocationValue(value));
+    }
+
+    function getCatalogModuleForItem(item, kind = "stage") {
+      if (!modulesCatalogData.length) return null;
+      const candidates = getModuleCatalogCandidates(item, kind);
+      return modulesCatalogData.find((module) => {
+        const values = [module?.name, module?.slug, module?.short_description].filter(Boolean).map((value) => normalizeLocationValue(value));
+        return values.some((value) => candidates.includes(value));
+      }) || null;
+    }
+
+    function getModuleDescriptionForCard(item, kind = "stage", path = "public") {
+      const type = getItemModuleType(item);
+      const moduleRow = getCatalogModuleForItem(item, kind);
+      return (
+        moduleRow?.long_description ||
+        moduleRow?.short_description ||
+        item?.module_description ||
+        item?.training_module_description ||
+        item?.description ||
+        moduleDefaultDescription(type, path)
+      );
+    }
+
+    function getShortFrontLocation(item) {
+      const city = formatCityPostal(item);
+      if (city && city !== "Lieu à confirmer") return city;
+      if (item?.department) return item.department;
+      if (item?.region) return item.region;
+      return "Lieu à confirmer";
+    }
+
+    function renderMarketplaceCardFaces({ entry, item, title, moduleLabel, pathLabel, price, location, dateText, timeText, placesText, actionText }) {
+      const description = getModuleDescriptionForCard(item, entry.kind, entry.path);
+      const moduleChip = moduleLabel || title;
+      return `
+        <span class="vp-card-face vp-card-face-front" aria-hidden="false">
+          <span class="vp-card-mainline"><span class="vp-card-kicker">${escapeHtml(pathLabel)}</span><span class="vp-card-price">${escapeHtml(price)}</span></span>
+          <span class="vp-card-title">${escapeHtml(title)}</span>
+          <span class="vp-card-location">${escapeHtml(location)}</span>
+          <span class="vp-card-front-meta"><span class="vp-card-chip">${escapeHtml(dateText)}</span></span>
+          <span class="vp-card-action">Voir les détails →</span>
+        </span>
+        <span class="vp-card-face vp-card-face-back" aria-hidden="true">
+          <span class="vp-card-back-title">Description du module</span>
+          <span class="vp-card-back-desc">${escapeHtml(description)}</span>
+          <span class="vp-card-back-meta"><span class="vp-card-chip">${escapeHtml(moduleChip)}</span><span class="vp-card-chip">${escapeHtml(timeText)}</span><span class="vp-card-chip">${escapeHtml(placesText)}</span></span>
+          <span class="vp-card-action">${escapeHtml(actionText)}</span>
+        </span>
+      `;
     }
 
     function isProfessionalTeamStage(item) {
@@ -1333,26 +1453,38 @@
           const sessionUrl = `/devenir-formateur.html?session_id=${encodeURIComponent(item.id)}`;
           return `
             <a class="vp-marketplace-card ${escapeHtml(cardVisualClass)}" href="${sessionUrl}" style="background-image:url('${escapeHtml(cardVisualSrc)}');background-size:cover;background-position:center center;background-repeat:no-repeat;">
-              <div class="vp-marketplace-card-content" style="position:absolute!important;left:0!important;right:0!important;bottom:0!important;z-index:9999!important;display:flex!important;flex-direction:column!important;box-sizing:border-box!important;width:100%!important;max-height:46%!important;padding:0 18px 14px!important;color:#fff!important;opacity:1!important;visibility:visible!important;overflow:hidden!important;text-shadow:0 2px 10px rgba(0,0,0,.45)!important;pointer-events:none!important;">
-                <span class="vp-marketplace-card-top"><span class="vp-marketplace-type">${escapeHtml(pathLabel)}</span><span class="vp-marketplace-price">${escapeHtml(formatPrice(price))}</span></span>
-                <span class="vp-marketplace-title">${escapeHtml(title)}</span>
-                <span class="vp-marketplace-desc">${escapeHtml(moduleSummary(moduleType, "trainer"))}</span>
-                <span class="vp-marketplace-meta"><span>${escapeHtml(moduleLabel)}</span><span>${escapeHtml(formatCityPostal(item))}</span><span>${escapeHtml(formatDateRange(item.start_date, item.end_date))}</span><span>${Number(item.remaining_places || 0)} place(s)</span></span>
-                <span class="vp-marketplace-action">Voir cette session →</span>
-              </div>
+              ${renderMarketplaceCardFaces({
+                entry,
+                item,
+                title,
+                moduleLabel,
+                pathLabel,
+                price: formatPrice(price),
+                location: getShortFrontLocation(item),
+                dateText: formatDateRange(item.start_date, item.end_date),
+                timeText: item.start_time || item.duration_days ? `${item.duration_days || 3} jour(s)` : "Durée à confirmer",
+                placesText: `${Number(item.remaining_places || 0)} place(s)`,
+                actionText: "Voir cette session →"
+              })}
             </a>
           `;
         }
         const complete = hasCompleteSession(item);
         return `
           <button type="button" class="vp-marketplace-card ${escapeHtml(cardVisualClass)} ${selected ? "is-selected" : ""} ${complete ? "" : "is-disabled"}" data-stage-id="${escapeHtml(item.id)}" style="background-image:url('${escapeHtml(cardVisualSrc)}');background-size:cover;background-position:center center;background-repeat:no-repeat;" ${complete ? "" : "disabled"}>
-            <div class="vp-marketplace-card-content" style="position:absolute!important;left:0!important;right:0!important;bottom:0!important;z-index:9999!important;display:flex!important;flex-direction:column!important;box-sizing:border-box!important;width:100%!important;max-height:46%!important;padding:0 18px 14px!important;color:#fff!important;opacity:1!important;visibility:visible!important;overflow:hidden!important;text-shadow:0 2px 10px rgba(0,0,0,.45)!important;pointer-events:none!important;">
-              <span class="vp-marketplace-card-top"><span class="vp-marketplace-type">${escapeHtml(pathLabel)}</span><span class="vp-marketplace-price">${escapeHtml(formatPrice(item.price))}</span></span>
-              <span class="vp-marketplace-title">${escapeHtml(title)}</span>
-              <span class="vp-marketplace-desc">${escapeHtml(item.description || moduleSummary(moduleType, entry.path))}</span>
-              <span class="vp-marketplace-meta"><span>${escapeHtml(moduleLabel)}</span><span>${escapeHtml(formatCityPostal(item))}</span><span>${escapeHtml(formatDate(item.stage_date))}</span><span>${escapeHtml(item.start_time || "Horaire à confirmer")}</span><span>${Number(item.remaining_places || 0)} place(s)</span></span>
-              <span class="vp-marketplace-action">${complete ? (entry.path === "team" ? "Inscrire mes salariés →" : "Choisir et réserver →") : "Session à compléter"}</span>
-            </div>
+            ${renderMarketplaceCardFaces({
+              entry,
+              item,
+              title,
+              moduleLabel,
+              pathLabel,
+              price: formatPrice(item.price),
+              location: getShortFrontLocation(item),
+              dateText: formatDate(item.stage_date),
+              timeText: item.start_time || "Horaire à confirmer",
+              placesText: `${Number(item.remaining_places || 0)} place(s)`,
+              actionText: complete ? (entry.path === "team" ? "Inscrire mes salariés →" : "Choisir et réserver →") : "Session à compléter"
+            })}
           </button>
         `;
       }).join("");
@@ -1379,6 +1511,17 @@
     }
 
     async function loadMarketplace() {
+      try {
+        const { data, error } = await supabase
+          .from("training_modules")
+          .select("*")
+          .order("sort_order", { ascending: true })
+          .order("name", { ascending: true });
+        if (!error) modulesCatalogData = (data || []).filter((module) => module && module.is_active !== false && module.public_visible !== false);
+      } catch (error) {
+        console.warn("Catalogue modules inaccessible côté public, fallback descriptions activé:", error);
+      }
+
       try {
         const { data, error } = await supabase
           .from("stages")
