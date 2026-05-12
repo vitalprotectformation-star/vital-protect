@@ -722,6 +722,285 @@
   body.page-formateur-redesign .module-flip-face.back .module-chip { background:rgba(255,255,255,.13) !important; border-color:rgba(255,255,255,.12) !important; color:rgba(255,255,255,.92) !important; }
 </style>
 
+
+<style id="vptr-formateur-session-flip-card-fix">
+  /* Vrai flip recto/verso pour les cartes de sessions formateur — front only. */
+  body.page-formateur-redesign .sessions-grid{
+    display:grid !important;
+    grid-template-columns:repeat(auto-fill,minmax(250px,1fr)) !important;
+    gap:18px !important;
+    margin-top:34px !important;
+    perspective:1400px !important;
+  }
+  body.page-formateur-redesign .session-card.trainer-flip-card{
+    position:relative !important;
+    display:block !important;
+    height:520px !important;
+    min-height:520px !important;
+    margin:0 !important;
+    padding:0 !important;
+    border:0 !important;
+    border-radius:24px !important;
+    background:none !important;
+    box-shadow:none !important;
+    overflow:visible !important;
+    cursor:pointer !important;
+    perspective:1400px !important;
+    transform:none !important;
+    color:#fff !important;
+  }
+  body.page-formateur-redesign .session-card.trainer-flip-card:hover{
+    transform:none !important;
+    box-shadow:none !important;
+    border-color:transparent !important;
+  }
+  body.page-formateur-redesign .session-card.trainer-flip-card::before,
+  body.page-formateur-redesign .session-card.trainer-flip-card::after{
+    display:none !important;
+    content:none !important;
+  }
+  body.page-formateur-redesign .session-card.trainer-flip-card.is-disabled{
+    opacity:.72 !important;
+    cursor:not-allowed !important;
+  }
+  body.page-formateur-redesign .trainer-session-flip-inner{
+    position:relative !important;
+    width:100% !important;
+    height:100% !important;
+    border-radius:24px !important;
+    transform-style:preserve-3d !important;
+    transition:transform .72s cubic-bezier(.2,.72,.15,1), box-shadow .25s ease !important;
+    box-shadow:0 18px 46px rgba(6,26,47,.16) !important;
+    will-change:transform !important;
+  }
+  body.page-formateur-redesign .session-card.trainer-flip-card:hover .trainer-session-flip-inner{
+    transform:translateY(-4px) !important;
+    box-shadow:0 24px 58px rgba(6,26,47,.22) !important;
+  }
+  body.page-formateur-redesign .session-card.trainer-flip-card.is-flipped .trainer-session-flip-inner,
+  body.page-formateur-redesign .session-card.trainer-flip-card.is-flipped:hover .trainer-session-flip-inner{
+    transform:rotateY(180deg) !important;
+  }
+  body.page-formateur-redesign .trainer-session-face{
+    position:absolute !important;
+    inset:0 !important;
+    display:block !important;
+    width:100% !important;
+    height:100% !important;
+    padding:0 !important;
+    border:1px solid rgba(6,26,47,.18) !important;
+    border-radius:24px !important;
+    overflow:hidden !important;
+    backface-visibility:hidden !important;
+    -webkit-backface-visibility:hidden !important;
+    transform-style:preserve-3d !important;
+    color:#fff !important;
+    text-shadow:0 2px 12px rgba(0,0,0,.5) !important;
+    box-sizing:border-box !important;
+  }
+  body.page-formateur-redesign .trainer-session-face *{box-sizing:border-box !important;color:inherit !important;}
+  body.page-formateur-redesign .trainer-session-face.front{
+    transform:rotateY(0deg) !important;
+    background-image:var(--vptr-card-bg) !important;
+    background-size:cover !important;
+    background-position:center center !important;
+    background-repeat:no-repeat !important;
+    background-color:#061a2f !important;
+  }
+  body.page-formateur-redesign .trainer-session-face.back{
+    transform:rotateY(180deg) !important;
+    background:
+      radial-gradient(circle at 18% 12%, rgba(124,196,255,.23), transparent 30%),
+      radial-gradient(circle at 84% 86%, rgba(20,83,142,.32), transparent 36%),
+      linear-gradient(155deg, #06172b 0%, #082947 54%, #04111f 100%) !important;
+    text-shadow:none !important;
+  }
+  body.page-formateur-redesign .trainer-session-face.back::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    opacity:.6;
+    background:
+      linear-gradient(130deg,rgba(255,255,255,.11),transparent 22%,transparent 72%,rgba(140,200,255,.10)),
+      url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="360" height="360" viewBox="0 0 360 360"><path d="M180 30 285 76v78c0 74-42 139-105 176C117 293 75 228 75 154V76l105-46Z" fill="none" stroke="rgba(140,200,255,.16)" stroke-width="10"/><path d="M180 62 254 94v56c0 54-30 101-74 130-44-29-74-76-74-130V94l74-32Z" fill="none" stroke="rgba(140,200,255,.09)" stroke-width="8"/></svg>') left -92px bottom -84px / 230px 230px no-repeat;
+  }
+  body.page-formateur-redesign .trainer-session-front-content{
+    position:absolute !important;
+    left:18px !important;
+    right:18px !important;
+    bottom:18px !important;
+    z-index:3 !important;
+    display:flex !important;
+    flex-direction:column !important;
+    gap:8px !important;
+    max-height:46% !important;
+    overflow:hidden !important;
+    color:#fff !important;
+  }
+  body.page-formateur-redesign .trainer-session-card-line{
+    display:flex !important;
+    align-items:flex-start !important;
+    justify-content:space-between !important;
+    gap:10px !important;
+    margin:0 !important;
+  }
+  body.page-formateur-redesign .trainer-session-kicker{
+    display:block !important;
+    font-size:10px !important;
+    line-height:1.1 !important;
+    font-weight:950 !important;
+    text-transform:uppercase !important;
+    letter-spacing:.075em !important;
+    color:#a8d5ff !important;
+  }
+  body.page-formateur-redesign .trainer-session-price{
+    display:block !important;
+    font-size:18px !important;
+    line-height:1 !important;
+    font-weight:950 !important;
+    color:#fff !important;
+    white-space:nowrap !important;
+  }
+  body.page-formateur-redesign .trainer-session-title{
+    display:-webkit-box !important;
+    -webkit-line-clamp:3 !important;
+    -webkit-box-orient:vertical !important;
+    overflow:hidden !important;
+    margin:0 !important;
+    font-size:19px !important;
+    line-height:1.02 !important;
+    font-weight:950 !important;
+    letter-spacing:-.045em !important;
+    color:#fff !important;
+    text-wrap:balance !important;
+  }
+  body.page-formateur-redesign .trainer-session-location,
+  body.page-formateur-redesign .trainer-session-date{
+    display:flex !important;
+    align-items:center !important;
+    gap:7px !important;
+    margin:0 !important;
+    font-size:12.5px !important;
+    line-height:1.2 !important;
+    font-weight:900 !important;
+    color:rgba(255,255,255,.92) !important;
+  }
+  body.page-formateur-redesign .trainer-session-location::before{
+    content:"";
+    width:7px;
+    height:7px;
+    border-radius:999px;
+    background:#8cc8ff;
+    box-shadow:0 0 0 4px rgba(140,200,255,.14);
+    flex:0 0 auto;
+  }
+  body.page-formateur-redesign .trainer-session-date{
+    width:max-content !important;
+    max-width:100% !important;
+    min-height:24px !important;
+    padding:5px 8px !important;
+    border-radius:999px !important;
+    background:rgba(255,255,255,.14) !important;
+    border:1px solid rgba(255,255,255,.12) !important;
+  }
+  body.page-formateur-redesign .trainer-session-action{
+    display:inline-flex !important;
+    align-items:center !important;
+    width:max-content !important;
+    max-width:100% !important;
+    margin-top:4px !important;
+    color:#a8d5ff !important;
+    font-size:13px !important;
+    font-weight:950 !important;
+    line-height:1.1 !important;
+  }
+  body.page-formateur-redesign .trainer-session-back-content{
+    position:absolute !important;
+    inset:0 !important;
+    z-index:3 !important;
+    display:flex !important;
+    flex-direction:column !important;
+    padding:24px 20px 20px !important;
+    color:#fff !important;
+  }
+  body.page-formateur-redesign .trainer-session-back-label{
+    margin:0 0 10px !important;
+    color:#a8d5ff !important;
+    font-size:11px !important;
+    font-weight:950 !important;
+    letter-spacing:.08em !important;
+    text-transform:uppercase !important;
+  }
+  body.page-formateur-redesign .trainer-session-back-title{
+    display:-webkit-box !important;
+    -webkit-line-clamp:3 !important;
+    -webkit-box-orient:vertical !important;
+    overflow:hidden !important;
+    margin:0 0 12px !important;
+    color:#fff !important;
+    font-size:22px !important;
+    line-height:1.02 !important;
+    font-weight:950 !important;
+    letter-spacing:-.05em !important;
+  }
+  body.page-formateur-redesign .trainer-session-back-desc{
+    display:-webkit-box !important;
+    -webkit-line-clamp:8 !important;
+    -webkit-box-orient:vertical !important;
+    overflow:hidden !important;
+    margin:0 !important;
+    color:rgba(255,255,255,.86) !important;
+    font-size:13px !important;
+    line-height:1.42 !important;
+    font-weight:700 !important;
+  }
+  body.page-formateur-redesign .trainer-session-back-meta{
+    display:flex !important;
+    flex-wrap:wrap !important;
+    gap:7px !important;
+    margin:14px 0 0 !important;
+    overflow:hidden !important;
+  }
+  body.page-formateur-redesign .trainer-session-chip{
+    display:inline-flex !important;
+    align-items:center !important;
+    min-height:24px !important;
+    max-width:100% !important;
+    padding:5px 8px !important;
+    border-radius:999px !important;
+    background:rgba(255,255,255,.12) !important;
+    border:1px solid rgba(255,255,255,.12) !important;
+    color:rgba(255,255,255,.9) !important;
+    font-size:11px !important;
+    font-weight:850 !important;
+    line-height:1.05 !important;
+  }
+  body.page-formateur-redesign .trainer-session-select-btn{
+    margin-top:auto !important;
+    width:100% !important;
+    min-height:44px !important;
+    border:0 !important;
+    border-radius:999px !important;
+    background:#fff !important;
+    color:#082947 !important;
+    font-size:13px !important;
+    font-weight:950 !important;
+    cursor:pointer !important;
+    box-shadow:0 14px 28px rgba(0,0,0,.18) !important;
+  }
+  body.page-formateur-redesign .trainer-session-select-btn:disabled{
+    opacity:.55 !important;
+    cursor:not-allowed !important;
+  }
+  @media(max-width:640px){
+    body.page-formateur-redesign .session-card.trainer-flip-card{height:500px !important;min-height:500px !important;}
+    body.page-formateur-redesign .trainer-session-front-content{left:16px !important;right:16px !important;bottom:16px !important;}
+    body.page-formateur-redesign .trainer-session-title{font-size:18px !important;}
+    body.page-formateur-redesign .trainer-session-back-title{font-size:20px !important;}
+  }
+</style>
+
 </head>
 <body class="vpl-inner-page page-editorial-light page-formateur-redesign">
 <div class="vptr-background-orbs" aria-hidden="true"><span class="vptr-orb vptr-orb-one"></span><span class="vptr-orb vptr-orb-two"></span><span class="vptr-orb vptr-orb-three"></span></div>
@@ -1581,77 +1860,85 @@
 
       sessionsContainer.innerHTML = filteredSessions.map((session) => {
         const sessionComplete = isCompleteSession(session);
+        const title = trainerModuleName(session.module_name || session.title);
+        const description = trainerModuleDescription(session.module_name || session.title) ||
+          "Intégration au cadre Vital Protect : logique de méthode, cohérence de transmission, exigence pédagogique, sécurité et activation progressive dans le réseau.";
+        const price = formatPrice(session.launch_price || session.standard_price || 0);
+        const city = session.city || "Ville à confirmer";
+        const dateRange = `${formatDate(session.start_date)} → ${formatDate(session.end_date)}`;
+        const duration = session.duration_days ? `${session.duration_days} jour(s)` : "Durée à confirmer";
+        const places = `${session.remaining_places || 0} place(s)`;
+
         return `
-        <article class="session-card">
-          <div class="session-top">
-            <div>
-              <div class="session-type">${escapeHtml(trainerModuleName(session.module_name || session.title))}</div>
-              <h3 class="session-title">${escapeHtml(trainerModuleName(session.module_name || session.title))}</h3>
-            </div>
-            <div class="session-price">${formatPrice(session.launch_price || session.standard_price || 0)}</div>
-          </div>
-
-          <div class="session-body">
-            <div class="session-description">
-              ${escapeHtml(
-                trainerModuleDescription(session.module_name || session.title) ||
-                "Intégration au cadre Vital Protect : logique de méthode, cohérence de transmission, exigence pédagogique, sécurité et activation progressive dans le réseau."
-              )}
-            </div>
-
-            <div class="session-meta">
-              <div class="meta-item">
-                <span class="meta-label">Ville</span>
-                <span class="meta-value">${escapeHtml(session.city || "Non précisée")}</span>
-              </div>
-
-              <div class="meta-item">
-                <span class="meta-label">Début</span>
-                <span class="meta-value">${formatDate(session.start_date)}</span>
-              </div>
-
-              <div class="meta-item">
-                <span class="meta-label">Fin</span>
-                <span class="meta-value">${formatDate(session.end_date)}</span>
-              </div>
-
-              <div class="meta-item">
-                <span class="meta-label">Durée</span>
-                <span class="meta-value">${session.duration_days || "—"} jours</span>
-              </div>
-
-              <div class="meta-item">
-                <span class="meta-label">Tarif standard</span>
-                <span class="meta-value">${formatPrice(session.standard_price || 0)}</span>
-              </div>
-
-              <div class="meta-item">
-                <span class="meta-label">Places restantes</span>
-                <span class="meta-value">${session.remaining_places || 0}</span>
+        <article class="session-card trainer-flip-card ${sessionComplete ? "" : "is-disabled"}" tabindex="0" data-trainer-session-card="true" aria-expanded="false" style="--vptr-card-bg:url('vp-card-formateur-reseau.webp?v=20260512');">
+          <div class="trainer-session-flip-inner">
+            <div class="trainer-session-face front">
+              <div class="trainer-session-front-content">
+                <div class="trainer-session-card-line">
+                  <span class="trainer-session-kicker">Devenir formateur</span>
+                  <span class="trainer-session-price">${price}</span>
+                </div>
+                <h3 class="trainer-session-title">${escapeHtml(title)}</h3>
+                <p class="trainer-session-location">${escapeHtml(city)}</p>
+                <p class="trainer-session-date">${escapeHtml(dateRange)}</p>
+                <span class="trainer-session-action">Voir les détails →</span>
               </div>
             </div>
 
-            <div class="availability ${getAvailabilityClass(session.remaining_places)}">
-              ${session.remaining_places || 0} place(s) restante(s)
+            <div class="trainer-session-face back">
+              <div class="trainer-session-back-content">
+                <div class="trainer-session-back-label">Détails de la session</div>
+                <h3 class="trainer-session-back-title">${escapeHtml(title)}</h3>
+                <p class="trainer-session-back-desc">${escapeHtml(description)}</p>
+                <div class="trainer-session-back-meta">
+                  <span class="trainer-session-chip">${escapeHtml(city)}</span>
+                  <span class="trainer-session-chip">${escapeHtml(duration)}</span>
+                  <span class="trainer-session-chip">${escapeHtml(places)}</span>
+                  <span class="trainer-session-chip">Tarif : ${price}</span>
+                </div>
+                <button
+                  class="trainer-session-select-btn"
+                  type="button"
+                  data-session-id="${escapeHtml(session.id)}"
+                  ${sessionComplete ? "" : "disabled"}
+                >
+                  ${sessionComplete ? "Choisir cette session" : "Session à confirmer"}
+                </button>
+              </div>
             </div>
-          </div>
-
-          <div class="session-actions">
-            <button
-              class="btn btn-dark"
-              type="button"
-              data-session-id="${escapeHtml(session.id)}"
-              ${sessionComplete ? "" : "disabled"}
-            >
-              ${sessionComplete ? "Choisir cette session" : "Session à confirmer"}
-            </button>
           </div>
         </article>
       `;
       }).join("");
 
-      document.querySelectorAll("[data-session-id]").forEach((button) => {
-        button.addEventListener("click", () => {
+      sessionsContainer.querySelectorAll("[data-trainer-session-card]").forEach((card) => {
+        const flip = () => {
+          if (card.classList.contains("is-disabled")) return;
+          sessionsContainer.querySelectorAll(".trainer-flip-card.is-flipped").forEach((other) => {
+            if (other !== card) {
+              other.classList.remove("is-flipped");
+              other.setAttribute("aria-expanded", "false");
+            }
+          });
+          card.classList.toggle("is-flipped");
+          card.setAttribute("aria-expanded", card.classList.contains("is-flipped") ? "true" : "false");
+        };
+        card.addEventListener("click", (event) => {
+          if (event.target.closest("[data-session-id]")) return;
+          flip();
+        });
+        card.addEventListener("keydown", (event) => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            flip();
+          }
+        });
+      });
+
+      sessionsContainer.querySelectorAll("[data-session-id]").forEach((button) => {
+        button.addEventListener("click", (event) => {
+          event.preventDefault();
+          event.stopPropagation();
           const session = filteredSessions.find((item) => item.id === button.dataset.sessionId);
           if (session) {
             selectSession(session);
