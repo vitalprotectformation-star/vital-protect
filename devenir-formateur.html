@@ -722,6 +722,71 @@
   body.page-formateur-redesign .module-flip-face.back .module-chip { background:rgba(255,255,255,.13) !important; border-color:rgba(255,255,255,.12) !important; color:rgba(255,255,255,.92) !important; }
 </style>
 
+
+<style id="vptr-module-card-overflow-fix">
+  /* Correctif visuel — cartes catalogue Devenir formateur.
+     Les intitulés longs du dos de carte ne doivent plus couper le bouton. */
+  @media (min-width: 921px) {
+    body.page-formateur-redesign .module-card,
+    body.page-formateur-redesign .module-flip-inner {
+      min-height: 292px !important;
+    }
+
+    body.page-formateur-redesign .module-flip-face {
+      padding: 26px 24px 24px !important;
+    }
+
+    body.page-formateur-redesign .module-flip-face h3 {
+      font-size: clamp(1.02rem, 1.15vw, 1.18rem) !important;
+      line-height: 1.28 !important;
+      letter-spacing: -0.035em !important;
+      margin-bottom: 12px !important;
+    }
+
+    body.page-formateur-redesign .module-flip-face p {
+      line-height: 1.55 !important;
+    }
+
+    body.page-formateur-redesign .module-flip-face.back {
+      gap: 16px !important;
+    }
+
+    body.page-formateur-redesign .module-card__meta {
+      margin: 14px 0 0 !important;
+      gap: 8px !important;
+    }
+
+    body.page-formateur-redesign .module-flip-face.back .btn {
+      width: 100%;
+      min-height: 46px;
+      margin-top: auto;
+      flex-shrink: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      z-index: 2;
+    }
+  }
+
+  @media (max-width: 920px) {
+    body.page-formateur-redesign .module-card,
+    body.page-formateur-redesign .module-flip-inner {
+      min-height: 284px !important;
+    }
+
+    body.page-formateur-redesign .module-flip-face.back .btn {
+      width: 100%;
+      min-height: 46px;
+      margin-top: auto;
+      flex-shrink: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+</style>
+
 </head>
 <body class="vpl-inner-page page-editorial-light page-formateur-redesign">
 <div class="vptr-background-orbs" aria-hidden="true"><span class="vptr-orb vptr-orb-one"></span><span class="vptr-orb vptr-orb-two"></span><span class="vptr-orb vptr-orb-three"></span></div>
