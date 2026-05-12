@@ -1753,6 +1753,12 @@
       return `${Number(value || 0).toFixed(0)} €`;
     }
 
+    function formatCurrency(value) {
+      const amount = Number(value || 0);
+      if (!Number.isFinite(amount)) return "—";
+      return `${amount.toFixed(0)} €`;
+    }
+
     function normalize(value) {
       return String(value || "").trim().toLowerCase();
     }
