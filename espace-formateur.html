@@ -630,12 +630,13 @@
       const value = normalize(status || "pending");
       const labels = {
         published: "Publié",
-        pending: "En validation",
+        pending: "En attente admin",
         draft: "Brouillon",
+        hidden: "Masqué",
         cancelled: "Annulé",
         completed: "Réalisé"
       };
-      return labels[value] || status || "En validation";
+      return labels[value] || status || "Publié";
     }
 
     function getStatusBadgeClass(status) {
@@ -653,8 +654,15 @@
       return reservationsForStage(stageId).filter(row => normalize(row.payment_status || "paid") === "paid");
     }
 
+    function isEnterpriseStage(stage) {
+      return normalize(stage?.stage_kind || stage?.price_model) === "enterprise" || normalize(stage?.stage_kind || stage?.price_model) === "package" || Number(stage?.standard_price || 0) === 390;
+    }
+
     function paidPlacesForStage(stageId) {
-      return paidReservationsForStage(stageId).reduce((sum, row) => sum + Number(row.places || 0), 0);
+      const stage = dashboardStages.find(item => item.id === stageId);
+      const reservations = paidReservationsForStage(stageId);
+      if (isEnterpriseStage(stage)) return reservations.length;
+      return reservations.reduce((sum, row) => sum + Number(row.places || 0), 0);
     }
 
     function getReservationTrainerPayout(row) {
@@ -667,6 +675,12 @@
     }
 
     function payoutSummaryForStage(stageId) {
+      const stage = dashboardStages.find(item => item.id === stageId);
+      const stageAmount = Number(stage?.trainer_payout_estimate);
+      if (Number.isFinite(stageAmount)) {
+        return { known: true, amount: stageAmount };
+      }
+
       const reservations = paidReservationsForStage(stageId);
       if (!reservations.length) {
         return { known: true, amount: 0 };
@@ -692,6 +706,9 @@
     }
 
     function getStageCapacity(stage) {
+      const apiCapacity = Number(stage.inventory_capacity || 0);
+      if (apiCapacity > 0) return apiCapacity;
+      if (isEnterpriseStage(stage)) return Number(stage.remaining_places || 0) + paidPlacesForStage(stage.id) || 1;
       const maxParticipants = Number(stage.max_participants || 0);
       if (maxParticipants > 0) return maxParticipants;
       return Number(stage.remaining_places || 0) + paidPlacesForStage(stage.id);
@@ -897,13 +914,26 @@
               <div class="kpi-value">${Number(stats.stages_upcoming || 0)}</div>
             </div>
             <div class="kpi-card">
-              <span class="kpi-label">Places vendues</span>
+              <span class="kpi-label">Réservations payées</span>
               <div class="kpi-value">${Number(stats.registrations_total || 0)}</div>
+            </div>
+            <div class="kpi-card">
+              <span class="kpi-label">Stages réalisés / 12 mois</span>
+              <div class="kpi-value">${Number(stats.stages_realized_12_months || 0)}</div>
+            </div>
+            <div class="kpi-card">
+              <span class="kpi-label">Commission VP</span>
+              <div class="kpi-value">${Math.round(Number(stats.commission_rate || 0) * 1000) / 10}%</div>
             </div>
             <div class="kpi-card">
               <span class="kpi-label">Versement estimé</span>
               <div class="kpi-value">${stats.trainer_payout_available === false ? "À définir" : formatPrice(stats.trainer_payout_due || 0)}</div>
             </div>
+          </div>
+
+          <div class="alert ${stats.habilitation_at_risk ? "alert-warning" : "alert-success"}">
+            <strong>${escapeHtml(stats.commission_label || "Niveau formateur")}</strong> — ${escapeHtml(stats.commission_description || "Commission calculée sur les stages réalisés sur 12 mois.")}
+            <br />Minimum habilitation : ${Number(stats.habilitation_minimum_required || 2)} stages réalisés sur 12 mois. Reversements préparés après stage, cycle mensuel le ${Number(stats.next_payout_day || 20)}.
           </div>
 
           ${stages.length ? `
@@ -912,7 +942,9 @@
                 <option value="all">Tous mes stages</option>
                 <option value="upcoming">À venir</option>
                 <option value="published">Publiés</option>
-                <option value="pending">En validation</option>
+                <option value="completed">Réalisés</option>
+                <option value="hidden">Masqués</option>
+                <option value="pending">En attente admin</option>
                 <option value="draft">Brouillons</option>
                 <option value="cancelled">Annulés</option>
                 <option value="past">Passés</option>
@@ -938,7 +970,7 @@
           ` : `
             <div class="empty-state">
               <strong>Aucun stage créé pour le moment.</strong>
-              <p>Créez votre première date depuis le formulaire ci-dessous. Elle sera soumise à validation avant publication publique.</p>
+              <p>Créez votre première date depuis le formulaire ci-dessous. Elle sera publiée automatiquement sur les modules pour lesquels vous êtes habilité.</p>
             </div>
           `}
         </div>
@@ -997,7 +1029,8 @@
         const payoutSummary = payoutSummaryForStage(stage.id);
         const canContact = paidReservations.length > 0;
         const canCancel = !["cancelled", "completed"].includes(status);
-        const canSubmit = status === "draft";
+        const canSubmit = false;
+        const unitLabel = isEnterpriseStage(stage) ? "session" : "place";
 
         return `
           <tr>
@@ -1017,7 +1050,7 @@
               <div class="progress-track" aria-label="Taux de remplissage ${percent}%">
                 <div class="progress-fill" style="width:${percent}%;"></div>
               </div>
-              <span>${percent}% · ${remaining} place${remaining > 1 ? "s" : ""} restante${remaining > 1 ? "s" : ""}</span>
+              <span>${percent}% · ${remaining} ${unitLabel}${remaining > 1 && unitLabel === "place" ? "s" : ""} restante${remaining > 1 && unitLabel === "place" ? "s" : ""}</span>
             </td>
             <td>
               <strong>${formatTrainerPayout(payoutSummary)}</strong>
@@ -1067,6 +1100,14 @@
           <div class="info-box">
             <span class="label">Versement VITAL PROTECT</span>
             <div class="value">${formatTrainerPayout(payoutSummary)}</div>
+          </div>
+          <div class="info-box">
+            <span class="label">Date de reversement prévue</span>
+            <div class="value">${formatDate(stage.trainer_payout_due_date)}</div>
+          </div>
+          <div class="info-box">
+            <span class="label">Commission VITAL PROTECT</span>
+            <div class="value">${Math.round(Number(stage.vital_protect_commission_rate || 0) * 1000) / 10}%</div>
           </div>
         </div>
         <h3 style="margin-top:18px;">Inscrits payés</h3>
@@ -1166,7 +1207,7 @@ VITAL PROTECT`;
     }
 
     async function updateTrainerStageStatus(stageId, status) {
-      const label = status === "cancelled" ? "annuler" : "soumettre à validation";
+      const label = status === "cancelled" ? "annuler" : "publier";
       if (!window.confirm(`Confirmer : ${label} ce stage ?`)) return;
 
       try {
@@ -1268,7 +1309,7 @@ VITAL PROTECT`;
       return `
         <div class="card">
           <h2 class="section-title">Créer un stage</h2>
-          <p class="muted">Vous pouvez proposer un stage uniquement sur un module pour lequel vous êtes habilité et à jour. Il sera soumis à validation avant publication publique.</p>
+          <p class="muted">Vous pouvez créer une date en autonomie sur un module pour lequel vous êtes habilité et à jour. Elle est publiée automatiquement ; VITAL PROTECT conserve un contrôle total côté admin.</p>
 
           <form id="createStageForm">
             <div class="field">
@@ -1343,11 +1384,11 @@ VITAL PROTECT`;
             </div>
 
             <div class="actions">
-              <button class="btn btn-primary" type="submit">Soumettre le stage</button>
+              <button class="btn btn-primary" type="submit">Créer et publier le stage</button>
             </div>
 
             <div class="form-note">
-              Le titre, le tarif public, les conditions de versement formateur et la publication publique sont validés par l’administrateur VITAL PROTECT.
+              Tarifs standardisés : 30 € par personne pour les stages publics, 390 € pour une session entreprise si le module est professionnel. VITAL PROTECT encaisse puis reverse après réalisation du stage.
             </div>
           </form>
 
@@ -1405,7 +1446,7 @@ VITAL PROTECT`;
           duration: document.getElementById("stageDuration").value.trim(),
           max_participants: Number(document.getElementById("stageMaxParticipants").value || 20),
           remaining_places: Number(document.getElementById("stageRemainingPlaces").value || 20),
-          price: 0
+          // Le prix n’est pas choisi par le formateur : il est standardisé côté serveur.
         };
 
         try {
@@ -1424,7 +1465,7 @@ VITAL PROTECT`;
             return;
           }
 
-          statusBox.textContent = `✅ ${result.message || "Stage soumis avec succès."} Titre généré : ${result.stage?.title || "Stage"}`;
+          statusBox.textContent = `✅ ${result.message || "Stage créé et publié avec succès."} Titre généré : ${result.stage?.title || "Stage"}`;
           form.reset();
           await refreshTrainerDashboard();
         } catch (error) {

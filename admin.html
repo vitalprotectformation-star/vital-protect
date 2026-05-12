@@ -746,15 +746,15 @@
               </div>
               <div class="field">
                 <label>Région</label>
-                <input id="trainerRegionFilter" type="text" placeholder="Île-de-France..." />
+                <select id="trainerRegionFilter"></select>
               </div>
               <div class="field">
                 <label>Département</label>
-                <input id="trainerDepartmentFilter" type="text" placeholder="75..." />
+                <select id="trainerDepartmentFilter"></select>
               </div>
               <div class="field">
-                <label>Ville</label>
-                <input id="trainerCityFilter" type="text" placeholder="Paris..." />
+                <label>Ville / code postal</label>
+                <input id="trainerCityFilter" type="text" placeholder="Paris ou 75000..." />
               </div>
               <div class="field">
                 <label>Affiliation</label>
@@ -799,7 +799,7 @@
               <div class="card-header">
                 <div>
                   <h3>Catalogue des modules</h3>
-                  <p>Créer, modifier et supprimer les modules disponibles. La description longue sera utilisée au dos des cards publiques.</p>
+                  <p>Créer, modifier et supprimer les modules disponibles dans tout le site admin.</p>
                 </div>
               </div>
               <div class="card-body">
@@ -849,15 +849,15 @@
 
                   <div class="field">
                     <label>Description courte</label>
-                    <textarea id="moduleCatalogShortDescriptionInput" placeholder="Résumé bref du module, utilisé en secours sur les cards."></textarea>
+                    <textarea id="moduleCatalogShortDescriptionInput"></textarea>
                   </div>
                   <div class="field">
-                    <label>Description du module affichée au dos des cards</label>
-                    <textarea id="moduleCatalogLongDescriptionInput" placeholder="Décrivez le contenu pédagogique du module : ce que les participants vont apprendre, les situations travaillées, les objectifs concrets."></textarea>
+                    <label>Description longue</label>
+                    <textarea id="moduleCatalogLongDescriptionInput"></textarea>
                   </div>
                   <div class="field">
-                    <label>Objectifs pédagogiques</label>
-                    <textarea id="moduleCatalogObjectivesInput" placeholder="Listez les objectifs pédagogiques internes ou publics du module."></textarea>
+                    <label>Objectifs</label>
+                    <textarea id="moduleCatalogObjectivesInput"></textarea>
                   </div>
 
                   <div class="actions-row">
@@ -961,15 +961,15 @@
             <div class="filters">
               <div class="field">
                 <label>Région</label>
-                <input id="stageRegionFilter" type="text" placeholder="Région..." />
+                <select id="stageRegionFilter"></select>
               </div>
               <div class="field">
                 <label>Département</label>
-                <input id="stageDepartmentFilter" type="text" placeholder="Département..." />
+                <select id="stageDepartmentFilter"></select>
               </div>
               <div class="field">
-                <label>Ville</label>
-                <input id="stageCityFilter" type="text" placeholder="Ville..." />
+                <label>Ville / code postal</label>
+                <input id="stageCityFilter" type="text" placeholder="Ville ou code postal..." />
               </div>
               <div class="field">
                 <label>Formateur (ID / email lié)</label>
@@ -981,6 +981,10 @@
                   <option value="">Tous</option>
                   <option value="published">Publié</option>
                   <option value="pending">En attente</option>
+                  <option value="draft">Brouillon</option>
+                  <option value="hidden">Masqué</option>
+                  <option value="cancelled">Annulé</option>
+                  <option value="completed">Réalisé</option>
                 </select>
               </div>
             </div>
@@ -1018,12 +1022,16 @@
                     <input id="stageCityInput" type="text" required />
                   </div>
                   <div class="field">
-                    <label>Département</label>
-                    <input id="stageDepartmentInput" type="text" />
+                    <label>Code postal</label>
+                    <input id="stagePostalCodeInput" type="text" placeholder="13001" />
                   </div>
                   <div class="field">
                     <label>Région</label>
-                    <input id="stageRegionInput" type="text" />
+                    <select id="stageRegionInput"></select>
+                  </div>
+                  <div class="field">
+                    <label>Département</label>
+                    <select id="stageDepartmentInput"></select>
                   </div>
                 </div>
 
@@ -1041,8 +1049,15 @@
                     <input id="stageDurationInput" type="text" placeholder="3h" />
                   </div>
                   <div class="field">
-                    <label>Prix</label>
-                    <input id="stagePriceInput" type="number" required />
+                    <label>Type d’offre</label>
+                    <select id="stageOfferTypeInput">
+                      <option value="public">Particulier — 30 €/personne</option>
+                      <option value="enterprise">Entreprise — 390 € / stage</option>
+                    </select>
+                  </div>
+                  <div class="field">
+                    <label>Prix standardisé</label>
+                    <input id="stagePriceInput" type="number" value="30" readonly required />
                   </div>
                 </div>
 
@@ -1089,13 +1104,22 @@
                     <input id="trainerSessionCityInput" type="text" required />
                   </div>
                   <div class="field">
-                    <label>Département</label>
-                    <input id="trainerSessionDepartmentInput" type="text" placeholder="13" required />
+                    <label>Code postal</label>
+                    <input id="trainerSessionPostalCodeInput" type="text" placeholder="13001" />
                   </div>
                   <div class="field">
-                    <label>Adresse</label>
-                    <input id="trainerSessionAddressInput" type="text" />
+                    <label>Région</label>
+                    <select id="trainerSessionRegionInput"></select>
                   </div>
+                  <div class="field">
+                    <label>Département</label>
+                    <select id="trainerSessionDepartmentInput" required></select>
+                  </div>
+                </div>
+
+                <div class="field">
+                  <label>Adresse</label>
+                  <input id="trainerSessionAddressInput" type="text" />
                 </div>
 
                 <div class="filters filters-4">
@@ -1110,6 +1134,14 @@
                   <div class="field">
                     <label>Durée (jours)</label>
                     <input id="trainerSessionDurationInput" type="number" value="3" />
+                  </div>
+                  <div class="field">
+                    <label>Nombre de modules</label>
+                    <select id="trainerSessionModuleCountInput">
+                      <option value="1">1 module — 490 €</option>
+                      <option value="2">2 modules — 590 €</option>
+                      <option value="3">3 modules — 690 €</option>
+                    </select>
                   </div>
                   <div class="field">
                     <label>Statut</label>
@@ -1131,7 +1163,7 @@
                   </div>
                   <div class="field">
                     <label>Tarif standard</label>
-                    <input id="trainerSessionStandardPriceInput" type="number" value="590" />
+                    <input id="trainerSessionStandardPriceInput" type="number" value="490" />
                   </div>
                 </div>
 
@@ -1164,8 +1196,8 @@
                 <input id="trainerSessionModuleFilter" type="text" placeholder="Module..." />
               </div>
               <div class="field">
-                <label>Ville</label>
-                <input id="trainerSessionCityFilter" type="text" placeholder="Ville..." />
+                <label>Ville / code postal</label>
+                <input id="trainerSessionCityFilter" type="text" placeholder="Ville ou code postal..." />
               </div>
               <div class="field">
                 <label>Statut</label>
@@ -1233,6 +1265,7 @@
     </main>
   </div>
 
+  <script src="/fr-location.js"></script>
   <script type="module">
     import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
@@ -1653,6 +1686,93 @@
       return String(value || "").trim().toLowerCase();
     }
 
+    const PUBLIC_STAGE_UNIT_PRICE = 30;
+    const ENTERPRISE_STAGE_PRICE = 390;
+
+    function classifyStageOffer(item = {}) {
+      const explicit = normalize(item.stage_kind || item.offer_type || item.audience || item.price_model);
+      if (["enterprise", "entreprise", "team", "b2b", "company", "package"].includes(explicit)) return "enterprise";
+      if (["public", "particulier", "individual", "per_person", "standard"].includes(explicit)) return "public";
+
+      const text = [item.training_type, item.title, item.description, item.module_slug]
+        .filter(Boolean)
+        .map(value => normalize(value).normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, " "))
+        .join(" ");
+
+      if (text.includes("professionnel") || text.includes("entreprise") || text.includes("salarie") || text.includes("equipe") || text.includes("agressif") || text.includes("tendu") || text.includes("comportement")) return "enterprise";
+      return "public";
+    }
+
+    function standardStagePrice(item = {}) {
+      return classifyStageOffer(item) === "enterprise" ? ENTERPRISE_STAGE_PRICE : PUBLIC_STAGE_UNIT_PRICE;
+    }
+
+    function stageOfferLabel(item = {}) {
+      return classifyStageOffer(item) === "enterprise" ? "Entreprise 390 €" : "Particulier 30 €/pers.";
+    }
+
+    function isStageCompleted(row) {
+      return ["completed", "realized", "réalisé", "realise"].includes(normalize(row?.status));
+    }
+
+    function isInLast12Months(dateString) {
+      if (!dateString) return false;
+      const date = new Date(dateString);
+      if (Number.isNaN(date.getTime())) return false;
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const start = new Date(today);
+      start.setFullYear(start.getFullYear() - 1);
+      date.setHours(0, 0, 0, 0);
+      return date >= start && date <= today;
+    }
+
+    function trainerCompletedStageCount12m(trainerId) {
+      if (!trainerId) return 0;
+      return stagesData.filter(row => String(row.trainer_id || "") === String(trainerId) && isStageCompleted(row) && isInLast12Months(row.stage_date)).length;
+    }
+
+    function trainerCommissionRate(trainerId) {
+      const count = trainerCompletedStageCount12m(trainerId);
+      if (count >= 12) return 0.075;
+      if (count >= 6) return 0.15;
+      return 0.30;
+    }
+
+    function stagePaidReservations(stageId) {
+      return reservationsData.filter(row => String(row.stage_id || "") === String(stageId) && normalize(row.payment_status || "paid") === "paid");
+    }
+
+    function stageGrossAmount(stage) {
+      const reservations = stagePaidReservations(stage.id);
+      return reservations.reduce((sum, row) => {
+        const stored = Number(row.total_amount || 0);
+        if (stored > 0) return sum + stored;
+        if (classifyStageOffer(stage) === "enterprise") return sum + ENTERPRISE_STAGE_PRICE;
+        return sum + Number(row.places || 0) * PUBLIC_STAGE_UNIT_PRICE;
+      }, 0);
+    }
+
+    function stageTrainerPayout(stage) {
+      const gross = stageGrossAmount(stage);
+      const rate = trainerCommissionRate(stage.trainer_id);
+      return Math.round(gross * (1 - rate) * 100) / 100;
+    }
+
+    function departmentCode(value) {
+      const raw = String(value || "").trim();
+      const match = raw.match(/^(2A|2B|\d{2,3})\b/i);
+      return match ? match[1].toLowerCase() : "";
+    }
+
+    function matchesDepartment(rowValue, selectedValue) {
+      const selected = normalize(selectedValue);
+      if (!selected) return true;
+      const row = normalize(rowValue);
+      const selectedCode = departmentCode(selectedValue);
+      return row.includes(selected) || Boolean(selectedCode && (row === selectedCode || row.startsWith(`${selectedCode} `) || row.startsWith(`${selectedCode}-`)));
+    }
+
     function escapeHtml(value) {
       return String(value ?? "")
         .replace(/&/g, "&amp;")
@@ -1812,44 +1932,46 @@
               <th>Stage</th>
               <th>Ville</th>
               <th>Date</th>
-              <th>Prix</th>
-              <th>Places restantes</th>
+              <th>Offre</th>
+              <th>Places / session</th>
               <th>Statut</th>
               <th>Formateur lié</th>
               <th>Inscrits</th>
+              <th>Reversement</th>
               <th>Actions</th>
             </tr>
           </thead>
           <tbody>
-            ${rows.map(row => `
-              <tr>
-                <td><strong>${escapeHtml(row.title || "—")}</strong><span>${escapeHtml(row.training_type || "—")}</span></td>
-                <td>${escapeHtml(row.city || "—")}</td>
-                <td>${formatStageDate(row.stage_date)}</td>
-                <td>${formatPrice(row.price)}</td>
-                <td>${row.remaining_places ?? 0}</td>
-                <td>
-                  <span class="badge ${normalize(row.status) === "published" ? "badge-success" : "badge-warning"}">
-                    ${escapeHtml(row.status || "published")}
-                  </span>
-                </td>
-                <td>${escapeHtml(getTrainerDisplay(row.trainer_id))}</td>
-                <td>${getStageReservationCount(row.id)}</td>
-                <td>
-                  <div class="action-stack">
-                    <button class="btn btn-secondary" type="button" onclick="window.contactStageRegistrants('${jsArg(row.id)}', '${jsArg(row.title || "")}')">
-                      Contacter les inscrits
-                    </button>
-                    <button class="btn btn-secondary" type="button" onclick="window.updateStageStatus('${jsArg(row.id)}', '${normalize(row.status) === "published" ? "pending" : "published"}')">
-                      ${normalize(row.status) === "published" ? "Mettre en attente" : "Publier"}
-                    </button>
-                    <button class="btn btn-danger" type="button" onclick="window.deleteStage('${jsArg(row.id)}', '${jsArg(row.title || "")}')">
-                      Supprimer le stage
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            `).join("")}
+            ${rows.map(row => {
+              const offer = classifyStageOffer(row);
+              const gross = stageGrossAmount(row);
+              const rate = trainerCommissionRate(row.trainer_id);
+              const payout = stageTrainerPayout(row);
+              const status = normalize(row.status || "published");
+              const statusClass = status === "published" || status === "completed" ? "badge-success" : status === "cancelled" ? "badge-danger" : "badge-warning";
+              return `
+                <tr>
+                  <td><strong>${escapeHtml(row.title || "—")}</strong><span>${escapeHtml(row.training_type || "—")}</span></td>
+                  <td>${escapeHtml(row.city || "—")}${row.postal_code ? `<span>${escapeHtml(row.postal_code)}</span>` : ""}</td>
+                  <td>${formatStageDate(row.stage_date)}</td>
+                  <td><strong>${escapeHtml(stageOfferLabel(row))}</strong><span>${offer === "enterprise" ? "Forfait jusqu’à 20 personnes" : "Inscription individuelle"}</span></td>
+                  <td>${offer === "enterprise" ? `${Number(row.remaining_places || 0)} session` : `${row.remaining_places ?? 0} place(s)`}</td>
+                  <td><span class="badge ${statusClass}">${escapeHtml(row.status || "published")}</span></td>
+                  <td>${escapeHtml(getTrainerDisplay(row.trainer_id))}</td>
+                  <td>${getStageReservationCount(row.id)}</td>
+                  <td><strong>${formatPrice(payout)}</strong><span>CA ${formatPrice(gross)} · VP ${Math.round(rate * 1000) / 10}%</span></td>
+                  <td>
+                    <div class="action-stack">
+                      <button class="btn btn-secondary" type="button" onclick="window.contactStageRegistrants('${jsArg(row.id)}', '${jsArg(row.title || "")}')">Contacter les inscrits</button>
+                      ${status !== "published" ? `<button class="btn btn-secondary" type="button" onclick="window.updateStageStatus('${jsArg(row.id)}', 'published')">Publier</button>` : `<button class="btn btn-secondary" type="button" onclick="window.updateStageStatus('${jsArg(row.id)}', 'hidden')">Masquer</button>`}
+                      ${status !== "completed" ? `<button class="btn btn-secondary" type="button" onclick="window.updateStageStatus('${jsArg(row.id)}', 'completed')">Marquer réalisé</button>` : ""}
+                      ${status !== "cancelled" ? `<button class="btn btn-secondary" type="button" onclick="window.updateStageStatus('${jsArg(row.id)}', 'cancelled')">Annuler</button>` : ""}
+                      <button class="btn btn-danger" type="button" onclick="window.deleteStage('${jsArg(row.id)}', '${jsArg(row.title || "")}')">Supprimer le stage</button>
+                    </div>
+                  </td>
+                </tr>
+              `;
+            }).join("")}
           </tbody>
         </table>
       `;
@@ -2236,7 +2358,7 @@
               <tr>
                 <td><strong>${escapeHtml(row.module_name || "—")}</strong></td>
                 <td>${escapeHtml(row.title || "—")}</td>
-                <td>${escapeHtml(row.city || "—")}</td>
+                <td>${escapeHtml(row.city || "—")}${row.postal_code ? `<span>${escapeHtml(row.postal_code)}</span>` : ""}</td>
                 <td>${escapeHtml(row.department || "—")}</td>
                 <td>${escapeHtml(row.address || "—")}</td>
                 <td>${formatShortDate(row.start_date)}</td>
@@ -2349,8 +2471,8 @@
 
         const searchOk = !search || text.includes(search);
         const regionOk = !region || normalize(row.region).includes(region);
-        const departmentOk = !department || normalize(row.department).includes(department);
-        const cityOk = !city || normalize(row.city).includes(city);
+        const departmentOk = matchesDepartment(row.department, department);
+        const cityOk = !city || normalize(row.city).includes(city) || normalize(row.postal_code).includes(city);
         const affiliationOk =
           !affiliation ||
           (affiliation === "active" && affValid) ||
@@ -2407,8 +2529,8 @@
 
       const filtered = stagesData.filter(row => {
         const regionOk = !region || normalize(row.region).includes(region);
-        const departmentOk = !department || normalize(row.department).includes(department);
-        const cityOk = !city || normalize(row.city).includes(city);
+        const departmentOk = matchesDepartment(row.department, department);
+        const cityOk = !city || normalize(row.city).includes(city) || normalize(row.postal_code).includes(city);
         const trainerText = normalize(`${row.trainer_id || ""} ${getTrainerDisplay(row.trainer_id)}`);
         const trainerOk = !trainer || trainerText.includes(trainer);
         const statusOk = !status || row.status === status;
@@ -2425,7 +2547,7 @@
 
       const filtered = trainerSessionsData.filter(row => {
         const moduleOk = !moduleValue || normalize(row.module_name).includes(moduleValue);
-        const cityOk = !city || normalize(row.city).includes(city);
+        const cityOk = !city || normalize(row.city).includes(city) || normalize(row.postal_code).includes(city);
         const statusOk = !status || row.status === status;
         return moduleOk && cityOk && statusOk;
       });
@@ -2583,8 +2705,15 @@ VITAL PROTECT`
     };
 
     window.updateStageStatus = async (stageId, status) => {
-      const label = status === "published" ? "publier" : "mettre en attente";
-      const confirmed = window.confirm(`Confirmer : ${label} ce stage ?`);
+      const labels = {
+        published: "publier",
+        hidden: "masquer",
+        pending: "mettre en attente",
+        draft: "passer en brouillon",
+        cancelled: "annuler",
+        completed: "marquer comme réalisé"
+      };
+      const confirmed = window.confirm(`Confirmer : ${labels[status] || "modifier"} ce stage ?`);
       if (!confirmed) return;
 
       try {
@@ -2997,6 +3126,39 @@ VITAL PROTECT`
       }
     });
 
+    window.VP_FRANCE_LOCATION?.setupRegionDepartment({
+      regionId: "trainerRegionFilter",
+      departmentId: "trainerDepartmentFilter",
+      regionPlaceholder: "Toutes les régions",
+      departmentPlaceholder: "Tous les départements",
+      includeAllDepartmentsWhenNoRegion: true,
+      onChange: applyTrainerFilters
+    });
+    window.VP_FRANCE_LOCATION?.setupRegionDepartment({
+      regionId: "stageRegionFilter",
+      departmentId: "stageDepartmentFilter",
+      regionPlaceholder: "Toutes les régions",
+      departmentPlaceholder: "Tous les départements",
+      includeAllDepartmentsWhenNoRegion: true,
+      onChange: applyStageFilters
+    });
+    window.VP_FRANCE_LOCATION?.setupRegionDepartment({
+      regionId: "stageRegionInput",
+      departmentId: "stageDepartmentInput",
+      regionPlaceholder: "Sélectionner une région",
+      departmentPlaceholder: "Sélectionner un département",
+      includeAllDepartmentsWhenNoRegion: false
+    });
+    window.VP_FRANCE_LOCATION?.setupRegionDepartment({
+      regionId: "trainerSessionRegionInput",
+      departmentId: "trainerSessionDepartmentInput",
+      regionPlaceholder: "Sélectionner une région",
+      departmentPlaceholder: "Sélectionner un département",
+      includeAllDepartmentsWhenNoRegion: false
+    });
+    window.VP_FRANCE_LOCATION?.setupPostalCode("stagePostalCodeInput");
+    window.VP_FRANCE_LOCATION?.setupPostalCode("trainerSessionPostalCodeInput");
+
     document.getElementById("candidateSearch").addEventListener("input", applyCandidateFilters);
     document.getElementById("candidateValidationFilter").addEventListener("change", applyCandidateFilters);
     document.getElementById("candidateResultFilter").addEventListener("change", applyCandidateFilters);
@@ -3007,8 +3169,8 @@ VITAL PROTECT`
     document.getElementById("archivePaymentFilter").addEventListener("change", applyArchiveFilters);
 
     document.getElementById("trainerSearch").addEventListener("input", applyTrainerFilters);
-    document.getElementById("trainerRegionFilter").addEventListener("input", applyTrainerFilters);
-    document.getElementById("trainerDepartmentFilter").addEventListener("input", applyTrainerFilters);
+    document.getElementById("trainerRegionFilter").addEventListener("change", applyTrainerFilters);
+    document.getElementById("trainerDepartmentFilter").addEventListener("change", applyTrainerFilters);
     document.getElementById("trainerCityFilter").addEventListener("input", applyTrainerFilters);
     document.getElementById("trainerAffiliationFilter").addEventListener("change", applyTrainerFilters);
     document.getElementById("trainerCertificationFilter").addEventListener("change", applyTrainerFilters);
@@ -3018,8 +3180,8 @@ VITAL PROTECT`
     document.getElementById("trainerModuleStatusFilter").addEventListener("change", applyTrainerModulesFilters);
     document.getElementById("trainerModuleExpiryFilter").addEventListener("change", applyTrainerModulesFilters);
 
-    document.getElementById("stageRegionFilter").addEventListener("input", applyStageFilters);
-    document.getElementById("stageDepartmentFilter").addEventListener("input", applyStageFilters);
+    document.getElementById("stageRegionFilter").addEventListener("change", applyStageFilters);
+    document.getElementById("stageDepartmentFilter").addEventListener("change", applyStageFilters);
     document.getElementById("stageCityFilter").addEventListener("input", applyStageFilters);
     document.getElementById("stageTrainerFilter").addEventListener("input", applyStageFilters);
     document.getElementById("stageStatusFilter").addEventListener("change", applyStageFilters);
@@ -3027,6 +3189,24 @@ VITAL PROTECT`
     document.getElementById("trainerSessionModuleFilter").addEventListener("input", applyTrainerSessionFilters);
     document.getElementById("trainerSessionCityFilter").addEventListener("input", applyTrainerSessionFilters);
     document.getElementById("trainerSessionStatusFilter").addEventListener("change", applyTrainerSessionFilters);
+
+
+    function updateStageStandardPriceInput() {
+      const offerType = document.getElementById("stageOfferTypeInput")?.value || "public";
+      const priceInput = document.getElementById("stagePriceInput");
+      const remainingInput = document.getElementById("stageRemainingPlacesInput");
+      const maxInput = document.getElementById("stageMaxParticipantsInput");
+      if (priceInput) priceInput.value = offerType === "enterprise" ? "390" : "30";
+      if (offerType === "enterprise") {
+        if (maxInput && !Number(maxInput.value || 0)) maxInput.value = "20";
+        if (remainingInput) remainingInput.value = "1";
+      } else if (remainingInput && maxInput && Number(remainingInput.value || 0) === 1) {
+        remainingInput.value = maxInput.value || "20";
+      }
+    }
+
+    document.getElementById("stageOfferTypeInput")?.addEventListener("change", updateStageStandardPriceInput);
+    updateStageStandardPriceInput();
 
     document.getElementById("createStageForm").addEventListener("submit", async (e) => {
       e.preventDefault();
@@ -3050,6 +3230,7 @@ VITAL PROTECT`
         }
 
         const moduleName = document.getElementById("stageModuleInput").value;
+        const offerType = document.getElementById("stageOfferTypeInput")?.value || "public";
 
         const payload = {
           action: "create_stage",
@@ -3058,6 +3239,7 @@ VITAL PROTECT`
           training_type: moduleName,
           description: document.getElementById("stageDescriptionInput").value,
           city: document.getElementById("stageCityInput").value,
+          postal_code: document.getElementById("stagePostalCodeInput").value,
           department: document.getElementById("stageDepartmentInput").value,
           region: document.getElementById("stageRegionInput").value,
           address: document.getElementById("stageAddressInput").value,
@@ -3067,6 +3249,8 @@ VITAL PROTECT`
           max_participants: Number(document.getElementById("stageMaxParticipantsInput").value || 20),
           remaining_places: Number(document.getElementById("stageRemainingPlacesInput").value || 20),
           price: Number(document.getElementById("stagePriceInput").value || 0),
+          stage_kind: offerType,
+          price_model: offerType === "enterprise" ? "package" : "per_person",
           status: "published"
         };
 
@@ -3087,13 +3271,28 @@ VITAL PROTECT`
 
         alert("Stage créé avec succès.");
         e.target.reset();
+        window.VP_FRANCE_LOCATION?.populateDepartments(document.getElementById("stageDepartmentInput"), "", "Sélectionner un département", false);
         populateModuleSelect("stageModuleInput");
+        updateStageStandardPriceInput();
         await loadStages();
       } catch (error) {
         console.error(error);
         alert(error.message || "Erreur lors de la création du stage.");
       }
     });
+
+
+    function updateTrainerSessionLaunchPrices() {
+      const count = Number(document.getElementById("trainerSessionModuleCountInput")?.value || 1);
+      const price = count >= 3 ? 690 : count >= 2 ? 590 : 490;
+      const standardInput = document.getElementById("trainerSessionStandardPriceInput");
+      const launchInput = document.getElementById("trainerSessionLaunchPriceInput");
+      if (standardInput) standardInput.value = String(price);
+      if (launchInput) launchInput.value = String(price);
+    }
+
+    document.getElementById("trainerSessionModuleCountInput")?.addEventListener("change", updateTrainerSessionLaunchPrices);
+    updateTrainerSessionLaunchPrices();
 
     document.getElementById("createTrainerSessionForm").addEventListener("submit", async (e) => {
       e.preventDefault();
@@ -3106,11 +3305,14 @@ VITAL PROTECT`
           module_name: moduleName,
           title: moduleName,
           city: document.getElementById("trainerSessionCityInput").value,
+          postal_code: document.getElementById("trainerSessionPostalCodeInput").value,
+          region: document.getElementById("trainerSessionRegionInput").value,
           department: document.getElementById("trainerSessionDepartmentInput").value,
           address: document.getElementById("trainerSessionAddressInput").value,
           start_date: document.getElementById("trainerSessionStartDateInput").value,
           end_date: document.getElementById("trainerSessionEndDateInput").value,
           duration_days: Number(document.getElementById("trainerSessionDurationInput").value || 3),
+          module_count: Number(document.getElementById("trainerSessionModuleCountInput")?.value || 1),
           max_places: Number(document.getElementById("trainerSessionMaxPlacesInput").value || 10),
           remaining_places: Number(document.getElementById("trainerSessionRemainingPlacesInput").value || 10),
           standard_price: Number(document.getElementById("trainerSessionStandardPriceInput").value || 590),
@@ -3135,6 +3337,7 @@ VITAL PROTECT`
 
         alert("Session formateur créée avec succès.");
         e.target.reset();
+        window.VP_FRANCE_LOCATION?.populateDepartments(document.getElementById("trainerSessionDepartmentInput"), "", "Sélectionner un département", false);
         populateModuleSelect("trainerSessionModuleInput");
         await loadTrainerSessions();
       } catch (error) {
