@@ -677,8 +677,10 @@
                 <label>Paiement</label>
                 <select id="candidatePaymentFilter">
                   <option value="">Tous</option>
+                  <option value="checkout_created">Dossier créé</option>
                   <option value="authorized">Autorisé</option>
                   <option value="captured">Capturé</option>
+                  <option value="paid">Payé</option>
                   <option value="canceled">Annulé</option>
                 </select>
               </div>
@@ -2429,7 +2431,7 @@
 
     function renderTrainerRegistrations(rows) {
       trainerRegistrationsCount.textContent = rows.length;
-      capturedTrainerPaymentsCount.textContent = rows.filter(r => r.payment_status === "captured").length;
+      capturedTrainerPaymentsCount.textContent = rows.filter(r => ["captured", "paid", "authorized", "checkout_created"].includes(r.payment_status)).length;
 
       if (!rows.length) {
         trainerRegistrationsWrap.innerHTML = `<div class="empty">Aucun candidat formateur pour le moment.</div>`;
@@ -2969,30 +2971,43 @@
     }
 
     async function loadTrainerRegistrations() {
+      const attempts = [];
+
+      try {
+        const headers = await getAuthHeaders();
+        const res = await fetch("/api/list-trainer-registrations", {
+          method: "GET",
+          headers
+        });
+        const result = await parseApiResponse(res);
+        trainerRegistrationsData = result.trainer_registrations || [];
+        renderTrainerRegistrations(trainerRegistrationsData);
+        updateFinance();
+        return;
+      } catch (directApiError) {
+        console.warn("Lecture candidats via endpoint dédié impossible.", directApiError);
+        attempts.push(`Endpoint dédié : ${directApiError.message || directApiError}`);
+      }
+
       try {
         const result = await callAdminTool("list_trainer_registrations");
         trainerRegistrationsData = result.trainer_registrations || [];
         renderTrainerRegistrations(trainerRegistrationsData);
         updateFinance();
         return;
-      } catch (apiError) {
-        console.warn("Lecture candidats via admin-tools impossible, tentative Supabase directe.", apiError);
+      } catch (adminToolError) {
+        console.warn("Lecture candidats via admin-tools impossible.", adminToolError);
+        attempts.push(`Admin tools : ${adminToolError.message || adminToolError}`);
       }
 
-      const { data, error } = await supabase
-        .from("trainer_session_registrations")
-        .select("*")
-        .order("created_at", { ascending: false });
-
-      if (error) {
-        console.error(error);
-        trainerRegistrationsWrap.innerHTML = `<div class="error">Impossible de charger les candidats formateurs : ${escapeHtml(error.message || "erreur inconnue")}</div>`;
-        return;
-      }
-
-      trainerRegistrationsData = data || [];
-      renderTrainerRegistrations(trainerRegistrationsData);
-      updateFinance();
+      trainerRegistrationsWrap.innerHTML = `
+        <div class="error">
+          Impossible de charger les candidats formateurs depuis l’admin.<br />
+          ${attempts.map(item => `<small>${escapeHtml(item)}</small>`).join("<br />")}
+          <br /><br />
+          Vérifiez que <strong>SUPABASE_SERVICE_ROLE_KEY</strong> est bien configurée côté serveur et que le dossier <strong>/api</strong> est déployé.
+        </div>
+      `;
     }
 
     async function loadArchives() {
