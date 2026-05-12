@@ -19,7 +19,7 @@
     html.vpl-route-preload-transition::before{content:"";position:fixed;inset:0;z-index:2147482998;pointer-events:none;background-color:#2f6f9f;background-image:var(--vpl-transition-image);background-position:center;background-size:var(--vpl-transition-bg-size);background-repeat:no-repeat;opacity:1}
     @media (max-width: 768px), (pointer: coarse) and (orientation: portrait){html{--vpl-transition-image:url("transition-screen-mobile.jpg");--vpl-transition-bg-size:cover}}
 
-    /* Correctif définitif : l’image complète est le fond de la card, le texte est forcé au premier plan en inline + CSS. */
+    /* Cards marketplace : image complète en fond, texte au recto, détails au verso par clic. */
     .vp-marketplace-card{background-size:cover!important;background-position:center center!important;background-repeat:no-repeat!important;}
     .vp-marketplace-card > .vp-marketplace-card-content{position:absolute!important;left:0!important;right:0!important;bottom:0!important;top:auto!important;z-index:9999!important;color:#fff!important;opacity:1!important;visibility:visible!important;display:flex!important;}
     .vp-marketplace-card > .vp-marketplace-card-content *{opacity:1!important;visibility:visible!important;}
@@ -509,11 +509,11 @@
       overflow:hidden!important;
     }
     .vp-card-face *{color:inherit!important;box-sizing:border-box!important}
-    .vp-card-face-back{opacity:0!important;transform:translateY(12px)!important}
-    .vp-marketplace-card:hover .vp-card-face-front,
-    .vp-marketplace-card:focus-visible .vp-card-face-front{opacity:0!important;transform:translateY(-10px)!important}
-    .vp-marketplace-card:hover .vp-card-face-back,
-    .vp-marketplace-card:focus-visible .vp-card-face-back{opacity:1!important;transform:translateY(0)!important}
+    .vp-card-face-front{opacity:1!important;transform:rotateY(0deg) translateY(0)!important;backface-visibility:hidden!important;transform-origin:center center!important}
+    .vp-card-face-back{opacity:0!important;transform:rotateY(180deg) translateY(10px)!important;backface-visibility:hidden!important;transform-origin:center center!important}
+    .vp-marketplace-card.is-flipped .vp-card-face-front{opacity:0!important;transform:rotateY(-180deg) translateY(-6px)!important;pointer-events:none!important}
+    .vp-marketplace-card.is-flipped .vp-card-face-back{opacity:1!important;transform:rotateY(0deg) translateY(0)!important}
+    .vp-marketplace-card.is-flipped{border-color:rgba(140,200,255,.46);box-shadow:0 22px 56px rgba(6,26,47,.24);filter:saturate(1.04)}
     .vp-card-mainline{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:8px}
     .vp-card-kicker{font-size:10px;font-weight:950;text-transform:uppercase;letter-spacing:.075em;color:#a8d5ff!important;line-height:1.1}
     .vp-card-price{font-size:17px;font-weight:950;white-space:nowrap;line-height:1;color:#fff!important}
@@ -526,8 +526,6 @@
     .vp-card-back-title{margin:0 0 7px;font-size:12px;font-weight:950;text-transform:uppercase;letter-spacing:.07em;color:#a8d5ff!important}
     .vp-card-back-desc{display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical;overflow:hidden;margin:0;color:rgba(255,255,255,.88)!important;font-size:12px;line-height:1.36;font-weight:700}
     .vp-card-back-meta{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0}
-    @media(hover:none){.vp-marketplace-card:active .vp-card-face-front{opacity:0!important;transform:translateY(-10px)!important}.vp-marketplace-card:active .vp-card-face-back{opacity:1!important;transform:translateY(0)!important}}
-
     @media(max-width:1080px){.vp-marketplace-column{min-height:auto}.vp-marketplace-filters{grid-template-columns:repeat(2,minmax(170px,1fr));max-width:640px}}
     @media(max-width:640px){.vp-marketplace-section{padding:62px 0}.vp-marketplace-filters{grid-template-columns:1fr}.vp-marketplace-column{padding:18px;border-radius:24px}.vp-marketplace-column-head{display:block}.vp-marketplace-badge{margin-top:12px}.vp-marketplace-list{grid-template-columns:1fr}.vp-marketplace-card{height:500px}.vp-marketplace-card-content{max-height:47%!important;padding:0 16px 14px!important}.vp-marketplace-card-top{display:flex}.vp-marketplace-price{display:block}.vp-marketplace-private-cta{display:block}.vp-marketplace-private-cta .vpl-button{margin-top:12px}}
   </style>
@@ -904,10 +902,6 @@
     let trainerSessionsData = [];
     let modulesCatalogData = [];
 
-    const PUBLIC_STAGE_UNIT_PRICE = 30;
-    const ENTERPRISE_STAGE_PRICE = 390;
-    const TRAINER_SESSION_PRICES = { 1: 490, 2: 590, 3: 690 };
-
     const FRANCE_REGIONS = [
       { name: "Auvergne-Rhône-Alpes", departments: ["01 - Ain", "03 - Allier", "07 - Ardèche", "15 - Cantal", "26 - Drôme", "38 - Isère", "42 - Loire", "43 - Haute-Loire", "63 - Puy-de-Dôme", "69 - Rhône", "73 - Savoie", "74 - Haute-Savoie"] },
       { name: "Bourgogne-Franche-Comté", departments: ["21 - Côte-d’Or", "25 - Doubs", "39 - Jura", "58 - Nièvre", "70 - Haute-Saône", "71 - Saône-et-Loire", "89 - Yonne", "90 - Territoire de Belfort"] },
@@ -970,7 +964,7 @@
     function hasCompleteSession(item) {
       if (!item) return false;
       const hasId = String(item.id || "").trim().length > 0;
-      const hasPrice = getStagePublicPrice(item) > 0;
+      const hasPrice = Number(item.price || 0) > 0;
       const hasPlaces = Number(item.remaining_places || 0) > 0;
       const isPublished = !item.status || String(item.status).toLowerCase() === "published";
       return hasId && hasPrice && hasPlaces && isPublished;
@@ -1000,9 +994,7 @@
         return;
       }
       const places = Math.max(1, Number(placesInput?.value || 1));
-      const total = isEnterpriseStage(stage) ? ENTERPRISE_STAGE_PRICE : getStagePublicPrice(stage) * places;
-      const suffix = isEnterpriseStage(stage) ? " — forfait entreprise jusqu’à 20 personnes" : "";
-      setText(bookingTotal, `Total : ${formatPrice(total)}${suffix}`);
+      setText(bookingTotal, `Total : ${formatPrice(Number(stage.price || 0) * places)}`);
     }
 
     function showNoSessionState(message = "Choisissez une session dans la liste : le formulaire s’activera automatiquement si la réservation est possible.") {
@@ -1102,41 +1094,6 @@
 
     function getItemModuleType(item) {
       return classifyVitalModule(item?.module_name, item?.training_module_name, item?.training_type, item?.title, item?.description, item?.audience, item?.slug);
-    }
-
-    function getStageOfferType(item = {}) {
-      const explicit = normalizeLocationValue(item?.stage_kind || item?.offer_type || item?.audience || item?.price_model);
-      if (["enterprise", "entreprise", "team", "b2b", "company", "package"].includes(explicit)) return "enterprise";
-      if (["public", "particulier", "individual", "per_person", "standard"].includes(explicit)) return "public";
-      return getItemModuleType(item) === "pro" ? "enterprise" : "public";
-    }
-
-    function isEnterpriseStage(item) {
-      return getStageOfferType(item) === "enterprise";
-    }
-
-    function getStagePublicPrice(item = {}) {
-      return isEnterpriseStage(item) ? ENTERPRISE_STAGE_PRICE : PUBLIC_STAGE_UNIT_PRICE;
-    }
-
-    function getTrainerSessionPrice(item = {}) {
-      const launch = Number(item.launch_price || 0);
-      const standard = Number(item.standard_price || 0);
-      if (launch > 0) return launch;
-      if (standard > 0) return standard;
-      const count = Math.max(1, Math.min(3, Number(item.module_count || item.modules_count || 1)));
-      return TRAINER_SESSION_PRICES[count] || TRAINER_SESSION_PRICES[1];
-    }
-
-    function formatStageRemainingLabel(item) {
-      if (isEnterpriseStage(item)) return Number(item.remaining_places || 0) > 0 ? "Session disponible" : "Session réservée";
-      const remaining = Number(item.remaining_places || 0);
-      return `${remaining} place${remaining > 1 ? "s" : ""}`;
-    }
-
-    function getStageActionText(item, path, complete) {
-      if (!complete) return "Session à compléter";
-      return isEnterpriseStage(item) || path === "team" ? "Réserver le forfait entreprise →" : "Choisir et réserver →";
     }
 
     function getDisplayModuleName(item, kind = "stage") {
@@ -1249,7 +1206,7 @@
     }
 
     function stagePathForItem(item) {
-      return isEnterpriseStage(item) || isProfessionalTeamStage(item) ? "team" : "public";
+      return isProfessionalTeamStage(item) ? "team" : "public";
     }
 
     function labelForPath(path) {
@@ -1490,10 +1447,10 @@
         const cardVisualClass = getCardVisualClass(entry);
         const cardVisualSrc = getCardVisualSrc(entry);
         if (entry.kind === "trainer") {
-          const price = getTrainerSessionPrice(item);
+          const price = Number(item.launch_price || item.standard_price || 0);
           const sessionUrl = `/devenir-formateur.html?session_id=${encodeURIComponent(item.id)}`;
           return `
-            <a class="vp-marketplace-card ${escapeHtml(cardVisualClass)}" href="${sessionUrl}" style="background-image:url('${escapeHtml(cardVisualSrc)}');background-size:cover;background-position:center center;background-repeat:no-repeat;">
+            <a class="vp-marketplace-card ${escapeHtml(cardVisualClass)}" href="${sessionUrl}" data-flip-card="true" aria-expanded="false" style="background-image:url('${escapeHtml(cardVisualSrc)}');background-size:cover;background-position:center center;background-repeat:no-repeat;">
               ${renderMarketplaceCardFaces({
                 entry,
                 item,
@@ -1512,23 +1469,41 @@
         }
         const complete = hasCompleteSession(item);
         return `
-          <button type="button" class="vp-marketplace-card ${escapeHtml(cardVisualClass)} ${selected ? "is-selected" : ""} ${complete ? "" : "is-disabled"}" data-stage-id="${escapeHtml(item.id)}" style="background-image:url('${escapeHtml(cardVisualSrc)}');background-size:cover;background-position:center center;background-repeat:no-repeat;" ${complete ? "" : "disabled"}>
+          <button type="button" class="vp-marketplace-card ${escapeHtml(cardVisualClass)} ${selected ? "is-selected" : ""} ${complete ? "" : "is-disabled"}" data-flip-card="true" aria-expanded="false" data-stage-id="${escapeHtml(item.id)}" style="background-image:url('${escapeHtml(cardVisualSrc)}');background-size:cover;background-position:center center;background-repeat:no-repeat;" ${complete ? "" : "disabled"}>
             ${renderMarketplaceCardFaces({
               entry,
               item,
               title,
               moduleLabel,
               pathLabel,
-              price: formatPrice(getStagePublicPrice(item)),
+              price: formatPrice(item.price),
               location: getShortFrontLocation(item),
               dateText: formatDate(item.stage_date),
               timeText: item.start_time || "Horaire à confirmer",
-              placesText: formatStageRemainingLabel(item),
-              actionText: getStageActionText(item, entry.path, complete)
+              placesText: `${Number(item.remaining_places || 0)} place(s)`,
+              actionText: complete ? (entry.path === "team" ? "Inscrire mes salariés →" : "Choisir et réserver →") : "Session à compléter"
             })}
           </button>
         `;
       }).join("");
+
+      publicStagesContainer.querySelectorAll(".vp-marketplace-card[data-flip-card]").forEach((card) => {
+        card.addEventListener("click", (event) => {
+          if (card.classList.contains("is-disabled") || card.disabled) return;
+          if (!card.classList.contains("is-flipped")) {
+            event.preventDefault();
+            event.stopImmediatePropagation();
+            publicStagesContainer.querySelectorAll(".vp-marketplace-card.is-flipped").forEach((other) => {
+              if (other !== card) {
+                other.classList.remove("is-flipped");
+                other.setAttribute("aria-expanded", "false");
+              }
+            });
+            card.classList.add("is-flipped");
+            card.setAttribute("aria-expanded", "true");
+          }
+        });
+      });
 
       publicStagesContainer.querySelectorAll("[data-stage-id]").forEach((button) => {
         button.addEventListener("click", () => {
@@ -1601,8 +1576,8 @@
       setText(heroDescription, stage.description || moduleSummary(getItemModuleType(stage), stagePathForItem(stage)));
       setText(metaCity, stage.city || "À confirmer");
       setText(metaDate, formatDate(stage.stage_date));
-      setText(metaPrice, formatPrice(getStagePublicPrice(stage)));
-      setText(metaPlaces, isEnterpriseStage(stage) ? "Forfait jusqu’à 20 personnes" : String(stage.remaining_places ?? "—"));
+      setText(metaPrice, formatPrice(stage.price));
+      setText(metaPlaces, String(stage.remaining_places ?? "—"));
       setText(metaRegion, stage.region || "Région à confirmer");
       setText(metaDepartment, stage.department || "Département à confirmer");
       setText(practicalAddress, stage.address || "Adresse à confirmer");
@@ -1611,7 +1586,7 @@
       setText(practicalType, cleanModule || "Stage Vital Protect");
       setText(selectedStageValue, `${cleanTitle || "Stage"} — ${stage.city || "Ville à confirmer"} — ${formatDate(stage.stage_date)}`);
       if (cityDisplay) cityDisplay.value = stage.city || "";
-      if (isEnterpriseStage(stage) || isProfessionalTeamStage(stage)) {
+      if (isProfessionalTeamStage(stage)) {
         setText(audienceText, "Ce stage peut accueillir des salariés dans un cadre professionnel, sans modification du déroulé pédagogique Vital Protect.");
         setText(objectiveText, stage.description || "Programme standardisé : faire face aux situations tendues et comportements agressifs en milieu professionnel, avec des repères simples, progressifs et proportionnés.");
       } else {
@@ -1620,7 +1595,7 @@
       }
 
       if (!hasCompleteSession(stage)) {
-        setBookingEnabled(false, "Réservation désactivée : le stage n’a pas encore de place restante ou n’est pas publié.");
+        setBookingEnabled(false, "Réservation désactivée : le stage n’a pas encore de tarif valide ou de place restante.");
       } else {
         setBookingEnabled(true, "Stage sélectionné : vous pouvez réserver votre place.");
       }
@@ -1672,14 +1647,8 @@
           showBookingStatus("Merci de remplir tous les champs obligatoires.", "error");
           return;
         }
-        const enterprise = isEnterpriseStage(stage);
-        const checkoutQuantity = enterprise ? 1 : places;
-        if (enterprise && places > 20) {
-          showBookingStatus("Le forfait entreprise est prévu pour 20 personnes maximum.", "error");
-          return;
-        }
-        if (checkoutQuantity > Number(stage.remaining_places || 0)) {
-          showBookingStatus(enterprise ? "Cette session entreprise n’est plus disponible." : "Le nombre de places demandé dépasse les places restantes.", "error");
+        if (places > Number(stage.remaining_places || 0)) {
+          showBookingStatus("Le nombre de places demandé dépasse les places restantes.", "error");
           return;
         }
         showBookingStatus("Redirection vers le paiement Stripe...", "info");
@@ -1694,9 +1663,8 @@
               last_name: lastName,
               email,
               phone,
-              places: checkoutQuantity,
-              requested_places: places,
-              unit_price: getStagePublicPrice(stage)
+              places,
+              unit_price: Number(stage.price || 0)
             })
           });
           const result = await res.json();
