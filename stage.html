@@ -18,6 +18,11 @@
     html.vpl-route-preload-transition,html.vpl-route-preload-transition body{background:#2f6f9f!important}
     html.vpl-route-preload-transition::before{content:"";position:fixed;inset:0;z-index:2147482998;pointer-events:none;background-color:#2f6f9f;background-image:var(--vpl-transition-image);background-position:center;background-size:var(--vpl-transition-bg-size);background-repeat:no-repeat;opacity:1}
     @media (max-width: 768px), (pointer: coarse) and (orientation: portrait){html{--vpl-transition-image:url("transition-screen-mobile.jpg");--vpl-transition-bg-size:cover}}
+
+    /* Correctif définitif : l’image complète est le fond de la card, le texte est forcé au premier plan en inline + CSS. */
+    .vp-marketplace-card{background-size:cover!important;background-position:center center!important;background-repeat:no-repeat!important;}
+    .vp-marketplace-card > .vp-marketplace-card-content{position:absolute!important;left:0!important;right:0!important;bottom:0!important;top:auto!important;z-index:9999!important;color:#fff!important;opacity:1!important;visibility:visible!important;display:flex!important;}
+    .vp-marketplace-card > .vp-marketplace-card-content *{opacity:1!important;visibility:visible!important;}
   </style>
   <link rel="preload" as="image" href="transition-screen.png" media="(min-width: 769px)" />
   <link rel="preload" as="image" href="transition-screen-mobile.jpg" media="(max-width: 768px), (pointer: coarse) and (orientation: portrait)" />
@@ -33,9 +38,9 @@
   <meta name="description" content="Découvrez les stages Vital Protect : une méthode claire pour prévenir, éviter, réagir et reprendre le calme, avec des sessions publiées uniquement quand les conditions sont confirmées." />
   <link rel="canonical" href="https://vital-protect.fr/stage.html" />
   <link rel="icon" href="/logo.png" type="image/png" />
-  <link rel="preload" as="image" href="vp-card-prevenir-module.webp?v=vpoverlay2" />
-  <link rel="preload" as="image" href="vp-card-self-pro.webp?v=vpoverlay2" />
-  <link rel="preload" as="image" href="vp-card-formateur-reseau.webp?v=vpoverlay2" />
+  <link rel="preload" as="image" href="vp-card-prevenir-module.webp?v=vpforeground1" />
+  <link rel="preload" as="image" href="vp-card-self-pro.webp?v=vpforeground1" />
+  <link rel="preload" as="image" href="vp-card-formateur-reseau.webp?v=vpforeground1" />
   <link rel="stylesheet" href="/styles/tokens.css" />
   <link rel="stylesheet" href="/styles/base.css" />
   <link rel="stylesheet" href="/styles/components.css" />
@@ -417,75 +422,65 @@
     }
     .vp-marketplace-card{
       position:relative;
-      display:block;
+      display:flex;
+      flex-direction:column;
+      justify-content:flex-end;
       height:520px;
-      min-height:0;
       width:100%;
       text-align:left;
       padding:0;
       border:1px solid rgba(6,26,47,.18);
       border-radius:24px;
-      background:#061a2f;
+      background-color:#061a2f;
+      background-image:var(--vp-card-image);
+      background-size:cover;
+      background-position:center center;
+      background-repeat:no-repeat;
       color:#fff;
       text-decoration:none;
       box-shadow:0 18px 46px rgba(6,26,47,.16);
       overflow:hidden;
-      isolation:isolate;
       cursor:pointer;
       transition:transform .28s ease,box-shadow .28s ease,border-color .28s ease,filter .28s ease;
+      isolation:isolate;
     }
-    .vp-marketplace-card-visual{
-      position:absolute!important;
-      z-index:1!important;
-      inset:0!important;
-      display:block!important;
-      width:100%!important;
-      height:100%!important;
-      object-fit:cover!important;
-      object-position:center center!important;
-      pointer-events:none!important;
-      user-select:none!important;
-      background:#061a2f;
-    }
+    .vp-marketplace-card-visual,
     .vp-marketplace-card-bg{display:none!important;}
     .vp-marketplace-card::before,
     .vp-marketplace-card::after{display:none!important;content:none!important;}
     .vp-marketplace-card-content{
-      position:absolute!important;
-      z-index:50!important;
-      left:0!important;
-      right:0!important;
-      top:52%!important;
-      bottom:0!important;
+      position:relative!important;
+      z-index:20!important;
       display:flex!important;
       flex-direction:column!important;
+      width:100%!important;
+      max-height:46%!important;
       box-sizing:border-box!important;
-      padding:16px 18px 14px!important;
+      margin-top:auto!important;
+      padding:0 18px 14px!important;
       color:#fff!important;
       opacity:1!important;
       visibility:visible!important;
+      overflow:hidden!important;
       text-shadow:0 2px 10px rgba(0,0,0,.42);
-      overflow:hidden;
       pointer-events:none;
     }
     .vp-marketplace-card-content *{
       opacity:1!important;
       visibility:visible!important;
-      color:inherit;
     }
     button.vp-marketplace-card{cursor:pointer;font:inherit}
     .vp-marketplace-card:hover,.vp-marketplace-card.is-selected{transform:translateY(-6px);border-color:rgba(140,200,255,.42);box-shadow:0 22px 56px rgba(6,26,47,.22);filter:saturate(1.05)}
-    .vp-marketplace-card:hover .vp-marketplace-card-visual,.vp-marketplace-card.is-selected .vp-marketplace-card-visual{filter:saturate(1.04) contrast(1.02)}
     .vp-marketplace-card.is-selected{outline:2px solid rgba(109,183,255,.46);outline-offset:3px}
     .vp-marketplace-card.is-disabled{opacity:.62;cursor:not-allowed;transform:none!important}
     .vp-marketplace-card-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:8px}
-    .vp-marketplace-type{color:#a8d5ff;font-size:10px;font-weight:950;text-transform:uppercase;letter-spacing:.06em}
-    .vp-marketplace-price{font-weight:950;color:#fff;white-space:nowrap;font-size:16px}
-    .vp-marketplace-title{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;margin:0 0 9px;color:#fff;font-size:17px;line-height:1.06;letter-spacing:-.04em;font-weight:950;text-wrap:balance}
+    .vp-marketplace-type{color:#a8d5ff!important;font-size:10px;font-weight:950;text-transform:uppercase;letter-spacing:.06em}
+    .vp-marketplace-price{font-weight:950;color:#fff!important;white-space:nowrap;font-size:16px}
+    .vp-marketplace-title{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;margin:0 0 9px;color:#fff!important;font-size:17px;line-height:1.06;letter-spacing:-.04em;font-weight:950;text-wrap:balance}
     .vp-marketplace-desc{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;color:rgba(255,255,255,.82)!important;font-size:12.5px;line-height:1.42;margin:0}
-    .vp-marketplace-meta{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0}
-    .vp-marketplace-meta span{display:inline-flex;align-items:center;min-height:22px;padding:4px 7px;border-radius:999px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.10);color:rgba(255,255,255,.82);font-size:10.5px;font-weight:800;line-height:1.05}
-    .vp-marketplace-action{display:inline-flex;align-items:center;gap:8px;margin-top:auto;padding-top:10px;color:#a8d5ff;font-size:12.5px;font-weight:950}
+    .vp-marketplace-meta{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0;overflow:hidden}
+    .vp-marketplace-meta span{display:inline-flex;align-items:center;min-height:22px;padding:4px 7px;border-radius:999px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.10);color:rgba(255,255,255,.86)!important;font-size:10.5px;font-weight:800;line-height:1.05}
+    .vp-marketplace-action{display:inline-flex;align-items:center;gap:8px;margin-top:auto;padding-top:10px;color:#a8d5ff!important;font-size:12.5px;font-weight:950}
     .vp-marketplace-empty{grid-column:1/-1;padding:18px;border:1px dashed rgba(11,74,139,.22);border-radius:20px;background:rgba(255,255,255,.58);color:#50647a;font-size:14px;line-height:1.55}
     .vp-marketplace-empty strong{display:block;margin-bottom:4px;color:#061a2f}
     .vp-marketplace-cta{margin-top:18px;display:flex;flex-wrap:wrap;gap:10px}
@@ -495,7 +490,7 @@
     .vp-marketplace-private-cta strong{display:block;color:#061a2f;font-size:16px;font-weight:950;letter-spacing:-.02em}
     .vp-marketplace-private-cta span{display:block;margin-top:4px;color:#50647a;font-size:13px;line-height:1.45}
     @media(max-width:1080px){.vp-marketplace-column{min-height:auto}.vp-marketplace-filters{grid-template-columns:repeat(2,minmax(170px,1fr));max-width:640px}}
-    @media(max-width:640px){.vp-marketplace-section{padding:62px 0}.vp-marketplace-filters{grid-template-columns:1fr}.vp-marketplace-column{padding:18px;border-radius:24px}.vp-marketplace-column-head{display:block}.vp-marketplace-badge{margin-top:12px}.vp-marketplace-list{grid-template-columns:1fr}.vp-marketplace-card{height:500px}.vp-marketplace-card-visual{height:100%;flex-basis:auto}.vp-marketplace-card-content{top:52%!important;padding:14px 16px!important}.vp-marketplace-card-top{display:flex}.vp-marketplace-price{display:block}.vp-marketplace-private-cta{display:block}.vp-marketplace-private-cta .vpl-button{margin-top:12px}}
+    @media(max-width:640px){.vp-marketplace-section{padding:62px 0}.vp-marketplace-filters{grid-template-columns:1fr}.vp-marketplace-column{padding:18px;border-radius:24px}.vp-marketplace-column-head{display:block}.vp-marketplace-badge{margin-top:12px}.vp-marketplace-list{grid-template-columns:1fr}.vp-marketplace-card{height:500px}.vp-marketplace-card-content{max-height:47%!important;padding:0 16px 14px!important}.vp-marketplace-card-top{display:flex}.vp-marketplace-price{display:block}.vp-marketplace-private-cta{display:block}.vp-marketplace-private-cta .vpl-button{margin-top:12px}}
   </style>
 
 
@@ -1082,10 +1077,10 @@
     }
 
     function getCardVisualSrc(entry) {
-      if (entry.kind === "trainer") return "vp-card-formateur-reseau.webp?v=vpoverlay2";
+      if (entry.kind === "trainer") return "vp-card-formateur-reseau.webp?v=vpforeground1";
       const type = getItemModuleType(entry.item);
-      if (type === "pro" || entry.path === "team") return "vp-card-self-pro.webp?v=vpoverlay2";
-      return "vp-card-prevenir-module.webp?v=vpoverlay2";
+      if (type === "pro" || entry.path === "team") return "vp-card-self-pro.webp?v=vpforeground1";
+      return "vp-card-prevenir-module.webp?v=vpforeground1";
     }
 
     function isProfessionalTeamStage(item) {
@@ -1337,31 +1332,27 @@
           const price = Number(item.launch_price || item.standard_price || 0);
           const sessionUrl = `/devenir-formateur.html?session_id=${encodeURIComponent(item.id)}`;
           return `
-            <a class="vp-marketplace-card ${escapeHtml(cardVisualClass)}" href="${sessionUrl}">
-              <img class="vp-marketplace-card-visual" src="${escapeHtml(cardVisualSrc)}" alt="" loading="lazy" decoding="async" aria-hidden="true">
-              <span class="vp-marketplace-card-bg" aria-hidden="true"></span>
-              <span class="vp-marketplace-card-content">
+            <a class="vp-marketplace-card ${escapeHtml(cardVisualClass)}" href="${sessionUrl}" style="background-image:url('${escapeHtml(cardVisualSrc)}');background-size:cover;background-position:center center;background-repeat:no-repeat;">
+              <div class="vp-marketplace-card-content" style="position:absolute!important;left:0!important;right:0!important;bottom:0!important;z-index:9999!important;display:flex!important;flex-direction:column!important;box-sizing:border-box!important;width:100%!important;max-height:46%!important;padding:0 18px 14px!important;color:#fff!important;opacity:1!important;visibility:visible!important;overflow:hidden!important;text-shadow:0 2px 10px rgba(0,0,0,.45)!important;pointer-events:none!important;">
                 <span class="vp-marketplace-card-top"><span class="vp-marketplace-type">${escapeHtml(pathLabel)}</span><span class="vp-marketplace-price">${escapeHtml(formatPrice(price))}</span></span>
                 <span class="vp-marketplace-title">${escapeHtml(title)}</span>
                 <span class="vp-marketplace-desc">${escapeHtml(moduleSummary(moduleType, "trainer"))}</span>
                 <span class="vp-marketplace-meta"><span>${escapeHtml(moduleLabel)}</span><span>${escapeHtml(formatCityPostal(item))}</span><span>${escapeHtml(formatDateRange(item.start_date, item.end_date))}</span><span>${Number(item.remaining_places || 0)} place(s)</span></span>
                 <span class="vp-marketplace-action">Voir cette session →</span>
-              </span>
+              </div>
             </a>
           `;
         }
         const complete = hasCompleteSession(item);
         return `
-          <button type="button" class="vp-marketplace-card ${escapeHtml(cardVisualClass)} ${selected ? "is-selected" : ""} ${complete ? "" : "is-disabled"}" data-stage-id="${escapeHtml(item.id)}" ${complete ? "" : "disabled"}>
-            <img class="vp-marketplace-card-visual" src="${escapeHtml(cardVisualSrc)}" alt="" loading="lazy" decoding="async" aria-hidden="true">
-            <span class="vp-marketplace-card-bg" aria-hidden="true"></span>
-            <span class="vp-marketplace-card-content">
+          <button type="button" class="vp-marketplace-card ${escapeHtml(cardVisualClass)} ${selected ? "is-selected" : ""} ${complete ? "" : "is-disabled"}" data-stage-id="${escapeHtml(item.id)}" style="background-image:url('${escapeHtml(cardVisualSrc)}');background-size:cover;background-position:center center;background-repeat:no-repeat;" ${complete ? "" : "disabled"}>
+            <div class="vp-marketplace-card-content" style="position:absolute!important;left:0!important;right:0!important;bottom:0!important;z-index:9999!important;display:flex!important;flex-direction:column!important;box-sizing:border-box!important;width:100%!important;max-height:46%!important;padding:0 18px 14px!important;color:#fff!important;opacity:1!important;visibility:visible!important;overflow:hidden!important;text-shadow:0 2px 10px rgba(0,0,0,.45)!important;pointer-events:none!important;">
               <span class="vp-marketplace-card-top"><span class="vp-marketplace-type">${escapeHtml(pathLabel)}</span><span class="vp-marketplace-price">${escapeHtml(formatPrice(item.price))}</span></span>
               <span class="vp-marketplace-title">${escapeHtml(title)}</span>
               <span class="vp-marketplace-desc">${escapeHtml(item.description || moduleSummary(moduleType, entry.path))}</span>
               <span class="vp-marketplace-meta"><span>${escapeHtml(moduleLabel)}</span><span>${escapeHtml(formatCityPostal(item))}</span><span>${escapeHtml(formatDate(item.stage_date))}</span><span>${escapeHtml(item.start_time || "Horaire à confirmer")}</span><span>${Number(item.remaining_places || 0)} place(s)</span></span>
               <span class="vp-marketplace-action">${complete ? (entry.path === "team" ? "Inscrire mes salariés →" : "Choisir et réserver →") : "Session à compléter"}</span>
-            </span>
+            </div>
           </button>
         `;
       }).join("");
