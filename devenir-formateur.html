@@ -1194,7 +1194,7 @@
   </div>
   <div class="module-choice-actions">
     <button class="btn btn-dark" type="button" id="modulePayShortcut" disabled>Complétez votre sélection</button>
-    <span class="module-choice-note">Après paiement, vous pourrez choisir vos sessions de validation selon les dates disponibles.</span>
+    <span class="module-choice-note">Après paiement, les dates seront proposées selon vos disponibilités.</span>
   </div>
   <div class="module-selection-error" id="moduleSelectionError"></div>
 </div>
@@ -1354,18 +1354,18 @@
 <section id="sessions" class="vptr-section vptr-sessions-section vptr-reveal">
 <div class="container">
 <div class="section-head">
-<span class="eyebrow">Sessions disponibles</span>
-<h2>Sessions de validation interne</h2>
+<span class="eyebrow">Après paiement</span>
+<h2>Vos dates se choisissent ensuite</h2>
 <p>
-            Les sessions affichées sont indicatives. Le choix d’une date n’est pas obligatoire pour payer :
-            après paiement, vous pourrez vous inscrire aux sessions qui correspondent à vos disponibilités.
+            Pour aller vite, le paiement porte sur votre formule et vos modules. Les dates de validation ne bloquent pas l’inscription :
+            après paiement, Vital Protect vous proposera les sessions disponibles correspondant à vos modules.
           </p>
 </div>
 <div class="sessions-grid" id="sessionsContainer">
-<div class="empty-state">Sélectionnez vos modules ci-dessus. Les sessions disponibles seront affichées à titre indicatif.</div>
+<div class="empty-state">Choisissez votre formule et vos modules : les dates seront organisées après paiement, selon vos disponibilités.</div>
 </div>
 <div class="timeline-cta">
-<a class="btn btn-dark" href="#formulaire">Finaliser et payer</a>
+<a class="btn btn-dark" href="#formulaire">Finaliser mon panier</a>
 </div>
 </div>
 </section>
@@ -1375,7 +1375,7 @@
 <div class="form-head">
 <h2>Compléter votre dossier</h2>
 <p>
-              Votre formule et vos modules sont enregistrés dans votre panier. Après paiement, vous pourrez choisir vos sessions de validation selon les dates disponibles.
+              Votre formule et vos modules sont enregistrés dans votre panier. Après paiement, les dates seront proposées selon vos disponibilités.
             </p>
 </div>
 <div id="checkoutFeedback"></div>
@@ -1425,7 +1425,7 @@
 </div>
 <button class="btn btn-dark" id="trainerSubmitButton" type="submit">Valider et payer</button>
 <p class="form-submit-note">
-              Paiement sécurisé : vous réglez votre parcours formateur maintenant, puis vous choisissez vos sessions de validation selon les disponibilités.
+              Paiement sécurisé : vous réglez votre parcours formateur maintenant, puis les dates de validation sont organisées avec Vital Protect selon les disponibilités.
             </p>
 <p class="form-rgpd-note">
               Les informations transmises via ce formulaire servent uniquement à traiter votre demande. Vous pouvez exercer vos droits d’accès, de rectification ou de suppression en écrivant à vitalprotectformation@gmail.com. Voir notre politique de confidentialité.
@@ -1578,7 +1578,7 @@
 
     const params = new URLSearchParams(window.location.search);
 
-    let selectedSessionId = params.get("session_id") || "";
+    let selectedSessionId = "";
     let selectedTrainingType = params.get("training_type") || "";
     let selectedModuleLimit = Math.max(0, Math.min(3, Number(params.get("module_count") || 0)));
     let selectedModuleNames = (params.get("selected_modules") || "")
@@ -1723,7 +1723,7 @@
       if (checkoutStatus === "success") {
         checkoutFeedback.innerHTML = `
           <div class="alert alert-success">
-            Votre parcours formateur a bien été enregistré. Après validation administrative, vous pourrez choisir vos sessions de validation selon les dates disponibles.
+            Votre parcours formateur a bien été enregistré. Vital Protect vous transmettra ensuite les dates disponibles pour les modules choisis.
           </div>
         `;
         return;
@@ -1794,8 +1794,7 @@
       if (selectedTrainingType) newUrl.searchParams.set("training_type", selectedTrainingType);
       else newUrl.searchParams.delete("training_type");
 
-      if (selectedSessionId) newUrl.searchParams.set("session_id", selectedSessionId);
-      else newUrl.searchParams.delete("session_id");
+      newUrl.searchParams.delete("session_id");
 
       window.history.replaceState({}, "", newUrl);
     }
@@ -2045,124 +2044,40 @@
     }
 
     function renderSessions() {
-      if (!sessionsData.length) {
+      if (!sessionsContainer) return;
+
+      const targetCount = selectedModuleLimit || 0;
+      const selectedCount = selectedModuleNames.length;
+      const price = getFormulaPrice(targetCount);
+      const labels = getSelectedModuleLabels();
+
+      if (!targetCount) {
         sessionsContainer.innerHTML = `
           <div class="empty-state">
-            Aucune session affichée pour le moment. Vous pouvez tout de même régler votre parcours : les dates seront choisies après paiement avec Vital Protect.
+            <strong>Les dates viendront après le paiement.</strong><br>
+            Choisissez d’abord votre formule. Ensuite, sélectionnez vos modules, validez votre panier, puis Vital Protect vous proposera les sessions de validation disponibles.
           </div>
         `;
         return;
       }
 
-      if (!selectedModuleLimit) {
+      if (selectedCount < targetCount) {
         sessionsContainer.innerHTML = `
           <div class="empty-state">
-            Choisissez d’abord une formule 1, 2 ou 3 modules. Le choix d’une session n’est pas obligatoire pour payer.
+            <strong>Formule ${targetCount} module${targetCount > 1 ? "s" : ""} — ${formatPrice(price)}</strong><br>
+            Sélectionnez encore ${targetCount - selectedCount} module${targetCount - selectedCount > 1 ? "s" : ""}. Les dates ne sont pas à choisir maintenant : elles seront proposées après paiement.
           </div>
         `;
         return;
       }
 
-      if (selectedModuleNames.length < selectedModuleLimit) {
-        sessionsContainer.innerHTML = `
-          <div class="empty-state">
-            Sélectionnez encore ${selectedModuleLimit - selectedModuleNames.length} module(s). Vous pourrez payer dès que votre panier sera complet, sans obligation de choisir une date.
-          </div>
-        `;
-        return;
-      }
-
-      const filteredSessions = getFilteredSessions();
-
-      if (!filteredSessions.length) {
-        sessionsContainer.innerHTML = `
-          <div class="empty-state">
-            Aucune session affichée pour les modules sélectionnés : <strong>${escapeHtml(getSelectedModuleLabels().join(" + "))}</strong>.<br>Vous pouvez quand même payer votre parcours ; les dates seront planifiées ensuite.
-          </div>
-        `;
-        return;
-      }
-
-      sessionsContainer.innerHTML = filteredSessions.map((session) => {
-        const sessionComplete = isCompleteSession(session);
-        const displayedPrice = getFormulaPrice(selectedModuleLimit) || session.launch_price || session.standard_price || 0;
-        return `
-        <article class="session-card">
-          <div class="session-top">
-            <div>
-              <div class="session-type">${escapeHtml(trainerModuleName(session.module_name || session.title))}</div>
-              <h3 class="session-title">${escapeHtml(trainerModuleName(session.module_name || session.title))}</h3>
-            </div>
-            <div class="session-price">${formatPrice(displayedPrice)}</div>
-          </div>
-
-          <div class="session-body">
-            <div class="session-description">
-              ${escapeHtml(
-                trainerModuleDescription(session.module_name || session.title) ||
-                "Intégration au cadre Vital Protect : logique de méthode, cohérence de transmission, exigence pédagogique, sécurité et activation progressive dans le réseau."
-              )}
-            </div>
-
-            <div class="session-meta">
-              <div class="meta-item">
-                <span class="meta-label">Ville</span>
-                <span class="meta-value">${escapeHtml(session.city || "Non précisée")}</span>
-              </div>
-
-              <div class="meta-item">
-                <span class="meta-label">Début</span>
-                <span class="meta-value">${formatDate(session.start_date)}</span>
-              </div>
-
-              <div class="meta-item">
-                <span class="meta-label">Fin</span>
-                <span class="meta-value">${formatDate(session.end_date)}</span>
-              </div>
-
-              <div class="meta-item">
-                <span class="meta-label">Durée</span>
-                <span class="meta-value">${session.duration_days || "—"} jours</span>
-              </div>
-
-              <div class="meta-item">
-                <span class="meta-label">Tarif formule</span>
-                <span class="meta-value">${formatPrice(displayedPrice)}</span>
-              </div>
-
-              <div class="meta-item">
-                <span class="meta-label">Places restantes</span>
-                <span class="meta-value">${session.remaining_places || 0}</span>
-              </div>
-            </div>
-
-            <div class="availability ${getAvailabilityClass(session.remaining_places)}">
-              ${session.remaining_places || 0} place(s) restante(s)
-            </div>
-          </div>
-
-          <div class="session-actions">
-            <button
-              class="btn btn-dark"
-              type="button"
-              data-session-id="${escapeHtml(session.id)}"
-              ${sessionComplete ? "" : "disabled"}
-            >
-              ${sessionComplete ? "Préférer cette session" : "Session à confirmer"}
-            </button>
-          </div>
-        </article>
+      sessionsContainer.innerHTML = `
+        <div class="empty-state">
+          <strong>Votre parcours est prêt à payer : ${targetCount} module${targetCount > 1 ? "s" : ""} — ${formatPrice(price)}</strong><br>
+          ${labels.map((label) => `✓ ${escapeHtml(label)}`).join("<br>")}<br><br>
+          Après paiement, vous recevrez la suite du parcours et les dates de validation correspondant à vos modules. Si aucune date ne vous convient, Vital Protect vous proposera une prochaine session.
+        </div>
       `;
-      }).join("");
-
-      document.querySelectorAll("[data-session-id]").forEach((button) => {
-        button.addEventListener("click", () => {
-          const session = filteredSessions.find((item) => item.id === button.dataset.sessionId);
-          if (session) {
-            selectSession(session);
-          }
-        });
-      });
     }
 
     async function loadModules() {
@@ -2202,33 +2117,8 @@
     }
 
     async function loadSessions() {
-      const { data, error } = await supabase
-        .from("trainer_sessions")
-        .select("*")
-        .eq("status", "open")
-        .gt("remaining_places", 0)
-        .order("start_date", { ascending: true });
-
-      if (error) {
-        console.error("Erreur chargement sessions:", error);
-        sessionsContainer.innerHTML = `
-          <div class="empty-state">
-            Impossible de charger les sessions.
-          </div>
-        `;
-        return;
-      }
-
-      sessionsData = (data || []).filter((session) => !isHiddenTrainerModule(session));
-
-      if (selectedSessionId) {
-        const preselected = sessionsData.find((item) => item.id === selectedSessionId);
-        if (preselected) {
-          selectSession(preselected);
-          return;
-        }
-      }
-
+      sessionsData = [];
+      selectedSessionId = "";
       renderSessions();
     }
 
@@ -2304,7 +2194,7 @@
         selected_modules: selectedModuleLabels,
         selected_module_count: selectedModuleLimit,
         message: document.getElementById("message").value.trim(),
-        session_id: selectedSessionId || ""
+        session_id: ""
       };
 
       if (!data.training_type || !data.selected_modules.length) {
