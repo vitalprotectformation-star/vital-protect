@@ -455,22 +455,27 @@ async function handleTrainerCheckout(session) {
 
   if (existingTrainerRegistration) return;
 
+  const trainerRegistrationPayload = {
+    first_name: firstName,
+    last_name: lastName,
+    email,
+    phone,
+    city,
+    message: registrationMessage,
+    stripe_session_id: session.id,
+    stripe_payment_intent_id: stripePaymentIntentId,
+    payment_mode: "manual_capture",
+    payment_status: "authorized",
+    validation_status: "pending"
+  };
+
+  if (trainerSessionId) {
+    trainerRegistrationPayload.session_id = trainerSessionId;
+  }
+
   const { error: trainerRegistrationError } = await supabase
     .from("trainer_session_registrations")
-    .insert({
-      session_id: trainerSessionId,
-      first_name: firstName,
-      last_name: lastName,
-      email,
-      phone,
-      city,
-      message: registrationMessage,
-      stripe_session_id: session.id,
-      stripe_payment_intent_id: stripePaymentIntentId,
-      payment_mode: "manual_capture",
-      payment_status: "authorized",
-      validation_status: "pending"
-    });
+    .insert(trainerRegistrationPayload);
 
   if (trainerRegistrationError) {
     console.error("Supabase trainer registration insert error:", trainerRegistrationError);
@@ -481,17 +486,18 @@ async function handleTrainerCheckout(session) {
     from: "VITAL PROTECT <contact@vital-protect.fr>",
     to: email,
     replyTo: "contact@vital-protect.fr",
-    subject: "Réservation de votre place confirmée",
+    subject: "Parcours formateur Vital Protect enregistré",
     html: `
-      <h2>Réservation enregistrée ✅</h2>
+      <h2>Parcours formateur enregistré ✅</h2>
       <p>Bonjour ${escapeHtml(firstName)} ${escapeHtml(lastName)},</p>
-      <p>Votre réservation pour le parcours formateur <strong>VITAL PROTECT</strong> a bien été enregistrée.</p>
+      <p>Votre parcours formateur <strong>VITAL PROTECT</strong> a bien été enregistré.</p>
       <ul>
         <li><strong>Module(s) :</strong> ${escapeHtml(trainingType)}</li>
         <li><strong>Statut paiement :</strong> empreinte bancaire autorisée</li>
+        <li><strong>Sessions :</strong> à choisir ensuite selon les disponibilités</li>
         <li><strong>Validation :</strong> en attente</li>
       </ul>
-      <p>Vous recevrez la suite des étapes prochainement.</p>
+      <p>Vous recevrez la suite des étapes prochainement, notamment le choix ou la confirmation des sessions de validation.</p>
       <p><strong>VITAL PROTECT</strong></p>
     `
   });

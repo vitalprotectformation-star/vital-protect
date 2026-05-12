@@ -227,56 +227,58 @@ export default async function handler(req, res) {
       });
     }
 
-    if (!cleanSessionId) {
-      return res.status(400).json({ error: "Session manquante" });
+    let trainerSession = null;
+
+    if (cleanSessionId) {
+      const { data: fetchedTrainerSession, error: sessionError } = await supabase
+        .from("trainer_sessions")
+        .select("*")
+        .eq("id", cleanSessionId)
+        .maybeSingle();
+
+      if (sessionError) {
+        console.error("Trainer session fetch error:", sessionError);
+        return res.status(500).json({ error: "Erreur lecture session formateur" });
+      }
+
+      if (!fetchedTrainerSession) {
+        return res.status(404).json({ error: "Session formateur introuvable" });
+      }
+
+      if (String(fetchedTrainerSession.status || "").toLowerCase() !== "open") {
+        return res.status(400).json({
+          error: "Cette session n'est pas ouverte à la réservation"
+        });
+      }
+
+      const remainingPlaces = Number(fetchedTrainerSession.remaining_places || 0);
+      if (remainingPlaces <= 0) {
+        return res.status(400).json({ error: "Cette session est complète" });
+      }
+
+      const sessionModuleName = getCanonicalModuleName(sanitizeText(
+        fetchedTrainerSession.module_name ||
+        fetchedTrainerSession.training_type ||
+        fetchedTrainerSession.title
+      ));
+
+      if (
+        sessionModuleName &&
+        cleanSelectedModules.length &&
+        !cleanSelectedModules.some((moduleName) => sameCanonicalModule(moduleName, sessionModuleName))
+      ) {
+        return res.status(400).json({
+          error: "La session choisie ne correspond à aucun des modules sélectionnés"
+        });
+      }
+
+      trainerSession = fetchedTrainerSession;
     }
 
-    const { data: trainerSession, error: sessionError } = await supabase
-      .from("trainer_sessions")
-      .select("*")
-      .eq("id", cleanSessionId)
-      .maybeSingle();
-
-    if (sessionError) {
-      console.error("Trainer session fetch error:", sessionError);
-      return res.status(500).json({ error: "Erreur lecture session formateur" });
-    }
-
-    if (!trainerSession) {
-      return res.status(404).json({ error: "Session formateur introuvable" });
-    }
-
-    if (String(trainerSession.status || "").toLowerCase() !== "open") {
-      return res.status(400).json({
-        error: "Cette session n'est pas ouverte à la réservation"
-      });
-    }
-
-    const remainingPlaces = Number(trainerSession.remaining_places || 0);
-    if (remainingPlaces <= 0) {
-      return res.status(400).json({ error: "Cette session est complète" });
-    }
-
-    const sessionModuleName = getCanonicalModuleName(sanitizeText(
-      trainerSession.module_name ||
-      trainerSession.training_type ||
-      trainerSession.title
-    ));
-
-    if (
-      sessionModuleName &&
-      cleanSelectedModules.length &&
-      !cleanSelectedModules.some((moduleName) => sameCanonicalModule(moduleName, sessionModuleName))
-    ) {
-      return res.status(400).json({
-        error: "La session choisie ne correspond à aucun des modules sélectionnés"
-      });
-    }
-
-    const selectedPrice = getTrainerFormulaPrice(cleanModuleCount) || getTrainerSessionPrice(trainerSession);
+    const selectedPrice = getTrainerFormulaPrice(cleanModuleCount) || getTrainerSessionPrice(trainerSession || {});
 
     if (!selectedPrice || selectedPrice <= 0) {
-      return res.status(400).json({ error: "Tarif session invalide" });
+      return res.status(400).json({ error: "Tarif formule invalide" });
     }
 
     const origin =
@@ -296,7 +298,7 @@ export default async function handler(req, res) {
             product_data: {
               name: `Formation formateur VITAL PROTECT — ${cleanModuleCount} module${cleanModuleCount > 1 ? "s" : ""}`,
               description: `Modules : ${cleanSelectedModules.join(" + ")}${
-                trainerSession.city ? ` - ${trainerSession.city}` : ""
+                trainerSession?.city ? ` - session préférée : ${trainerSession.city}` : " - sessions à choisir après paiement"
               }`
             },
             unit_amount: Math.round(selectedPrice * 100)
@@ -327,8 +329,8 @@ export default async function handler(req, res) {
         message: cleanMessage
       },
 
-      success_url: `${origin}/trainer-success.html?session_id=${encodeURIComponent(cleanSessionId)}`,
-      cancel_url: `${origin}/trainer-cancel.html?session_id=${encodeURIComponent(cleanSessionId)}`
+      success_url: `${origin}/trainer-success.html?checkout=success&module_count=${encodeURIComponent(String(cleanModuleCount))}`,
+      cancel_url: `${origin}/trainer-cancel.html?checkout=cancel&module_count=${encodeURIComponent(String(cleanModuleCount))}`
     });
 
     return res.status(200).json({ url: checkoutSession.url });
