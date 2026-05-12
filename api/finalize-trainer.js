@@ -19,6 +19,25 @@ function sanitizeText(value, fallback = "") {
   return String(value || fallback).trim();
 }
 
+function parseRequestedModulesFromMessage(message) {
+  const text = String(message || "");
+  const match = text.match(/Modules demandés\s*:\s*([^\n]+)/i);
+  if (!match) return [];
+
+  const modules = [];
+  match[1]
+    .split(/\s*\|\s*|\s*,\s*/g)
+    .map((value) => sanitizeText(value))
+    .filter(Boolean)
+    .forEach((moduleName) => {
+      if (!modules.some((existing) => existing.toLowerCase() === moduleName.toLowerCase())) {
+        modules.push(moduleName);
+      }
+    });
+
+  return modules.slice(0, 3);
+}
+
 async function requireAdmin(req) {
   const authHeader = req.headers.authorization || "";
   const token = authHeader.startsWith("Bearer ")
@@ -125,9 +144,9 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: "Email candidat manquant" });
     }
 
-    let moduleName = "";
+    let moduleNames = parseRequestedModulesFromMessage(registration.message);
 
-    if (registration.session_id) {
+    if (!moduleNames.length && registration.session_id) {
       const { data: trainerSession, error: trainerSessionError } = await supabase
         .from("trainer_sessions")
         .select("id, module_name, title")
@@ -139,11 +158,15 @@ export default async function handler(req, res) {
         return res.status(500).json({ error: "Erreur de lecture de la session formateur" });
       }
 
-      moduleName = sanitizeText(
+      const moduleName = sanitizeText(
         trainerSession?.module_name || trainerSession?.title || registration.training_type || ""
       );
-    } else {
-      moduleName = sanitizeText(registration.training_type || "");
+      if (moduleName) moduleNames = [moduleName];
+    }
+
+    if (!moduleNames.length) {
+      const moduleName = sanitizeText(registration.training_type || "");
+      if (moduleName) moduleNames = [moduleName];
     }
 
     const trainerPayload = {
@@ -172,9 +195,9 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: trainerError.message });
     }
 
-    let trainerModule = null;
+    const trainerModules = [];
 
-    if (moduleName) {
+    for (const moduleName of moduleNames) {
       const trainerModulePayload = {
         trainer_id: trainerData.id,
         module_name: moduleName,
@@ -194,13 +217,14 @@ export default async function handler(req, res) {
         return res.status(500).json({ error: trainerModuleError.message });
       }
 
-      trainerModule = trainerModuleData;
+      trainerModules.push(trainerModuleData);
     }
 
     return res.status(200).json({
       success: true,
       trainer: trainerData,
-      trainer_module: trainerModule
+      trainer_module: trainerModules[0] || null,
+      trainer_modules: trainerModules
     });
   } catch (err) {
     console.error("Finalize trainer error:", err);

@@ -386,6 +386,35 @@ async function handleAffiliationCheckout(session) {
   });
 }
 
+function parseTrainerSelectedModules(metadata = {}) {
+  const raw = metadata.selected_modules || metadata.training_type || metadata.selected_module || "";
+  let values = [];
+
+  if (typeof raw === "string" && raw.trim().startsWith("[") && raw.trim().endsWith("]")) {
+    try {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) values = parsed;
+    } catch (_) {
+      values = [];
+    }
+  }
+
+  if (!values.length) {
+    values = String(raw || "").split(/\s*\|\s*|\s*,\s*/g);
+  }
+
+  const modules = [];
+  values.forEach((value) => {
+    const canonical = getCanonicalModuleName(value);
+    if (!canonical) return;
+    if (!modules.some((existing) => existing.toLowerCase() === canonical.toLowerCase())) {
+      modules.push(canonical);
+    }
+  });
+
+  return modules.slice(0, 3);
+}
+
 async function handleTrainerCheckout(session) {
   const metadata = session.metadata || {};
 
@@ -394,8 +423,13 @@ async function handleTrainerCheckout(session) {
   const email = normalizeEmail(metadata.email || session.customer_email || "");
   const phone = metadata.phone || "";
   const city = metadata.city || "";
-  const trainingType = getCanonicalModuleName(metadata.training_type || "");
+  const selectedModules = parseTrainerSelectedModules(metadata);
+  const trainingType = selectedModules.length ? selectedModules.join(" | ") : getCanonicalModuleName(metadata.training_type || "");
   const message = metadata.message || "";
+  const modulesMessage = selectedModules.length ? `Modules demandés: ${selectedModules.join(" | ")}` : "";
+  const registrationMessage = [message, modulesMessage].filter(Boolean).join("
+
+");
   const trainerSessionId = metadata.session_id || null;
 
   if (!email) {
@@ -430,7 +464,7 @@ async function handleTrainerCheckout(session) {
       email,
       phone,
       city,
-      message,
+      message: registrationMessage,
       stripe_session_id: session.id,
       stripe_payment_intent_id: stripePaymentIntentId,
       payment_mode: "manual_capture",
@@ -453,7 +487,7 @@ async function handleTrainerCheckout(session) {
       <p>Bonjour ${escapeHtml(firstName)} ${escapeHtml(lastName)},</p>
       <p>Votre réservation pour le parcours formateur <strong>VITAL PROTECT</strong> a bien été enregistrée.</p>
       <ul>
-        <li><strong>Module :</strong> ${escapeHtml(trainingType)}</li>
+        <li><strong>Module(s) :</strong> ${escapeHtml(trainingType)}</li>
         <li><strong>Statut paiement :</strong> empreinte bancaire autorisée</li>
         <li><strong>Validation :</strong> en attente</li>
       </ul>

@@ -115,6 +115,49 @@ function getTrainerSessionPrice(trainerSession) {
   return 490;
 }
 
+function getTrainerFormulaPrice(moduleCount) {
+  const count = Number(moduleCount || 1);
+  if (count >= 3) return 690;
+  if (count >= 2) return 590;
+  return 490;
+}
+
+function parseSelectedModules(value) {
+  let rawItems = [];
+
+  if (Array.isArray(value)) {
+    rawItems = value;
+  } else if (typeof value === "string") {
+    const trimmed = value.trim();
+    if (trimmed.startsWith("[") && trimmed.endsWith("]")) {
+      try {
+        const parsed = JSON.parse(trimmed);
+        if (Array.isArray(parsed)) rawItems = parsed;
+      } catch (_) {
+        rawItems = [];
+      }
+    }
+    if (!rawItems.length) {
+      rawItems = trimmed.split(/\s*\|\s*|\s*,\s*/g);
+    }
+  }
+
+  const modules = [];
+  rawItems.forEach((item) => {
+    const canonical = getCanonicalModuleName(replaceLegacyModuleNames(item));
+    if (!canonical) return;
+    if (!modules.some((existing) => existing.toLowerCase() === canonical.toLowerCase())) {
+      modules.push(canonical);
+    }
+  });
+
+  return modules.slice(0, 3);
+}
+
+function sameCanonicalModule(a, b) {
+  return getCanonicalModuleName(a).toLowerCase() === getCanonicalModuleName(b).toLowerCase();
+}
+
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
@@ -129,6 +172,9 @@ export default async function handler(req, res) {
       city,
       postal_code,
       selected_module,
+      selected_modules,
+      selected_module_count,
+      module_count,
       training_type,
       experience,
       message,
@@ -141,7 +187,12 @@ export default async function handler(req, res) {
     const cleanPhone = sanitizeText(phone);
     const cleanCity = sanitizeText(city);
     const cleanPostalCode = sanitizeText(postal_code);
-    const cleanSelectedModule = getCanonicalModuleName(sanitizeText(selected_module || training_type));
+    const requestedModules = parseSelectedModules(selected_modules);
+    const fallbackModule = getCanonicalModuleName(sanitizeText(selected_module || training_type));
+    const cleanSelectedModules = requestedModules.length ? requestedModules : (fallbackModule ? [fallbackModule] : []);
+    const requestedModuleCount = Number(selected_module_count || module_count || cleanSelectedModules.length || 1);
+    const cleanModuleCount = Math.max(1, Math.min(3, requestedModuleCount));
+    const cleanSelectedModule = cleanSelectedModules[0] || "";
     const cleanExperience = sanitizeText(experience);
     const cleanMessage = sanitizeText(message);
     const cleanSessionId = sanitizeText(session_id);
@@ -166,8 +217,14 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: "Téléphone manquant" });
     }
 
-    if (!cleanSelectedModule) {
+    if (!cleanSelectedModule || !cleanSelectedModules.length) {
       return res.status(400).json({ error: "Module manquant" });
+    }
+
+    if (cleanSelectedModules.length !== cleanModuleCount) {
+      return res.status(400).json({
+        error: `Votre formule comprend ${cleanModuleCount} module(s). Merci de sélectionner exactement ${cleanModuleCount} module(s).`
+      });
     }
 
     if (!cleanSessionId) {
@@ -208,15 +265,15 @@ export default async function handler(req, res) {
 
     if (
       sessionModuleName &&
-      cleanSelectedModule &&
-      sessionModuleName.toLowerCase() !== cleanSelectedModule.toLowerCase()
+      cleanSelectedModules.length &&
+      !cleanSelectedModules.some((moduleName) => sameCanonicalModule(moduleName, sessionModuleName))
     ) {
       return res.status(400).json({
-        error: "Le module sélectionné ne correspond pas à la session choisie"
+        error: "La session choisie ne correspond à aucun des modules sélectionnés"
       });
     }
 
-    const selectedPrice = getTrainerSessionPrice(trainerSession);
+    const selectedPrice = getTrainerFormulaPrice(cleanModuleCount) || getTrainerSessionPrice(trainerSession);
 
     if (!selectedPrice || selectedPrice <= 0) {
       return res.status(400).json({ error: "Tarif session invalide" });
@@ -237,11 +294,8 @@ export default async function handler(req, res) {
           price_data: {
             currency: "eur",
             product_data: {
-              name:
-                trainerSession.title ||
-                sessionModuleName ||
-                "Formation formateur VITAL PROTECT",
-              description: `Réservation session formateur${
+              name: `Formation formateur VITAL PROTECT — ${cleanModuleCount} module${cleanModuleCount > 1 ? "s" : ""}`,
+              description: `Modules : ${cleanSelectedModules.join(" + ")}${
                 trainerSession.city ? ` - ${trainerSession.city}` : ""
               }`
             },
@@ -258,8 +312,11 @@ export default async function handler(req, res) {
       metadata: {
         type: "trainer",
         session_id: cleanSessionId,
-        training_type: sessionModuleName || cleanSelectedModule,
+        training_type: cleanSelectedModules.join(" | "),
         selected_module: cleanSelectedModule,
+        selected_modules: JSON.stringify(cleanSelectedModules),
+        selected_module_count: String(cleanModuleCount),
+        formula_price: String(selectedPrice),
         first_name: cleanFirstName,
         last_name: cleanLastName,
         email: cleanEmail,
