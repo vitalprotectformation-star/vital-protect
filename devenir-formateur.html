@@ -974,6 +974,23 @@
     color:#7b8794;
     border-style:dashed;
   }
+  body.page-formateur-redesign .module-choice-actions {
+    display:flex;
+    align-items:center;
+    gap:12px;
+    flex-wrap:wrap;
+    padding-top:4px;
+  }
+  body.page-formateur-redesign .module-choice-actions .btn[disabled] {
+    cursor:not-allowed;
+    opacity:.55;
+  }
+  body.page-formateur-redesign .module-choice-note {
+    color:#627185;
+    font-size:.86rem;
+    line-height:1.45;
+    max-width:680px;
+  }
   body.page-formateur-redesign .module-card.is-selected .module-flip-face.front,
   body.page-formateur-redesign .module-card.is-selected .module-flip-face.back {
     border-color: rgba(16,42,67,.86) !important;
@@ -1100,7 +1117,7 @@
 <h2>Choisissez votre rythme d’entrée dans le parcours</h2>
 <p>
             Choisissez votre parcours formateur selon votre niveau d’engagement : 1 module,
-            2 modules ou pack complet. Vous pourrez ensuite sélectionner les modules et sessions adaptés à votre projet.
+            2 modules ou pack complet. Vous sélectionnez vos modules, vous validez votre paiement, puis vous choisissez vos sessions selon les dates disponibles.
           </p>
 </div>
 <div class="offer-grid">
@@ -1160,8 +1177,8 @@
 <div class="module-catalog-head" id="catalogue-modules">
 <h3>Catalogue des modules ouverts</h3>
 <p>
-            Une fois votre formule choisie, sélectionnez le ou les modules qui vous intéressent.
-            Ensuite, seules les sessions liées à ce module s’afficheront plus bas.
+            Une fois votre formule choisie, sélectionnez le ou les modules sur lesquels vous souhaitez être habilité.
+            Le paiement ne dépend pas d’une date : les sessions de validation se choisissent ensuite selon les disponibilités.
           </p>
 </div>
 <div class="module-choice-panel" id="moduleChoicePanel" aria-live="polite">
@@ -1175,10 +1192,14 @@
   <div class="module-choice-tags" id="moduleChoiceTags">
     <span class="module-choice-tag is-empty">Aucun module sélectionné</span>
   </div>
+  <div class="module-choice-actions">
+    <button class="btn btn-dark" type="button" id="modulePayShortcut" disabled>Complétez votre sélection</button>
+    <span class="module-choice-note">Après paiement, vous pourrez choisir vos sessions de validation selon les dates disponibles.</span>
+  </div>
   <div class="module-selection-error" id="moduleSelectionError"></div>
 </div>
 <div class="module-grid" id="modulesContainer" style="margin-top:24px;">
-<div class="empty-state">Chargement des modules. Aucun paiement ne sera proposé tant qu’une formule, les modules et une session complète ne sont pas sélectionnés.</div>
+<div class="empty-state">Chargement des modules. Aucun paiement ne sera proposé tant qu’une formule et les modules correspondants ne sont pas sélectionnés.</div>
 </div>
 </div>
 </section>
@@ -1219,7 +1240,7 @@
 </article>
 </div>
 <div class="timeline-cta">
-<a class="btn btn-dark" href="#formulaire">Réserver une session</a>
+<a class="btn btn-dark" href="#formulaire">Finaliser mon panier</a>
 </div>
 </div>
 </section>
@@ -1292,7 +1313,7 @@
 </article>
 </div>
 <div class="timeline-cta">
-<a class="btn btn-outline" href="#sessions">Voir les sessions</a>
+<a class="btn btn-outline" href="#formulaire">Valider mon parcours</a>
 </div>
 </div>
 </section>
@@ -1304,13 +1325,13 @@
 <span class="eyebrow">Coût &amp; logique de paiement</span>
 <h3>Une réservation claire et sécurisée</h3>
 <p>
-            Le tarif dépend de la session choisie. Le paiement est sécurisé
-            et reste en autorisation bancaire tant que le dossier n’est pas validé.
+            Le tarif dépend uniquement de la formule choisie : 1, 2 ou 3 modules.
+            Vous pouvez régler votre parcours même si aucune session ne correspond encore à vos disponibilités.
           </p>
 <div class="bullet-list">
-<div class="bullet-item"><strong>Tarif :</strong> affiché session par session.</div>
+<div class="bullet-item"><strong>Tarifs lancement :</strong> 490 € pour 1 module, 590 € pour 2 modules, 690 € pour 3 modules.</div>
 <div class="bullet-item"><strong>Mode :</strong> paiement sécurisé Stripe.</div>
-<div class="bullet-item"><strong>Encaissement :</strong> capture uniquement après validation du dossier.</div>
+<div class="bullet-item"><strong>Sessions :</strong> choix des dates après paiement, selon les disponibilités.</div>
 <div class="bullet-item"><strong>Clarté :</strong> le parcours reste cadré du début à la fin.</div>
 </div>
 </div>
@@ -1334,17 +1355,17 @@
 <div class="container">
 <div class="section-head">
 <span class="eyebrow">Sessions disponibles</span>
-<h2>Choisissez une session de validation interne</h2>
+<h2>Sessions de validation interne</h2>
 <p>
-            Sélectionnez d’abord un module pour afficher les sessions correspondantes, puis complétez votre demande
-            de réservation.
+            Les sessions affichées sont indicatives. Le choix d’une date n’est pas obligatoire pour payer :
+            après paiement, vous pourrez vous inscrire aux sessions qui correspondent à vos disponibilités.
           </p>
 </div>
 <div class="sessions-grid" id="sessionsContainer">
-<div class="empty-state">Choisissez d’abord un module ci-dessus pour voir les sessions disponibles.</div>
+<div class="empty-state">Sélectionnez vos modules ci-dessus. Les sessions disponibles seront affichées à titre indicatif.</div>
 </div>
 <div class="timeline-cta">
-<a class="btn btn-dark" href="#formulaire">Aller au formulaire</a>
+<a class="btn btn-dark" href="#formulaire">Finaliser et payer</a>
 </div>
 </div>
 </section>
@@ -1354,14 +1375,13 @@
 <div class="form-head">
 <h2>Compléter votre dossier</h2>
 <p>
-              Une fois votre session choisie, votre module est verrouillé automatiquement pour éviter toute incohérence
-              dans la réservation.
+              Votre formule et vos modules sont enregistrés dans votre panier. Après paiement, vous pourrez choisir vos sessions de validation selon les dates disponibles.
             </p>
 </div>
 <div id="checkoutFeedback"></div>
 <div class="selected-session-box" id="selectedSessionBox">
-<span class="selected-session-label">Session sélectionnée</span>
-<div class="selected-session-value" id="selectedSessionValue">—</div>
+<span class="selected-session-label">Votre panier formateur</span>
+<div class="selected-session-value" id="selectedSessionValue">Choisissez une formule et vos modules.</div>
 </div>
 <form id="trainerForm" class="trainer-candidate-form">
 <div class="form-grid">
@@ -1389,13 +1409,13 @@
 <label for="postalCode">Code postal</label>
 <input id="postalCode" type="text" autocomplete="postal-code" placeholder="13001"/>
 </div>
-<div class="form-field">
-<label for="trainingType">Module de session</label>
-<select id="trainingType" required="">
-<option value="">Choisissez un module</option>
+<div class="form-field trainer-module-field" style="display:none;">
+<label for="trainingType">Module principal choisi</label>
+<select id="trainingType">
+<option value="">Module principal automatique</option>
 </select>
 <p class="field-help">
-                  Ce champ reprend le module de la session choisie. Les modules à financer se sélectionnent plus haut selon la formule 1, 2 ou 3 modules.
+                  Les modules à financer se sélectionnent plus haut selon la formule 1, 2 ou 3 modules.
                 </p>
 </div>
 <div class="form-field full">
@@ -1403,9 +1423,9 @@
 <textarea id="message" placeholder="Présentez brièvement votre profil, votre motivation et votre intention de transmission."></textarea>
 </div>
 </div>
-<button class="btn btn-dark" type="submit">Réserver ma place</button>
+<button class="btn btn-dark" id="trainerSubmitButton" type="submit">Valider et payer</button>
 <p class="form-submit-note">
-              Réservation sécurisée : le montant est autorisé puis capturé uniquement après validation du dossier et vérification de la session.
+              Paiement sécurisé : vous réglez votre parcours formateur maintenant, puis vous choisissez vos sessions de validation selon les disponibilités.
             </p>
 <p class="form-rgpd-note">
               Les informations transmises via ce formulaire servent uniquement à traiter votre demande. Vous pouvez exercer vos droits d’accès, de rectification ou de suppression en écrivant à vitalprotectformation@gmail.com. Voir notre politique de confidentialité.
@@ -1452,7 +1472,7 @@
 </article>
 </div>
 <div class="timeline-cta">
-<a class="btn btn-dark" href="#formulaire">Candidater maintenant</a>
+<a class="btn btn-dark" href="#formulaire">Valider et payer mon parcours</a>
 <a class="btn btn-outline" href="/contact.html">Poser une question</a>
 </div>
 </div>
@@ -1587,7 +1607,9 @@
     const moduleChoiceText = document.getElementById("moduleChoiceText");
     const moduleChoicePrice = document.getElementById("moduleChoicePrice");
     const moduleChoiceTags = document.getElementById("moduleChoiceTags");
+    const modulePayShortcut = document.getElementById("modulePayShortcut");
     const moduleSelectionError = document.getElementById("moduleSelectionError");
+    const trainerSubmitButton = document.getElementById("trainerSubmitButton");
 
     function formatDate(dateString) {
       if (!dateString) return "Date non disponible";
@@ -1701,8 +1723,7 @@
       if (checkoutStatus === "success") {
         checkoutFeedback.innerHTML = `
           <div class="alert alert-success">
-            Votre demande de réservation a bien été enregistrée.
-            Le montant a seulement été autorisé. Il sera capturé uniquement après validation de votre dossier.
+            Votre parcours formateur a bien été enregistré. Après validation administrative, vous pourrez choisir vos sessions de validation selon les dates disponibles.
           </div>
         `;
         return;
@@ -1711,7 +1732,7 @@
       if (checkoutStatus === "cancel") {
         checkoutFeedback.innerHTML = `
           <div class="alert alert-warning">
-            Le paiement n’a pas été finalisé. Votre réservation n’a pas été enregistrée.
+            Le paiement n’a pas été finalisé. Votre parcours formateur n’a pas été enregistré.
           </div>
         `;
         return;
@@ -1723,7 +1744,7 @@
     function updateSelectedSessionBox(label) {
       if (!label) {
         selectedSessionBox.classList.remove("active");
-        selectedSessionValue.textContent = "—";
+        selectedSessionValue.textContent = "Choisissez une formule et vos modules.";
         return;
       }
 
@@ -1816,8 +1837,8 @@
       } else {
         moduleChoiceTitle.textContent = `Formule ${targetCount} module${targetCount > 1 ? "s" : ""} sélectionnée`;
         moduleChoiceText.textContent = remaining > 0
-          ? `Sélectionnez encore ${remaining} module${remaining > 1 ? "s" : ""} pour compléter votre parcours.`
-          : "Votre sélection est complète. Vous pouvez choisir une session puis compléter votre dossier.";
+          ? `Sélectionnez encore ${remaining} module${remaining > 1 ? "s" : ""} pour compléter votre panier.`
+          : "Votre panier est prêt. Vous pouvez payer maintenant ; les sessions de validation se choisiront ensuite selon les disponibilités.";
         moduleChoicePrice.textContent = formatPrice(price);
       }
 
@@ -1827,6 +1848,22 @@
         moduleChoiceTags.innerHTML = getSelectedModuleLabels()
           .map((label) => `<span class="module-choice-tag">✓ ${escapeHtml(label)}</span>`)
           .join("");
+      }
+
+      const complete = targetCount > 0 && selectedCount === targetCount;
+      if (modulePayShortcut) {
+        modulePayShortcut.disabled = !complete;
+        modulePayShortcut.textContent = complete ? `Valider et payer ${formatPrice(price)}` : "Complétez votre sélection";
+      }
+      if (trainerSubmitButton) {
+        trainerSubmitButton.textContent = complete ? `Valider et payer ${formatPrice(price)}` : "Valider et payer";
+      }
+
+      if (complete) {
+        selectedSessionBox.classList.add("active");
+        selectedSessionValue.textContent = `${targetCount} module${targetCount > 1 ? "s" : ""} — ${formatPrice(price)} — ${getSelectedModuleLabels().join(" + ")}`;
+      } else if (!selectedSessionId) {
+        updateSelectedSessionBox("");
       }
     }
 
@@ -1925,7 +1962,7 @@
         const buttonLabel = isSelected ? "Module sélectionné ✓" : "Sélectionner ce module";
 
         return `
-          <article class="module-card ${isSelected ? "is-selected" : ""} ${limitReached ? "is-disabled" : ""}" tabindex="0">
+          <article class="module-card ${isSelected ? "is-selected" : ""} ${limitReached ? "is-disabled" : ""}" tabindex="0" data-module-card-name="${escapeHtml(module.name)}">
             <div class="module-flip-inner">
               <div class="module-flip-face front">
                 <div class="module-dot" aria-hidden="true"></div>
@@ -1952,8 +1989,16 @@
       }).join("");
 
       document.querySelectorAll("[data-module-name]").forEach((button) => {
-        button.addEventListener("click", () => {
+        button.addEventListener("click", (event) => {
+          event.stopPropagation();
           toggleModuleSelection(button.dataset.moduleName || "");
+        });
+      });
+
+      document.querySelectorAll("[data-module-card-name]").forEach((card) => {
+        card.addEventListener("click", (event) => {
+          if (event.target.closest("button, a")) return;
+          toggleModuleSelection(card.dataset.moduleCardName || "");
         });
       });
     }
@@ -1991,7 +2036,7 @@
       }
 
       const moduleLabel = getSelectedModuleLabels().join(" + ") || trainerModuleName(session.module_name || session.title);
-      const label = `${moduleLabel} — ${session.city || "Ville"} — ${formatDate(session.end_date)}`;
+      const label = `Panier : ${moduleLabel} — ${formatPrice(getFormulaPrice(selectedModuleLimit))}. Session préférée : ${session.city || "Ville"} — ${formatDate(session.end_date)}`;
       updateSelectedSessionBox(label);
       updateSelectionUrl();
 
@@ -2003,7 +2048,7 @@
       if (!sessionsData.length) {
         sessionsContainer.innerHTML = `
           <div class="empty-state">
-            Aucune session disponible pour le moment.
+            Aucune session affichée pour le moment. Vous pouvez tout de même régler votre parcours : les dates seront choisies après paiement avec Vital Protect.
           </div>
         `;
         return;
@@ -2012,7 +2057,7 @@
       if (!selectedModuleLimit) {
         sessionsContainer.innerHTML = `
           <div class="empty-state">
-            Choisissez d’abord une formule 1, 2 ou 3 modules.
+            Choisissez d’abord une formule 1, 2 ou 3 modules. Le choix d’une session n’est pas obligatoire pour payer.
           </div>
         `;
         return;
@@ -2021,7 +2066,7 @@
       if (selectedModuleNames.length < selectedModuleLimit) {
         sessionsContainer.innerHTML = `
           <div class="empty-state">
-            Sélectionnez encore ${selectedModuleLimit - selectedModuleNames.length} module(s) pour afficher les sessions disponibles.
+            Sélectionnez encore ${selectedModuleLimit - selectedModuleNames.length} module(s). Vous pourrez payer dès que votre panier sera complet, sans obligation de choisir une date.
           </div>
         `;
         return;
@@ -2032,7 +2077,7 @@
       if (!filteredSessions.length) {
         sessionsContainer.innerHTML = `
           <div class="empty-state">
-            Aucune session ouverte pour les modules sélectionnés : <strong>${escapeHtml(getSelectedModuleLabels().join(" + "))}</strong>.
+            Aucune session affichée pour les modules sélectionnés : <strong>${escapeHtml(getSelectedModuleLabels().join(" + "))}</strong>.<br>Vous pouvez quand même payer votre parcours ; les dates seront planifiées ensuite.
           </div>
         `;
         return;
@@ -2103,7 +2148,7 @@
               data-session-id="${escapeHtml(session.id)}"
               ${sessionComplete ? "" : "disabled"}
             >
-              ${sessionComplete ? "Choisir cette session" : "Session à confirmer"}
+              ${sessionComplete ? "Préférer cette session" : "Session à confirmer"}
             </button>
           </div>
         </article>
@@ -2212,6 +2257,12 @@
 
     window.VP_FRANCE_LOCATION?.setupPostalCode("postalCode");
 
+    modulePayShortcut?.addEventListener("click", () => {
+      if (modulePayShortcut.disabled) return;
+      document.getElementById("formulaire")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      document.getElementById("firstName")?.focus({ preventScroll: true });
+    });
+
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
 
@@ -2235,15 +2286,9 @@
         return;
       }
 
-      const selectedSession = sessionsData.find((item) => item.id === selectedSessionId);
-      if (!selectedSessionId || !isCompleteSession(selectedSession)) {
-        checkoutFeedback.innerHTML = `
-          <div class="alert alert-error">
-            Merci de sélectionner une session complète avant de continuer.
-          </div>
-        `;
-        document.getElementById("sessions").scrollIntoView({ behavior: "smooth" });
-        return;
+      const selectedSession = selectedSessionId ? sessionsData.find((item) => item.id === selectedSessionId) : null;
+      if (selectedSessionId && !isCompleteSession(selectedSession)) {
+        selectedSessionId = "";
       }
 
       const selectedModuleLabels = getSelectedModuleLabels();
@@ -2259,7 +2304,7 @@
         selected_modules: selectedModuleLabels,
         selected_module_count: selectedModuleLimit,
         message: document.getElementById("message").value.trim(),
-        session_id: selectedSessionId
+        session_id: selectedSessionId || ""
       };
 
       if (!data.training_type || !data.selected_modules.length) {

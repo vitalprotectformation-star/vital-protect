@@ -2412,6 +2412,18 @@
       return `<div class="action-stack">${actions.join("")}</div>`;
     }
 
+
+    function getCandidateModulesLabel(row) {
+      const message = String(row.message || "");
+      const match = message.match(/Modules demandés\s*:\s*([^\n]+)/i);
+      if (match && match[1]) return match[1].trim();
+      return row.training_type || row.selected_module || "—";
+    }
+
+    function getCandidateSessionLabel(row) {
+      return row.session_id || "À planifier après paiement";
+    }
+
     function renderTrainerRegistrations(rows) {
       trainerRegistrationsCount.textContent = rows.length;
       capturedTrainerPaymentsCount.textContent = rows.filter(r => r.payment_status === "captured").length;
@@ -2464,7 +2476,10 @@
                     <span>${escapeHtml(row.phone || "—")}</span><br />
                     <span>${escapeHtml(row.city || "—")}</span>
                   </td>
-                  <td><strong>${escapeHtml(row.session_id || "—")}</strong></td>
+                  <td>
+                    <strong>${escapeHtml(getCandidateSessionLabel(row))}</strong>
+                    <span>${escapeHtml(getCandidateModulesLabel(row))}</span>
+                  </td>
                   <td><span class="badge ${paymentBadgeClass}">${escapeHtml(row.payment_status || "—")}</span></td>
                   <td><span class="badge ${validationBadgeClass}">${escapeHtml(row.validation_status || "—")}</span></td>
                   <td><span class="badge ${resultBadgeClass}">${escapeHtml(resultValue)}</span></td>
@@ -2527,7 +2542,10 @@
                     <span>${escapeHtml(row.phone || "—")}</span><br />
                     <span>${escapeHtml(row.city || "—")}</span>
                   </td>
-                  <td><strong>${escapeHtml(row.session_id || "—")}</strong></td>
+                  <td>
+                    <strong>${escapeHtml(getCandidateSessionLabel(row))}</strong>
+                    <span>${escapeHtml(getCandidateModulesLabel(row))}</span>
+                  </td>
                   <td><span class="badge ${paymentBadgeClass}">${escapeHtml(row.payment_status || "—")}</span></td>
                   <td><span class="badge ${validationBadgeClass}">${escapeHtml(row.validation_status || "—")}</span></td>
                   <td><span class="badge ${resultBadgeClass}">${escapeHtml(resultValue)}</span></td>
@@ -2766,7 +2784,9 @@
           row.email,
           row.city,
           row.phone,
-          row.session_id
+          row.session_id,
+          row.message,
+          getCandidateModulesLabel(row)
         ].map(normalize).join(" ");
 
         const searchOk = !search || text.includes(search);
@@ -2792,7 +2812,9 @@
           row.email,
           row.city,
           row.phone,
-          row.session_id
+          row.session_id,
+          row.message,
+          getCandidateModulesLabel(row)
         ].map(normalize).join(" ");
 
         const searchOk = !search || text.includes(search);
