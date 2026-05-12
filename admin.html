@@ -2416,8 +2416,11 @@
     function getCandidateModulesLabel(row) {
       const message = String(row.message || "");
       const match = message.match(/Modules demandés\s*:\s*([^\n]+)/i);
-      if (match && match[1]) return match[1].trim();
-      return row.training_type || row.selected_module || "—";
+      const modules = match && match[1] ? match[1].trim() : (row.training_type || row.selected_module || "—");
+      const count = row.trainer_formula_module_count || row.selected_module_count || row.module_count;
+      const price = row.trainer_formula_price || row.formula_price;
+      const formula = count ? `Formule ${count} module${Number(count) > 1 ? "s" : ""}${price ? ` — ${formatCurrency(price)}` : ""}` : "";
+      return formula ? `${formula} — ${modules}` : modules;
     }
 
     function getCandidateSessionLabel(row) {
@@ -2452,6 +2455,8 @@
               const paymentBadgeClass =
                 row.payment_status === "captured" ? "badge-success" :
                 row.payment_status === "authorized" ? "badge-ok" :
+                row.payment_status === "checkout_created" ? "badge-warning" :
+                row.payment_status === "pending_payment" ? "badge-warning" :
                 row.payment_status === "canceled" ? "badge-danger" :
                 "badge-warning";
 
@@ -2964,6 +2969,16 @@
     }
 
     async function loadTrainerRegistrations() {
+      try {
+        const result = await callAdminTool("list_trainer_registrations");
+        trainerRegistrationsData = result.trainer_registrations || [];
+        renderTrainerRegistrations(trainerRegistrationsData);
+        updateFinance();
+        return;
+      } catch (apiError) {
+        console.warn("Lecture candidats via admin-tools impossible, tentative Supabase directe.", apiError);
+      }
+
       const { data, error } = await supabase
         .from("trainer_session_registrations")
         .select("*")
@@ -2971,7 +2986,7 @@
 
       if (error) {
         console.error(error);
-        trainerRegistrationsWrap.innerHTML = `<div class="error">Impossible de charger les candidats formateurs.</div>`;
+        trainerRegistrationsWrap.innerHTML = `<div class="error">Impossible de charger les candidats formateurs : ${escapeHtml(error.message || "erreur inconnue")}</div>`;
         return;
       }
 
