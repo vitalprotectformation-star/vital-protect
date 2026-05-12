@@ -570,6 +570,60 @@
       return String(value || "").trim().toLowerCase();
     }
 
+
+    const VP_MODULE_NAMES = {
+      module1: "Prévenir, éviter, réagir – Module 1",
+      module2: "Prévenir, éviter, réagir – Module 2",
+      pro: "Faire face aux situations tendues et comportements agressifs en milieu professionnel"
+    };
+
+    function normalizeModuleKey(value) {
+      return String(value || "")
+        .trim()
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-z0-9]+/g, " ")
+        .trim();
+    }
+
+    function getCanonicalModuleType(...values) {
+      const text = values.map(normalizeModuleKey).filter(Boolean).join(" ");
+      if (!text) return "";
+      if (text.includes("niveau 2") || text.includes("niv 2") || text.includes("module 2")) return "module2";
+      if (text.includes("professionnel") || text.includes("professionnelle") || text.includes("entreprise") || text.includes("salarie") || text.includes("salaries") || text.includes("equipe") || text.includes("agressif") || text.includes("agressive") || text.includes("tendu") || text.includes("tendue") || text.includes("comportement") || text.includes("self pro")) return "pro";
+      if (text.includes("niveau 1") || text.includes("niv 1") || text.includes("module 1") || text.includes("self defense") || text.includes("securite personnelle") || text.includes("prevenir eviter reagir")) return "module1";
+      return "";
+    }
+
+    function getCanonicalModuleName(value) {
+      const type = getCanonicalModuleType(value);
+      return type ? VP_MODULE_NAMES[type] : String(value || "").trim();
+    }
+
+    function replaceLegacyModuleNames(value) {
+      let text = String(value || "").trim();
+      if (!text) return "";
+      text = text.replace(/Self\s*Défense\s*en\s*entreprise/gi, VP_MODULE_NAMES.pro);
+      text = text.replace(/Self\s*Defense\s*en\s*entreprise/gi, VP_MODULE_NAMES.pro);
+      text = text.replace(/Self\s*Pro/gi, VP_MODULE_NAMES.pro);
+      text = text.replace(/Self\s*Défense\s*Essentielle\s*Niveau\s*2/gi, VP_MODULE_NAMES.module2);
+      text = text.replace(/Self\s*Defense\s*Essentielle\s*Niveau\s*2/gi, VP_MODULE_NAMES.module2);
+      text = text.replace(/Self\s*Défense\s*Essentielle\s*Niveau\s*1/gi, VP_MODULE_NAMES.module1);
+      text = text.replace(/Self\s*Defense\s*Essentielle\s*Niveau\s*1/gi, VP_MODULE_NAMES.module1);
+      text = text.replace(/Self\s*Défense\s*Essentielle/gi, VP_MODULE_NAMES.module1);
+      text = text.replace(/Self\s*Defense\s*Essentielle/gi, VP_MODULE_NAMES.module1);
+      return text;
+    }
+
+    function displayStageTitle(stage) {
+      const moduleName = getCanonicalModuleName(stage?.training_type || stage?.title);
+      const title = replaceLegacyModuleNames(stage?.title || "");
+      if (title && title !== stage?.title) return title;
+      if (title && normalizeModuleKey(title).includes(normalizeModuleKey(moduleName))) return title;
+      return moduleName || title || "Stage";
+    }
+
     function escapeHtml(value) {
       return String(value ?? "")
         .replace(/&/g, "&amp;")
@@ -854,13 +908,20 @@
         return [];
       }
 
+      const seen = new Set();
       return (trainerModules || [])
         .filter(item =>
           normalize(item.status) === "certified" &&
           isFutureOrToday(item.expires_at) &&
           item.module_name
         )
-        .map(item => item.module_name);
+        .map(item => item.module_name)
+        .filter(moduleName => {
+          const key = normalizeModuleKey(getCanonicalModuleName(moduleName));
+          if (seen.has(key)) return false;
+          seen.add(key);
+          return true;
+        });
     }
 
     async function loadTrainerDashboardData() {
@@ -1035,8 +1096,8 @@
         return `
           <tr>
             <td>
-              <strong>${escapeHtml(stage.title || stage.training_type || "Stage")}</strong>
-              <span>${escapeHtml(stage.training_type || "Module non renseigné")}</span>
+              <strong>${escapeHtml(displayStageTitle(stage))}</strong>
+              <span>${escapeHtml(getCanonicalModuleName(stage.training_type) || "Module non renseigné")}</span>
             </td>
             <td>
               ${formatDate(stage.stage_date)}${stage.start_time ? ` · ${escapeHtml(stage.start_time)}` : ""}
@@ -1083,11 +1144,11 @@
       const payoutSummary = payoutSummaryForStage(stageId);
 
       panel.innerHTML = `
-        <h3>${escapeHtml(stage.title || "Stage")}</h3>
+        <h3>${escapeHtml(displayStageTitle(stage))}</h3>
         <div class="grid">
           <div class="info-box">
             <span class="label">Module</span>
-            <div class="value">${escapeHtml(stage.training_type || "—")}</div>
+            <div class="value">${escapeHtml(getCanonicalModuleName(stage.training_type) || "—")}</div>
           </div>
           <div class="info-box">
             <span class="label">Date</span>
@@ -1154,7 +1215,7 @@
       const rows = [
         ["Stage", "Date", "Prénom", "Nom", "Email", "Téléphone", "Places", "Versement Vital Protect estimé", "Paiement", "Inscription"],
         ...reservations.map(row => [
-          stage.title || "Stage",
+          displayStageTitle(stage),
           formatDate(stage.stage_date),
           row.first_name || "",
           row.last_name || "",
@@ -1175,7 +1236,7 @@
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
-      link.download = `inscrits-${(stage.title || "stage").toLowerCase().replace(/[^a-z0-9]+/gi, "-").replace(/^-|-$/g, "")}.csv`;
+      link.download = `inscrits-${(displayStageTitle(stage) || "stage").toLowerCase().replace(/[^a-z0-9]+/gi, "-").replace(/^-|-$/g, "")}.csv`;
       document.body.appendChild(link);
       link.click();
       link.remove();
@@ -1191,11 +1252,11 @@
         return;
       }
 
-      const subject = `Information stage VITAL PROTECT - ${stage.title || "Stage"}`;
+      const subject = `Information stage VITAL PROTECT - ${displayStageTitle(stage) || "Stage"}`;
       const body = `Bonjour,
 
 Nous vous contactons concernant le stage suivant :
-${stage.title || "Stage VITAL PROTECT"}
+${displayStageTitle(stage) || "Stage VITAL PROTECT"}
 Date : ${formatDate(stage.stage_date)}${stage.start_time ? ` à ${stage.start_time}` : ""}
 Lieu : ${stage.address || stage.city || "à confirmer"}
 
@@ -1316,7 +1377,7 @@ VITAL PROTECT`;
               <label for="stageTrainingType">Module habilité</label>
               <select id="stageTrainingType" required>
                 <option value="">Choisir un module</option>
-                ${certifiedModules.map(module => `<option value="${escapeAttr(module)}">${escapeHtml(module)}</option>`).join("")}
+                ${certifiedModules.map(module => `<option value="${escapeAttr(module)}">${escapeHtml(getCanonicalModuleName(module))}</option>`).join("")}
               </select>
             </div>
 
@@ -1544,7 +1605,7 @@ Email trouvé : ${trainer.email}
 ID formateur : ${escapeHtml(trainer.id)}
 Habilitation valide : ${certValid}
 Affiliation valide : ${affiliationValid}
-Modules habilités valides : ${escapeHtml(certifiedModules.join(", ") || "aucun")}</div>
+Modules habilités valides : ${escapeHtml(certifiedModules.map(getCanonicalModuleName).join(", ") || "aucun")}</div>
       `;
 
       attachLogoutButtons();

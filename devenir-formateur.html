@@ -1497,7 +1497,7 @@
       if (!selectedTrainingType) return [];
 
       return sessionsData.filter((session) => {
-        return String(session.module_name || "").trim().toLowerCase() === selectedTrainingType.trim().toLowerCase();
+        return normalizeModuleSearch(publicModuleName(session.module_name || session.title)) === normalizeModuleSearch(publicModuleName(selectedTrainingType)) || normalizeModuleSearch(session.module_name || "") === normalizeModuleSearch(selectedTrainingType);
       });
     }
 
