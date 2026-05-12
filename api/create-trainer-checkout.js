@@ -103,6 +103,102 @@ function isValidEmail(value) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(value || "").trim());
 }
 
+function isMissingColumnError(error, columnName) {
+  const message = String(error?.message || "").toLowerCase();
+  return message.includes(String(columnName || "").toLowerCase()) && message.includes("column");
+}
+
+function withoutUndefined(payload) {
+  return Object.fromEntries(
+    Object.entries(payload).filter(([, value]) => value !== undefined)
+  );
+}
+
+async function insertWithOptionalColumns(table, payload, optionalColumns = []) {
+  const omittedColumns = [];
+  let currentPayload = withoutUndefined({ ...payload });
+
+  for (let attempt = 0; attempt <= optionalColumns.length; attempt += 1) {
+    const { data, error } = await supabase
+      .from(table)
+      .insert(currentPayload)
+      .select()
+      .single();
+
+    if (!error) return { data, error: null, omittedColumns };
+
+    const missingColumn = optionalColumns.find(
+      columnName => Object.prototype.hasOwnProperty.call(currentPayload, columnName) && isMissingColumnError(error, columnName)
+    );
+
+    if (!missingColumn) return { data: null, error, omittedColumns };
+
+    omittedColumns.push(missingColumn);
+    currentPayload = { ...currentPayload };
+    delete currentPayload[missingColumn];
+  }
+
+  return { data: null, error: new Error("Colonnes optionnelles incompatibles"), omittedColumns };
+}
+
+async function updateWithOptionalColumns(table, payload, filters, optionalColumns = []) {
+  const omittedColumns = [];
+  let currentPayload = withoutUndefined({ ...payload });
+
+  for (let attempt = 0; attempt <= optionalColumns.length; attempt += 1) {
+    let query = supabase.from(table).update(currentPayload);
+    filters.forEach(filter => {
+      query = query.eq(filter.column, filter.value);
+    });
+
+    const { data, error } = await query.select().single();
+    if (!error) return { data, error: null, omittedColumns };
+
+    const missingColumn = optionalColumns.find(
+      columnName => Object.prototype.hasOwnProperty.call(currentPayload, columnName) && isMissingColumnError(error, columnName)
+    );
+
+    if (!missingColumn) return { data: null, error, omittedColumns };
+
+    omittedColumns.push(missingColumn);
+    currentPayload = { ...currentPayload };
+    delete currentPayload[missingColumn];
+  }
+
+  return { data: null, error: new Error("Colonnes optionnelles incompatibles"), omittedColumns };
+}
+
+async function upsertTrainerRegistrationDraft(payload) {
+  const optionalColumns = [
+    "session_id",
+    "trainer_formula_module_count",
+    "trainer_formula_price",
+    "stripe_payment_intent_id",
+    "payment_mode",
+    "training_type"
+  ];
+
+  const { data: existing, error: existingError } = await supabase
+    .from("trainer_session_registrations")
+    .select("id")
+    .eq("stripe_session_id", payload.stripe_session_id)
+    .maybeSingle();
+
+  if (existingError) return { data: null, error: existingError };
+
+  if (existing?.id) {
+    return await updateWithOptionalColumns(
+      "trainer_session_registrations",
+      payload,
+      [{ column: "id", value: existing.id }],
+      optionalColumns
+    );
+  }
+
+  return await insertWithOptionalColumns("trainer_session_registrations", payload, optionalColumns);
+}
+
+
 function getTrainerSessionPrice(trainerSession) {
   const explicitLaunchPrice = Number(trainerSession.launch_price || 0);
   const explicitStandardPrice = Number(trainerSession.standard_price || 0);
@@ -332,6 +428,32 @@ export default async function handler(req, res) {
       success_url: `${origin}/trainer-success.html?checkout=success&module_count=${encodeURIComponent(String(cleanModuleCount))}`,
       cancel_url: `${origin}/trainer-cancel.html?checkout=cancel&module_count=${encodeURIComponent(String(cleanModuleCount))}`
     });
+
+    const modulesMessage = cleanSelectedModules.length ? `Modules demandés: ${cleanSelectedModules.join(" | ")}` : "";
+    const registrationMessage = [cleanMessage, modulesMessage].filter(Boolean).join("\n\n");
+
+    const draftRegistrationPayload = {
+      first_name: cleanFirstName,
+      last_name: cleanLastName,
+      email: cleanEmail,
+      phone: cleanPhone,
+      city: cleanCity,
+      message: registrationMessage,
+      session_id: cleanSessionId || undefined,
+      stripe_session_id: checkoutSession.id,
+      stripe_payment_intent_id: typeof checkoutSession.payment_intent === "string" ? checkoutSession.payment_intent : undefined,
+      payment_mode: "manual_capture",
+      payment_status: "checkout_created",
+      validation_status: "pending",
+      training_type: cleanSelectedModules.join(" | "),
+      trainer_formula_module_count: cleanModuleCount,
+      trainer_formula_price: selectedPrice
+    };
+
+    const draftResult = await upsertTrainerRegistrationDraft(draftRegistrationPayload);
+    if (draftResult.error) {
+      console.error("Trainer registration draft save error:", draftResult.error);
+    }
 
     return res.status(200).json({ url: checkoutSession.url });
   } catch (err) {

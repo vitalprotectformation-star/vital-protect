@@ -207,6 +207,33 @@ async function insertWithOptionalColumns(table, payload, optionalColumns = []) {
   };
 }
 
+async function updateWithOptionalColumns(table, payload, filters, optionalColumns = []) {
+  const omittedColumns = [];
+  let currentPayload = withoutUndefined({ ...payload });
+
+  for (let attempt = 0; attempt <= optionalColumns.length; attempt += 1) {
+    let query = supabase.from(table).update(currentPayload);
+    filters.forEach(filter => {
+      query = query.eq(filter.column, filter.value);
+    });
+
+    const { data, error } = await query.select().single();
+    if (!error) return { data, error: null, omittedColumns };
+
+    const missingColumn = optionalColumns.find(
+      columnName => Object.prototype.hasOwnProperty.call(currentPayload, columnName) && isMissingColumnError(error, columnName)
+    );
+
+    if (!missingColumn) return { data: null, error, omittedColumns };
+
+    omittedColumns.push(missingColumn);
+    currentPayload = { ...currentPayload };
+    delete currentPayload[missingColumn];
+  }
+
+  return { data: null, error: new Error("Impossible de mettre à jour : colonnes optionnelles incompatibles"), omittedColumns };
+}
+
 async function sendEmailSafe(payload) {
   try {
     if (!process.env.RESEND_API_KEY) return;
@@ -453,7 +480,8 @@ async function handleTrainerCheckout(session) {
     throw new Error("Failed to check existing trainer registration");
   }
 
-  if (existingTrainerRegistration) return;
+  const trainerFormulaModuleCount = Number(metadata.selected_module_count || metadata.module_count || selectedModules.length || 1);
+  const trainerFormulaPrice = Number(metadata.formula_price || 0) || (trainerFormulaModuleCount >= 3 ? 690 : trainerFormulaModuleCount >= 2 ? 590 : 490);
 
   const trainerRegistrationPayload = {
     first_name: firstName,
@@ -462,23 +490,37 @@ async function handleTrainerCheckout(session) {
     phone,
     city,
     message: registrationMessage,
+    session_id: trainerSessionId || undefined,
     stripe_session_id: session.id,
     stripe_payment_intent_id: stripePaymentIntentId,
     payment_mode: "manual_capture",
     payment_status: "authorized",
-    validation_status: "pending"
+    validation_status: "pending",
+    training_type: trainingType,
+    trainer_formula_module_count: trainerFormulaModuleCount,
+    trainer_formula_price: trainerFormulaPrice
   };
 
-  if (trainerSessionId) {
-    trainerRegistrationPayload.session_id = trainerSessionId;
-  }
+  const optionalColumns = [
+    "session_id",
+    "stripe_payment_intent_id",
+    "payment_mode",
+    "training_type",
+    "trainer_formula_module_count",
+    "trainer_formula_price"
+  ];
 
-  const { error: trainerRegistrationError } = await supabase
-    .from("trainer_session_registrations")
-    .insert(trainerRegistrationPayload);
+  const trainerRegistrationResult = existingTrainerRegistration
+    ? await updateWithOptionalColumns(
+        "trainer_session_registrations",
+        trainerRegistrationPayload,
+        [{ column: "id", value: existingTrainerRegistration.id }],
+        optionalColumns
+      )
+    : await insertWithOptionalColumns("trainer_session_registrations", trainerRegistrationPayload, optionalColumns);
 
-  if (trainerRegistrationError) {
-    console.error("Supabase trainer registration insert error:", trainerRegistrationError);
+  if (trainerRegistrationResult.error) {
+    console.error("Supabase trainer registration save error:", trainerRegistrationResult.error);
     throw new Error("Failed to save trainer registration");
   }
 

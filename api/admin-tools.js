@@ -620,6 +620,23 @@ async function handleListStages(req, res) {
   return res.status(200).json({ success: true, stages: data || [] });
 }
 
+async function handleListTrainerRegistrations(req, res) {
+  const { data, error } = await supabase
+    .from("trainer_session_registrations")
+    .select("*")
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    return res.status(500).json({ error: error.message });
+  }
+
+  return res.status(200).json({
+    success: true,
+    trainer_registrations: data || []
+  });
+}
+
+
 async function handleCreateStage(req, res) {
   const trainerId = sanitizeText(req.body?.trainer_id) || null;
   const rawTitle = sanitizeText(req.body?.title);
@@ -1090,6 +1107,10 @@ export default async function handler(req, res) {
 
     if (action === "list_stages") {
       return await handleListStages(req, res);
+    }
+
+    if (action === "list_trainer_registrations") {
+      return await handleListTrainerRegistrations(req, res);
     }
 
     if (action === "create_stage") {
