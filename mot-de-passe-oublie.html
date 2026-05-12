@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <script>
+    (function () {
+      try {
+        if (sessionStorage.getItem('vpl-route-transition-next') !== '1') return;
+        var root = document.documentElement;
+        var origin = JSON.parse(sessionStorage.getItem('vpl-route-transition-origin') || '{}');
+        if (Number.isFinite(origin.x)) root.style.setProperty('--vpl-transition-x', (Math.max(0, Math.min(1, origin.x)) * 100) + '%');
+        if (Number.isFinite(origin.y)) root.style.setProperty('--vpl-transition-y', (Math.max(0, Math.min(1, origin.y)) * 100) + '%');
+        root.classList.add('vpl-route-preload-transition');
+      } catch (_) {}
+    })();
+  </script>
+  <style>
+    html{--vpl-transition-image:url("transition-screen.png");--vpl-transition-bg-size:cover}
+    html.vpl-route-preload-transition,html.vpl-route-preload-transition body{background:#2f6f9f!important}
+    html.vpl-route-preload-transition::before{content:"";position:fixed;inset:0;z-index:2147482998;pointer-events:none;background-color:#2f6f9f;background-image:var(--vpl-transition-image);background-position:center;background-size:var(--vpl-transition-bg-size);background-repeat:no-repeat;opacity:1}
+    @media (max-width: 768px), (pointer: coarse) and (orientation: portrait){html{--vpl-transition-image:url("transition-screen-mobile.jpg");--vpl-transition-bg-size:cover}}
+  </style>
+  <link rel="preload" as="image" href="transition-screen.png" media="(min-width: 769px)" />
+  <link rel="preload" as="image" href="transition-screen-mobile.jpg" media="(max-width: 768px), (pointer: coarse) and (orientation: portrait)" />
+  <script src="/page-transition.js"></script>
+  <script>
+    if (!window.VitalPageTransition) {
+      document.write('<script src="page-transition.js"><\/script>');
+    }
+  </script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mot de passe oublié — VITAL PROTECT</title>
+  <style>
+    :root {
+      --navy: #0b2e59;
+      --blue: #1f6feb;
+      --bg: #f4f7fb;
+      --card: #ffffff;
+      --border: #dbe4f0;
+      --text: #142033;
+      --muted: #667085;
+      --success: #0f9d58;
+      --danger: #c62828;
+      --shadow: 0 10px 30px rgba(11, 46, 89, 0.08);
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body { max-width: 100%; overflow-x: hidden; }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .logo { margin-bottom: 24px; }
+    .logo img { width: min(260px, 60vw); height: auto; display: block; }
+
+    .card {
+      width: min(520px, 100%);
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      padding: 28px;
+    }
+
+    .card, .card *, .status, .footer-link {
+      min-width: 0;
+      max-width: 100%;
+      overflow-wrap: break-word;
+      word-break: normal;
+      hyphens: auto;
+    }
+
+    h1 { margin: 0 0 8px; font-size: 2rem; }
+    p { margin: 0 0 18px; color: var(--muted); line-height: 1.6; }
+
+    .field { margin-bottom: 14px; }
+    label { display: block; margin-bottom: 6px; font-weight: 700; }
+
+    input, select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      font-size: 1rem;
+      background: white;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 12px;
+      padding: 12px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      background: var(--blue);
+      color: white;
+      width: 100%;
+      height: auto;
+      white-space: normal;
+      line-height: 1.25;
+      text-align: center;
+    }
+
+    .btn:disabled { opacity: 0.7; cursor: not-allowed; }
+
+    .status {
+      margin-top: 14px;
+      min-height: 22px;
+      line-height: 1.5;
+      color: var(--muted);
+    }
+
+    .status.success { color: var(--success); }
+    .status.error { color: var(--danger); }
+
+    .footer-link { margin-top: 16px; text-align: center; }
+    .footer-link a { color: var(--navy); text-decoration: none; font-weight: 700; }
+
+    .hint {
+      border: 1px solid var(--border);
+      background: #f8fbff;
+      border-radius: 14px;
+      padding: 12px;
+      margin: 0 0 18px;
+      color: var(--muted);
+      line-height: 1.5;
+      font-size: 0.95rem;
+    }
+
+    @media (max-width: 480px) {
+      body { padding: 18px; justify-content: flex-start; padding-top: 42px; }
+      .logo { margin-bottom: 18px; }
+      .logo img { width: min(190px, 58vw); }
+      .card { padding: 22px; border-radius: 20px; }
+      h1 { font-size: 1.55rem; line-height: 1.15; }
+      input, select { font-size: 16px; }
+      .btn { min-height: 46px; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="logo">
+    <img src="/logo.png" alt="VITAL PROTECT" />
+  </div>
+
+  <div class="card">
+    <h1>Mot de passe oublié</h1>
+    <p>Entrez votre email. Si un compte existe, un lien sécurisé vous permettra de définir un nouveau mot de passe.</p>
+
+    <div class="hint">
+      Cette action envoie un email Supabase. Elle ne sert qu’en dépannage, pas à chaque connexion.<br />
+      Si Supabase affiche une limite d’envoi, ce n’est pas un bug du bouton : la limite email est globale au projet. Pour un formateur, l’admin peut maintenant définir un mot de passe temporaire depuis l’onglet <strong>Formateurs</strong>, sans envoyer d’email Supabase.
+    </div>
+
+    <form id="resetForm">
+      <div class="field">
+        <label for="accountType">Type d’espace</label>
+        <select id="accountType" required>
+          <option value="formateur">Formateur</option>
+          <option value="admin">Admin</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="email">Email</label>
+        <input
+          type="email"
+          id="email"
+          required
+          placeholder="votre@email.fr"
+          autocomplete="email"
+        />
+      </div>
+
+      <button type="submit" class="btn" id="submitBtn">
+        Recevoir le lien de réinitialisation
+      </button>
+    </form>
+
+    <div class="status" id="status"></div>
+
+    <div class="footer-link">
+      <a href="/formateur-login.html">← Retour connexion formateur</a>
+    </div>
+    <div class="footer-link">
+      <a href="/admin-login.html">← Retour connexion admin</a>
+    </div>
+  </div>
+
+  <script type="module">
+    import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
+    const supabase = createClient(
+      "https://zsraqxzneghkzaozzuci.supabase.co",
+      "sb_publishable_VlTpYjzJ3DKpFA1Un_EFHQ_FW-mYK4U"
+    );
+
+    const params = new URLSearchParams(window.location.search);
+    const initialType = params.get("type");
+    const form = document.getElementById("resetForm");
+    const accountType = document.getElementById("accountType");
+    const status = document.getElementById("status");
+    const submitBtn = document.getElementById("submitBtn");
+
+    if (initialType === "admin" || initialType === "formateur") {
+      accountType.value = initialType;
+    }
+
+    function setStatus(message, type = "") {
+      status.textContent = message;
+      status.className = `status${type ? " " + type : ""}`;
+    }
+
+    function startCooldown(seconds = 60) {
+      let remaining = seconds;
+      submitBtn.disabled = true;
+      const originalText = "Recevoir le lien de réinitialisation";
+      submitBtn.textContent = `Réessayer dans ${remaining}s`;
+      const timer = setInterval(() => {
+        remaining -= 1;
+        if (remaining <= 0) {
+          clearInterval(timer);
+          submitBtn.disabled = false;
+          submitBtn.textContent = originalText;
+          return;
+        }
+        submitBtn.textContent = `Réessayer dans ${remaining}s`;
+      }, 1000);
+    }
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const email = document.getElementById("email").value.trim().toLowerCase();
+      const nextPath = accountType.value === "admin" ? "/admin-login.html" : "/formateur-login.html";
+      const redirectTo = `${window.location.origin}/nouveau-mot-de-passe.html?next=${encodeURIComponent(nextPath)}`;
+
+      if (!email) {
+        setStatus("Veuillez saisir votre email.", "error");
+        return;
+      }
+
+      submitBtn.disabled = true;
+      setStatus("Envoi du lien en cours...");
+
+      try {
+        const { error } = await supabase.auth.resetPasswordForEmail(email, {
+          redirectTo
+        });
+
+        if (error) {
+          console.error("Erreur réinitialisation mot de passe:", error);
+          const message = String(error.message || "");
+          const isRateLimit = /rate limit|too many|email rate|over email/i.test(message);
+
+          if (isRateLimit) {
+            setStatus(
+              "Limite d’envoi email Supabase atteinte. Le bouton fonctionne, mais Supabase bloque les emails de reset. Pour un formateur, allez dans Admin > Formateurs > Définir mot de passe, ou attendez que la limite expire.",
+              "error"
+            );
+            startCooldown(3600);
+            return;
+          }
+
+          setStatus(message || "Impossible d’envoyer le lien pour le moment.", "error");
+          submitBtn.disabled = false;
+          return;
+        }
+
+        setStatus("Si un compte existe pour cet email, un lien de réinitialisation vient d’être envoyé. Pensez à vérifier les spams.", "success");
+        startCooldown(60);
+      } catch (error) {
+        console.error("Erreur reset password:", error);
+        setStatus(error.message || "Erreur réseau ou serveur.", "error");
+        submitBtn.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>

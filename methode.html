@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+
+  <script>
+    (function () {
+      try {
+        if (sessionStorage.getItem('vpl-route-transition-next') !== '1') return;
+        var root = document.documentElement;
+        var origin = JSON.parse(sessionStorage.getItem('vpl-route-transition-origin') || '{}');
+        if (Number.isFinite(origin.x)) root.style.setProperty('--vpl-transition-x', (Math.max(0, Math.min(1, origin.x)) * 100) + '%');
+        if (Number.isFinite(origin.y)) root.style.setProperty('--vpl-transition-y', (Math.max(0, Math.min(1, origin.y)) * 100) + '%');
+        root.classList.add('vpl-route-preload-transition');
+      } catch (_) {}
+    })();
+  </script>
+  <style>
+    html{--vpl-transition-image:url("transition-screen.png");--vpl-transition-bg-size:cover}
+    html.vpl-route-preload-transition,html.vpl-route-preload-transition body{background:#2f6f9f!important}
+    html.vpl-route-preload-transition::before{content:"";position:fixed;inset:0;z-index:2147482998;pointer-events:none;background-color:#2f6f9f;background-image:var(--vpl-transition-image);background-position:center;background-size:var(--vpl-transition-bg-size);background-repeat:no-repeat;opacity:1}
+    @media (max-width: 768px), (pointer: coarse) and (orientation: portrait){html{--vpl-transition-image:url("transition-screen-mobile.jpg");--vpl-transition-bg-size:cover}}
+  </style>
+  <link rel="preload" as="image" href="transition-screen.png" media="(min-width: 769px)" />
+  <link rel="preload" as="image" href="transition-screen-mobile.jpg" media="(max-width: 768px), (pointer: coarse) and (orientation: portrait)" />
+  <script src="/page-transition.js"></script>
+  <script>
+    if (!window.VitalPageTransition) {
+      document.write('<script src="page-transition.js"><\/script>');
+    }
+  </script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Le standard Vital Protect — Référentiel structuré de sécurité personnelle</title>
+  <meta
+    name="description"
+    content="Découvrez le standard Vital Protect : un cadre simple et structuré pour prévenir, observer, éviter et réagir avec cohérence."
+  />
+
+  <link rel="icon" href="/logo.png" type="image/png" />
+  <link rel="stylesheet" href="/styles/tokens.css" />
+  <link rel="stylesheet" href="/styles/base.css" />
+  <link rel="stylesheet" href="/styles/components.css" />
+  <link rel="stylesheet" href="/styles/lusion-level.css" />
+</head>
+<body class="vpl-inner-page page-methode">
+  <canvas class="vpl-canvas" aria-hidden="true"></canvas>
+  <div class="vpl-noise" aria-hidden="true"></div>
+  <div class="vpl-scroll-ribbon" aria-hidden="true">
+    <svg class="vpl-scroll-ribbon-svg" viewBox="0 0 1000 1600" preserveAspectRatio="none">
+      <defs>
+        <linearGradient id="vplRibbonGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="#d8ecff" stop-opacity="0.96"></stop>
+          <stop offset="38%" stop-color="#6db7ff" stop-opacity="0.94"></stop>
+          <stop offset="72%" stop-color="#2f7fca" stop-opacity="0.94"></stop>
+          <stop offset="100%" stop-color="#0b3a6f" stop-opacity="0.92"></stop>
+        </linearGradient>
+      </defs>
+      <path class="vpl-ribbon-base" pathLength="1" d="M920 -80 C980 130 700 120 760 330 C820 520 990 560 860 760 C700 1010 240 930 300 1180 C360 1420 760 1350 680 1580 C640 1680 560 1710 430 1750"></path>
+      <path class="vpl-ribbon-progress" pathLength="1" d="M920 -80 C980 130 700 120 760 330 C820 520 990 560 860 760 C700 1010 240 930 300 1180 C360 1420 760 1350 680 1580 C640 1680 560 1710 430 1750"></path>
+      <circle class="vpl-ribbon-dot" cx="920" cy="-80" r="18"></circle>
+    </svg>
+  </div>
+
+  <header class="vpl-nav">
+    <a href="/index.html" class="vpl-brand" aria-label="Accueil Vital Protect">
+      <img src="/logo.png" alt="Vital Protect" />
+      <div>
+        <b>VITAL PROTECT</b>
+        <span>Standard sécurité personnelle</span>
+      </div>
+    </a>
+
+    <nav class="vpl-menu" aria-label="Navigation principale">
+      <a href="/index.html" data-page="index">Accueil</a>
+      <a href="/methode.html" data-page="methode" class="active">Standard</a>
+      <a href="/stage.html" data-page="stage">Stages</a>
+      <a href="/entreprises.html" data-page="entreprises">Entreprises</a>
+      <a href="/devenir-formateur.html" data-page="devenir-formateur">Devenir formateur</a>
+      <a href="/faq.html" data-page="faq">FAQ</a>
+      <a href="/contact.html" data-page="contact">Contact</a>
+      <a href="/formateur-login.html" class="vpl-nav-ghost">Espace</a>
+    </nav>
+
+    <a href="/stage.html" class="vpl-nav-cta">Trouver un stage</a>
+  </header>
+
+  <main>
+    <section class="vpl-inner-hero vpl-methode-hero">
+      <div class="vpl-container vpl-inner-hero-grid">
+        <div>
+          <div class="vpl-eyebrow">Le standard</div>
+          <h1 class="vpl-inner-title">Le standard <span>Vital Protect.</span></h1>
+          <p class="vpl-inner-lead">
+            Un cadre simple pour prévenir, observer, éviter et réagir.
+            L’objectif : transmettre des repères utiles, sans surcharger l’apprentissage.
+          </p>
+          <div class="vpl-actions">
+            <a class="vpl-button vpl-button-primary" href="/stage.html">Trouver un stage</a>
+            <a class="vpl-button vpl-button-secondary" href="/contact.html">Nous contacter</a>
+          </div>
+        </div>
+
+        <div class="vpl-inner-visual">
+          <img src="/visuel-prevenir-proteger-agir.webp" alt="Formateur Vital Protect présentant la méthode face à un groupe" />
+          <div class="vpl-inner-stat">
+            <strong>Une méthode lisible</strong>
+            <span>5 piliers, 4 temps pédagogiques et des repères concrets pour agir avec plus de calme.</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <section class="vp-visual-story vp-visual-story--method" aria-labelledby="method-visual-title">
+      <div class="container vp-visual-story-grid">
+        <div class="vp-visual-copy">
+          <span class="eyebrow">Du cadre à la pratique</span>
+          <h2 id="method-visual-title">Un standard lisible parce qu’il est pratiqué.</h2>
+          <p>
+            La méthode prend forme dans des consignes courtes, des exercices progressifs
+            et un retour au calme systématique après chaque séquence.
+          </p>
+        </div>
+        <div class="vp-image-flip" role="group" aria-labelledby="method-visual-title">
+          <input class="vp-image-flip__toggle" type="checkbox" id="method-visual-flip" />
+          <label class="vp-image-flip__card" for="method-visual-flip">
+            <span class="vp-image-flip__face vp-image-flip__face--front">
+              <img src="/visuel-briefing-crossfit.webp" alt="Briefing progressif d’un groupe avant les exercices" loading="lazy" />
+              <span class="vp-image-flip__badge">Briefing</span>
+            </span>
+            <span class="vp-image-flip__face vp-image-flip__face--back">
+              <img src="/visuel-mise-distance.webp" alt="Mise en pratique de la distance et de la posture" loading="lazy" />
+              <span class="vp-image-flip__badge">Mise en pratique</span>
+            </span>
+          </label>
+        </div>
+      </div>
+    </section>
+
+    <section class="vp-scroll-pillars-section" id="piliers" aria-labelledby="piliers-title">
+      <div class="vp-scroll-pillars-grain" aria-hidden="true"></div>
+
+      <div class="vp-scroll-pillars-sticky">
+        <div class="vp-scroll-pillars-wrap">
+          <div class="section-head section-head--center vp-scroll-pillars-head">
+            <span class="eyebrow">Les 5 piliers</span>
+            <h2 id="piliers-title">Les repères à retenir</h2>
+            <p>
+              Le standard tient en cinq idées simples. Elles servent de fil conducteur pendant les stages.
+            </p>
+          </div>
+
+          <div class="vp-scroll-pillars-grid" aria-label="Les 5 piliers à retenir">
+            <article class="vp-scroll-pillar-card" data-step="0">
+              <div class="vp-scroll-pillar-capital" aria-hidden="true"></div>
+              <div class="vp-scroll-pillar-shaft">
+                <div class="vp-scroll-pillar-medallion">1</div>
+                <h3>Anticipation</h3>
+                <p>Repérer les contextes sensibles avant qu’une tension n’apparaisse.</p>
+              </div>
+              <div class="vp-scroll-pillar-base" aria-hidden="true"></div>
+            </article>
+
+            <article class="vp-scroll-pillar-card" data-step="1">
+              <div class="vp-scroll-pillar-capital" aria-hidden="true"></div>
+              <div class="vp-scroll-pillar-shaft">
+                <div class="vp-scroll-pillar-medallion">2</div>
+                <h3>Observation</h3>
+                <p>Lire l’environnement, les postures et les signaux faibles.</p>
+              </div>
+              <div class="vp-scroll-pillar-base" aria-hidden="true"></div>
+            </article>
+
+            <article class="vp-scroll-pillar-card" data-step="2">
+              <div class="vp-scroll-pillar-capital" aria-hidden="true"></div>
+              <div class="vp-scroll-pillar-shaft">
+                <div class="vp-scroll-pillar-medallion">3</div>
+                <h3>Évitement</h3>
+                <p>Garder de la distance, une sortie possible et une marge de décision.</p>
+              </div>
+              <div class="vp-scroll-pillar-base" aria-hidden="true"></div>
+            </article>
+
+            <article class="vp-scroll-pillar-card" data-step="3">
+              <div class="vp-scroll-pillar-capital" aria-hidden="true"></div>
+              <div class="vp-scroll-pillar-shaft">
+                <div class="vp-scroll-pillar-medallion">4</div>
+                <h3>Réaction</h3>
+                <p>Utiliser des réponses courtes, accessibles et proportionnées.</p>
+              </div>
+              <div class="vp-scroll-pillar-base" aria-hidden="true"></div>
+            </article>
+
+            <article class="vp-scroll-pillar-card" data-step="4">
+              <div class="vp-scroll-pillar-capital" aria-hidden="true"></div>
+              <div class="vp-scroll-pillar-shaft">
+                <div class="vp-scroll-pillar-medallion">5</div>
+                <h3>Après-situation</h3>
+                <p>Se sécuriser, alerter et retrouver rapidement sa capacité d’action.</p>
+              </div>
+              <div class="vp-scroll-pillar-base" aria-hidden="true"></div>
+            </article>
+          </div>
+        </div>
+
+        <div class="vp-scroll-pillars-hint" aria-hidden="true"><span></span>Continuez à scroller</div>
+      </div>
+    </section>
+
+    <section>
+      <div class="container">
+        <div class="section-head section-head--center">
+          <span class="eyebrow">Déroulé pédagogique</span>
+          <h2>Comment se passe une séance&nbsp;?</h2>
+          <p>
+            Une progression claire, toujours dans le même ordre : comprendre, voir, pratiquer, débriefer.
+          </p>
+        </div>
+
+        <div class="timeline-grid">
+          <article class="timeline-card">
+            <span class="timeline-step">Temps 1</span>
+            <h3>Comprendre</h3>
+            <p>Le contexte, le but et les erreurs fréquentes sont expliqués simplement.</p>
+          </article>
+
+          <article class="timeline-card">
+            <span class="timeline-step">Temps 2</span>
+            <h3>Voir</h3>
+            <p>Le formateur montre le principe sans mise en scène inutile.</p>
+          </article>
+
+          <article class="timeline-card">
+            <span class="timeline-step">Temps 3</span>
+            <h3>Pratiquer</h3>
+            <p>Les participants répètent progressivement, avec correction et sécurité.</p>
+          </article>
+
+          <article class="timeline-card">
+            <span class="timeline-step">Temps 4</span>
+            <h3>Débriefer</h3>
+            <p>On remet l’exercice en perspective pour retenir l’essentiel et les limites.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="container method-split">
+        <div class="soft-card method-panel">
+          <span class="eyebrow">Ce que l’on apprend</span>
+          <h3>Des repères utiles au quotidien</h3>
+          <p>
+            Le but n’est pas de former des combattants, mais de donner des réflexes simples et réalistes.
+          </p>
+
+          <div class="bullet-list">
+            <div class="bullet-item"><strong>Lire :</strong> mieux comprendre ce qui change dans une situation.</div>
+            <div class="bullet-item"><strong>Prévenir :</strong> réduire l’exposition et éviter l’escalade.</div>
+            <div class="bullet-item"><strong>Se placer :</strong> gérer l’espace, la distance et les sorties possibles.</div>
+            <div class="bullet-item"><strong>Réagir :</strong> choisir une réponse simple quand il n’y a plus d’autre option.</div>
+          </div>
+        </div>
+
+        <div class="soft-card method-panel">
+          <span class="eyebrow">Ce que l’on évite</span>
+          <h3>Pas de spectacle, pas de surpromesse</h3>
+          <p>
+            Le standard privilégie l’utilité, la clarté et la sécurité pédagogique.
+          </p>
+
+          <div class="bullet-list">
+            <div class="bullet-item"><strong>Pas de folklore :</strong> on ne cherche pas l’effet visuel ou la démonstration impressionnante.</div>
+            <div class="bullet-item"><strong>Pas de complexité inutile :</strong> les réponses doivent rester mobilisables sous stress.</div>
+            <div class="bullet-item"><strong>Pas d’escalade recherchée :</strong> l’évitement reste prioritaire.</div>
+            <div class="bullet-item"><strong>Pas d’illusion :</strong> un stage donne des repères, pas une invulnérabilité.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="container">
+        <div class="section-head section-head--center">
+          <span class="eyebrow">Pourquoi ce cadre</span>
+          <h2>Un langage commun, plus simple à transmettre</h2>
+          <p>
+            Le standard sert à garder la même logique d’un stage à l’autre et d’un formateur à l’autre.
+          </p>
+        </div>
+
+        <div class="standard-grid">
+          <article class="standard-card">
+            <h3>Même vocabulaire</h3>
+            <p>Les notions clés restent identiques, ce qui rend le contenu plus lisible pour tous.</p>
+          </article>
+
+          <article class="standard-card">
+            <h3>Même progression</h3>
+            <p>Les séances suivent un déroulé stable pour faciliter l’apprentissage et la mémorisation.</p>
+          </article>
+
+          <article class="standard-card">
+            <h3>Même exigence</h3>
+            <p>Le cadre aide à maintenir une pédagogie sérieuse et cohérente dans le temps.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="container">
+        <div class="cta-panel">
+          <h2>Découvrir le standard sur le terrain</h2>
+          <p>
+            Le plus simple pour comprendre l’approche Vital Protect reste de participer à un stage ou d’échanger avec nous.
+          </p>
+
+          <div class="cta-actions">
+            <a href="/stage.html" class="btn btn-dark">Voir les stages</a>
+            <a href="/devenir-formateur.html" class="btn btn-outline">Parcours formateur</a>
+            <a href="/contact.html" class="btn btn-outline">Nous contacter</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container site-footer__grid">
+      <div class="site-footer__brand">
+        <strong>VITAL PROTECT</strong>
+        <p>
+          Vital Protect développe un standard structuré de sécurité personnelle
+          fondé sur la prévention, l’évitement, la lecture des situations,
+          la réaction réaliste, la transmission encadrée et la certification par module.
+        </p>
+      </div>
+
+      <div class="site-footer__links">
+        <a href="/index.html">Accueil</a>
+        <a href="/methode.html">Le standard</a>
+        <a href="/entreprises.html">Entreprises</a>
+        <a href="/devenir-formateur.html">Réseau formateur</a>
+        <a href="/faq.html">FAQ</a>
+        <a href="/contact.html">Contact</a>
+        <a href="/mentions-legales.html">Mentions légales</a>
+        <a href="/politique-confidentialite.html">Confidentialité</a>
+        <a href="/cgv.html">CGV</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/lusion-level.js"></script>
+
+  <script>
+    (function () {
+      var section = document.querySelector('.vp-visual-story--method');
+      var toggle = document.getElementById('method-visual-flip');
+      if (!section || !toggle) return;
+
+      section.classList.add('vp-flip-scroll-section');
+
+      var lockUntil = 0;
+      var didFlipDown = toggle.checked;
+      var didFlipUp = !toggle.checked;
+      var lastTouchY = null;
+
+      function isInFlipZone() {
+        var rect = section.getBoundingClientRect();
+        var viewH = window.innerHeight || document.documentElement.clientHeight;
+        return rect.top < viewH * 0.58 && rect.bottom > viewH * 0.42;
+      }
+
+      function centerSection() {
+        var rect = section.getBoundingClientRect();
+        var viewH = window.innerHeight || document.documentElement.clientHeight;
+        var target = window.pageYOffset + rect.top - Math.max(20, (viewH - rect.height) / 2);
+        window.scrollTo({ top: Math.max(0, target), behavior: 'smooth' });
+      }
+
+      function flipWithScroll(direction, event) {
+        if (!isInFlipZone()) return false;
+        if (Date.now() < lockUntil) {
+          if (event && event.cancelable) event.preventDefault();
+          return true;
+        }
+
+        if (direction > 0 && !toggle.checked && !didFlipDown) {
+          if (event && event.cancelable) event.preventDefault();
+          centerSection();
+          toggle.checked = true;
+          didFlipDown = true;
+          didFlipUp = false;
+          lockUntil = Date.now() + 760;
+          return true;
+        }
+
+        if (direction < 0 && toggle.checked && !didFlipUp) {
+          if (event && event.cancelable) event.preventDefault();
+          centerSection();
+          toggle.checked = false;
+          didFlipUp = true;
+          didFlipDown = false;
+          lockUntil = Date.now() + 760;
+          return true;
+        }
+
+        return false;
+      }
+
+      window.addEventListener('wheel', function (event) {
+        if (Math.abs(event.deltaY) < 8) return;
+        flipWithScroll(event.deltaY > 0 ? 1 : -1, event);
+      }, { passive: false });
+
+      window.addEventListener('touchstart', function (event) {
+        if (!event.touches || !event.touches.length) return;
+        lastTouchY = event.touches[0].clientY;
+      }, { passive: true });
+
+      window.addEventListener('touchmove', function (event) {
+        if (lastTouchY === null || !event.touches || !event.touches.length) return;
+        var currentY = event.touches[0].clientY;
+        var delta = lastTouchY - currentY;
+        if (Math.abs(delta) < 12) return;
+        if (!flipWithScroll(delta > 0 ? 1 : -1, event)) {
+          lastTouchY = currentY;
+        }
+      }, { passive: false });
+
+      window.addEventListener('keydown', function (event) {
+        var downKeys = ['ArrowDown', 'PageDown', ' '];
+        var upKeys = ['ArrowUp', 'PageUp'];
+        if (downKeys.indexOf(event.key) !== -1) flipWithScroll(1, event);
+        if (upKeys.indexOf(event.key) !== -1) flipWithScroll(-1, event);
+      });
+
+      toggle.addEventListener('change', function () {
+        if (toggle.checked) {
+          didFlipDown = true;
+          didFlipUp = false;
+        } else {
+          didFlipUp = true;
+          didFlipDown = false;
+        }
+      });
+    })();
+  </script>
+
+  <script>
+    (function () {
+      var section = document.getElementById('piliers');
+      if (!section || !section.classList.contains('vp-scroll-pillars-section')) return;
+
+      var cards = Array.prototype.slice.call(section.querySelectorAll('.vp-scroll-pillar-card'));
+      if (!cards.length) return;
+
+      var progress = 0;
+      var locked = false;
+      var complete = false;
+      var touchY = null;
+      var wheelFactor = 1750;
+      var keyStep = 0.22;
+
+      var mediaDesktop = window.matchMedia ? window.matchMedia('(min-width: 721px)') : null;
+      var mediaReduce = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : null;
+
+      function isDesktop() {
+        return !mediaDesktop || mediaDesktop.matches;
+      }
+
+      function isReduced() {
+        return mediaReduce && mediaReduce.matches;
+      }
+
+      function clamp(value, min, max) {
+        return Math.min(Math.max(value, min), max);
+      }
+
+      function sectionTop() {
+        return window.pageYOffset + section.getBoundingClientRect().top;
+      }
+
+      function snapToSection() {
+        window.scrollTo({ top: Math.max(0, sectionTop()), behavior: 'auto' });
+      }
+
+      function revealAll() {
+        complete = true;
+        progress = 1;
+        section.classList.add('vp-scroll-pillars-complete');
+        section.classList.remove('vp-scroll-pillars-locked');
+        cards.forEach(function (card) {
+          card.classList.add('is-visible');
+          card.style.transform = '';
+          card.style.filter = '';
+          card.style.opacity = '';
+        });
+      }
+
+      function render() {
+        if (isReduced() || !isDesktop()) {
+          revealAll();
+          return;
+        }
+
+        var revealStart = 0.02;
+        var revealGap = 0.18;
+        var revealDuration = 0.16;
+        var completeAt = revealStart + ((cards.length - 1) * revealGap) + revealDuration;
+
+        cards.forEach(function (card, index) {
+          var start = revealStart + index * revealGap;
+          var end = start + revealDuration;
+          var local = clamp((progress - start) / (end - start), 0, 1);
+
+          card.classList.toggle('is-visible', local > 0.02);
+
+          if (local < 1) {
+            var y = (1 - local) * 42;
+            var scale = 0.9 + local * 0.1;
+            var blur = (1 - local) * 8;
+            card.style.transform = 'translateY(' + y + 'vh) scale(' + scale + ') rotateX(' + ((1 - local) * 8) + 'deg)';
+            card.style.filter = 'blur(' + blur + 'px)';
+            card.style.opacity = local;
+          } else {
+            card.style.transform = '';
+            card.style.filter = '';
+            card.style.opacity = '';
+          }
+        });
+
+        if (progress >= completeAt) {
+          revealAll();
+        } else {
+          complete = false;
+          section.classList.remove('vp-scroll-pillars-complete');
+        }
+      }
+
+      function engageLock() {
+        if (complete || locked || isReduced() || !isDesktop()) return false;
+        locked = true;
+        section.classList.add('vp-scroll-pillars-locked');
+        snapToSection();
+        render();
+        return true;
+      }
+
+      function releaseLock() {
+        locked = false;
+        section.classList.remove('vp-scroll-pillars-locked');
+      }
+
+      function shouldCatchSection(delta) {
+        if (complete || isReduced() || !isDesktop()) return false;
+        var rect = section.getBoundingClientRect();
+        var vh = window.innerHeight || document.documentElement.clientHeight;
+        var y = window.pageYOffset || document.documentElement.scrollTop || 0;
+        var top = sectionTop();
+
+        if (delta > 0) {
+          return y >= top - 12 || (rect.top <= vh * 0.35 && rect.bottom > vh * 0.5);
+        }
+
+        return locked;
+      }
+
+      function consume(delta, event) {
+        if (complete) {
+          releaseLock();
+          return false;
+        }
+
+        if (!locked && !shouldCatchSection(delta)) return false;
+
+        if (event && event.cancelable) event.preventDefault();
+        engageLock();
+
+        if (delta < 0 && progress <= 0.001) {
+          releaseLock();
+          window.scrollTo({ top: Math.max(0, sectionTop() - 24), behavior: 'auto' });
+          return true;
+        }
+
+        progress = clamp(progress + (delta / wheelFactor), 0, 1);
+        render();
+
+        if (complete) {
+          releaseLock();
+          snapToSection();
+        }
+
+        return true;
+      }
+
+      var ticking = false;
+      function guardScrollPosition() {
+        if (complete || locked || isReduced() || !isDesktop()) return;
+        var y = window.pageYOffset || document.documentElement.scrollTop || 0;
+        var top = sectionTop();
+        var rect = section.getBoundingClientRect();
+        var vh = window.innerHeight || document.documentElement.clientHeight;
+
+        if (y >= top && rect.bottom > vh * 0.2) {
+          engageLock();
+        }
+      }
+
+      function onScroll() {
+        if (ticking) return;
+        ticking = true;
+        window.requestAnimationFrame(function () {
+          guardScrollPosition();
+          ticking = false;
+        });
+      }
+
+      window.addEventListener('wheel', function (event) {
+        consume(event.deltaY || 0, event);
+      }, { passive: false, capture: true });
+
+      window.addEventListener('keydown', function (event) {
+        var downKeys = ['ArrowDown', 'PageDown', ' '];
+        var upKeys = ['ArrowUp', 'PageUp'];
+        if (downKeys.indexOf(event.key) !== -1) consume(keyStep * wheelFactor, event);
+        if (upKeys.indexOf(event.key) !== -1) consume(-keyStep * wheelFactor, event);
+      }, { passive: false, capture: true });
+
+      window.addEventListener('touchstart', function (event) {
+        if (event.touches && event.touches.length) touchY = event.touches[0].clientY;
+      }, { passive: true });
+
+      window.addEventListener('touchmove', function (event) {
+        if (!event.touches || !event.touches.length || touchY === null) return;
+        var currentY = event.touches[0].clientY;
+        var delta = touchY - currentY;
+        if (Math.abs(delta) > 2) {
+          consume(delta * 2.8, event);
+          touchY = currentY;
+        }
+      }, { passive: false, capture: true });
+
+      window.addEventListener('touchend', function () {
+        touchY = null;
+      }, { passive: true });
+
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', function () {
+        if (isReduced() || !isDesktop()) revealAll();
+        else render();
+      });
+
+      render();
+      guardScrollPosition();
+    })();
+  </script>
+</body>
+</html>

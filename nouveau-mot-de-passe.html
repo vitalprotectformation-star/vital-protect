@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <script>
+    (function () {
+      try {
+        if (sessionStorage.getItem('vpl-route-transition-next') !== '1') return;
+        var root = document.documentElement;
+        var origin = JSON.parse(sessionStorage.getItem('vpl-route-transition-origin') || '{}');
+        if (Number.isFinite(origin.x)) root.style.setProperty('--vpl-transition-x', (Math.max(0, Math.min(1, origin.x)) * 100) + '%');
+        if (Number.isFinite(origin.y)) root.style.setProperty('--vpl-transition-y', (Math.max(0, Math.min(1, origin.y)) * 100) + '%');
+        root.classList.add('vpl-route-preload-transition');
+      } catch (_) {}
+    })();
+  </script>
+  <style>
+    html{--vpl-transition-image:url("transition-screen.png");--vpl-transition-bg-size:cover}
+    html.vpl-route-preload-transition,html.vpl-route-preload-transition body{background:#2f6f9f!important}
+    html.vpl-route-preload-transition::before{content:"";position:fixed;inset:0;z-index:2147482998;pointer-events:none;background-color:#2f6f9f;background-image:var(--vpl-transition-image);background-position:center;background-size:var(--vpl-transition-bg-size);background-repeat:no-repeat;opacity:1}
+    @media (max-width: 768px), (pointer: coarse) and (orientation: portrait){html{--vpl-transition-image:url("transition-screen-mobile.jpg");--vpl-transition-bg-size:cover}}
+  </style>
+  <link rel="preload" as="image" href="transition-screen.png" media="(min-width: 769px)" />
+  <link rel="preload" as="image" href="transition-screen-mobile.jpg" media="(max-width: 768px), (pointer: coarse) and (orientation: portrait)" />
+  <script src="/page-transition.js"></script>
+  <script>
+    if (!window.VitalPageTransition) {
+      document.write('<script src="page-transition.js"><\/script>');
+    }
+  </script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nouveau mot de passe — VITAL PROTECT</title>
+  <style>
+    :root {
+      --navy: #0b2e59;
+      --blue: #1f6feb;
+      --bg: #f4f7fb;
+      --card: #ffffff;
+      --border: #dbe4f0;
+      --text: #142033;
+      --muted: #667085;
+      --success: #0f9d58;
+      --danger: #c62828;
+      --shadow: 0 10px 30px rgba(11, 46, 89, 0.08);
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body { max-width: 100%; overflow-x: hidden; }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .logo { margin-bottom: 24px; }
+    .logo img { width: min(260px, 60vw); height: auto; display: block; }
+
+    .card {
+      width: min(520px, 100%);
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      padding: 28px;
+    }
+
+    .card, .card *, .status, .footer-link {
+      min-width: 0;
+      max-width: 100%;
+      overflow-wrap: break-word;
+      word-break: normal;
+      hyphens: auto;
+    }
+
+    h1 { margin: 0 0 8px; font-size: 2rem; }
+    p { margin: 0 0 18px; color: var(--muted); line-height: 1.6; }
+
+    .field { margin-bottom: 14px; }
+    label { display: block; margin-bottom: 6px; font-weight: 700; }
+
+    input, select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      font-size: 1rem;
+      background: white;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 12px;
+      padding: 12px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      background: var(--blue);
+      color: white;
+      width: 100%;
+      height: auto;
+      white-space: normal;
+      line-height: 1.25;
+      text-align: center;
+    }
+
+    .btn:disabled { opacity: 0.7; cursor: not-allowed; }
+
+    .status {
+      margin-top: 14px;
+      min-height: 22px;
+      line-height: 1.5;
+      color: var(--muted);
+    }
+
+    .status.success { color: var(--success); }
+    .status.error { color: var(--danger); }
+
+    .footer-link { margin-top: 16px; text-align: center; }
+    .footer-link a { color: var(--navy); text-decoration: none; font-weight: 700; }
+
+    .hint {
+      border: 1px solid var(--border);
+      background: #f8fbff;
+      border-radius: 14px;
+      padding: 12px;
+      margin: 0 0 18px;
+      color: var(--muted);
+      line-height: 1.5;
+      font-size: 0.95rem;
+    }
+
+    @media (max-width: 480px) {
+      body { padding: 18px; justify-content: flex-start; padding-top: 42px; }
+      .logo { margin-bottom: 18px; }
+      .logo img { width: min(190px, 58vw); }
+      .card { padding: 22px; border-radius: 20px; }
+      h1 { font-size: 1.55rem; line-height: 1.15; }
+      input, select { font-size: 16px; }
+      .btn { min-height: 46px; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="logo">
+    <img src="/logo.png" alt="VITAL PROTECT" />
+  </div>
+
+  <div class="card">
+    <h1>Nouveau mot de passe</h1>
+    <p>Choisissez un nouveau mot de passe pour votre compte VITAL PROTECT.</p>
+
+    <div class="hint">
+      Cette page fonctionne uniquement depuis le lien de réinitialisation reçu par email.
+    </div>
+
+    <form id="passwordForm" style="display:none;">
+      <div class="field">
+        <label for="password">Nouveau mot de passe</label>
+        <input
+          type="password"
+          id="password"
+          required
+          minlength="8"
+          placeholder="Minimum 8 caractères"
+          autocomplete="new-password"
+        />
+      </div>
+
+      <div class="field">
+        <label for="confirmPassword">Confirmer le mot de passe</label>
+        <input
+          type="password"
+          id="confirmPassword"
+          required
+          minlength="8"
+          placeholder="Répétez le mot de passe"
+          autocomplete="new-password"
+        />
+      </div>
+
+      <button type="submit" class="btn" id="submitBtn">
+        Enregistrer le nouveau mot de passe
+      </button>
+    </form>
+
+    <div class="status" id="status">Vérification du lien en cours...</div>
+
+    <div class="footer-link">
+      <a href="/mot-de-passe-oublie.html">Demander un nouveau lien</a>
+    </div>
+  </div>
+
+  <script type="module">
+    import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
+    const supabase = createClient(
+      "https://zsraqxzneghkzaozzuci.supabase.co",
+      "sb_publishable_VlTpYjzJ3DKpFA1Un_EFHQ_FW-mYK4U"
+    );
+
+    const params = new URLSearchParams(window.location.search);
+    const allowedNext = ["/admin-login.html", "/formateur-login.html"];
+    const requestedNext = params.get("next") || "/formateur-login.html";
+    const nextPath = allowedNext.includes(requestedNext) ? requestedNext : "/formateur-login.html";
+
+    const form = document.getElementById("passwordForm");
+    const status = document.getElementById("status");
+    const submitBtn = document.getElementById("submitBtn");
+
+    let recoveryReady = false;
+
+    function setStatus(message, type = "") {
+      status.textContent = message;
+      status.className = `status${type ? " " + type : ""}`;
+    }
+
+    function showForm() {
+      if (recoveryReady) return;
+      recoveryReady = true;
+      form.style.display = "block";
+      setStatus("Lien vérifié. Vous pouvez choisir un nouveau mot de passe.", "success");
+    }
+
+    supabase.auth.onAuthStateChange((event, session) => {
+      if (event === "PASSWORD_RECOVERY" || session?.user) {
+        showForm();
+      }
+    });
+
+    setTimeout(async () => {
+      if (recoveryReady) return;
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession();
+        if (error) throw error;
+        if (session?.user) {
+          showForm();
+          return;
+        }
+        setStatus("Lien invalide ou expiré. Demandez un nouveau lien de réinitialisation.", "error");
+      } catch (error) {
+        console.error("Erreur vérification lien reset:", error);
+        setStatus("Impossible de vérifier le lien. Demandez un nouveau lien de réinitialisation.", "error");
+      }
+    }, 1200);
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const password = document.getElementById("password").value;
+      const confirmPassword = document.getElementById("confirmPassword").value;
+
+      if (password.length < 8) {
+        setStatus("Le mot de passe doit contenir au moins 8 caractères.", "error");
+        return;
+      }
+
+      if (password !== confirmPassword) {
+        setStatus("Les deux mots de passe ne correspondent pas.", "error");
+        return;
+      }
+
+      submitBtn.disabled = true;
+      setStatus("Mise à jour du mot de passe...");
+
+      try {
+        const { error } = await supabase.auth.updateUser({
+          password
+        });
+
+        if (error) {
+          console.error("Erreur update password:", error);
+          setStatus(error.message || "Impossible de modifier le mot de passe.", "error");
+          submitBtn.disabled = false;
+          return;
+        }
+
+        await supabase.auth.signOut();
+        setStatus("✅ Mot de passe modifié. Redirection vers la connexion...", "success");
+
+        setTimeout(() => {
+          window.location.href = nextPath;
+        }, 900);
+      } catch (error) {
+        console.error("Erreur nouveau mot de passe:", error);
+        setStatus(error.message || "Erreur réseau ou serveur.", "error");
+        submitBtn.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>
