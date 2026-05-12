@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+
+  <script>
+    (function () {
+      try {
+        if (sessionStorage.getItem('vpl-route-transition-next') !== '1') return;
+        var root = document.documentElement;
+        var origin = JSON.parse(sessionStorage.getItem('vpl-route-transition-origin') || '{}');
+        if (Number.isFinite(origin.x)) root.style.setProperty('--vpl-transition-x', (Math.max(0, Math.min(1, origin.x)) * 100) + '%');
+        if (Number.isFinite(origin.y)) root.style.setProperty('--vpl-transition-y', (Math.max(0, Math.min(1, origin.y)) * 100) + '%');
+        root.classList.add('vpl-route-preload-transition');
+      } catch (_) {}
+    })();
+  </script>
+  <style>
+    html{--vpl-transition-image:url("transition-screen.png");--vpl-transition-bg-size:cover}
+    html.vpl-route-preload-transition,html.vpl-route-preload-transition body{background:#2f6f9f!important}
+    html.vpl-route-preload-transition::before{content:"";position:fixed;inset:0;z-index:2147482998;pointer-events:none;background-color:#2f6f9f;background-image:var(--vpl-transition-image);background-position:center;background-size:var(--vpl-transition-bg-size);background-repeat:no-repeat;opacity:1}
+    @media (max-width: 768px), (pointer: coarse) and (orientation: portrait){html{--vpl-transition-image:url("transition-screen-mobile.jpg");--vpl-transition-bg-size:cover}}
+  </style>
+  <link rel="preload" as="image" href="transition-screen.png" media="(min-width: 769px)" />
+  <link rel="preload" as="image" href="transition-screen-mobile.jpg" media="(max-width: 768px), (pointer: coarse) and (orientation: portrait)" />
+  <script src="/page-transition.js"></script>
+  <script>
+    if (!window.VitalPageTransition) {
+      document.write('<script src="page-transition.js"><\/script>');
+    }
+  </script>
+<meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Paiement annulé — VITAL PROTECT</title>
+  <style>
+    :root {
+      --navy: #0b2e59;
+      --blue: #1f6feb;
+      --bg: #f4f7fb;
+      --card: #ffffff;
+      --border: #dbe4f0;
+      --text: #142033;
+      --muted: #667085;
+      --warning: #b7791f;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .wrapper {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 720px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 40px 32px;
+      box-shadow: 0 10px 30px rgba(11, 46, 89, 0.08);
+      text-align: center;
+    }
+
+    .icon {
+      width: 72px;
+      height: 72px;
+      margin: 0 auto 20px;
+      border-radius: 999px;
+      background: rgba(183, 121, 31, 0.12);
+      color: var(--warning);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      font-weight: bold;
+    }
+
+    h1 {
+      margin: 0 0 14px;
+      font-size: 2rem;
+    }
+
+    p {
+      margin: 0 0 12px;
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 1.05rem;
+    }
+
+    .actions {
+      margin-top: 28px;
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      text-decoration: none;
+      border-radius: 14px;
+      padding: 14px 18px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .btn-primary {
+      background: var(--blue);
+      color: white;
+    }
+
+    .btn-secondary {
+      background: white;
+      color: var(--navy);
+      border: 1px solid var(--border);
+    }
+  
+
+    /* Mobile hardening login */
+    @media (max-width: 480px) {
+      body { padding: 18px; justify-content: flex-start; padding-top: 42px; }
+      .logo { margin-bottom: 18px; }
+      .logo img { width: min(190px, 58vw); }
+      .card { padding: 22px; border-radius: 20px; }
+      h1 { font-size: 1.55rem; line-height: 1.15; }
+      input { font-size: 16px; }
+      .btn { min-height: 46px; }
+    }
+</style>
+</head>
+<body>
+  <div class="wrapper">
+    <div class="card">
+      <div class="icon">!</div>
+      <h1>Paiement annulé</h1>
+      <p>Le paiement n’a pas été finalisé.</p>
+      <p>Votre réservation n’a donc pas été confirmée.</p>
+
+      <div class="actions">
+        <a href="/" class="btn btn-primary">Retour à l’accueil</a>
+        <a href="/#reservation" class="btn btn-secondary">Réessayer</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
