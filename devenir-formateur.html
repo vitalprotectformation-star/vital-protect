@@ -702,6 +702,26 @@
     }
   }
 </style>
+
+<style id="vptr-module-card-blue-back-fix">
+  /* Dos des cartes modules formateur : fond bleu dégradé + texte blanc. */
+  body.page-formateur-redesign .module-card { perspective:1400px !important; cursor:pointer !important; }
+  body.page-formateur-redesign .module-flip-inner { transform-style:preserve-3d !important; transition:transform .72s cubic-bezier(.2,.72,.15,1) !important; }
+  body.page-formateur-redesign .module-card.is-flipped .module-flip-inner { transform:rotateY(180deg) !important; }
+  body.page-formateur-redesign .module-flip-face { backface-visibility:hidden !important; -webkit-backface-visibility:hidden !important; }
+  body.page-formateur-redesign .module-flip-face.back {
+    transform:rotateY(180deg) !important;
+    color:#fff !important;
+    border-color:rgba(140,200,255,.22) !important;
+    background:
+      radial-gradient(circle at 18% 12%, rgba(124,196,255,.22), transparent 30%),
+      linear-gradient(155deg, #06172b 0%, #082947 54%, #04111f 100%) !important;
+  }
+  body.page-formateur-redesign .module-flip-face.back * { color:inherit !important; }
+  body.page-formateur-redesign .module-flip-face.back p { color:rgba(255,255,255,.86) !important; }
+  body.page-formateur-redesign .module-flip-face.back .module-chip { background:rgba(255,255,255,.13) !important; border-color:rgba(255,255,255,.12) !important; color:rgba(255,255,255,.92) !important; }
+</style>
+
 </head>
 <body class="vpl-inner-page page-editorial-light page-formateur-redesign">
 <div class="vptr-background-orbs" aria-hidden="true"><span class="vptr-orb vptr-orb-one"></span><span class="vptr-orb vptr-orb-two"></span><span class="vptr-orb vptr-orb-three"></span></div>
@@ -1497,7 +1517,7 @@
       if (!selectedTrainingType) return [];
 
       return sessionsData.filter((session) => {
-        return normalizeModuleSearch(publicModuleName(session.module_name || session.title)) === normalizeModuleSearch(publicModuleName(selectedTrainingType)) || normalizeModuleSearch(session.module_name || "") === normalizeModuleSearch(selectedTrainingType);
+        return String(session.module_name || "").trim().toLowerCase() === selectedTrainingType.trim().toLowerCase();
       });
     }
 

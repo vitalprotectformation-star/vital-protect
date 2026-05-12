@@ -19,7 +19,7 @@
     html.vpl-route-preload-transition::before{content:"";position:fixed;inset:0;z-index:2147482998;pointer-events:none;background-color:#2f6f9f;background-image:var(--vpl-transition-image);background-position:center;background-size:var(--vpl-transition-bg-size);background-repeat:no-repeat;opacity:1}
     @media (max-width: 768px), (pointer: coarse) and (orientation: portrait){html{--vpl-transition-image:url("transition-screen-mobile.jpg");--vpl-transition-bg-size:cover}}
 
-    /* Correctif définitif : l’image complète est le fond de la card, le texte est forcé au premier plan en inline + CSS. */
+    /* Cards marketplace : image complète en fond, texte au recto, détails au verso par clic. */
     .vp-marketplace-card{background-size:cover!important;background-position:center center!important;background-repeat:no-repeat!important;}
     .vp-marketplace-card > .vp-marketplace-card-content{position:absolute!important;left:0!important;right:0!important;bottom:0!important;top:auto!important;z-index:9999!important;color:#fff!important;opacity:1!important;visibility:visible!important;display:flex!important;}
     .vp-marketplace-card > .vp-marketplace-card-content *{opacity:1!important;visibility:visible!important;}
@@ -509,11 +509,11 @@
       overflow:hidden!important;
     }
     .vp-card-face *{color:inherit!important;box-sizing:border-box!important}
-    .vp-card-face-back{opacity:0!important;transform:translateY(12px)!important}
-    .vp-marketplace-card:hover .vp-card-face-front,
-    .vp-marketplace-card:focus-visible .vp-card-face-front{opacity:0!important;transform:translateY(-10px)!important}
-    .vp-marketplace-card:hover .vp-card-face-back,
-    .vp-marketplace-card:focus-visible .vp-card-face-back{opacity:1!important;transform:translateY(0)!important}
+    .vp-card-face-front{opacity:1!important;transform:rotateY(0deg) translateY(0)!important;backface-visibility:hidden!important;transform-origin:center center!important}
+    .vp-card-face-back{opacity:0!important;transform:rotateY(180deg) translateY(10px)!important;backface-visibility:hidden!important;transform-origin:center center!important}
+    .vp-marketplace-card.is-flipped .vp-card-face-front{opacity:0!important;transform:rotateY(-180deg) translateY(-6px)!important;pointer-events:none!important}
+    .vp-marketplace-card.is-flipped .vp-card-face-back{opacity:1!important;transform:rotateY(0deg) translateY(0)!important}
+    .vp-marketplace-card.is-flipped{border-color:rgba(140,200,255,.46);box-shadow:0 22px 56px rgba(6,26,47,.24);filter:saturate(1.04)}
     .vp-card-mainline{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:8px}
     .vp-card-kicker{font-size:10px;font-weight:950;text-transform:uppercase;letter-spacing:.075em;color:#a8d5ff!important;line-height:1.1}
     .vp-card-price{font-size:17px;font-weight:950;white-space:nowrap;line-height:1;color:#fff!important}
@@ -526,8 +526,6 @@
     .vp-card-back-title{margin:0 0 7px;font-size:12px;font-weight:950;text-transform:uppercase;letter-spacing:.07em;color:#a8d5ff!important}
     .vp-card-back-desc{display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical;overflow:hidden;margin:0;color:rgba(255,255,255,.88)!important;font-size:12px;line-height:1.36;font-weight:700}
     .vp-card-back-meta{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0}
-    @media(hover:none){.vp-marketplace-card:active .vp-card-face-front{opacity:0!important;transform:translateY(-10px)!important}.vp-marketplace-card:active .vp-card-face-back{opacity:1!important;transform:translateY(0)!important}}
-
     @media(max-width:1080px){.vp-marketplace-column{min-height:auto}.vp-marketplace-filters{grid-template-columns:repeat(2,minmax(170px,1fr));max-width:640px}}
     @media(max-width:640px){.vp-marketplace-section{padding:62px 0}.vp-marketplace-filters{grid-template-columns:1fr}.vp-marketplace-column{padding:18px;border-radius:24px}.vp-marketplace-column-head{display:block}.vp-marketplace-badge{margin-top:12px}.vp-marketplace-list{grid-template-columns:1fr}.vp-marketplace-card{height:500px}.vp-marketplace-card-content{max-height:47%!important;padding:0 16px 14px!important}.vp-marketplace-card-top{display:flex}.vp-marketplace-price{display:block}.vp-marketplace-private-cta{display:block}.vp-marketplace-private-cta .vpl-button{margin-top:12px}}
   </style>
@@ -549,6 +547,497 @@
         font-size: clamp(42px, 11.6vw, 52px) !important;
         line-height: .98 !important;
       }
+    }
+  </style>
+
+
+  <style id="vp-real-flip-cards-final">
+    /* VRAI RECTO/VERSO AU CLIC — pas de faux patch :
+       - la carte est un conteneur 3D
+       - .vp-flip-inner tourne à 180°
+       - recto = image complète fournie + infos principales seulement
+       - verso = panneau bleu indépendant + description et infos secondaires
+    */
+    .vp-marketplace-list{
+      grid-template-columns:repeat(auto-fill,minmax(250px,1fr)) !important;
+      gap:18px !important;
+      perspective:1200px !important;
+    }
+    .vp-marketplace-card{
+      position:relative !important;
+      display:block !important;
+      width:100% !important;
+      height:520px !important;
+      min-height:520px !important;
+      padding:0 !important;
+      border:0 !important;
+      border-radius:24px !important;
+      background:none !important;
+      background-image:none !important;
+      overflow:visible !important;
+      color:#fff !important;
+      text-align:left !important;
+      text-decoration:none !important;
+      cursor:pointer !important;
+      perspective:1200px !important;
+      transform:none !important;
+      box-shadow:none !important;
+      isolation:isolate !important;
+    }
+    .vp-marketplace-card:hover,
+    .vp-marketplace-card.is-selected{
+      transform:none !important;
+      filter:none !important;
+      box-shadow:none !important;
+    }
+    .vp-marketplace-card.is-disabled{
+      opacity:.6 !important;
+      cursor:not-allowed !important;
+      pointer-events:none !important;
+    }
+    .vp-flip-inner{
+      position:relative !important;
+      width:100% !important;
+      height:100% !important;
+      min-height:100% !important;
+      transform-style:preserve-3d !important;
+      transition:transform .72s cubic-bezier(.2,.72,.15,1) !important;
+      border-radius:24px !important;
+      box-shadow:0 18px 46px rgba(6,26,47,.16) !important;
+      will-change:transform !important;
+    }
+    .vp-marketplace-card:hover .vp-flip-inner{
+      box-shadow:0 24px 58px rgba(6,26,47,.22) !important;
+      transform:translateY(-4px) !important;
+    }
+    .vp-marketplace-card.is-flipped .vp-flip-inner,
+    .vp-marketplace-card.is-flipped:hover .vp-flip-inner{
+      transform:rotateY(180deg) !important;
+    }
+    .vp-marketplace-card.is-selected .vp-flip-inner{
+      outline:2px solid rgba(140,200,255,.55) !important;
+      outline-offset:4px !important;
+    }
+    .vp-card-face{
+      position:absolute !important;
+      inset:0 !important;
+      z-index:auto !important;
+      display:block !important;
+      width:100% !important;
+      height:100% !important;
+      min-height:100% !important;
+      max-height:none !important;
+      padding:0 !important;
+      border:1px solid rgba(6,26,47,.18) !important;
+      border-radius:24px !important;
+      overflow:hidden !important;
+      backface-visibility:hidden !important;
+      -webkit-backface-visibility:hidden !important;
+      transform-style:preserve-3d !important;
+      opacity:1 !important;
+      visibility:visible !important;
+      pointer-events:none !important;
+      color:#fff !important;
+      text-shadow:0 2px 12px rgba(0,0,0,.5) !important;
+      box-sizing:border-box !important;
+    }
+    .vp-card-face *{box-sizing:border-box !important;color:inherit !important;}
+    .vp-card-face-front{
+      transform:rotateY(0deg) !important;
+      background-image:var(--vp-card-bg) !important;
+      background-size:cover !important;
+      background-position:center center !important;
+      background-repeat:no-repeat !important;
+      background-color:#061a2f !important;
+    }
+    .vp-card-face-back{
+      transform:rotateY(180deg) !important;
+      background:
+        radial-gradient(circle at 15% 10%,rgba(82,158,236,.22),transparent 28%),
+        radial-gradient(circle at 85% 85%,rgba(31,99,166,.24),transparent 34%),
+        linear-gradient(160deg,#071b31 0%,#082744 52%,#061827 100%) !important;
+    }
+    .vp-card-face-back::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:
+        linear-gradient(130deg,rgba(255,255,255,.12),transparent 22%,transparent 70%,rgba(140,200,255,.10)),
+        url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="360" height="360" viewBox="0 0 360 360"><path d="M180 30 285 76v78c0 74-42 139-105 176C117 293 75 228 75 154V76l105-46Z" fill="none" stroke="rgba(140,200,255,.16)" stroke-width="10"/><path d="M180 62 254 94v56c0 54-30 101-74 130-44-29-74-76-74-130V94l74-32Z" fill="none" stroke="rgba(140,200,255,.09)" stroke-width="8"/></svg>') left -92px bottom -84px / 230px 230px no-repeat;
+      opacity:.72;
+      pointer-events:none;
+    }
+    .vp-card-front-content{
+      position:absolute !important;
+      left:18px !important;
+      right:18px !important;
+      bottom:18px !important;
+      z-index:3 !important;
+      display:flex !important;
+      flex-direction:column !important;
+      gap:8px !important;
+      max-height:44% !important;
+      overflow:hidden !important;
+      color:#fff !important;
+      pointer-events:none !important;
+    }
+    .vp-card-back-content{
+      position:absolute !important;
+      inset:0 !important;
+      z-index:3 !important;
+      display:flex !important;
+      flex-direction:column !important;
+      justify-content:flex-start !important;
+      padding:24px 20px 20px !important;
+      color:#fff !important;
+      pointer-events:none !important;
+    }
+    .vp-card-mainline{
+      display:flex !important;
+      align-items:flex-start !important;
+      justify-content:space-between !important;
+      gap:10px !important;
+      margin:0 !important;
+    }
+    .vp-card-kicker{
+      display:block !important;
+      font-size:10px !important;
+      line-height:1.1 !important;
+      font-weight:950 !important;
+      text-transform:uppercase !important;
+      letter-spacing:.075em !important;
+      color:#a8d5ff !important;
+    }
+    .vp-card-price{
+      display:block !important;
+      font-size:18px !important;
+      line-height:1 !important;
+      font-weight:950 !important;
+      color:#fff !important;
+      white-space:nowrap !important;
+    }
+    .vp-card-title{
+      display:-webkit-box !important;
+      -webkit-line-clamp:3 !important;
+      -webkit-box-orient:vertical !important;
+      overflow:hidden !important;
+      margin:0 !important;
+      font-size:19px !important;
+      line-height:1.02 !important;
+      font-weight:950 !important;
+      letter-spacing:-.045em !important;
+      color:#fff !important;
+      text-wrap:balance !important;
+    }
+    .vp-card-location,
+    .vp-card-date{
+      display:flex !important;
+      align-items:center !important;
+      gap:7px !important;
+      margin:0 !important;
+      font-size:12.5px !important;
+      line-height:1.2 !important;
+      font-weight:900 !important;
+      color:rgba(255,255,255,.92) !important;
+    }
+    .vp-card-location::before{
+      content:"";
+      width:7px;
+      height:7px;
+      border-radius:999px;
+      background:#8cc8ff;
+      box-shadow:0 0 0 4px rgba(140,200,255,.14);
+      flex:0 0 auto;
+    }
+    .vp-card-date{
+      width:max-content !important;
+      max-width:100% !important;
+      min-height:24px !important;
+      padding:5px 8px !important;
+      border-radius:999px !important;
+      background:rgba(255,255,255,.14) !important;
+      border:1px solid rgba(255,255,255,.12) !important;
+      color:rgba(255,255,255,.92) !important;
+    }
+    .vp-card-action{
+      display:inline-flex !important;
+      align-items:center !important;
+      gap:8px !important;
+      width:max-content !important;
+      max-width:100% !important;
+      margin-top:4px !important;
+      color:#a8d5ff !important;
+      font-size:13px !important;
+      font-weight:950 !important;
+      line-height:1.1 !important;
+    }
+    .vp-card-back-title{
+      margin:0 0 10px !important;
+      color:#a8d5ff !important;
+      font-size:11px !important;
+      font-weight:950 !important;
+      letter-spacing:.08em !important;
+      text-transform:uppercase !important;
+    }
+    .vp-card-back-heading{
+      display:-webkit-box !important;
+      -webkit-line-clamp:3 !important;
+      -webkit-box-orient:vertical !important;
+      overflow:hidden !important;
+      margin:0 0 12px !important;
+      color:#fff !important;
+      font-size:22px !important;
+      line-height:1.02 !important;
+      font-weight:950 !important;
+      letter-spacing:-.05em !important;
+    }
+    .vp-card-back-desc{
+      display:-webkit-box !important;
+      -webkit-line-clamp:8 !important;
+      -webkit-box-orient:vertical !important;
+      overflow:hidden !important;
+      margin:0 !important;
+      color:rgba(255,255,255,.86) !important;
+      font-size:13px !important;
+      line-height:1.42 !important;
+      font-weight:700 !important;
+    }
+    .vp-card-back-meta{
+      display:flex !important;
+      flex-wrap:wrap !important;
+      gap:7px !important;
+      margin:14px 0 0 !important;
+      overflow:hidden !important;
+    }
+    .vp-card-chip{
+      display:inline-flex !important;
+      align-items:center !important;
+      min-height:24px !important;
+      max-width:100% !important;
+      padding:5px 8px !important;
+      border-radius:999px !important;
+      background:rgba(255,255,255,.12) !important;
+      border:1px solid rgba(255,255,255,.12) !important;
+      color:rgba(255,255,255,.9) !important;
+      font-size:11px !important;
+      font-weight:850 !important;
+      line-height:1.05 !important;
+      overflow:hidden !important;
+      text-overflow:ellipsis !important;
+    }
+    .vp-card-back-content .vp-card-action{
+      margin-top:auto !important;
+      padding-top:12px !important;
+      font-size:14px !important;
+    }
+    @media(max-width:640px){
+      .vp-marketplace-card{height:500px !important;min-height:500px !important;}
+      .vp-card-front-content{left:16px !important;right:16px !important;bottom:16px !important;max-height:46% !important;}
+      .vp-card-title{font-size:18px !important;}
+      .vp-card-back-heading{font-size:20px !important;}
+      .vp-card-back-desc{-webkit-line-clamp:7 !important;}
+    }
+  </style>
+
+
+  <style id="vp-card-back-blue-definitive-fix">
+    /* Correctif définitif dos des cards : vrai verso bleu, texte blanc visible, sans modifier l'API. */
+    .vp-marketplace-list{
+      perspective:1400px !important;
+    }
+    .vp-marketplace-card{
+      position:relative !important;
+      display:block !important;
+      height:520px !important;
+      min-height:520px !important;
+      padding:0 !important;
+      border:0 !important;
+      border-radius:24px !important;
+      background:transparent !important;
+      overflow:visible !important;
+      color:#fff !important;
+      text-decoration:none !important;
+      perspective:1400px !important;
+      isolation:isolate !important;
+    }
+    .vp-flip-inner{
+      position:relative !important;
+      width:100% !important;
+      height:100% !important;
+      min-height:100% !important;
+      border-radius:24px !important;
+      transform-style:preserve-3d !important;
+      transition:transform .72s cubic-bezier(.2,.72,.15,1) !important;
+      box-shadow:0 18px 46px rgba(6,26,47,.18) !important;
+    }
+    .vp-marketplace-card:hover .vp-flip-inner{
+      box-shadow:0 24px 58px rgba(6,26,47,.24) !important;
+    }
+    .vp-marketplace-card.is-flipped .vp-flip-inner{
+      transform:rotateY(180deg) !important;
+    }
+    .vp-card-face{
+      position:absolute !important;
+      inset:0 !important;
+      width:100% !important;
+      height:100% !important;
+      min-height:100% !important;
+      max-height:none !important;
+      display:block !important;
+      padding:0 !important;
+      border:1px solid rgba(6,26,47,.18) !important;
+      border-radius:24px !important;
+      overflow:hidden !important;
+      backface-visibility:hidden !important;
+      -webkit-backface-visibility:hidden !important;
+      transform-style:preserve-3d !important;
+      opacity:1 !important;
+      visibility:visible !important;
+      pointer-events:none !important;
+      color:#fff !important;
+      box-sizing:border-box !important;
+    }
+    .vp-card-face-front,
+    .vp-marketplace-card.is-flipped .vp-card-face-front{
+      transform:rotateY(0deg) !important;
+      opacity:1 !important;
+      visibility:visible !important;
+      background-image:var(--vp-card-bg) !important;
+      background-size:cover !important;
+      background-position:center center !important;
+      background-repeat:no-repeat !important;
+      background-color:#061a2f !important;
+    }
+    .vp-card-face-back,
+    .vp-marketplace-card.is-flipped .vp-card-face-back{
+      transform:rotateY(180deg) !important;
+      opacity:1 !important;
+      visibility:visible !important;
+      background:
+        radial-gradient(circle at 20% 8%, rgba(124,196,255,.24), transparent 28%),
+        radial-gradient(circle at 88% 88%, rgba(28,94,160,.26), transparent 34%),
+        linear-gradient(155deg, #06172b 0%, #082947 52%, #04111f 100%) !important;
+      text-shadow:none !important;
+    }
+    .vp-card-face-back::before{
+      content:"" !important;
+      position:absolute !important;
+      inset:0 !important;
+      background:
+        linear-gradient(125deg, rgba(255,255,255,.13), transparent 23%, transparent 72%, rgba(140,200,255,.10)),
+        url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="420" height="420" viewBox="0 0 420 420"><path d="M210 42 332 94v92c0 86-48 162-122 206C136 348 88 272 88 186V94l122-52Z" fill="none" stroke="rgba(140,200,255,.18)" stroke-width="11"/><path d="M210 78 296 116v68c0 63-36 118-86 151-50-33-86-88-86-151v-68l86-38Z" fill="none" stroke="rgba(140,200,255,.10)" stroke-width="8"/></svg>') left -92px bottom -90px / 255px 255px no-repeat !important;
+      opacity:.78 !important;
+      pointer-events:none !important;
+    }
+    .vp-card-face-back::after{
+      content:"" !important;
+      position:absolute !important;
+      inset:0 !important;
+      background:linear-gradient(180deg, rgba(255,255,255,.04), transparent 34%, rgba(0,0,0,.10)) !important;
+      pointer-events:none !important;
+    }
+    .vp-card-front-content{
+      position:absolute !important;
+      left:18px !important;
+      right:18px !important;
+      bottom:18px !important;
+      z-index:5 !important;
+      display:flex !important;
+      flex-direction:column !important;
+      gap:8px !important;
+      max-height:43% !important;
+      overflow:hidden !important;
+      color:#fff !important;
+      text-shadow:0 2px 14px rgba(0,0,0,.58) !important;
+      pointer-events:none !important;
+    }
+    .vp-card-back-content{
+      position:absolute !important;
+      inset:0 !important;
+      z-index:5 !important;
+      display:flex !important;
+      flex-direction:column !important;
+      justify-content:flex-start !important;
+      gap:12px !important;
+      padding:26px 22px 22px !important;
+      color:#fff !important;
+      text-shadow:none !important;
+      pointer-events:none !important;
+      overflow:hidden !important;
+      transform:translateZ(1px) !important;
+    }
+    .vp-card-back-content *{
+      color:inherit !important;
+      visibility:visible !important;
+      opacity:1 !important;
+      box-sizing:border-box !important;
+    }
+    .vp-card-back-title{
+      margin:0 !important;
+      color:#a8d5ff !important;
+      font-size:11px !important;
+      line-height:1.15 !important;
+      font-weight:950 !important;
+      letter-spacing:.09em !important;
+      text-transform:uppercase !important;
+    }
+    .vp-card-back-heading{
+      display:block !important;
+      margin:0 !important;
+      color:#fff !important;
+      font-size:22px !important;
+      line-height:1.03 !important;
+      font-weight:950 !important;
+      letter-spacing:-.05em !important;
+      text-wrap:balance !important;
+    }
+    .vp-card-back-desc{
+      display:block !important;
+      margin:0 !important;
+      color:rgba(255,255,255,.88) !important;
+      font-size:13px !important;
+      line-height:1.45 !important;
+      font-weight:700 !important;
+      overflow:hidden !important;
+      max-height:198px !important;
+    }
+    .vp-card-back-meta{
+      display:flex !important;
+      flex-wrap:wrap !important;
+      gap:7px !important;
+      margin:2px 0 0 !important;
+      overflow:hidden !important;
+    }
+    .vp-card-chip{
+      display:inline-flex !important;
+      align-items:center !important;
+      min-height:24px !important;
+      max-width:100% !important;
+      padding:5px 8px !important;
+      border-radius:999px !important;
+      background:rgba(255,255,255,.13) !important;
+      border:1px solid rgba(255,255,255,.13) !important;
+      color:rgba(255,255,255,.92) !important;
+      font-size:11px !important;
+      font-weight:850 !important;
+      line-height:1.05 !important;
+      overflow:hidden !important;
+      text-overflow:ellipsis !important;
+    }
+    .vp-card-back-content .vp-card-action{
+      margin-top:auto !important;
+      padding-top:12px !important;
+      color:#a8d5ff !important;
+      font-size:14px !important;
+      font-weight:950 !important;
+      text-shadow:none !important;
+    }
+    @media(max-width:640px){
+      .vp-marketplace-card{height:500px !important;min-height:500px !important;}
+      .vp-card-front-content{left:16px !important;right:16px !important;bottom:16px !important;max-height:44% !important;}
+      .vp-card-back-content{padding:23px 19px 19px !important;}
+      .vp-card-back-heading{font-size:20px !important;}
+      .vp-card-back-desc{font-size:12.5px !important;max-height:178px !important;}
     }
   </style>
 
@@ -904,10 +1393,6 @@
     let trainerSessionsData = [];
     let modulesCatalogData = [];
 
-    const PUBLIC_STAGE_UNIT_PRICE = 30;
-    const ENTERPRISE_STAGE_PRICE = 390;
-    const TRAINER_SESSION_PRICES = { 1: 490, 2: 590, 3: 690 };
-
     const FRANCE_REGIONS = [
       { name: "Auvergne-Rhône-Alpes", departments: ["01 - Ain", "03 - Allier", "07 - Ardèche", "15 - Cantal", "26 - Drôme", "38 - Isère", "42 - Loire", "43 - Haute-Loire", "63 - Puy-de-Dôme", "69 - Rhône", "73 - Savoie", "74 - Haute-Savoie"] },
       { name: "Bourgogne-Franche-Comté", departments: ["21 - Côte-d’Or", "25 - Doubs", "39 - Jura", "58 - Nièvre", "70 - Haute-Saône", "71 - Saône-et-Loire", "89 - Yonne", "90 - Territoire de Belfort"] },
@@ -970,7 +1455,7 @@
     function hasCompleteSession(item) {
       if (!item) return false;
       const hasId = String(item.id || "").trim().length > 0;
-      const hasPrice = getStagePublicPrice(item) > 0;
+      const hasPrice = Number(item.price || 0) > 0;
       const hasPlaces = Number(item.remaining_places || 0) > 0;
       const isPublished = !item.status || String(item.status).toLowerCase() === "published";
       return hasId && hasPrice && hasPlaces && isPublished;
@@ -1000,9 +1485,7 @@
         return;
       }
       const places = Math.max(1, Number(placesInput?.value || 1));
-      const total = isEnterpriseStage(stage) ? ENTERPRISE_STAGE_PRICE : getStagePublicPrice(stage) * places;
-      const suffix = isEnterpriseStage(stage) ? " — forfait entreprise jusqu’à 20 personnes" : "";
-      setText(bookingTotal, `Total : ${formatPrice(total)}${suffix}`);
+      setText(bookingTotal, `Total : ${formatPrice(Number(stage.price || 0) * places)}`);
     }
 
     function showNoSessionState(message = "Choisissez une session dans la liste : le formulaire s’activera automatiquement si la réservation est possible.") {
@@ -1104,41 +1587,6 @@
       return classifyVitalModule(item?.module_name, item?.training_module_name, item?.training_type, item?.title, item?.description, item?.audience, item?.slug);
     }
 
-    function getStageOfferType(item = {}) {
-      const explicit = normalizeLocationValue(item?.stage_kind || item?.offer_type || item?.audience || item?.price_model);
-      if (["enterprise", "entreprise", "team", "b2b", "company", "package"].includes(explicit)) return "enterprise";
-      if (["public", "particulier", "individual", "per_person", "standard"].includes(explicit)) return "public";
-      return getItemModuleType(item) === "pro" ? "enterprise" : "public";
-    }
-
-    function isEnterpriseStage(item) {
-      return getStageOfferType(item) === "enterprise";
-    }
-
-    function getStagePublicPrice(item = {}) {
-      return isEnterpriseStage(item) ? ENTERPRISE_STAGE_PRICE : PUBLIC_STAGE_UNIT_PRICE;
-    }
-
-    function getTrainerSessionPrice(item = {}) {
-      const launch = Number(item.launch_price || 0);
-      const standard = Number(item.standard_price || 0);
-      if (launch > 0) return launch;
-      if (standard > 0) return standard;
-      const count = Math.max(1, Math.min(3, Number(item.module_count || item.modules_count || 1)));
-      return TRAINER_SESSION_PRICES[count] || TRAINER_SESSION_PRICES[1];
-    }
-
-    function formatStageRemainingLabel(item) {
-      if (isEnterpriseStage(item)) return Number(item.remaining_places || 0) > 0 ? "Session disponible" : "Session réservée";
-      const remaining = Number(item.remaining_places || 0);
-      return `${remaining} place${remaining > 1 ? "s" : ""}`;
-    }
-
-    function getStageActionText(item, path, complete) {
-      if (!complete) return "Session à compléter";
-      return isEnterpriseStage(item) || path === "team" ? "Réserver le forfait entreprise →" : "Choisir et réserver →";
-    }
-
     function getDisplayModuleName(item, kind = "stage") {
       const type = getItemModuleType(item);
       if (kind === "trainer") return moduleTrainerName(type);
@@ -1188,9 +1636,9 @@
         modulePublicName(type),
         moduleTrainerName(type)
       ];
-      if (type === "module1") candidates.push("Prévenir, éviter, réagir – Module 1");
-      if (type === "module2") candidates.push("Prévenir, éviter, réagir – Module 2");
-      if (type === "pro") candidates.push("Faire face aux situations tendues et comportements agressifs en milieu professionnel");
+      if (type === "module1") candidates.push("Self Défense Essentielle", "Self Defense Essentielle", "Self Défense Essentielle Niveau 1", "Prévenir, éviter, réagir – Module 1");
+      if (type === "module2") candidates.push("Self Défense Essentielle Niveau 2", "Self Defense Essentielle Niveau 2", "Prévenir, éviter, réagir – Module 2");
+      if (type === "pro") candidates.push("Self Défense en entreprise", "Self Pro", "Faire face aux situations tendues et comportements agressifs en milieu professionnel");
       return candidates.filter(Boolean).map((value) => normalizeLocationValue(value));
     }
 
@@ -1228,19 +1676,26 @@
       const description = getModuleDescriptionForCard(item, entry.kind, entry.path);
       const moduleChip = moduleLabel || title;
       return `
-        <span class="vp-card-face vp-card-face-front" aria-hidden="false">
-          <span class="vp-card-mainline"><span class="vp-card-kicker">${escapeHtml(pathLabel)}</span><span class="vp-card-price">${escapeHtml(price)}</span></span>
-          <span class="vp-card-title">${escapeHtml(title)}</span>
-          <span class="vp-card-location">${escapeHtml(location)}</span>
-          <span class="vp-card-front-meta"><span class="vp-card-chip">${escapeHtml(dateText)}</span></span>
-          <span class="vp-card-action">Voir les détails →</span>
-        </span>
-        <span class="vp-card-face vp-card-face-back" aria-hidden="true">
-          <span class="vp-card-back-title">Description du module</span>
-          <span class="vp-card-back-desc">${escapeHtml(description)}</span>
-          <span class="vp-card-back-meta"><span class="vp-card-chip">${escapeHtml(moduleChip)}</span><span class="vp-card-chip">${escapeHtml(timeText)}</span><span class="vp-card-chip">${escapeHtml(placesText)}</span></span>
-          <span class="vp-card-action">${escapeHtml(actionText)}</span>
-        </span>
+        <div class="vp-flip-inner" aria-hidden="false">
+          <div class="vp-card-face vp-card-face-front">
+            <div class="vp-card-front-content">
+              <div class="vp-card-mainline"><span class="vp-card-kicker">${escapeHtml(pathLabel)}</span><span class="vp-card-price">${escapeHtml(price)}</span></div>
+              <h3 class="vp-card-title">${escapeHtml(title)}</h3>
+              <div class="vp-card-location">${escapeHtml(location)}</div>
+              <div class="vp-card-date">${escapeHtml(dateText)}</div>
+              <div class="vp-card-action">Voir les détails →</div>
+            </div>
+          </div>
+          <div class="vp-card-face vp-card-face-back">
+            <div class="vp-card-back-content">
+              <div class="vp-card-back-title">Description du module</div>
+              <h3 class="vp-card-back-heading">${escapeHtml(title)}</h3>
+              <p class="vp-card-back-desc">${escapeHtml(description)}</p>
+              <div class="vp-card-back-meta"><span class="vp-card-chip">${escapeHtml(moduleChip)}</span><span class="vp-card-chip">${escapeHtml(timeText)}</span><span class="vp-card-chip">${escapeHtml(placesText)}</span></div>
+              <div class="vp-card-action">${escapeHtml(actionText)}</div>
+            </div>
+          </div>
+        </div>
       `;
     }
 
@@ -1249,7 +1704,7 @@
     }
 
     function stagePathForItem(item) {
-      return isEnterpriseStage(item) || isProfessionalTeamStage(item) ? "team" : "public";
+      return isProfessionalTeamStage(item) ? "team" : "public";
     }
 
     function labelForPath(path) {
@@ -1490,10 +1945,10 @@
         const cardVisualClass = getCardVisualClass(entry);
         const cardVisualSrc = getCardVisualSrc(entry);
         if (entry.kind === "trainer") {
-          const price = getTrainerSessionPrice(item);
+          const price = Number(item.launch_price || item.standard_price || 0);
           const sessionUrl = `/devenir-formateur.html?session_id=${encodeURIComponent(item.id)}`;
           return `
-            <a class="vp-marketplace-card ${escapeHtml(cardVisualClass)}" href="${sessionUrl}" style="background-image:url('${escapeHtml(cardVisualSrc)}');background-size:cover;background-position:center center;background-repeat:no-repeat;">
+            <a class="vp-marketplace-card ${escapeHtml(cardVisualClass)}" href="${sessionUrl}" data-flip-card="true" aria-expanded="false" style="--vp-card-bg:url('${escapeHtml(cardVisualSrc)}');">
               ${renderMarketplaceCardFaces({
                 entry,
                 item,
@@ -1512,23 +1967,41 @@
         }
         const complete = hasCompleteSession(item);
         return `
-          <button type="button" class="vp-marketplace-card ${escapeHtml(cardVisualClass)} ${selected ? "is-selected" : ""} ${complete ? "" : "is-disabled"}" data-stage-id="${escapeHtml(item.id)}" style="background-image:url('${escapeHtml(cardVisualSrc)}');background-size:cover;background-position:center center;background-repeat:no-repeat;" ${complete ? "" : "disabled"}>
+          <button type="button" class="vp-marketplace-card ${escapeHtml(cardVisualClass)} ${selected ? "is-selected" : ""} ${complete ? "" : "is-disabled"}" data-flip-card="true" aria-expanded="false" data-stage-id="${escapeHtml(item.id)}" style="--vp-card-bg:url('${escapeHtml(cardVisualSrc)}');" ${complete ? "" : "disabled"}>
             ${renderMarketplaceCardFaces({
               entry,
               item,
               title,
               moduleLabel,
               pathLabel,
-              price: formatPrice(getStagePublicPrice(item)),
+              price: formatPrice(item.price),
               location: getShortFrontLocation(item),
               dateText: formatDate(item.stage_date),
               timeText: item.start_time || "Horaire à confirmer",
-              placesText: formatStageRemainingLabel(item),
-              actionText: getStageActionText(item, entry.path, complete)
+              placesText: `${Number(item.remaining_places || 0)} place(s)`,
+              actionText: complete ? (entry.path === "team" ? "Inscrire mes salariés →" : "Choisir et réserver →") : "Session à compléter"
             })}
           </button>
         `;
       }).join("");
+
+      publicStagesContainer.querySelectorAll(".vp-marketplace-card[data-flip-card]").forEach((card) => {
+        card.addEventListener("click", (event) => {
+          if (card.classList.contains("is-disabled") || card.disabled) return;
+          if (!card.classList.contains("is-flipped")) {
+            event.preventDefault();
+            event.stopImmediatePropagation();
+            publicStagesContainer.querySelectorAll(".vp-marketplace-card.is-flipped").forEach((other) => {
+              if (other !== card) {
+                other.classList.remove("is-flipped");
+                other.setAttribute("aria-expanded", "false");
+              }
+            });
+            card.classList.add("is-flipped");
+            card.setAttribute("aria-expanded", "true");
+          }
+        });
+      });
 
       publicStagesContainer.querySelectorAll("[data-stage-id]").forEach((button) => {
         button.addEventListener("click", () => {
@@ -1601,8 +2074,8 @@
       setText(heroDescription, stage.description || moduleSummary(getItemModuleType(stage), stagePathForItem(stage)));
       setText(metaCity, stage.city || "À confirmer");
       setText(metaDate, formatDate(stage.stage_date));
-      setText(metaPrice, formatPrice(getStagePublicPrice(stage)));
-      setText(metaPlaces, isEnterpriseStage(stage) ? "Forfait jusqu’à 20 personnes" : String(stage.remaining_places ?? "—"));
+      setText(metaPrice, formatPrice(stage.price));
+      setText(metaPlaces, String(stage.remaining_places ?? "—"));
       setText(metaRegion, stage.region || "Région à confirmer");
       setText(metaDepartment, stage.department || "Département à confirmer");
       setText(practicalAddress, stage.address || "Adresse à confirmer");
@@ -1611,7 +2084,7 @@
       setText(practicalType, cleanModule || "Stage Vital Protect");
       setText(selectedStageValue, `${cleanTitle || "Stage"} — ${stage.city || "Ville à confirmer"} — ${formatDate(stage.stage_date)}`);
       if (cityDisplay) cityDisplay.value = stage.city || "";
-      if (isEnterpriseStage(stage) || isProfessionalTeamStage(stage)) {
+      if (isProfessionalTeamStage(stage)) {
         setText(audienceText, "Ce stage peut accueillir des salariés dans un cadre professionnel, sans modification du déroulé pédagogique Vital Protect.");
         setText(objectiveText, stage.description || "Programme standardisé : faire face aux situations tendues et comportements agressifs en milieu professionnel, avec des repères simples, progressifs et proportionnés.");
       } else {
@@ -1620,7 +2093,7 @@
       }
 
       if (!hasCompleteSession(stage)) {
-        setBookingEnabled(false, "Réservation désactivée : le stage n’a pas encore de place restante ou n’est pas publié.");
+        setBookingEnabled(false, "Réservation désactivée : le stage n’a pas encore de tarif valide ou de place restante.");
       } else {
         setBookingEnabled(true, "Stage sélectionné : vous pouvez réserver votre place.");
       }
@@ -1672,14 +2145,8 @@
           showBookingStatus("Merci de remplir tous les champs obligatoires.", "error");
           return;
         }
-        const enterprise = isEnterpriseStage(stage);
-        const checkoutQuantity = enterprise ? 1 : places;
-        if (enterprise && places > 20) {
-          showBookingStatus("Le forfait entreprise est prévu pour 20 personnes maximum.", "error");
-          return;
-        }
-        if (checkoutQuantity > Number(stage.remaining_places || 0)) {
-          showBookingStatus(enterprise ? "Cette session entreprise n’est plus disponible." : "Le nombre de places demandé dépasse les places restantes.", "error");
+        if (places > Number(stage.remaining_places || 0)) {
+          showBookingStatus("Le nombre de places demandé dépasse les places restantes.", "error");
           return;
         }
         showBookingStatus("Redirection vers le paiement Stripe...", "info");
@@ -1694,9 +2161,8 @@
               last_name: lastName,
               email,
               phone,
-              places: checkoutQuantity,
-              requested_places: places,
-              unit_price: getStagePublicPrice(stage)
+              places,
+              unit_price: Number(stage.price || 0)
             })
           });
           const result = await res.json();
