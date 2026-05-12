@@ -1194,7 +1194,7 @@
   </div>
   <div class="module-choice-actions">
     <button class="btn btn-dark" type="button" id="modulePayShortcut" disabled>Complétez votre sélection</button>
-    <span class="module-choice-note">Après paiement, les dates seront proposées selon vos disponibilités.</span>
+    <span class="module-choice-note">Étape suivante : formulaire candidat, puis paiement sécurisé.</span>
   </div>
   <div class="module-selection-error" id="moduleSelectionError"></div>
 </div>
@@ -1203,6 +1203,73 @@
 </div>
 </div>
 </section>
+<!-- Tunnel conversion : formulaire immédiatement après le choix des modules -->
+<section id="formulaire" class="vptr-section vptr-form-section vptr-reveal">
+<div class="container">
+<div class="form-card">
+<div class="form-head">
+<h2>Dernière étape avant paiement</h2>
+<p>
+              Remplissez vos informations pour créer votre dossier candidat, puis vous serez redirigé vers le paiement sécurisé. Après paiement, Vital Protect vous proposera les dates disponibles selon vos modules.
+            </p>
+</div>
+<div id="checkoutFeedback"></div>
+<div class="selected-session-box" id="selectedSessionBox">
+<span class="selected-session-label">Votre panier formateur</span>
+<div class="selected-session-value" id="selectedSessionValue">Choisissez une formule et vos modules.</div>
+</div>
+<form id="trainerForm" class="trainer-candidate-form">
+<div class="form-grid">
+<div class="form-field">
+<label for="firstName">Prénom</label>
+<input id="firstName" required="" type="text" autocomplete="given-name" placeholder="Votre prénom"/>
+</div>
+<div class="form-field">
+<label for="lastName">Nom</label>
+<input id="lastName" required="" type="text" autocomplete="family-name" placeholder="Votre nom"/>
+</div>
+<div class="form-field">
+<label for="email">Email</label>
+<input id="email" required="" type="email" autocomplete="email" placeholder="nom@exemple.fr"/>
+</div>
+<div class="form-field">
+<label for="phone">Téléphone</label>
+<input id="phone" required="" type="tel" autocomplete="tel" placeholder="06 00 00 00 00"/>
+</div>
+<div class="form-field">
+<label for="city">Ville</label>
+<input id="city" required="" type="text" autocomplete="address-level2" placeholder="Votre ville"/>
+</div>
+<div class="form-field">
+<label for="postalCode">Code postal</label>
+<input id="postalCode" type="text" autocomplete="postal-code" placeholder="13001"/>
+</div>
+<div class="form-field trainer-module-field" style="display:none;">
+<label for="trainingType">Module principal choisi</label>
+<select id="trainingType">
+<option value="">Module principal automatique</option>
+</select>
+<p class="field-help">
+                  Les modules à financer se sélectionnent plus haut selon la formule 1, 2 ou 3 modules.
+                </p>
+</div>
+<div class="form-field full">
+<label for="message">Votre message</label>
+<textarea id="message" placeholder="Présentez brièvement votre profil, votre motivation et votre intention de transmission."></textarea>
+</div>
+</div>
+<button class="btn btn-dark" id="trainerSubmitButton" type="submit">Continuer vers le paiement</button>
+<p class="form-submit-note">
+              Étape suivante : paiement sécurisé Stripe. Votre dossier candidat sera associé à votre formule et aux modules sélectionnés.
+            </p>
+<p class="form-rgpd-note">
+              Les informations transmises via ce formulaire servent uniquement à traiter votre demande. Vous pouvez exercer vos droits d’accès, de rectification ou de suppression en écrivant à vitalprotectformation@gmail.com. Voir notre politique de confidentialité.
+            </p>
+</form>
+</div>
+</div>
+</section>
+
 <section class="vptr-section vptr-profile-section vptr-reveal">
 <div class="container">
 <div class="section-head section-head--center">
@@ -1240,7 +1307,7 @@
 </article>
 </div>
 <div class="timeline-cta">
-<a class="btn btn-dark" href="#formulaire">Finaliser mon panier</a>
+<a class="btn btn-dark" href="#formulaire">Remplir mon dossier</a>
 </div>
 </div>
 </section>
@@ -1313,7 +1380,7 @@
 </article>
 </div>
 <div class="timeline-cta">
-<a class="btn btn-outline" href="#formulaire">Valider mon parcours</a>
+<a class="btn btn-outline" href="#formulaire">Remplir mon dossier</a>
 </div>
 </div>
 </section>
@@ -1365,75 +1432,11 @@
 <div class="empty-state">Choisissez votre formule et vos modules : les dates seront organisées après paiement, selon vos disponibilités.</div>
 </div>
 <div class="timeline-cta">
-<a class="btn btn-dark" href="#formulaire">Finaliser mon panier</a>
+<a class="btn btn-dark" href="#formulaire">Remplir mon dossier</a>
 </div>
 </div>
 </section>
-<section id="formulaire" class="vptr-section vptr-form-section vptr-reveal">
-<div class="container">
-<div class="form-card">
-<div class="form-head">
-<h2>Compléter votre dossier</h2>
-<p>
-              Votre formule et vos modules sont enregistrés dans votre panier. Après paiement, les dates seront proposées selon vos disponibilités.
-            </p>
-</div>
-<div id="checkoutFeedback"></div>
-<div class="selected-session-box" id="selectedSessionBox">
-<span class="selected-session-label">Votre panier formateur</span>
-<div class="selected-session-value" id="selectedSessionValue">Choisissez une formule et vos modules.</div>
-</div>
-<form id="trainerForm" class="trainer-candidate-form">
-<div class="form-grid">
-<div class="form-field">
-<label for="firstName">Prénom</label>
-<input id="firstName" required="" type="text" autocomplete="given-name" placeholder="Votre prénom"/>
-</div>
-<div class="form-field">
-<label for="lastName">Nom</label>
-<input id="lastName" required="" type="text" autocomplete="family-name" placeholder="Votre nom"/>
-</div>
-<div class="form-field">
-<label for="email">Email</label>
-<input id="email" required="" type="email" autocomplete="email" placeholder="nom@exemple.fr"/>
-</div>
-<div class="form-field">
-<label for="phone">Téléphone</label>
-<input id="phone" required="" type="tel" autocomplete="tel" placeholder="06 00 00 00 00"/>
-</div>
-<div class="form-field">
-<label for="city">Ville</label>
-<input id="city" required="" type="text" autocomplete="address-level2" placeholder="Votre ville"/>
-</div>
-<div class="form-field">
-<label for="postalCode">Code postal</label>
-<input id="postalCode" type="text" autocomplete="postal-code" placeholder="13001"/>
-</div>
-<div class="form-field trainer-module-field" style="display:none;">
-<label for="trainingType">Module principal choisi</label>
-<select id="trainingType">
-<option value="">Module principal automatique</option>
-</select>
-<p class="field-help">
-                  Les modules à financer se sélectionnent plus haut selon la formule 1, 2 ou 3 modules.
-                </p>
-</div>
-<div class="form-field full">
-<label for="message">Votre message</label>
-<textarea id="message" placeholder="Présentez brièvement votre profil, votre motivation et votre intention de transmission."></textarea>
-</div>
-</div>
-<button class="btn btn-dark" id="trainerSubmitButton" type="submit">Valider et payer</button>
-<p class="form-submit-note">
-              Paiement sécurisé : vous réglez votre parcours formateur maintenant, puis les dates de validation sont organisées avec Vital Protect selon les disponibilités.
-            </p>
-<p class="form-rgpd-note">
-              Les informations transmises via ce formulaire servent uniquement à traiter votre demande. Vous pouvez exercer vos droits d’accès, de rectification ou de suppression en écrivant à vitalprotectformation@gmail.com. Voir notre politique de confidentialité.
-            </p>
-</form>
-</div>
-</div>
-</section>
+
 <section class="vptr-section vptr-faq-section vptr-reveal">
 <div class="container">
 <div class="section-head section-head--center">
@@ -1472,7 +1475,7 @@
 </article>
 </div>
 <div class="timeline-cta">
-<a class="btn btn-dark" href="#formulaire">Valider et payer mon parcours</a>
+<a class="btn btn-dark" href="#formulaire">Remplir mon dossier</a>
 <a class="btn btn-outline" href="/contact.html">Poser une question</a>
 </div>
 </div>
@@ -1837,7 +1840,7 @@
         moduleChoiceTitle.textContent = `Formule ${targetCount} module${targetCount > 1 ? "s" : ""} sélectionnée`;
         moduleChoiceText.textContent = remaining > 0
           ? `Sélectionnez encore ${remaining} module${remaining > 1 ? "s" : ""} pour compléter votre panier.`
-          : "Votre panier est prêt. Vous pouvez payer maintenant ; les sessions de validation se choisiront ensuite selon les disponibilités.";
+          : "Votre panier est prêt. Remplissez maintenant le formulaire candidat, puis vous passerez au paiement sécurisé.";
         moduleChoicePrice.textContent = formatPrice(price);
       }
 
@@ -1852,10 +1855,10 @@
       const complete = targetCount > 0 && selectedCount === targetCount;
       if (modulePayShortcut) {
         modulePayShortcut.disabled = !complete;
-        modulePayShortcut.textContent = complete ? `Valider et payer ${formatPrice(price)}` : "Complétez votre sélection";
+        modulePayShortcut.textContent = complete ? `Continuer vers le formulaire — ${formatPrice(price)}` : "Complétez votre sélection";
       }
       if (trainerSubmitButton) {
-        trainerSubmitButton.textContent = complete ? `Valider et payer ${formatPrice(price)}` : "Valider et payer";
+        trainerSubmitButton.textContent = complete ? `Continuer vers le paiement — ${formatPrice(price)}` : "Continuer vers le paiement";
       }
 
       if (complete) {
