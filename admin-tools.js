@@ -80,6 +80,89 @@ function sanitizeText(value, fallback = "") {
   return String(value || fallback).trim();
 }
 
+
+const VP_MODULE_NAMES = {
+  module1: "Prévenir, éviter, réagir – Module 1",
+  module2: "Prévenir, éviter, réagir – Module 2",
+  pro: "Faire face aux situations tendues et comportements agressifs en milieu professionnel"
+};
+
+function normalizeModuleKey(value) {
+  return String(value || "")
+    .trim()
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim();
+}
+
+function getCanonicalModuleType(...values) {
+  const text = values.map(normalizeModuleKey).filter(Boolean).join(" ");
+  if (!text) return "";
+  if (text.includes("niveau 2") || text.includes("niv 2") || text.includes("module 2")) return "module2";
+  if (
+    text.includes("professionnel") ||
+    text.includes("professionnelle") ||
+    text.includes("entreprise") ||
+    text.includes("salarie") ||
+    text.includes("salaries") ||
+    text.includes("equipe") ||
+    text.includes("agressif") ||
+    text.includes("agressive") ||
+    text.includes("tendu") ||
+    text.includes("tendue") ||
+    text.includes("comportement") ||
+    text.includes("self pro")
+  ) return "pro";
+  if (
+    text.includes("niveau 1") ||
+    text.includes("niv 1") ||
+    text.includes("module 1") ||
+    text.includes("self defense") ||
+    text.includes("securite personnelle") ||
+    text.includes("prevenir eviter reagir")
+  ) return "module1";
+  return "";
+}
+
+function getCanonicalModuleName(value) {
+  const type = getCanonicalModuleType(value);
+  return type ? VP_MODULE_NAMES[type] : String(value || "").trim();
+}
+
+function replaceLegacyModuleNames(value) {
+  let text = String(value || "").trim();
+  if (!text) return "";
+  text = text.replace(/Self\s*Défense\s*en\s*entreprise/gi, VP_MODULE_NAMES.pro);
+  text = text.replace(/Self\s*Defense\s*en\s*entreprise/gi, VP_MODULE_NAMES.pro);
+  text = text.replace(/Self\s*Pro/gi, VP_MODULE_NAMES.pro);
+  text = text.replace(/Self\s*Défense\s*Essentielle\s*Niveau\s*2/gi, VP_MODULE_NAMES.module2);
+  text = text.replace(/Self\s*Defense\s*Essentielle\s*Niveau\s*2/gi, VP_MODULE_NAMES.module2);
+  text = text.replace(/Self\s*Défense\s*Essentielle\s*Niveau\s*1/gi, VP_MODULE_NAMES.module1);
+  text = text.replace(/Self\s*Defense\s*Essentielle\s*Niveau\s*1/gi, VP_MODULE_NAMES.module1);
+  text = text.replace(/Self\s*Défense\s*Essentielle/gi, VP_MODULE_NAMES.module1);
+  text = text.replace(/Self\s*Defense\s*Essentielle/gi, VP_MODULE_NAMES.module1);
+  return text;
+}
+
+function getModuleNameCandidates(value) {
+  const raw = String(value || "").trim();
+  const canonical = getCanonicalModuleName(raw);
+  const type = getCanonicalModuleType(raw);
+  const candidates = [raw, canonical];
+  if (type === "module1") {
+    candidates.push("Self Défense Essentielle", "Self Defense Essentielle", "Self Défense Essentielle Niveau 1", "Self Defense Essentielle Niveau 1");
+  }
+  if (type === "module2") {
+    candidates.push("Self Défense Essentielle Niveau 2", "Self Defense Essentielle Niveau 2");
+  }
+  if (type === "pro") {
+    candidates.push("Self Défense en entreprise", "Self Defense en entreprise", "Self Pro");
+  }
+  return [...new Set(candidates.filter(Boolean))];
+}
+
 function sanitizeSlug(value) {
   return String(value || "")
     .trim()
@@ -285,7 +368,8 @@ async function requireAdmin(req) {
 }
 
 async function handleCreateModule(req, res) {
-  const name = sanitizeText(req.body?.name);
+  const rawName = sanitizeText(req.body?.name);
+  const name = getCanonicalModuleName(rawName);
   const slug = sanitizeSlug(req.body?.slug || name);
   const category = sanitizeText(req.body?.category);
   const shortDescription = sanitizeText(req.body?.short_description);
@@ -350,7 +434,8 @@ async function handleCreateModule(req, res) {
 
 async function handleUpdateModule(req, res) {
   const moduleId = sanitizeText(req.body?.module_id);
-  const name = sanitizeText(req.body?.name);
+  const rawName = sanitizeText(req.body?.name);
+  const name = getCanonicalModuleName(rawName);
   const slug = sanitizeSlug(req.body?.slug || name);
   const category = sanitizeText(req.body?.category);
   const shortDescription = sanitizeText(req.body?.short_description);
@@ -536,8 +621,10 @@ async function handleListStages(req, res) {
 
 async function handleCreateStage(req, res) {
   const trainerId = sanitizeText(req.body?.trainer_id) || null;
-  const title = sanitizeText(req.body?.title);
-  const trainingType = sanitizeText(req.body?.training_type);
+  const rawTitle = sanitizeText(req.body?.title);
+  const rawTrainingType = sanitizeText(req.body?.training_type);
+  const trainingType = getCanonicalModuleName(rawTrainingType);
+  const title = replaceLegacyModuleNames(rawTitle || trainingType);
   const description = sanitizeText(req.body?.description);
   const city = sanitizeText(req.body?.city);
   const department = sanitizeText(req.body?.department);
@@ -630,8 +717,9 @@ async function handleCreateStage(req, res) {
 }
 
 async function handleCreateTrainerSession(req, res) {
-  const moduleName = sanitizeText(req.body?.module_name);
-  const title = sanitizeText(req.body?.title || moduleName);
+  const rawModuleName = sanitizeText(req.body?.module_name);
+  const moduleName = getCanonicalModuleName(rawModuleName);
+  const title = replaceLegacyModuleNames(sanitizeText(req.body?.title || moduleName));
   const city = sanitizeText(req.body?.city);
   const department = sanitizeText(req.body?.department);
   const region = sanitizeText(req.body?.region);
@@ -769,7 +857,7 @@ async function handleUpdateStageStatus(req, res) {
 
 async function handleUpsertTrainerModule(req, res) {
   const trainerId = sanitizeText(req.body?.trainer_id);
-  const moduleName = sanitizeText(req.body?.module_name);
+  const moduleName = getCanonicalModuleName(sanitizeText(req.body?.module_name));
   const status = sanitizeText(req.body?.status || "certified").toLowerCase();
   let validatedAt = sanitizeText(req.body?.validated_at);
   let expiresAt = sanitizeText(req.body?.expires_at);
