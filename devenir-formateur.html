@@ -1411,15 +1411,6 @@
 <label for="postalCode">Code postal</label>
 <input id="postalCode" type="text" autocomplete="postal-code" placeholder="13001"/>
 </div>
-<div class="form-field trainer-module-field" style="display:none;">
-<label for="trainingType">Module principal choisi</label>
-<select id="trainingType">
-<option value="">Module principal automatique</option>
-</select>
-<p class="field-help">
-                  Les modules à financer se sélectionnent plus haut selon la formule 1, 2 ou 3 modules.
-                </p>
-</div>
 <div class="form-field full">
 <label for="message">Votre message</label>
 <textarea id="message" placeholder="Présentez brièvement votre profil, votre motivation et votre intention de transmission."></textarea>
@@ -1804,6 +1795,7 @@
 
     function syncTrainingTypeSelect() {
       selectedTrainingType = selectedTrainingType || selectedModuleNames[0] || "";
+      if (!trainingTypeSelect) return;
       populateTrainingTypeSelect();
       if (selectedTrainingType && [...trainingTypeSelect.options].some((option) => option.value === selectedTrainingType)) {
         trainingTypeSelect.value = selectedTrainingType;
@@ -1912,6 +1904,7 @@
     }
 
     function populateTrainingTypeSelect() {
+      if (!trainingTypeSelect) return;
       const selectableModules = modulesData.length ? modulesData : selectedModuleNames.map((name) => ({ name }));
       trainingTypeSelect.innerHTML = `
         <option value="">Choisissez un module de session</option>
@@ -1924,11 +1917,12 @@
       if (resolvedSelection && selectableModules.some((module) => sameModuleName(module.name, resolvedSelection))) {
         trainingTypeSelect.value = selectableModules.find((module) => sameModuleName(module.name, resolvedSelection))?.name || resolvedSelection;
       } else {
-        trainingTypeSelect.value = "";
+        if (trainingTypeSelect) trainingTypeSelect.value = "";
       }
     }
 
     function lockTrainingType(moduleName) {
+      if (!trainingTypeSelect) return;
       trainingTypeSelect.innerHTML = `
         <option value="${escapeHtml(moduleName)}">${escapeHtml(trainerModuleName(moduleName))}</option>
       `;
@@ -1937,6 +1931,7 @@
     }
 
     function unlockTrainingType() {
+      if (!trainingTypeSelect) return;
       trainingTypeSelect.disabled = false;
       populateTrainingTypeSelect();
     }
@@ -2100,7 +2095,7 @@
             Impossible de charger les modules pour le moment.
           </div>
         `;
-        trainingTypeSelect.innerHTML = `<option value="">Choisissez un module</option>`;
+        if (trainingTypeSelect) trainingTypeSelect.innerHTML = `<option value="">Choisissez un module</option>`;
         return;
       }
 
@@ -2111,7 +2106,7 @@
       if (isHiddenTrainerModule(selectedTrainingType)) {
         selectedTrainingType = "";
         selectedSessionId = "";
-        trainingTypeSelect.value = "";
+        if (trainingTypeSelect) trainingTypeSelect.value = "";
       }
 
       syncTrainingTypeSelect();
@@ -2125,7 +2120,7 @@
       renderSessions();
     }
 
-    trainingTypeSelect.addEventListener("change", () => {
+    trainingTypeSelect?.addEventListener("change", () => {
       if (trainingTypeSelect.disabled) return;
 
       selectedTrainingType = trainingTypeSelect.value.trim();
