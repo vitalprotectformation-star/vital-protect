@@ -550,6 +550,295 @@
     }
   </style>
 
+
+  <style id="vp-real-flip-cards-final">
+    /* VRAI RECTO/VERSO AU CLIC — pas de faux patch :
+       - la carte est un conteneur 3D
+       - .vp-flip-inner tourne à 180°
+       - recto = image complète fournie + infos principales seulement
+       - verso = panneau bleu indépendant + description et infos secondaires
+    */
+    .vp-marketplace-list{
+      grid-template-columns:repeat(auto-fill,minmax(250px,1fr)) !important;
+      gap:18px !important;
+      perspective:1200px !important;
+    }
+    .vp-marketplace-card{
+      position:relative !important;
+      display:block !important;
+      width:100% !important;
+      height:520px !important;
+      min-height:520px !important;
+      padding:0 !important;
+      border:0 !important;
+      border-radius:24px !important;
+      background:none !important;
+      background-image:none !important;
+      overflow:visible !important;
+      color:#fff !important;
+      text-align:left !important;
+      text-decoration:none !important;
+      cursor:pointer !important;
+      perspective:1200px !important;
+      transform:none !important;
+      box-shadow:none !important;
+      isolation:isolate !important;
+    }
+    .vp-marketplace-card:hover,
+    .vp-marketplace-card.is-selected{
+      transform:none !important;
+      filter:none !important;
+      box-shadow:none !important;
+    }
+    .vp-marketplace-card.is-disabled{
+      opacity:.6 !important;
+      cursor:not-allowed !important;
+      pointer-events:none !important;
+    }
+    .vp-flip-inner{
+      position:relative !important;
+      width:100% !important;
+      height:100% !important;
+      min-height:100% !important;
+      transform-style:preserve-3d !important;
+      transition:transform .72s cubic-bezier(.2,.72,.15,1) !important;
+      border-radius:24px !important;
+      box-shadow:0 18px 46px rgba(6,26,47,.16) !important;
+      will-change:transform !important;
+    }
+    .vp-marketplace-card:hover .vp-flip-inner{
+      box-shadow:0 24px 58px rgba(6,26,47,.22) !important;
+      transform:translateY(-4px) !important;
+    }
+    .vp-marketplace-card.is-flipped .vp-flip-inner,
+    .vp-marketplace-card.is-flipped:hover .vp-flip-inner{
+      transform:rotateY(180deg) !important;
+    }
+    .vp-marketplace-card.is-selected .vp-flip-inner{
+      outline:2px solid rgba(140,200,255,.55) !important;
+      outline-offset:4px !important;
+    }
+    .vp-card-face{
+      position:absolute !important;
+      inset:0 !important;
+      z-index:auto !important;
+      display:block !important;
+      width:100% !important;
+      height:100% !important;
+      min-height:100% !important;
+      max-height:none !important;
+      padding:0 !important;
+      border:1px solid rgba(6,26,47,.18) !important;
+      border-radius:24px !important;
+      overflow:hidden !important;
+      backface-visibility:hidden !important;
+      -webkit-backface-visibility:hidden !important;
+      transform-style:preserve-3d !important;
+      opacity:1 !important;
+      visibility:visible !important;
+      pointer-events:none !important;
+      color:#fff !important;
+      text-shadow:0 2px 12px rgba(0,0,0,.5) !important;
+      box-sizing:border-box !important;
+    }
+    .vp-card-face *{box-sizing:border-box !important;color:inherit !important;}
+    .vp-card-face-front{
+      transform:rotateY(0deg) !important;
+      background-image:var(--vp-card-bg) !important;
+      background-size:cover !important;
+      background-position:center center !important;
+      background-repeat:no-repeat !important;
+      background-color:#061a2f !important;
+    }
+    .vp-card-face-back{
+      transform:rotateY(180deg) !important;
+      background:
+        radial-gradient(circle at 15% 10%,rgba(82,158,236,.22),transparent 28%),
+        radial-gradient(circle at 85% 85%,rgba(31,99,166,.24),transparent 34%),
+        linear-gradient(160deg,#071b31 0%,#082744 52%,#061827 100%) !important;
+    }
+    .vp-card-face-back::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:
+        linear-gradient(130deg,rgba(255,255,255,.12),transparent 22%,transparent 70%,rgba(140,200,255,.10)),
+        url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="360" height="360" viewBox="0 0 360 360"><path d="M180 30 285 76v78c0 74-42 139-105 176C117 293 75 228 75 154V76l105-46Z" fill="none" stroke="rgba(140,200,255,.16)" stroke-width="10"/><path d="M180 62 254 94v56c0 54-30 101-74 130-44-29-74-76-74-130V94l74-32Z" fill="none" stroke="rgba(140,200,255,.09)" stroke-width="8"/></svg>') left -92px bottom -84px / 230px 230px no-repeat;
+      opacity:.72;
+      pointer-events:none;
+    }
+    .vp-card-front-content{
+      position:absolute !important;
+      left:18px !important;
+      right:18px !important;
+      bottom:18px !important;
+      z-index:3 !important;
+      display:flex !important;
+      flex-direction:column !important;
+      gap:8px !important;
+      max-height:44% !important;
+      overflow:hidden !important;
+      color:#fff !important;
+      pointer-events:none !important;
+    }
+    .vp-card-back-content{
+      position:absolute !important;
+      inset:0 !important;
+      z-index:3 !important;
+      display:flex !important;
+      flex-direction:column !important;
+      justify-content:flex-start !important;
+      padding:24px 20px 20px !important;
+      color:#fff !important;
+      pointer-events:none !important;
+    }
+    .vp-card-mainline{
+      display:flex !important;
+      align-items:flex-start !important;
+      justify-content:space-between !important;
+      gap:10px !important;
+      margin:0 !important;
+    }
+    .vp-card-kicker{
+      display:block !important;
+      font-size:10px !important;
+      line-height:1.1 !important;
+      font-weight:950 !important;
+      text-transform:uppercase !important;
+      letter-spacing:.075em !important;
+      color:#a8d5ff !important;
+    }
+    .vp-card-price{
+      display:block !important;
+      font-size:18px !important;
+      line-height:1 !important;
+      font-weight:950 !important;
+      color:#fff !important;
+      white-space:nowrap !important;
+    }
+    .vp-card-title{
+      display:-webkit-box !important;
+      -webkit-line-clamp:3 !important;
+      -webkit-box-orient:vertical !important;
+      overflow:hidden !important;
+      margin:0 !important;
+      font-size:19px !important;
+      line-height:1.02 !important;
+      font-weight:950 !important;
+      letter-spacing:-.045em !important;
+      color:#fff !important;
+      text-wrap:balance !important;
+    }
+    .vp-card-location,
+    .vp-card-date{
+      display:flex !important;
+      align-items:center !important;
+      gap:7px !important;
+      margin:0 !important;
+      font-size:12.5px !important;
+      line-height:1.2 !important;
+      font-weight:900 !important;
+      color:rgba(255,255,255,.92) !important;
+    }
+    .vp-card-location::before{
+      content:"";
+      width:7px;
+      height:7px;
+      border-radius:999px;
+      background:#8cc8ff;
+      box-shadow:0 0 0 4px rgba(140,200,255,.14);
+      flex:0 0 auto;
+    }
+    .vp-card-date{
+      width:max-content !important;
+      max-width:100% !important;
+      min-height:24px !important;
+      padding:5px 8px !important;
+      border-radius:999px !important;
+      background:rgba(255,255,255,.14) !important;
+      border:1px solid rgba(255,255,255,.12) !important;
+      color:rgba(255,255,255,.92) !important;
+    }
+    .vp-card-action{
+      display:inline-flex !important;
+      align-items:center !important;
+      gap:8px !important;
+      width:max-content !important;
+      max-width:100% !important;
+      margin-top:4px !important;
+      color:#a8d5ff !important;
+      font-size:13px !important;
+      font-weight:950 !important;
+      line-height:1.1 !important;
+    }
+    .vp-card-back-title{
+      margin:0 0 10px !important;
+      color:#a8d5ff !important;
+      font-size:11px !important;
+      font-weight:950 !important;
+      letter-spacing:.08em !important;
+      text-transform:uppercase !important;
+    }
+    .vp-card-back-heading{
+      display:-webkit-box !important;
+      -webkit-line-clamp:3 !important;
+      -webkit-box-orient:vertical !important;
+      overflow:hidden !important;
+      margin:0 0 12px !important;
+      color:#fff !important;
+      font-size:22px !important;
+      line-height:1.02 !important;
+      font-weight:950 !important;
+      letter-spacing:-.05em !important;
+    }
+    .vp-card-back-desc{
+      display:-webkit-box !important;
+      -webkit-line-clamp:8 !important;
+      -webkit-box-orient:vertical !important;
+      overflow:hidden !important;
+      margin:0 !important;
+      color:rgba(255,255,255,.86) !important;
+      font-size:13px !important;
+      line-height:1.42 !important;
+      font-weight:700 !important;
+    }
+    .vp-card-back-meta{
+      display:flex !important;
+      flex-wrap:wrap !important;
+      gap:7px !important;
+      margin:14px 0 0 !important;
+      overflow:hidden !important;
+    }
+    .vp-card-chip{
+      display:inline-flex !important;
+      align-items:center !important;
+      min-height:24px !important;
+      max-width:100% !important;
+      padding:5px 8px !important;
+      border-radius:999px !important;
+      background:rgba(255,255,255,.12) !important;
+      border:1px solid rgba(255,255,255,.12) !important;
+      color:rgba(255,255,255,.9) !important;
+      font-size:11px !important;
+      font-weight:850 !important;
+      line-height:1.05 !important;
+      overflow:hidden !important;
+      text-overflow:ellipsis !important;
+    }
+    .vp-card-back-content .vp-card-action{
+      margin-top:auto !important;
+      padding-top:12px !important;
+      font-size:14px !important;
+    }
+    @media(max-width:640px){
+      .vp-marketplace-card{height:500px !important;min-height:500px !important;}
+      .vp-card-front-content{left:16px !important;right:16px !important;bottom:16px !important;max-height:46% !important;}
+      .vp-card-title{font-size:18px !important;}
+      .vp-card-back-heading{font-size:20px !important;}
+      .vp-card-back-desc{-webkit-line-clamp:7 !important;}
+    }
+  </style>
+
 </head>
 <body class="vpl-inner-page page-editorial-light page-stage page-stage-redesign">
   <canvas class="vpl-canvas" aria-hidden="true"></canvas>
@@ -1185,19 +1474,26 @@
       const description = getModuleDescriptionForCard(item, entry.kind, entry.path);
       const moduleChip = moduleLabel || title;
       return `
-        <span class="vp-card-face vp-card-face-front" aria-hidden="false">
-          <span class="vp-card-mainline"><span class="vp-card-kicker">${escapeHtml(pathLabel)}</span><span class="vp-card-price">${escapeHtml(price)}</span></span>
-          <span class="vp-card-title">${escapeHtml(title)}</span>
-          <span class="vp-card-location">${escapeHtml(location)}</span>
-          <span class="vp-card-front-meta"><span class="vp-card-chip">${escapeHtml(dateText)}</span></span>
-          <span class="vp-card-action">Voir les détails →</span>
-        </span>
-        <span class="vp-card-face vp-card-face-back" aria-hidden="true">
-          <span class="vp-card-back-title">Description du module</span>
-          <span class="vp-card-back-desc">${escapeHtml(description)}</span>
-          <span class="vp-card-back-meta"><span class="vp-card-chip">${escapeHtml(moduleChip)}</span><span class="vp-card-chip">${escapeHtml(timeText)}</span><span class="vp-card-chip">${escapeHtml(placesText)}</span></span>
-          <span class="vp-card-action">${escapeHtml(actionText)}</span>
-        </span>
+        <div class="vp-flip-inner" aria-hidden="false">
+          <div class="vp-card-face vp-card-face-front">
+            <div class="vp-card-front-content">
+              <div class="vp-card-mainline"><span class="vp-card-kicker">${escapeHtml(pathLabel)}</span><span class="vp-card-price">${escapeHtml(price)}</span></div>
+              <h3 class="vp-card-title">${escapeHtml(title)}</h3>
+              <div class="vp-card-location">${escapeHtml(location)}</div>
+              <div class="vp-card-date">${escapeHtml(dateText)}</div>
+              <div class="vp-card-action">Voir les détails →</div>
+            </div>
+          </div>
+          <div class="vp-card-face vp-card-face-back">
+            <div class="vp-card-back-content">
+              <div class="vp-card-back-title">Description du module</div>
+              <h3 class="vp-card-back-heading">${escapeHtml(title)}</h3>
+              <p class="vp-card-back-desc">${escapeHtml(description)}</p>
+              <div class="vp-card-back-meta"><span class="vp-card-chip">${escapeHtml(moduleChip)}</span><span class="vp-card-chip">${escapeHtml(timeText)}</span><span class="vp-card-chip">${escapeHtml(placesText)}</span></div>
+              <div class="vp-card-action">${escapeHtml(actionText)}</div>
+            </div>
+          </div>
+        </div>
       `;
     }
 
@@ -1450,7 +1746,7 @@
           const price = Number(item.launch_price || item.standard_price || 0);
           const sessionUrl = `/devenir-formateur.html?session_id=${encodeURIComponent(item.id)}`;
           return `
-            <a class="vp-marketplace-card ${escapeHtml(cardVisualClass)}" href="${sessionUrl}" data-flip-card="true" aria-expanded="false" style="background-image:url('${escapeHtml(cardVisualSrc)}');background-size:cover;background-position:center center;background-repeat:no-repeat;">
+            <a class="vp-marketplace-card ${escapeHtml(cardVisualClass)}" href="${sessionUrl}" data-flip-card="true" aria-expanded="false" style="--vp-card-bg:url('${escapeHtml(cardVisualSrc)}');">
               ${renderMarketplaceCardFaces({
                 entry,
                 item,
@@ -1469,7 +1765,7 @@
         }
         const complete = hasCompleteSession(item);
         return `
-          <button type="button" class="vp-marketplace-card ${escapeHtml(cardVisualClass)} ${selected ? "is-selected" : ""} ${complete ? "" : "is-disabled"}" data-flip-card="true" aria-expanded="false" data-stage-id="${escapeHtml(item.id)}" style="background-image:url('${escapeHtml(cardVisualSrc)}');background-size:cover;background-position:center center;background-repeat:no-repeat;" ${complete ? "" : "disabled"}>
+          <button type="button" class="vp-marketplace-card ${escapeHtml(cardVisualClass)} ${selected ? "is-selected" : ""} ${complete ? "" : "is-disabled"}" data-flip-card="true" aria-expanded="false" data-stage-id="${escapeHtml(item.id)}" style="--vp-card-bg:url('${escapeHtml(cardVisualSrc)}');" ${complete ? "" : "disabled"}>
             ${renderMarketplaceCardFaces({
               entry,
               item,
