@@ -908,6 +908,94 @@
   }
 </style>
 
+
+<style id="vptr-module-choice-v14">
+  body.page-formateur-redesign .offer-card.is-selected {
+    border-color: rgba(16, 42, 67, .78) !important;
+    box-shadow: 0 24px 58px rgba(7, 24, 44, .18) !important;
+    transform: translateY(-4px);
+  }
+  body.page-formateur-redesign .module-choice-panel {
+    margin: 22px 0 10px;
+    padding: 20px 22px;
+    border: 1px solid rgba(207,224,240,.9);
+    border-radius: 24px;
+    background: rgba(255,255,255,.72);
+    box-shadow: 0 14px 34px rgba(7,24,44,.08);
+    display: grid;
+    gap: 12px;
+  }
+  body.page-formateur-redesign .module-choice-panel__top {
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:16px;
+    flex-wrap:wrap;
+  }
+  body.page-formateur-redesign .module-choice-panel__title {
+    margin:0;
+    font-size:1rem;
+    font-weight:900;
+    color:#0f1f31;
+  }
+  body.page-formateur-redesign .module-choice-panel__text {
+    margin:5px 0 0;
+    color:#5f6e80;
+    font-size:.92rem;
+    line-height:1.55;
+  }
+  body.page-formateur-redesign .module-choice-panel__price {
+    padding:.55rem .8rem;
+    border-radius:999px;
+    background:#0d2238;
+    color:#fff;
+    font-weight:900;
+    white-space:nowrap;
+  }
+  body.page-formateur-redesign .module-choice-tags {
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+  }
+  body.page-formateur-redesign .module-choice-tag {
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    padding:.48rem .7rem;
+    border-radius:999px;
+    background:#e7f1fa;
+    color:#173c5b;
+    font-size:.78rem;
+    font-weight:850;
+    border:1px solid rgba(142,181,215,.34);
+  }
+  body.page-formateur-redesign .module-choice-tag.is-empty {
+    background:rgba(255,255,255,.62);
+    color:#7b8794;
+    border-style:dashed;
+  }
+  body.page-formateur-redesign .module-card.is-selected .module-flip-face.front,
+  body.page-formateur-redesign .module-card.is-selected .module-flip-face.back {
+    border-color: rgba(16,42,67,.86) !important;
+    box-shadow: 0 22px 55px rgba(7,24,44,.18) !important;
+  }
+  body.page-formateur-redesign .module-card.is-disabled {
+    opacity:.62;
+  }
+  body.page-formateur-redesign .module-card .btn[disabled] {
+    cursor:not-allowed;
+    opacity:.58;
+  }
+  body.page-formateur-redesign .module-selection-error {
+    margin-top: 6px;
+    color:#b42318;
+    font-size:.88rem;
+    font-weight:800;
+    display:none;
+  }
+  body.page-formateur-redesign .module-selection-error.active { display:block; }
+</style>
+
 </head>
 <body class="vpl-inner-page page-editorial-light page-formateur-redesign">
 <div class="vptr-background-orbs" aria-hidden="true"><span class="vptr-orb vptr-orb-one"></span><span class="vptr-orb vptr-orb-two"></span><span class="vptr-orb vptr-orb-three"></span></div>
@@ -1030,7 +1118,7 @@
 <li>Entrée progressive dans le standard Vital Protect</li>
 </ul>
 <div class="timeline-cta" style="justify-content:flex-start; margin-top:auto;">
-<a class="btn btn-light" href="#catalogue-modules">Choisir 1 module</a>
+<a class="btn btn-light" href="#catalogue-modules" data-module-plan="1">Choisir 1 module</a>
 </div>
 </article>
 <article class="offer-card offer-card--two offer-card--featured">
@@ -1048,7 +1136,7 @@
 <li>Positionnement plus solide dès le lancement</li>
 </ul>
 <div class="timeline-cta" style="justify-content:flex-start; margin-top:auto;">
-<a class="btn btn-light" href="#catalogue-modules">Découvrir le pack 2 modules</a>
+<a class="btn btn-light" href="#catalogue-modules" data-module-plan="2">Choisir 2 modules</a>
 </div>
 </article>
 <article class="offer-card offer-card--full">
@@ -1065,7 +1153,7 @@
 <li>Parcours pensé pour construire une activité durable</li>
 </ul>
 <div class="timeline-cta" style="justify-content:flex-start; margin-top:auto;">
-<a class="btn btn-light" href="#catalogue-modules">Voir le pack complet</a>
+<a class="btn btn-light" href="#catalogue-modules" data-module-plan="3">Choisir 3 modules</a>
 </div>
 </article>
 </div>
@@ -1076,8 +1164,21 @@
             Ensuite, seules les sessions liées à ce module s’afficheront plus bas.
           </p>
 </div>
+<div class="module-choice-panel" id="moduleChoicePanel" aria-live="polite">
+  <div class="module-choice-panel__top">
+    <div>
+      <p class="module-choice-panel__title" id="moduleChoiceTitle">Choisissez d’abord une formule</p>
+      <p class="module-choice-panel__text" id="moduleChoiceText">Sélectionnez 1, 2 ou 3 modules ci-dessus, puis cochez les modules que vous souhaitez suivre.</p>
+    </div>
+    <div class="module-choice-panel__price" id="moduleChoicePrice">—</div>
+  </div>
+  <div class="module-choice-tags" id="moduleChoiceTags">
+    <span class="module-choice-tag is-empty">Aucun module sélectionné</span>
+  </div>
+  <div class="module-selection-error" id="moduleSelectionError"></div>
+</div>
 <div class="module-grid" id="modulesContainer" style="margin-top:24px;">
-<div class="empty-state">Chargement des modules. Aucun paiement ne sera proposé tant qu’une session complète n’est pas sélectionnée.</div>
+<div class="empty-state">Chargement des modules. Aucun paiement ne sera proposé tant qu’une formule, les modules et une session complète ne sont pas sélectionnés.</div>
 </div>
 </div>
 </section>
@@ -1289,12 +1390,12 @@
 <input id="postalCode" type="text" autocomplete="postal-code" placeholder="13001"/>
 </div>
 <div class="form-field">
-<label for="trainingType">Module</label>
+<label for="trainingType">Module de session</label>
 <select id="trainingType" required="">
 <option value="">Choisissez un module</option>
 </select>
 <p class="field-help">
-                  Le module se verrouille automatiquement quand vous sélectionnez une session.
+                  Ce champ reprend le module de la session choisie. Les modules à financer se sélectionnent plus haut selon la formule 1, 2 ou 3 modules.
                 </p>
 </div>
 <div class="form-field full">
@@ -1459,6 +1560,17 @@
 
     let selectedSessionId = params.get("session_id") || "";
     let selectedTrainingType = params.get("training_type") || "";
+    let selectedModuleLimit = Math.max(0, Math.min(3, Number(params.get("module_count") || 0)));
+    let selectedModuleNames = (params.get("selected_modules") || "")
+      .split("|")
+      .map((value) => value.trim())
+      .filter(Boolean);
+    if (selectedTrainingType && !selectedModuleNames.length) {
+      selectedModuleNames = [selectedTrainingType];
+    }
+    if (!selectedModuleLimit && selectedModuleNames.length) {
+      selectedModuleLimit = Math.min(3, selectedModuleNames.length || 1);
+    }
     const initialFocusTarget = params.get("focus") || "";
     let modulesData = [];
     let sessionsData = [];
@@ -1470,6 +1582,12 @@
     const sessionsContainer = document.getElementById("sessionsContainer");
     const checkoutFeedback = document.getElementById("checkoutFeedback");
     const modulesContainer = document.getElementById("modulesContainer");
+    const moduleChoicePanel = document.getElementById("moduleChoicePanel");
+    const moduleChoiceTitle = document.getElementById("moduleChoiceTitle");
+    const moduleChoiceText = document.getElementById("moduleChoiceText");
+    const moduleChoicePrice = document.getElementById("moduleChoicePrice");
+    const moduleChoiceTags = document.getElementById("moduleChoiceTags");
+    const moduleSelectionError = document.getElementById("moduleSelectionError");
 
     function formatDate(dateString) {
       if (!dateString) return "Date non disponible";
@@ -1484,6 +1602,14 @@
 
     function formatPrice(price) {
       return `${Number(price || 0).toFixed(0)} €`;
+    }
+
+    function getFormulaPrice(count) {
+      const moduleCount = Number(count || 0);
+      if (moduleCount >= 3) return 690;
+      if (moduleCount >= 2) return 590;
+      if (moduleCount >= 1) return 490;
+      return 0;
     }
 
     function escapeHtml(value) {
@@ -1564,7 +1690,7 @@
       const requiredText = [session.id, session.module_name, session.title, session.city, session.start_date, session.end_date];
       const hasRequiredText = requiredText.every((value) => String(value || "").trim().length > 0);
       const hasDuration = Number(session.duration_days || 0) > 0;
-      const hasPrice = Number(session.launch_price || session.standard_price || 0) > 0;
+      const hasPrice = getFormulaPrice(selectedModuleLimit) > 0 || Number(session.launch_price || session.standard_price || 0) > 0;
       const hasPlaces = Number(session.remaining_places || 0) > 0;
       return hasRequiredText && hasDuration && hasPrice && hasPlaces;
     }
@@ -1605,16 +1731,159 @@
       selectedSessionValue.textContent = label;
     }
 
+    function sameModuleName(a, b) {
+      if (!a || !b) return false;
+      return normalizeModuleSearch(publicModuleName(a)) === normalizeModuleSearch(publicModuleName(b)) ||
+        normalizeModuleSearch(a) === normalizeModuleSearch(b);
+    }
+
+    function resolveModuleName(value) {
+      const match = modulesData.find((module) => sameModuleName(module.name, value));
+      return match?.name || value;
+    }
+
+    function uniqueModuleNames(names) {
+      const result = [];
+      (names || []).forEach((name) => {
+        const resolved = resolveModuleName(name);
+        if (!resolved || isHiddenTrainerModule(resolved)) return;
+        if (!result.some((existing) => sameModuleName(existing, resolved))) {
+          result.push(resolved);
+        }
+      });
+      return result.slice(0, 3);
+    }
+
+    function selectedIncludesModule(moduleName) {
+      return selectedModuleNames.some((name) => sameModuleName(name, moduleName));
+    }
+
+    function getSelectedModuleLabels() {
+      return selectedModuleNames.map((name) => trainerModuleName(name));
+    }
+
+    function updateSelectionUrl() {
+      const newUrl = new URL(window.location.href);
+      if (selectedModuleLimit) newUrl.searchParams.set("module_count", String(selectedModuleLimit));
+      else newUrl.searchParams.delete("module_count");
+
+      if (selectedModuleNames.length) newUrl.searchParams.set("selected_modules", selectedModuleNames.join("|"));
+      else newUrl.searchParams.delete("selected_modules");
+
+      if (selectedTrainingType) newUrl.searchParams.set("training_type", selectedTrainingType);
+      else newUrl.searchParams.delete("training_type");
+
+      if (selectedSessionId) newUrl.searchParams.set("session_id", selectedSessionId);
+      else newUrl.searchParams.delete("session_id");
+
+      window.history.replaceState({}, "", newUrl);
+    }
+
+    function syncTrainingTypeSelect() {
+      selectedTrainingType = selectedTrainingType || selectedModuleNames[0] || "";
+      populateTrainingTypeSelect();
+      if (selectedTrainingType && [...trainingTypeSelect.options].some((option) => option.value === selectedTrainingType)) {
+        trainingTypeSelect.value = selectedTrainingType;
+      }
+    }
+
+    function showModuleSelectionError(message) {
+      if (!moduleSelectionError) return;
+      moduleSelectionError.textContent = message || "";
+      moduleSelectionError.classList.toggle("active", Boolean(message));
+      if (message) {
+        window.setTimeout(() => {
+          moduleSelectionError.classList.remove("active");
+        }, 3600);
+      }
+    }
+
+    function updateModuleChoicePanel() {
+      const selectedCount = selectedModuleNames.length;
+      const targetCount = selectedModuleLimit || 0;
+      const price = getFormulaPrice(targetCount);
+      const remaining = Math.max(0, targetCount - selectedCount);
+
+      document.querySelectorAll("[data-module-plan]").forEach((button) => {
+        const card = button.closest(".offer-card");
+        card?.classList.toggle("is-selected", Number(button.dataset.modulePlan || 0) === selectedModuleLimit);
+      });
+
+      if (!targetCount) {
+        moduleChoiceTitle.textContent = "Choisissez d’abord une formule";
+        moduleChoiceText.textContent = "Sélectionnez 1, 2 ou 3 modules ci-dessus, puis cochez les modules que vous souhaitez suivre.";
+        moduleChoicePrice.textContent = "—";
+      } else {
+        moduleChoiceTitle.textContent = `Formule ${targetCount} module${targetCount > 1 ? "s" : ""} sélectionnée`;
+        moduleChoiceText.textContent = remaining > 0
+          ? `Sélectionnez encore ${remaining} module${remaining > 1 ? "s" : ""} pour compléter votre parcours.`
+          : "Votre sélection est complète. Vous pouvez choisir une session puis compléter votre dossier.";
+        moduleChoicePrice.textContent = formatPrice(price);
+      }
+
+      if (!selectedCount) {
+        moduleChoiceTags.innerHTML = `<span class="module-choice-tag is-empty">Aucun module sélectionné</span>`;
+      } else {
+        moduleChoiceTags.innerHTML = getSelectedModuleLabels()
+          .map((label) => `<span class="module-choice-tag">✓ ${escapeHtml(label)}</span>`)
+          .join("");
+      }
+    }
+
+    function setModulePlan(count, shouldScroll = true) {
+      selectedModuleLimit = Math.max(1, Math.min(3, Number(count || 1)));
+      selectedModuleNames = uniqueModuleNames(selectedModuleNames).slice(0, selectedModuleLimit);
+      selectedTrainingType = selectedModuleNames[0] || "";
+      selectedSessionId = "";
+      updateSelectedSessionBox("");
+      syncTrainingTypeSelect();
+      updateModuleChoicePanel();
+      updateSelectionUrl();
+      renderModules();
+      renderSessions();
+      if (shouldScroll) {
+        document.getElementById("catalogue-modules")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }
+
+    function toggleModuleSelection(moduleName) {
+      if (!selectedModuleLimit) {
+        setModulePlan(1, false);
+      }
+
+      const alreadySelected = selectedIncludesModule(moduleName);
+      if (alreadySelected) {
+        selectedModuleNames = selectedModuleNames.filter((name) => !sameModuleName(name, moduleName));
+      } else {
+        if (selectedModuleNames.length >= selectedModuleLimit) {
+          showModuleSelectionError(`Votre formule permet ${selectedModuleLimit} module${selectedModuleLimit > 1 ? "s" : ""}. Désélectionnez un module pour en choisir un autre.`);
+          return;
+        }
+        selectedModuleNames = uniqueModuleNames([...selectedModuleNames, moduleName]);
+      }
+
+      selectedTrainingType = selectedModuleNames[0] || "";
+      selectedSessionId = "";
+      updateSelectedSessionBox("");
+      syncTrainingTypeSelect();
+      updateModuleChoicePanel();
+      updateSelectionUrl();
+      renderModules();
+      renderSessions();
+    }
+
     function populateTrainingTypeSelect() {
+      const selectableModules = modulesData.length ? modulesData : selectedModuleNames.map((name) => ({ name }));
       trainingTypeSelect.innerHTML = `
-        <option value="">Choisissez un module</option>
-        ${modulesData.map((module) => `
+        <option value="">Choisissez un module de session</option>
+        ${selectableModules.map((module) => `
           <option value="${escapeHtml(module.name)}">${escapeHtml(trainerModuleName(module))}</option>
         `).join("")}
       `;
 
-      if (selectedTrainingType && modulesData.some((module) => module.name === selectedTrainingType)) {
-        trainingTypeSelect.value = selectedTrainingType;
+      const resolvedSelection = resolveModuleName(selectedTrainingType || selectedModuleNames[0] || "");
+      if (resolvedSelection && selectableModules.some((module) => sameModuleName(module.name, resolvedSelection))) {
+        trainingTypeSelect.value = selectableModules.find((module) => sameModuleName(module.name, resolvedSelection))?.name || resolvedSelection;
       } else {
         trainingTypeSelect.value = "";
       }
@@ -1634,6 +1903,9 @@
     }
 
     function renderModules() {
+      selectedModuleNames = uniqueModuleNames(selectedModuleNames);
+      updateModuleChoicePanel();
+
       if (!modulesData.length) {
         modulesContainer.innerHTML = `
           <div class="empty-state">
@@ -1648,15 +1920,18 @@
           .filter(Boolean)
           .map((value) => `<span class="module-chip">${escapeHtml(value)}</span>`)
           .join("");
+        const isSelected = selectedIncludesModule(module.name);
+        const limitReached = selectedModuleLimit > 0 && selectedModuleNames.length >= selectedModuleLimit && !isSelected;
+        const buttonLabel = isSelected ? "Module sélectionné ✓" : "Sélectionner ce module";
 
         return `
-          <article class="module-card" tabindex="0">
+          <article class="module-card ${isSelected ? "is-selected" : ""} ${limitReached ? "is-disabled" : ""}" tabindex="0">
             <div class="module-flip-inner">
               <div class="module-flip-face front">
                 <div class="module-dot" aria-hidden="true"></div>
                 <h3>${escapeHtml(trainerModuleName(module))}</h3>
                 <p>${escapeHtml(trainerModuleDescription(module))}</p>
-                <p class="module-flip-hint">Survolez ou cliquez pour voir l’action</p>
+                <p class="module-flip-hint">Survolez ou cliquez pour choisir ce module</p>
               </div>
               <div class="module-flip-face back">
                 <div>
@@ -1665,10 +1940,10 @@
                 </div>
                 <button
                   type="button"
-                  class="btn btn-dark"
+                  class="btn ${isSelected ? "btn-light" : "btn-dark"}"
                   data-module-name="${escapeHtml(module.name)}"
                 >
-                  Voir les sessions
+                  ${buttonLabel}
                 </button>
               </div>
             </div>
@@ -1678,60 +1953,47 @@
 
       document.querySelectorAll("[data-module-name]").forEach((button) => {
         button.addEventListener("click", () => {
-          selectedTrainingType = button.dataset.moduleName || "";
-          selectedSessionId = "";
-
-          unlockTrainingType();
-          trainingTypeSelect.value = selectedTrainingType;
-          updateSelectedSessionBox("");
-
-          const newUrl = new URL(window.location.href);
-          if (selectedTrainingType) {
-            newUrl.searchParams.set("training_type", selectedTrainingType);
-          } else {
-            newUrl.searchParams.delete("training_type");
-          }
-          newUrl.searchParams.delete("session_id");
-          window.history.replaceState({}, "", newUrl);
-
-          renderSessions();
-          document.getElementById("sessions").scrollIntoView({ behavior: "smooth" });
+          toggleModuleSelection(button.dataset.moduleName || "");
         });
       });
     }
 
     function getFilteredSessions() {
-      if (!selectedTrainingType) return [];
+      const selectedNames = selectedModuleNames.length ? selectedModuleNames : [selectedTrainingType].filter(Boolean);
+      if (!selectedNames.length) return [];
 
       return sessionsData.filter((session) => {
-        return normalizeModuleSearch(publicModuleName(session.module_name || session.title)) === normalizeModuleSearch(publicModuleName(selectedTrainingType)) || normalizeModuleSearch(session.module_name || "") === normalizeModuleSearch(selectedTrainingType);
+        return selectedNames.some((moduleName) => (
+          normalizeModuleSearch(publicModuleName(session.module_name || session.title)) === normalizeModuleSearch(publicModuleName(moduleName)) ||
+          normalizeModuleSearch(session.module_name || "") === normalizeModuleSearch(moduleName)
+        ));
       });
     }
 
     function selectSession(session) {
       selectedSessionId = session.id || "";
-      selectedTrainingType = session.module_name || "";
+      const sessionModule = session.module_name || session.title || "";
+      selectedTrainingType = resolveModuleName(sessionModule) || selectedModuleNames[0] || "";
 
-      if (selectedTrainingType) {
-        lockTrainingType(selectedTrainingType);
+      if (sessionModule && selectedModuleLimit && !selectedIncludesModule(sessionModule) && selectedModuleNames.length < selectedModuleLimit) {
+        selectedModuleNames = uniqueModuleNames([...selectedModuleNames, sessionModule]);
       }
+
+      syncTrainingTypeSelect();
 
       if (!isCompleteSession(session)) {
         checkoutFeedback.innerHTML = `
           <div class="alert alert-error">
-            Cette session est incomplète : la réservation est désactivée jusqu’à confirmation de la ville, des dates, du tarif, de la durée et des places.
+            Cette session est incomplète : la réservation est désactivée jusqu’à confirmation de la ville, des dates, de la durée et des places.
           </div>
         `;
         return;
       }
 
-      const label = `${trainerModuleName(session.module_name || session.title)} — ${session.city || "Ville"} — ${formatDate(session.end_date)}`;
+      const moduleLabel = getSelectedModuleLabels().join(" + ") || trainerModuleName(session.module_name || session.title);
+      const label = `${moduleLabel} — ${session.city || "Ville"} — ${formatDate(session.end_date)}`;
       updateSelectedSessionBox(label);
-
-      const newUrl = new URL(window.location.href);
-      newUrl.searchParams.set("session_id", selectedSessionId);
-      newUrl.searchParams.set("training_type", selectedTrainingType);
-      window.history.replaceState({}, "", newUrl);
+      updateSelectionUrl();
 
       const targetId = initialFocusTarget === "modules" ? "modules" : "formulaire";
       document.getElementById(targetId)?.scrollIntoView({ behavior: "smooth" });
@@ -1747,10 +2009,19 @@
         return;
       }
 
-      if (!selectedTrainingType) {
+      if (!selectedModuleLimit) {
         sessionsContainer.innerHTML = `
           <div class="empty-state">
-            Choisissez d’abord un module ci-dessus pour voir les sessions disponibles.
+            Choisissez d’abord une formule 1, 2 ou 3 modules.
+          </div>
+        `;
+        return;
+      }
+
+      if (selectedModuleNames.length < selectedModuleLimit) {
+        sessionsContainer.innerHTML = `
+          <div class="empty-state">
+            Sélectionnez encore ${selectedModuleLimit - selectedModuleNames.length} module(s) pour afficher les sessions disponibles.
           </div>
         `;
         return;
@@ -1761,7 +2032,7 @@
       if (!filteredSessions.length) {
         sessionsContainer.innerHTML = `
           <div class="empty-state">
-            Aucune session ouverte pour le module <strong>${escapeHtml(trainerModuleName(selectedTrainingType))}</strong>.
+            Aucune session ouverte pour les modules sélectionnés : <strong>${escapeHtml(getSelectedModuleLabels().join(" + "))}</strong>.
           </div>
         `;
         return;
@@ -1769,6 +2040,7 @@
 
       sessionsContainer.innerHTML = filteredSessions.map((session) => {
         const sessionComplete = isCompleteSession(session);
+        const displayedPrice = getFormulaPrice(selectedModuleLimit) || session.launch_price || session.standard_price || 0;
         return `
         <article class="session-card">
           <div class="session-top">
@@ -1776,7 +2048,7 @@
               <div class="session-type">${escapeHtml(trainerModuleName(session.module_name || session.title))}</div>
               <h3 class="session-title">${escapeHtml(trainerModuleName(session.module_name || session.title))}</h3>
             </div>
-            <div class="session-price">${formatPrice(session.launch_price || session.standard_price || 0)}</div>
+            <div class="session-price">${formatPrice(displayedPrice)}</div>
           </div>
 
           <div class="session-body">
@@ -1809,8 +2081,8 @@
               </div>
 
               <div class="meta-item">
-                <span class="meta-label">Tarif standard</span>
-                <span class="meta-value">${formatPrice(session.standard_price || 0)}</span>
+                <span class="meta-label">Tarif formule</span>
+                <span class="meta-value">${formatPrice(displayedPrice)}</span>
               </div>
 
               <div class="meta-item">
@@ -1870,6 +2142,8 @@
       }
 
       modulesData = (data || []).filter((module) => !isHiddenTrainerModule(module));
+      selectedModuleNames = uniqueModuleNames(selectedModuleNames);
+      selectedTrainingType = resolveModuleName(selectedTrainingType || selectedModuleNames[0] || "");
 
       if (isHiddenTrainerModule(selectedTrainingType)) {
         selectedTrainingType = "";
@@ -1877,8 +2151,9 @@
         trainingTypeSelect.value = "";
       }
 
+      syncTrainingTypeSelect();
       renderModules();
-      populateTrainingTypeSelect();
+      updateModuleChoicePanel();
     }
 
     async function loadSessions() {
@@ -1916,19 +2191,23 @@
       if (trainingTypeSelect.disabled) return;
 
       selectedTrainingType = trainingTypeSelect.value.trim();
+      if (selectedTrainingType && !selectedIncludesModule(selectedTrainingType)) {
+        if (!selectedModuleLimit) selectedModuleLimit = 1;
+        selectedModuleNames = uniqueModuleNames([selectedTrainingType, ...selectedModuleNames]).slice(0, selectedModuleLimit);
+      }
       selectedSessionId = "";
       updateSelectedSessionBox("");
-
-      const newUrl = new URL(window.location.href);
-      if (selectedTrainingType) {
-        newUrl.searchParams.set("training_type", selectedTrainingType);
-      } else {
-        newUrl.searchParams.delete("training_type");
-      }
-      newUrl.searchParams.delete("session_id");
-      window.history.replaceState({}, "", newUrl);
-
+      updateModuleChoicePanel();
+      updateSelectionUrl();
+      renderModules();
       renderSessions();
+    });
+
+    document.querySelectorAll("[data-module-plan]").forEach((button) => {
+      button.addEventListener("click", (event) => {
+        event.preventDefault();
+        setModulePlan(button.dataset.modulePlan || 1, true);
+      });
     });
 
     window.VP_FRANCE_LOCATION?.setupPostalCode("postalCode");
@@ -1936,13 +2215,23 @@
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
 
-      if (!selectedTrainingType) {
+      if (!selectedModuleLimit) {
         checkoutFeedback.innerHTML = `
           <div class="alert alert-error">
-            Merci de choisir d’abord un module.
+            Merci de choisir d’abord une formule : 1, 2 ou 3 modules.
           </div>
         `;
         document.getElementById("modules").scrollIntoView({ behavior: "smooth" });
+        return;
+      }
+
+      if (selectedModuleNames.length !== selectedModuleLimit) {
+        checkoutFeedback.innerHTML = `
+          <div class="alert alert-error">
+            Votre formule comprend ${selectedModuleLimit} module(s). Merci de sélectionner exactement ${selectedModuleLimit} module(s).
+          </div>
+        `;
+        document.getElementById("catalogue-modules").scrollIntoView({ behavior: "smooth" });
         return;
       }
 
@@ -1957,6 +2246,7 @@
         return;
       }
 
+      const selectedModuleLabels = getSelectedModuleLabels();
       const data = {
         first_name: document.getElementById("firstName").value.trim(),
         last_name: document.getElementById("lastName").value.trim(),
@@ -1964,15 +2254,18 @@
         phone: document.getElementById("phone").value.trim(),
         city: document.getElementById("city").value.trim(),
         postal_code: document.getElementById("postalCode").value.trim(),
-        training_type: trainingTypeSelect.value.trim(),
+        training_type: selectedModuleLabels.join(" | "),
+        selected_module: selectedModuleLabels[0] || "",
+        selected_modules: selectedModuleLabels,
+        selected_module_count: selectedModuleLimit,
         message: document.getElementById("message").value.trim(),
         session_id: selectedSessionId
       };
 
-      if (!data.training_type) {
+      if (!data.training_type || !data.selected_modules.length) {
         checkoutFeedback.innerHTML = `
           <div class="alert alert-error">
-            Merci de choisir un module.
+            Merci de choisir vos modules.
           </div>
         `;
         return;
