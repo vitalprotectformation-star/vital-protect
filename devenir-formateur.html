@@ -1338,6 +1338,7 @@
 
     let selectedSessionId = params.get("session_id") || "";
     let selectedTrainingType = params.get("training_type") || "";
+    const initialFocusTarget = params.get("focus") || "";
     let modulesData = [];
     let sessionsData = [];
 
@@ -1611,7 +1612,8 @@
       newUrl.searchParams.set("training_type", selectedTrainingType);
       window.history.replaceState({}, "", newUrl);
 
-      document.getElementById("formulaire").scrollIntoView({ behavior: "smooth" });
+      const targetId = initialFocusTarget === "modules" ? "modules" : "formulaire";
+      document.getElementById(targetId)?.scrollIntoView({ behavior: "smooth" });
     }
 
     function renderSessions() {

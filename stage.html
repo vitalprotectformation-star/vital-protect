@@ -1032,6 +1032,21 @@
       font-weight:950 !important;
       text-shadow:none !important;
     }
+    .vp-card-back-content .vp-card-action-link{
+      pointer-events:auto !important;
+      position:relative !important;
+      z-index:10 !important;
+      text-decoration:none !important;
+    }
+    .vp-card-back-content .vp-card-action-link:hover{
+      color:#ffffff !important;
+      text-decoration:underline !important;
+      text-underline-offset:4px !important;
+    }
+    .vp-marketplace-card.is-flipped .vp-card-face-back,
+    .vp-marketplace-card.is-flipped .vp-card-back-content{
+      pointer-events:auto !important;
+    }
     @media(max-width:640px){
       .vp-marketplace-card{height:500px !important;min-height:500px !important;}
       .vp-card-front-content{left:16px !important;right:16px !important;bottom:16px !important;max-height:44% !important;}
@@ -1164,7 +1179,7 @@
 
     <section id="marketplace" class="vp-marketplace-section">
       <div class="vpl-container">
-        <div class="section-head section-head--center"><span class="eyebrow">Trouver un stage</span><h2 id="marketplaceTitle">Choisissez d’abord votre zone, puis le module qui vous intéresse.</h2><p id="marketplaceIntro">La liste affiche toutes les sessions ouvertes : stages publics, sessions professionnelles standardisées et sessions formateur. Vous pouvez ensuite filtrer par région, département, module ou parcours.</p></div>
+        <div class="section-head section-head--center"><span class="eyebrow">Trouver un stage</span><h2 id="marketplaceTitle">Choisissez d’abord votre zone, puis le module qui vous intéresse.</h2><p id="marketplaceIntro">La liste sépare les parcours : stages tout public, sessions entreprise et sessions formateur. Choisissez un parcours pour garder une navigation claire.</p></div>
         <div class="vp-marketplace-filters" aria-label="Rechercher les stages disponibles">
           <div class="vp-marketplace-filter">
             <label for="marketplaceRegionFilter">Région</label>
@@ -1672,9 +1687,12 @@
       return "Lieu à confirmer";
     }
 
-    function renderMarketplaceCardFaces({ entry, item, title, moduleLabel, pathLabel, price, location, dateText, timeText, placesText, actionText }) {
+    function renderMarketplaceCardFaces({ entry, item, title, moduleLabel, pathLabel, price, location, dateText, timeText, placesText, actionText, actionHref = "", actionLabel = "" }) {
       const description = getModuleDescriptionForCard(item, entry.kind, entry.path);
       const moduleChip = moduleLabel || title;
+      const actionMarkup = actionHref
+        ? `<a class="vp-card-action vp-card-action-link" href="${escapeHtml(actionHref)}" data-card-action-link="true" aria-label="${escapeHtml(actionLabel || actionText)}">${escapeHtml(actionText)}</a>`
+        : `<div class="vp-card-action">${escapeHtml(actionText)}</div>`;
       return `
         <div class="vp-flip-inner" aria-hidden="false">
           <div class="vp-card-face vp-card-face-front">
@@ -1692,7 +1710,7 @@
               <h3 class="vp-card-back-heading">${escapeHtml(title)}</h3>
               <p class="vp-card-back-desc">${escapeHtml(description)}</p>
               <div class="vp-card-back-meta"><span class="vp-card-chip">${escapeHtml(moduleChip)}</span><span class="vp-card-chip">${escapeHtml(timeText)}</span><span class="vp-card-chip">${escapeHtml(placesText)}</span></div>
-              <div class="vp-card-action">${escapeHtml(actionText)}</div>
+              ${actionMarkup}
             </div>
           </div>
         </div>
@@ -1788,7 +1806,10 @@
     function populateModuleFilter() {
       if (!marketplaceModuleFilter) return;
       const currentValue = marketplaceModuleFilter.value;
-      const modules = Array.from(new Set(getMarketplaceItems().map((entry) => getSessionModule(entry.item, entry.kind)).filter(Boolean))).sort((a, b) => a.localeCompare(b, "fr"));
+      const modules = Array.from(new Set(getMarketplaceItems()
+        .filter((entry) => entryIsVisibleForPath(entry, activeMarketplacePath))
+        .map((entry) => getSessionModule(entry.item, entry.kind))
+        .filter(Boolean))).sort((a, b) => a.localeCompare(b, "fr"));
       marketplaceModuleFilter.innerHTML = `<option value="">Tous les modules</option>${modules.map((module) => `<option value="${escapeHtml(module)}">${escapeHtml(module)}</option>`).join("")}`;
       marketplaceModuleFilter.value = modules.some((module) => module === currentValue) ? currentValue : "";
     }
@@ -1830,7 +1851,7 @@
     const MARKETPLACE_PATHS = {
       all: {
         title: "Trouvez une session près de vous",
-        intro: "Commencez par la région ou le département. La liste affiche ensuite tous les modules disponibles, quel que soit le parcours."
+        intro: "Commencez par la région ou le département. Cette vue affiche les stages tout public et entreprise ; les sessions formateur restent dans leur parcours dédié."
       },
       public: {
         title: "Stages pour moi",
@@ -1900,10 +1921,16 @@
       container.innerHTML = `<div class="vp-marketplace-empty"><strong>${escapeHtml(title)}</strong>${escapeHtml(text)}</div>`;
     }
 
+    function entryIsVisibleForPath(entry, path = activeMarketplacePath) {
+      if (!entry) return false;
+      if (path === "all") return entry.path !== "trainer";
+      return entry.path === path;
+    }
+
     function filterMarketplaceItems(items) {
       const filters = getCurrentLocationFilters();
       return items.filter((entry) => {
-        if (activeMarketplacePath !== "all" && entry.path !== activeMarketplacePath) return false;
+        if (!entryIsVisibleForPath(entry, activeMarketplacePath)) return false;
         if (!matchesLocationFilters(entry.item)) return false;
         if (filters.module && normalizeLocationValue(getSessionModule(entry.item, entry.kind)) !== normalizeLocationValue(filters.module)) return false;
         return true;
@@ -1946,9 +1973,9 @@
         const cardVisualSrc = getCardVisualSrc(entry);
         if (entry.kind === "trainer") {
           const price = Number(item.launch_price || item.standard_price || 0);
-          const sessionUrl = `/devenir-formateur.html?session_id=${encodeURIComponent(item.id)}`;
+          const sessionUrl = `/devenir-formateur.html?session_id=${encodeURIComponent(item.id)}&focus=modules#modules`;
           return `
-            <a class="vp-marketplace-card ${escapeHtml(cardVisualClass)}" href="${sessionUrl}" data-flip-card="true" aria-expanded="false" style="--vp-card-bg:url('${escapeHtml(cardVisualSrc)}');">
+            <article class="vp-marketplace-card ${escapeHtml(cardVisualClass)}" data-flip-card="true" data-trainer-session="true" tabindex="0" role="button" aria-expanded="false" aria-label="Voir le détail de la session formateur ${escapeHtml(title)}" style="--vp-card-bg:url('${escapeHtml(cardVisualSrc)}');">
               ${renderMarketplaceCardFaces({
                 entry,
                 item,
@@ -1960,9 +1987,11 @@
                 dateText: formatDateRange(item.start_date, item.end_date),
                 timeText: item.start_time || item.duration_days ? `${item.duration_days || 3} jour(s)` : "Durée à confirmer",
                 placesText: `${Number(item.remaining_places || 0)} place(s)`,
-                actionText: "Voir cette session →"
+                actionText: "Choisir cette session →",
+                actionHref: sessionUrl,
+                actionLabel: `Choisir la session formateur ${title}`
               })}
-            </a>
+            </article>
           `;
         }
         const complete = hasCompleteSession(item);
@@ -1986,11 +2015,12 @@
       }).join("");
 
       publicStagesContainer.querySelectorAll(".vp-marketplace-card[data-flip-card]").forEach((card) => {
-        card.addEventListener("click", (event) => {
+        const flipCard = (event) => {
           if (card.classList.contains("is-disabled") || card.disabled) return;
+          if (event?.target?.closest?.("[data-card-action-link]")) return;
           if (!card.classList.contains("is-flipped")) {
-            event.preventDefault();
-            event.stopImmediatePropagation();
+            event?.preventDefault?.();
+            event?.stopImmediatePropagation?.();
             publicStagesContainer.querySelectorAll(".vp-marketplace-card.is-flipped").forEach((other) => {
               if (other !== card) {
                 other.classList.remove("is-flipped");
@@ -2000,6 +2030,11 @@
             card.classList.add("is-flipped");
             card.setAttribute("aria-expanded", "true");
           }
+        };
+        card.addEventListener("click", flipCard);
+        card.addEventListener("keydown", (event) => {
+          if (event.key !== "Enter" && event.key !== " ") return;
+          flipCard(event);
         });
       });
 
