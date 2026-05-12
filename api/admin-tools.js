@@ -7,6 +7,7 @@ const supabase = createClient(
 
 const PUBLIC_STAGE_UNIT_PRICE = 30;
 const ENTERPRISE_STAGE_PRICE = 390;
+const PAYOUT_DAY_OF_MONTH = 20;
 
 function normalizeEmail(value) {
   return String(value || "").trim().toLowerCase();
@@ -855,6 +856,55 @@ async function handleUpdateStageStatus(req, res) {
   return res.status(200).json({ success: true, stage: data });
 }
 
+
+async function handleUpdatePayoutStatus(req, res) {
+  const stageId = sanitizeText(req.body?.stage_id);
+  const reservationId = sanitizeText(req.body?.reservation_id);
+  const status = sanitizeText(req.body?.status || "").toLowerCase();
+  const note = sanitizeText(req.body?.note);
+
+  if (!stageId && !reservationId) {
+    return res.status(400).json({ error: "stage_id ou reservation_id manquant" });
+  }
+
+  if (!["scheduled", "validated", "paid", "blocked"].includes(status)) {
+    return res.status(400).json({ error: "status de reversement invalide" });
+  }
+
+  const payload = {
+    trainer_payout_status: status,
+    trainer_payout_paid_at: status === "paid" ? new Date().toISOString() : null,
+    trainer_payout_admin_note: note || null
+  };
+
+  let query = supabase.from("reservations").update(payload);
+
+  if (reservationId) {
+    query = query.eq("id", reservationId);
+  } else {
+    query = query.eq("stage_id", stageId).eq("payment_status", "paid");
+  }
+
+  const { data, error } = await query.select("id, stage_id, trainer_payout_status, trainer_payout_paid_at");
+
+  if (error) {
+    const message = String(error.message || "");
+    if (message.toLowerCase().includes("trainer_payout")) {
+      return res.status(500).json({
+        error: "Colonnes reversements manquantes dans Supabase. Exécute le fichier SUPABASE_REVERSEMENTS_FORMATEURS.sql puis réessaie."
+      });
+    }
+    return res.status(500).json({ error: error.message });
+  }
+
+  return res.status(200).json({
+    success: true,
+    updated: Array.isArray(data) ? data.length : 0,
+    payout_status: status,
+    rows: data || []
+  });
+}
+
 async function handleUpsertTrainerModule(req, res) {
   const trainerId = sanitizeText(req.body?.trainer_id);
   const moduleName = getCanonicalModuleName(sanitizeText(req.body?.module_name));
@@ -1056,6 +1106,10 @@ export default async function handler(req, res) {
 
     if (action === "delete_stage") {
       return await handleDeleteStage(req, res);
+    }
+
+    if (action === "update_payout_status") {
+      return await handleUpdatePayoutStatus(req, res);
     }
 
     if (action === "upsert_trainer_module") {

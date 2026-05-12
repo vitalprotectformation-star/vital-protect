@@ -321,8 +321,11 @@ function sanitizeReservationForTrainer(row, stage, commissionTier) {
     places: row.places,
     payment_status: row.payment_status,
     created_at: row.created_at,
-    trainer_payout_amount: payoutAmount,
-    vital_protect_commission_rate: commissionTier.rate
+    trainer_payout_amount: Number(row.trainer_payout_amount ?? payoutAmount),
+    trainer_payout_status: row.trainer_payout_status || "scheduled",
+    trainer_payout_due_date: row.trainer_payout_due_date || getPayoutDateForStage(stage?.stage_date),
+    trainer_payout_paid_at: row.trainer_payout_paid_at || null,
+    vital_protect_commission_rate: Number(row.vital_protect_commission_rate ?? commissionTier.rate)
   };
 }
 
