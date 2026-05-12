@@ -556,6 +556,7 @@
         <button class="nav-btn" data-tab="modules">Modules certifiés</button>
         <button class="nav-btn" data-tab="stages">Stages</button>
         <button class="nav-btn" data-tab="formations">Formations formateur</button>
+        <button class="nav-btn" data-tab="reversements">Reversements formateurs</button>
         <button class="nav-btn" data-tab="finances">Pilotage financier</button>
       </div>
 
@@ -1216,6 +1217,68 @@
         </div>
       </section>
 
+
+      <section id="tab-reversements" class="tab-panel">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h2>Reversements formateurs</h2>
+              <p>Préparez, validez et marquez comme payés les reversements dus après réalisation des stages.</p>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="stats" style="grid-template-columns: repeat(4, minmax(0, 1fr)); margin-bottom: 18px;">
+              <div class="stat-card">
+                <span class="stat-label">À préparer</span>
+                <div class="stat-value" id="payoutScheduledCount">0 €</div>
+              </div>
+              <div class="stat-card">
+                <span class="stat-label">Validés</span>
+                <div class="stat-value" id="payoutValidatedCount">0 €</div>
+              </div>
+              <div class="stat-card">
+                <span class="stat-label">Payés</span>
+                <div class="stat-value" id="payoutPaidCount">0 €</div>
+              </div>
+              <div class="stat-card">
+                <span class="stat-label">Bloqués</span>
+                <div class="stat-value" id="payoutBlockedCount">0 €</div>
+              </div>
+            </div>
+
+            <div class="filters">
+              <div class="field">
+                <label>Recherche</label>
+                <input id="payoutSearch" type="text" placeholder="Formateur, stage, ville..." />
+              </div>
+              <div class="field">
+                <label>Statut reversement</label>
+                <select id="payoutStatusFilter">
+                  <option value="">Tous</option>
+                  <option value="scheduled">À préparer</option>
+                  <option value="validated">Validé</option>
+                  <option value="paid">Payé</option>
+                  <option value="blocked">Bloqué</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>État du stage</label>
+                <select id="payoutReadinessFilter">
+                  <option value="">Tous</option>
+                  <option value="completed">Stage réalisé</option>
+                  <option value="not_completed">Pas encore réalisé</option>
+                  <option value="due">Date de versement atteinte</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="table-wrap" id="trainerPayoutsWrap">
+              <div class="loading">Chargement des reversements...</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section id="tab-finances" class="tab-panel">
         <div class="card">
           <div class="card-header">
@@ -1290,6 +1353,7 @@
     const trainersWrap = document.getElementById("trainersWrap");
     const trainerModulesWrap = document.getElementById("trainerModulesWrap");
     const trainerSessionsWrap = document.getElementById("trainerSessionsWrap");
+    const trainerPayoutsWrap = document.getElementById("trainerPayoutsWrap");
 
     const reservationsCount = document.getElementById("reservationsCount");
     const stagesCount = document.getElementById("stagesCount");
@@ -1305,6 +1369,11 @@
     const financeTrainer = document.getElementById("financeTrainer");
     const financeAffiliation = document.getElementById("financeAffiliation");
     const financeTotal = document.getElementById("financeTotal");
+
+    const payoutScheduledCount = document.getElementById("payoutScheduledCount");
+    const payoutValidatedCount = document.getElementById("payoutValidatedCount");
+    const payoutPaidCount = document.getElementById("payoutPaidCount");
+    const payoutBlockedCount = document.getElementById("payoutBlockedCount");
 
     const logoutBtn = document.getElementById("logoutBtn");
 
@@ -2043,6 +2112,226 @@
       `;
     }
 
+
+    function getPayoutDateForStage(stageDateString) {
+      if (!stageDateString) return "";
+      const stageDate = new Date(stageDateString);
+      if (Number.isNaN(stageDate.getTime())) return "";
+      const payoutDate = new Date(stageDate.getFullYear(), stageDate.getMonth() + 1, 20);
+      return payoutDate.toISOString().slice(0, 10);
+    }
+
+    function payoutStatusLabel(status) {
+      const value = normalize(status || "scheduled");
+      const labels = {
+        scheduled: "À préparer",
+        validated: "Validé",
+        paid: "Payé",
+        blocked: "Bloqué"
+      };
+      return labels[value] || status || "À préparer";
+    }
+
+    function payoutStatusClass(status) {
+      const value = normalize(status || "scheduled");
+      if (value === "paid") return "badge-success";
+      if (value === "blocked") return "badge-danger";
+      return "badge-warning";
+    }
+
+    function reservationPayoutStatus(row) {
+      if (row?.trainer_payout_paid_at) return "paid";
+      return normalize(row?.trainer_payout_status || "scheduled");
+    }
+
+    function aggregatePayoutStatus(reservations) {
+      const paidReservations = (reservations || []).filter(row => normalize(row.payment_status || "paid") === "paid");
+      if (!paidReservations.length) return "scheduled";
+      const statuses = paidReservations.map(reservationPayoutStatus);
+      if (statuses.every(status => status === "paid")) return "paid";
+      if (statuses.some(status => status === "blocked")) return "blocked";
+      if (statuses.every(status => status === "validated")) return "validated";
+      if (statuses.some(status => status === "validated")) return "validated";
+      return "scheduled";
+    }
+
+    function buildTrainerPayoutRows() {
+      return stagesData
+        .filter(stage => stage.trainer_id)
+        .map(stage => {
+          const reservations = stagePaidReservations(stage.id);
+          const gross = stageGrossAmount(stage);
+          const rate = trainerCommissionRate(stage.trainer_id);
+          const payout = stageTrainerPayout(stage);
+          const status = aggregatePayoutStatus(reservations);
+          const dueDate = reservations.find(row => row.trainer_payout_due_date)?.trainer_payout_due_date || getPayoutDateForStage(stage.stage_date);
+          const trainer = getTrainerById(stage.trainer_id);
+          const stageStatus = normalize(stage.status || "published");
+          return {
+            stage,
+            trainer,
+            reservations,
+            gross,
+            rate,
+            payout,
+            status,
+            dueDate,
+            completed: stageStatus === "completed"
+          };
+        })
+        .filter(row => row.reservations.length || row.gross > 0)
+        .sort((a, b) => String(a.dueDate || "9999-12-31").localeCompare(String(b.dueDate || "9999-12-31")) || String(a.stage.stage_date || "").localeCompare(String(b.stage.stage_date || "")));
+    }
+
+    function updatePayoutStats(rows) {
+      const sums = { scheduled: 0, validated: 0, paid: 0, blocked: 0 };
+      rows.forEach(row => {
+        const key = ["scheduled", "validated", "paid", "blocked"].includes(row.status) ? row.status : "scheduled";
+        sums[key] += Number(row.payout || 0);
+      });
+      if (payoutScheduledCount) payoutScheduledCount.textContent = formatPrice(sums.scheduled);
+      if (payoutValidatedCount) payoutValidatedCount.textContent = formatPrice(sums.validated);
+      if (payoutPaidCount) payoutPaidCount.textContent = formatPrice(sums.paid);
+      if (payoutBlockedCount) payoutBlockedCount.textContent = formatPrice(sums.blocked);
+    }
+
+    function renderTrainerPayouts(rows = buildTrainerPayoutRows()) {
+      if (!trainerPayoutsWrap) return;
+      updatePayoutStats(buildTrainerPayoutRows());
+
+      if (!rows.length) {
+        trainerPayoutsWrap.innerHTML = `<div class="empty">Aucun reversement formateur à afficher pour le moment.</div>`;
+        return;
+      }
+
+      trainerPayoutsWrap.innerHTML = `
+        <table>
+          <thead>
+            <tr>
+              <th>Formateur</th>
+              <th>Stage</th>
+              <th>Date stage</th>
+              <th>Échéance</th>
+              <th>Brut encaissé</th>
+              <th>Commission VP</th>
+              <th>À reverser</th>
+              <th>Statut</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rows.map(row => {
+              const stage = row.stage;
+              const trainerName = row.trainer
+                ? `${row.trainer.first_name || ""} ${row.trainer.last_name || ""}`.trim() || row.trainer.email || "Formateur"
+                : getTrainerDisplay(stage.trainer_id);
+              const status = normalize(row.status || "scheduled");
+              const completedWarning = row.completed ? "" : `<span>Stage pas encore marqué réalisé</span>`;
+              return `
+                <tr>
+                  <td><strong>${escapeHtml(trainerName)}</strong><span>${escapeHtml(row.trainer?.email || stage.trainer_id || "—")}</span></td>
+                  <td><strong>${escapeHtml(replaceLegacyModuleNames(stage.title) || "Stage")}</strong><span>${escapeHtml(stage.city || "—")}</span></td>
+                  <td>${formatStageDate(stage.stage_date)}</td>
+                  <td>${formatShortDate(row.dueDate)}</td>
+                  <td>${formatPrice(row.gross)}<span>${row.reservations.length} réservation${row.reservations.length > 1 ? "s" : ""}</span></td>
+                  <td>${Math.round(Number(row.rate || 0) * 1000) / 10}%</td>
+                  <td><strong>${formatPrice(row.payout)}</strong>${completedWarning}</td>
+                  <td><span class="badge ${payoutStatusClass(status)}">${escapeHtml(payoutStatusLabel(status))}</span></td>
+                  <td>
+                    <div class="action-stack">
+                      ${status !== "validated" ? `<button class="btn btn-secondary" type="button" onclick="window.updatePayoutStatus('${jsArg(stage.id)}', 'validated')">Valider</button>` : ""}
+                      ${status !== "paid" ? `<button class="btn btn-secondary" type="button" onclick="window.updatePayoutStatus('${jsArg(stage.id)}', 'paid')">Marquer payé</button>` : ""}
+                      ${status !== "blocked" ? `<button class="btn btn-secondary" type="button" onclick="window.updatePayoutStatus('${jsArg(stage.id)}', 'blocked')">Bloquer</button>` : ""}
+                      ${status !== "scheduled" ? `<button class="btn btn-secondary" type="button" onclick="window.updatePayoutStatus('${jsArg(stage.id)}', 'scheduled')">Repasser à préparer</button>` : ""}
+                    </div>
+                  </td>
+                </tr>
+              `;
+            }).join("")}
+          </tbody>
+        </table>
+      `;
+    }
+
+    function applyPayoutFilters() {
+      if (!trainerPayoutsWrap) return;
+      const search = normalize(document.getElementById("payoutSearch")?.value || "");
+      const status = normalize(document.getElementById("payoutStatusFilter")?.value || "");
+      const readiness = normalize(document.getElementById("payoutReadinessFilter")?.value || "");
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      const rows = buildTrainerPayoutRows().filter(row => {
+        const text = normalize([
+          row.trainer?.first_name,
+          row.trainer?.last_name,
+          row.trainer?.email,
+          row.stage.title,
+          row.stage.training_type,
+          row.stage.city,
+          row.stage.postal_code
+        ].filter(Boolean).join(" "));
+
+        const searchOk = !search || text.includes(search);
+        const statusOk = !status || normalize(row.status) === status;
+        const dueDate = row.dueDate ? new Date(row.dueDate) : null;
+        if (dueDate) dueDate.setHours(0, 0, 0, 0);
+        const readinessOk = !readiness ||
+          (readiness === "completed" && row.completed) ||
+          (readiness === "not_completed" && !row.completed) ||
+          (readiness === "due" && dueDate && dueDate <= today && row.status !== "paid");
+
+        return searchOk && statusOk && readinessOk;
+      });
+
+      renderTrainerPayouts(rows);
+    }
+
+    window.updatePayoutStatus = async (stageId, status) => {
+      const stage = stagesData.find(item => String(item.id) === String(stageId));
+      if (!stage) {
+        alert("Stage introuvable.");
+        return;
+      }
+
+      const labels = {
+        scheduled: "repasser ce reversement à préparer",
+        validated: "valider ce reversement",
+        paid: "marquer ce reversement comme payé",
+        blocked: "bloquer ce reversement"
+      };
+
+      const isPaidAction = status === "paid";
+      const isCompleted = normalize(stage.status) === "completed";
+      const warning = isPaidAction && !isCompleted
+        ? "\n\nAttention : ce stage n’est pas encore marqué comme réalisé."
+        : "";
+      const confirmed = window.confirm(`Confirmer : ${labels[status] || "modifier ce reversement"} ?${warning}`);
+      if (!confirmed) return;
+
+      const note = status === "blocked" ? window.prompt("Motif du blocage / note interne :", "") : "";
+      if (status === "blocked" && note === null) return;
+
+      try {
+        const result = await callAdminTool("update_payout_status", {
+          stage_id: stageId,
+          status,
+          note: note || ""
+        });
+
+        if (!result.success) {
+          alert(result.error || "Mise à jour impossible.");
+          return;
+        }
+
+        alert("Statut du reversement mis à jour.");
+        await loadReservations();
+      } catch (error) {
+        console.error(error);
+        alert(error.message || "Erreur lors de la mise à jour du reversement.");
+      }
+    };
+
     function trainerAlreadyExists(email) {
       return trainersData.some(t => normalize(t.email) === normalize(email));
     }
@@ -2637,6 +2926,7 @@
       renderReservations(reservationsData);
       updateFinance();
       renderStages(stagesData);
+      applyPayoutFilters();
     }
 
     async function loadStages() {
@@ -2644,6 +2934,7 @@
         const result = await callAdminTool("list_stages");
         stagesData = result.stages || [];
         renderStages(stagesData);
+        applyPayoutFilters();
       } catch (error) {
         console.error(error);
         stagesWrap.innerHTML = `<div class="error">Impossible de charger les stages : ${escapeHtml(error.message || "erreur inconnue")}</div>`;
@@ -3255,6 +3546,10 @@ VITAL PROTECT`
     document.getElementById("trainerSessionModuleFilter").addEventListener("input", applyTrainerSessionFilters);
     document.getElementById("trainerSessionCityFilter").addEventListener("input", applyTrainerSessionFilters);
     document.getElementById("trainerSessionStatusFilter").addEventListener("change", applyTrainerSessionFilters);
+
+    document.getElementById("payoutSearch")?.addEventListener("input", applyPayoutFilters);
+    document.getElementById("payoutStatusFilter")?.addEventListener("change", applyPayoutFilters);
+    document.getElementById("payoutReadinessFilter")?.addEventListener("change", applyPayoutFilters);
 
 
     function updateStageStandardPriceInput() {
