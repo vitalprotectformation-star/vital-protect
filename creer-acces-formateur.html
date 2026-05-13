@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <script>
+    (function () {
+      try {
+        if (sessionStorage.getItem('vpl-route-transition-next') !== '1') return;
+        var root = document.documentElement;
+        var origin = JSON.parse(sessionStorage.getItem('vpl-route-transition-origin') || '{}');
+        if (Number.isFinite(origin.x)) root.style.setProperty('--vpl-transition-x', (Math.max(0, Math.min(1, origin.x)) * 100) + '%');
+        if (Number.isFinite(origin.y)) root.style.setProperty('--vpl-transition-y', (Math.max(0, Math.min(1, origin.y)) * 100) + '%');
+        root.classList.add('vpl-route-preload-transition');
+      } catch (_) {}
+    })();
+  </script>
+  <style>
+    html{--vpl-transition-image:url("transition-screen.png");--vpl-transition-bg-size:cover}
+    html.vpl-route-preload-transition,html.vpl-route-preload-transition body{background:#2f6f9f!important}
+    html.vpl-route-preload-transition::before{content:"";position:fixed;inset:0;z-index:2147482998;pointer-events:none;background-color:#2f6f9f;background-image:var(--vpl-transition-image);background-position:center;background-size:var(--vpl-transition-bg-size);background-repeat:no-repeat;opacity:1}
+    @media (max-width: 768px), (pointer: coarse) and (orientation: portrait){html{--vpl-transition-image:url("transition-screen-mobile.jpg");--vpl-transition-bg-size:cover}}
+  </style>
+  <link rel="preload" as="image" href="transition-screen.png" media="(min-width: 769px)" />
+  <link rel="preload" as="image" href="transition-screen-mobile.jpg" media="(max-width: 768px), (pointer: coarse) and (orientation: portrait)" />
+  <script src="/page-transition.js"></script>
+  <script>
+    if (!window.VitalPageTransition) {
+      document.write('<script src="page-transition.js"><\/script>');
+    }
+  </script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Créer mon accès formateur — VITAL PROTECT</title>
+  <style>
+    :root {
+      --navy: #0b2e59;
+      --blue: #1f6feb;
+      --bg: #f4f7fb;
+      --card: #ffffff;
+      --border: #dbe4f0;
+      --text: #142033;
+      --muted: #667085;
+      --success: #0f9d58;
+      --danger: #c62828;
+      --shadow: 0 10px 30px rgba(11, 46, 89, 0.08);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .card {
+      width: min(560px, 100%);
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      padding: 30px;
+    }
+
+    .logo { margin: 0 auto 20px; width: fit-content; }
+    .logo img { width: min(220px, 58vw); height: auto; display: block; }
+    h1 { margin: 0 0 10px; font-size: 2rem; line-height: 1.1; }
+    p { margin: 0 0 16px; color: var(--muted); line-height: 1.65; }
+
+    .info-box {
+      background: #f8fbff;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px;
+      margin: 18px 0;
+    }
+
+    .field { margin-bottom: 14px; }
+    label { display: block; margin-bottom: 6px; font-weight: 700; }
+    input {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      font-size: 1rem;
+      background: white;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 12px;
+      padding: 13px 16px;
+      font-size: 1rem;
+      font-weight: 800;
+      cursor: pointer;
+      background: var(--blue);
+      color: white;
+      width: 100%;
+    }
+
+    .btn:disabled { opacity: .65; cursor: not-allowed; }
+    .secondary-link { display: block; margin-top: 16px; text-align: center; color: var(--navy); text-decoration: none; font-weight: 700; }
+    .status { margin-top: 14px; min-height: 22px; line-height: 1.5; color: var(--muted); }
+    .status.success { color: var(--success); }
+    .status.error { color: var(--danger); }
+
+    @media (max-width: 480px) {
+      body { padding: 18px; align-items: flex-start; padding-top: 42px; }
+      .card { padding: 22px; border-radius: 20px; }
+      h1 { font-size: 1.55rem; }
+      input { font-size: 16px; }
+      .btn { min-height: 46px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="logo"><img src="/logo.png" alt="VITAL PROTECT" /></div>
+    <h1>Créer mon accès formateur</h1>
+    <p>Votre paiement est enregistré. Choisissez votre mot de passe pour accéder au dashboard formateur et suivre votre parcours.</p>
+
+    <div class="info-box">
+      <p><strong>Après création :</strong> vous serez connecté puis redirigé vers votre dashboard formateur.</p>
+      <p><strong>Avant activation :</strong> certaines fonctions restent verrouillées jusqu’à validation par VITAL PROTECT.</p>
+    </div>
+
+    <form id="setupForm">
+      <div class="field">
+        <label for="password">Mot de passe</label>
+        <input id="password" type="password" minlength="8" autocomplete="new-password" required placeholder="8 caractères minimum" />
+      </div>
+      <div class="field">
+        <label for="confirmPassword">Confirmer le mot de passe</label>
+        <input id="confirmPassword" type="password" minlength="8" autocomplete="new-password" required placeholder="Répétez le mot de passe" />
+      </div>
+      <button id="submitBtn" class="btn" type="submit">Créer mon accès et ouvrir le dashboard</button>
+    </form>
+
+    <div id="status" class="status"></div>
+    <a class="secondary-link" href="/formateur-login.html">J’ai déjà mon accès formateur</a>
+  </div>
+
+  <script type="module">
+    import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
+    const supabase = createClient(
+      "https://zsraqxzneghkzaozzuci.supabase.co",
+      "sb_publishable_VlTpYjzJ3DKpFA1Un_EFHQ_FW-mYK4U"
+    );
+
+    const url = new URL(window.location.href);
+    const sessionId = url.searchParams.get("session_id") || "";
+    const registrationId = url.searchParams.get("registration_id") || "";
+    const token = url.searchParams.get("token") || "";
+
+    const form = document.getElementById("setupForm");
+    const status = document.getElementById("status");
+    const submitBtn = document.getElementById("submitBtn");
+
+    function setStatus(message, type = "") {
+      status.textContent = message;
+      status.className = `status${type ? " " + type : ""}`;
+    }
+
+    if (!sessionId && (!registrationId || !token)) {
+      setStatus("Lien incomplet. Utilisez le lien reçu par email ou contactez VITAL PROTECT.", "error");
+      submitBtn.disabled = true;
+    }
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      const password = document.getElementById("password").value;
+      const confirmPassword = document.getElementById("confirmPassword").value;
+
+      if (!password || password.length < 8) {
+        setStatus("Le mot de passe doit contenir au moins 8 caractères.", "error");
+        return;
+      }
+
+      if (password !== confirmPassword) {
+        setStatus("Les deux mots de passe ne correspondent pas.", "error");
+        return;
+      }
+
+      submitBtn.disabled = true;
+      setStatus("Création de votre accès en cours...");
+
+      try {
+        const res = await fetch("/api/setup-trainer-account", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            session_id: sessionId,
+            registration_id: registrationId,
+            token,
+            password,
+            confirm_password: confirmPassword
+          })
+        });
+
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok || !data.success) {
+          throw new Error(data.error || "Création de l'accès impossible.");
+        }
+
+        setStatus("Accès créé. Connexion au dashboard...", "success");
+
+        const { error: loginError } = await supabase.auth.signInWithPassword({
+          email: data.email,
+          password
+        });
+
+        if (loginError) {
+          setStatus("Accès créé. Vous pouvez maintenant vous connecter avec votre mot de passe.", "success");
+          setTimeout(() => {
+            window.location.href = "/formateur-login.html";
+          }, 1200);
+          return;
+        }
+
+        setTimeout(() => {
+          window.location.href = "/espace-formateur.html";
+        }, 700);
+      } catch (error) {
+        console.error(error);
+        setStatus(error.message || "Erreur réseau ou serveur.", "error");
+      } finally {
+        submitBtn.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>

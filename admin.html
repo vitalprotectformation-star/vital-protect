@@ -2375,6 +2375,16 @@
       const isValidated = validationStatus === "validated";
       const isRejected = validationStatus === "rejected" || paymentStatus === "canceled" || paymentStatus === "failed";
       const existsAsTrainer = trainerAlreadyExists(row.email);
+      const portalCreated = Boolean(row.portal_account_created_at || row.auth_user_id);
+      const canSendPortalAccess = !existsAsTrainer && !portalCreated && ["checkout_created", "pending_payment", "authorized", "captured", "paid"].includes(paymentStatus);
+
+      if (canSendPortalAccess) {
+        actions.push(`
+          <button class="btn btn-secondary" type="button" onclick="window.sendTrainerAccessEmail('${jsArg(row.id)}')">
+            Envoyer accès dashboard
+          </button>
+        `);
+      }
 
       if (!isRejected && isPendingValidation && (isAuthorized || isCheckoutCreated)) {
         actions.push(`
@@ -2513,7 +2523,8 @@
                   <td>
                     <strong>${escapeHtml(row.email || "—")}</strong>
                     <span>${escapeHtml(row.phone || "—")}</span><br />
-                    <span>${escapeHtml(row.city || "—")}</span>
+                    <span>${escapeHtml(row.city || "—")}</span><br />
+                    <span>Accès dashboard : ${row.portal_account_created_at || row.auth_user_id ? "créé" : (row.portal_invite_sent_at ? "lien envoyé" : "à créer")}</span>
                   </td>
                   <td>
                     <strong>${escapeHtml(getCandidateSessionLabel(row))}</strong>
@@ -3307,6 +3318,40 @@ VITAL PROTECT`
       } catch (error) {
         console.error(error);
         alert(error.message || "Erreur lors de la suppression du stage.");
+      }
+    };
+
+    window.sendTrainerAccessEmail = async (registrationId) => {
+      const confirmed = window.confirm(
+        "Envoyer au candidat un lien sécurisé pour créer son accès dashboard formateur ?\n\n" +
+        "Le candidat choisira lui-même son mot de passe."
+      );
+
+      if (!confirmed) return;
+
+      try {
+        const headers = await getAuthHeaders();
+
+        const res = await fetch("/api/send-trainer-access-email", {
+          method: "POST",
+          headers,
+          body: JSON.stringify({ registration_id: registrationId })
+        });
+
+        const result = await parseApiResponse(res);
+
+        if (result.success) {
+          const fallback = result.email_sent
+            ? ""
+            : `\n\nRESEND_API_KEY n'est pas configurée : copie le lien ci-dessous et envoie-le manuellement :\n${result.access_link || ""}`;
+          alert(`Lien d'accès dashboard envoyé à ${result.email || "ce candidat"}.${fallback}`);
+          await loadTrainerRegistrations();
+        } else {
+          alert(result.error || "Envoi du lien impossible.");
+        }
+      } catch (error) {
+        console.error(error);
+        alert(error.message || "Erreur lors de l'envoi du lien d'accès.");
       }
     };
 

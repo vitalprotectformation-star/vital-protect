@@ -161,17 +161,28 @@
       <p>Votre dossier formateur et vos modules choisis ont bien été reçus par VITAL PROTECT.</p>
 
       <div class="info-box">
-        <p><strong>Étape suivante :</strong> votre dashboard formateur candidat est ouvert.</p>
-        <p><strong>Accès :</strong> vous recevez un email avec un lien sécurisé pour accéder au dashboard formateur.</p>
+        <p><strong>Étape suivante :</strong> créez votre mot de passe pour ouvrir votre dashboard formateur.</p>
+        <p><strong>Accès :</strong> si vous avez fermé la page de création, VITAL PROTECT peut vous renvoyer un lien sécurisé.</p>
         <p><strong>Dates :</strong> les sessions disponibles correspondant à vos modules seront visibles depuis ce dashboard.</p>
         <p><strong>Encaissement :</strong> le montant reste en autorisation et ne sera capturé qu’après validation de votre dossier.</p>
       </div>
 
       <div class="actions">
-        <a href="/formateur-login.html" class="btn btn-primary">Accéder à mon dashboard</a>
+        <a id="setupAccessLink" href="/creer-acces-formateur.html" class="btn btn-primary">Créer mon accès formateur</a>
         <a href="/" class="btn btn-secondary">Retour à l’accueil</a>
       </div>
     </div>
   </div>
+
+  <script>
+    (function () {
+      var params = new URLSearchParams(window.location.search);
+      var sessionId = params.get("session_id");
+      var link = document.getElementById("setupAccessLink");
+      if (link && sessionId) {
+        link.href = "/creer-acces-formateur.html?session_id=" + encodeURIComponent(sessionId);
+      }
+    })();
+  </script>
 </body>
 </html>
