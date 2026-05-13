@@ -2455,7 +2455,14 @@
     };
 
     function trainerAlreadyExists(email) {
-      return trainersData.some(t => normalize(t.email) === normalize(email));
+      // Ici, "existe comme formateur" doit signifier "formateur réellement activé".
+      // Un candidat peut déjà avoir créé son accès dashboard, ou avoir une ligne technique liée,
+      // sans pour autant devoir disparaître de la liste Candidats.
+      return trainersData.some(t => {
+        if (normalize(t.email) !== normalize(email)) return false;
+        const status = normalize(t.status || t.certification_status || "");
+        return ["active", "certified"].includes(status) || t.is_active === true;
+      });
     }
 
     function buildCandidateActions(row) {
@@ -2868,7 +2875,15 @@
     }
 
     function isCandidateActivated(row) {
-      return Boolean(row?.is_activated) || trainerAlreadyExists(row.email);
+      // Ne pas masquer un candidat uniquement parce qu'un compte/dashboard existe.
+      // On masque seulement quand le dossier est réellement terminé/activé.
+      const paymentStatus = normalize(row?.payment_status || "");
+      const validationStatus = normalize(row?.validation_status || "");
+      const overallResult = getCandidateOverallResultValue(row);
+      return Boolean(row?.is_activated)
+        && ["captured", "paid"].includes(paymentStatus)
+        && validationStatus === "validated"
+        && overallResult === "passed";
     }
 
     function trainerRecycleReasons(row) {
