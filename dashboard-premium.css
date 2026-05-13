@@ -1410,3 +1410,99 @@ body:has(header) footer {
   background: rgba(255, 103, 125, 0.16);
   border-color: rgba(255, 103, 125, 0.24);
 }
+
+/* v36 — Admin candidats : validation individuelle par module */
+.candidate-path-cell {
+  min-width: 420px;
+}
+
+.candidate-session-summary {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.candidate-session-summary > strong {
+  display: block;
+  color: #edf6ff;
+  line-height: 1.25;
+}
+
+.candidate-session-summary > span:not(.badge) {
+  color: #8ea8c8;
+  font-size: 0.82rem;
+}
+
+.candidate-module-review {
+  display: grid;
+  gap: 10px;
+  margin-top: 10px;
+  padding: 12px;
+  border-radius: 18px;
+  background: rgba(6, 18, 34, 0.52);
+  border: 1px solid rgba(129, 163, 214, 0.14);
+}
+
+.candidate-module-review-title {
+  color: #86f3ff;
+  font-size: 0.72rem;
+  font-weight: 950;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+.candidate-module-review-row {
+  display: grid;
+  grid-template-columns: minmax(240px, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  padding: 12px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(255, 255, 255, 0.065);
+}
+
+.candidate-module-review-row strong {
+  display: block;
+  margin-bottom: 7px;
+  color: #edf6ff;
+  font-size: 0.9rem;
+  line-height: 1.22;
+}
+
+.candidate-module-review-row small,
+.candidate-module-review-empty {
+  color: #8ea8c8;
+  font-size: 0.8rem;
+  line-height: 1.35;
+}
+
+.candidate-module-actions {
+  display: flex;
+  gap: 7px;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+.btn-mini {
+  min-height: 34px;
+  padding: 8px 10px !important;
+  border-radius: 12px !important;
+  font-size: 0.78rem !important;
+  line-height: 1 !important;
+}
+
+@media (max-width: 900px) {
+  .candidate-path-cell {
+    min-width: 320px;
+  }
+
+  .candidate-module-review-row {
+    grid-template-columns: 1fr;
+  }
+
+  .candidate-module-actions {
+    justify-content: flex-start;
+  }
+}

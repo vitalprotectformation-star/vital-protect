@@ -2045,7 +2045,7 @@
 
     function jsArg(value) {
       return escapeAttr(String(value ?? "")
-        .replace(/\\/g, "\\\\")
+        .replace(/\\/g, "\\\")
         .replace(/'/g, "\\'")
         .replace(/\r/g, "\\r")
         .replace(/\n/g, "\\n")
@@ -2502,41 +2502,11 @@
         `);
       }
 
-      if (isCaptured && isValidated && result === "pending") {
-        actions.push(`
-          <button class="btn btn-success" onclick="window.updateTrainingResult('${jsArg(row.id)}', 'passed')">
-            Marquer réussi
-          </button>
-        `);
+      // Les résultats sont désormais validés module par module dans la colonne Parcours.
+      // Le bouton d'activation apparaît seulement quand tous les modules financés sont validés.
+      const effectiveResult = getCandidateOverallResultValue(row);
 
-        actions.push(`
-          <button class="btn btn-warning" onclick="window.updateTrainingResult('${jsArg(row.id)}', 'resit')">
-            Marquer rattrapage
-          </button>
-        `);
-
-        actions.push(`
-          <button class="btn btn-danger" onclick="window.updateTrainingResult('${jsArg(row.id)}', 'failed')">
-            Marquer recalé
-          </button>
-        `);
-      }
-
-      if (isCaptured && isValidated && result === "resit") {
-        actions.push(`
-          <button class="btn btn-success" onclick="window.updateTrainingResult('${jsArg(row.id)}', 'passed')">
-            Valider après rattrapage
-          </button>
-        `);
-
-        actions.push(`
-          <button class="btn btn-danger" onclick="window.updateTrainingResult('${jsArg(row.id)}', 'failed')">
-            Recaler après rattrapage
-          </button>
-        `);
-      }
-
-      if (isCaptured && isValidated && result === "passed" && !existsAsTrainer) {
+      if (isCaptured && isValidated && effectiveResult === "passed" && !existsAsTrainer) {
         actions.push(`
           <button class="btn btn-primary" onclick="window.finalizeTrainer('${jsArg(row.id)}')">
             Activer formateur
@@ -2544,7 +2514,7 @@
         `);
       }
 
-      if (isCaptured && isValidated && result === "passed" && existsAsTrainer) {
+      if (isCaptured && isValidated && effectiveResult === "passed" && existsAsTrainer) {
         actions.push(`<span class="badge badge-success">Formateur déjà activé</span>`);
       }
 
@@ -2586,11 +2556,12 @@
     }
 
 
-    function getCandidateModulesLabel(row) {
+    function getCandidateModules(row) {
       const rawParts = [];
       const message = String(row.message || "");
       const match = message.match(/Modules demandés\s*:\s*([^\n]+)/i);
       if (match?.[1]) rawParts.push(match[1]);
+      if (Array.isArray(row.selected_modules)) rawParts.push(row.selected_modules.join(" | "));
       if (row.training_type) rawParts.push(row.training_type);
       if (row.selected_module) rawParts.push(row.selected_module);
 
@@ -2599,6 +2570,11 @@
         extractOfficialModulesFromText(replaceLegacyModuleNames(value)).forEach(moduleName => pushOfficialModule(modules, moduleName));
       });
 
+      return modules.slice(0, 3);
+    }
+
+    function getCandidateModulesLabel(row) {
+      const modules = getCandidateModules(row);
       const modulesLabel = modules.length ? modules.join(" + ") : "Modules à clarifier";
       const count = row.trainer_formula_module_count || row.selected_module_count || row.module_count;
       const price = row.trainer_formula_price || row.formula_price;
@@ -2606,6 +2582,101 @@
       return formula ? `${formula} — ${modulesLabel}` : modulesLabel;
     }
 
+    function normalizeModuleResults(results) {
+      if (!results) return {};
+      if (typeof results === "string") {
+        try {
+          results = JSON.parse(results);
+        } catch (_) {
+          return {};
+        }
+      }
+      if (typeof results !== "object" || Array.isArray(results)) return {};
+
+      const normalized = {};
+      Object.entries(results).forEach(([key, value]) => {
+        const moduleName = getOfficialModuleName(key) || key;
+        if (!moduleName) return;
+        const status = normalize(value);
+        normalized[moduleName] = ["pending", "passed", "resit", "failed"].includes(status) ? status : "pending";
+      });
+      return normalized;
+    }
+
+    function candidateModuleResultLabel(result) {
+      const value = normalize(result || "pending");
+      if (value === "passed") return "Validé";
+      if (value === "resit") return "Rattrapage";
+      if (value === "failed") return "Recalé";
+      return "À valider";
+    }
+
+    function candidateModuleResultBadgeClass(result) {
+      const value = normalize(result || "pending");
+      if (value === "passed") return "badge-success";
+      if (value === "failed") return "badge-danger";
+      if (value === "resit") return "badge-warning";
+      return "badge-warning";
+    }
+
+    function getCandidateModuleSummary(row) {
+      const modules = getCandidateModules(row);
+      const results = normalizeModuleResults(row.training_module_results);
+      if (!modules.length) return "Modules à clarifier";
+      const passed = modules.filter(moduleName => results[moduleName] === "passed").length;
+      const resit = modules.filter(moduleName => results[moduleName] === "resit").length;
+      const failed = modules.filter(moduleName => results[moduleName] === "failed").length;
+      if (passed === modules.length) return `Tous validés (${passed}/${modules.length})`;
+      if (failed) return `${failed} recalé${failed > 1 ? "s" : ""} · ${passed}/${modules.length} validé${passed > 1 ? "s" : ""}`;
+      if (resit) return `${resit} rattrapage${resit > 1 ? "s" : ""} · ${passed}/${modules.length} validé${passed > 1 ? "s" : ""}`;
+      return `${passed}/${modules.length} module${modules.length > 1 ? "s" : ""} validé${passed > 1 ? "s" : ""}`;
+    }
+
+    function getCandidateOverallResultValue(row) {
+      const modules = getCandidateModules(row);
+      const results = normalizeModuleResults(row.training_module_results);
+      if (!modules.length) return row.training_result || "pending";
+      if (modules.every(moduleName => results[moduleName] === "passed")) return "passed";
+      if (modules.some(moduleName => results[moduleName] === "failed")) return "failed";
+      if (modules.some(moduleName => results[moduleName] === "resit")) return "resit";
+      return row.training_result || "pending";
+    }
+
+    function renderCandidateModuleValidation(row) {
+      const modules = getCandidateModules(row);
+      if (!modules.length) {
+        return `<div class="candidate-module-review-empty">Modules à clarifier avant validation.</div>`;
+      }
+
+      const paymentStatus = normalize(row.payment_status || "");
+      const validationStatus = normalize(row.validation_status || "pending");
+      const canValidateModules = ["captured", "paid"].includes(paymentStatus) && validationStatus === "validated";
+      const results = normalizeModuleResults(row.training_module_results);
+
+      return `
+        <div class="candidate-module-review">
+          <div class="candidate-module-review-title">Validation par module</div>
+          ${modules.map(moduleName => {
+            const status = results[moduleName] || "pending";
+            return `
+              <div class="candidate-module-review-row">
+                <div>
+                  <strong>${escapeHtml(moduleName)}</strong>
+                  <span class="badge ${candidateModuleResultBadgeClass(status)}">${escapeHtml(candidateModuleResultLabel(status))}</span>
+                </div>
+                ${canValidateModules ? `
+                  <div class="candidate-module-actions">
+                    ${status !== "passed" ? `<button class="btn btn-success btn-mini" type="button" onclick="window.updateCandidateModuleResult('${jsArg(row.id)}', '${jsArg(moduleName)}', 'passed')">Valider</button>` : ""}
+                    ${status !== "resit" ? `<button class="btn btn-warning btn-mini" type="button" onclick="window.updateCandidateModuleResult('${jsArg(row.id)}', '${jsArg(moduleName)}', 'resit')">Rattrapage</button>` : ""}
+                    ${status !== "failed" ? `<button class="btn btn-danger btn-mini" type="button" onclick="window.updateCandidateModuleResult('${jsArg(row.id)}', '${jsArg(moduleName)}', 'failed')">Recaler</button>` : ""}
+                  </div>
+                ` : `<small>Validez le dossier et encaissez le paiement pour débloquer ce module.</small>`}
+              </div>
+            `;
+          }).join("")}
+        </div>
+      `;
+    }
 
     function getTrainerSessionById(sessionId) {
       if (!sessionId) return null;
@@ -2660,10 +2731,10 @@
             <tr>
               <th>Candidat</th>
               <th>Contact</th>
-              <th>Session</th>
+              <th>Parcours / modules</th>
               <th>Paiement</th>
-              <th>Validation</th>
-              <th>Résultat</th>
+              <th>Dossier</th>
+              <th>Modules</th>
               <th>Date</th>
               <th>Action</th>
             </tr>
@@ -2683,7 +2754,7 @@
                 row.validation_status === "rejected" ? "badge-danger" :
                 "badge-warning";
 
-              const resultValue = row.training_result || "pending";
+              const resultValue = getCandidateOverallResultValue(row);
 
               const resultBadgeClass =
                 resultValue === "passed" ? "badge-success" :
@@ -2700,15 +2771,17 @@
                     <span>${escapeHtml(row.city || "—")}</span><br />
                     <span>Accès dashboard : ${row.portal_account_created_at || row.auth_user_id ? "créé" : (row.portal_invite_sent_at ? "lien envoyé" : "à créer")}</span>
                   </td>
-                  <td>
-                    <strong>${escapeHtml(getCandidateSessionLabel(row))}</strong>
-                    <span>${escapeHtml(getCandidateModulesLabel(row))}</span><br />
-                    <span class="badge ${candidateSessionStatusBadgeClass(getCandidateSessionStatus(row))}">${escapeHtml(candidateSessionStatusLabel(getCandidateSessionStatus(row)))}</span>
-                    ${row.candidate_session_confirmed_at ? `<br /><span>Confirmée le ${formatDate(row.candidate_session_confirmed_at)}</span>` : ""}
+                  <td class="candidate-path-cell">
+                    <div class="candidate-session-summary">
+                      <strong>${escapeHtml(getCandidateSessionLabel(row))}</strong>
+                      <span class="badge ${candidateSessionStatusBadgeClass(getCandidateSessionStatus(row))}">${escapeHtml(candidateSessionStatusLabel(getCandidateSessionStatus(row)))}</span>
+                      ${row.candidate_session_confirmed_at ? `<span>Confirmée le ${formatDate(row.candidate_session_confirmed_at)}</span>` : ""}
+                    </div>
+                    ${renderCandidateModuleValidation(row)}
                   </td>
                   <td><span class="badge ${paymentBadgeClass}">${escapeHtml(row.payment_status || "—")}</span></td>
                   <td><span class="badge ${validationBadgeClass}">${escapeHtml(row.validation_status || "—")}</span></td>
-                  <td><span class="badge ${resultBadgeClass}">${escapeHtml(resultValue)}</span></td>
+                  <td><span class="badge ${resultBadgeClass}">${escapeHtml(getCandidateModuleSummary(row))}</span></td>
                   <td>${formatDate(row.created_at)}</td>
                   <td>${buildCandidateActions(row)}</td>
                 </tr>
@@ -2731,10 +2804,10 @@
             <tr>
               <th>Candidat</th>
               <th>Contact</th>
-              <th>Session</th>
+              <th>Parcours / modules</th>
               <th>Paiement</th>
-              <th>Validation</th>
-              <th>Résultat</th>
+              <th>Dossier</th>
+              <th>Modules</th>
               <th>Raison archive</th>
               <th>Archivé le</th>
             </tr>
@@ -2752,7 +2825,7 @@
                 row.validation_status === "rejected" ? "badge-danger" :
                 "badge-warning";
 
-              const resultValue = row.training_result || "pending";
+              const resultValue = getCandidateOverallResultValue(row);
 
               const resultBadgeClass =
                 resultValue === "passed" ? "badge-success" :
@@ -2768,15 +2841,17 @@
                     <span>${escapeHtml(row.phone || "—")}</span><br />
                     <span>${escapeHtml(row.city || "—")}</span>
                   </td>
-                  <td>
-                    <strong>${escapeHtml(getCandidateSessionLabel(row))}</strong>
-                    <span>${escapeHtml(getCandidateModulesLabel(row))}</span><br />
-                    <span class="badge ${candidateSessionStatusBadgeClass(getCandidateSessionStatus(row))}">${escapeHtml(candidateSessionStatusLabel(getCandidateSessionStatus(row)))}</span>
-                    ${row.candidate_session_confirmed_at ? `<br /><span>Confirmée le ${formatDate(row.candidate_session_confirmed_at)}</span>` : ""}
+                  <td class="candidate-path-cell">
+                    <div class="candidate-session-summary">
+                      <strong>${escapeHtml(getCandidateSessionLabel(row))}</strong>
+                      <span class="badge ${candidateSessionStatusBadgeClass(getCandidateSessionStatus(row))}">${escapeHtml(candidateSessionStatusLabel(getCandidateSessionStatus(row)))}</span>
+                      ${row.candidate_session_confirmed_at ? `<span>Confirmée le ${formatDate(row.candidate_session_confirmed_at)}</span>` : ""}
+                    </div>
+                    ${renderCandidateModuleValidation(row)}
                   </td>
                   <td><span class="badge ${paymentBadgeClass}">${escapeHtml(row.payment_status || "—")}</span></td>
                   <td><span class="badge ${validationBadgeClass}">${escapeHtml(row.validation_status || "—")}</span></td>
-                  <td><span class="badge ${resultBadgeClass}">${escapeHtml(resultValue)}</span></td>
+                  <td><span class="badge ${resultBadgeClass}">${escapeHtml(getCandidateModuleSummary(row))}</span></td>
                   <td><span class="badge badge-warning">${escapeHtml(archiveReasonLabel(row.archive_reason))}</span></td>
                   <td>${formatDate(row.archived_at)}</td>
                 </tr>
@@ -3115,7 +3190,7 @@
 
         const searchOk = !search || text.includes(search);
         const validationOk = !validation || row.validation_status === validation;
-        const resultOk = !result || (row.training_result || "pending") === result;
+        const resultOk = !result || getCandidateOverallResultValue(row) === result;
         const paymentOk = !payment || row.payment_status === payment;
 
         return searchOk && validationOk && resultOk && paymentOk;
@@ -3784,6 +3859,46 @@ VITAL PROTECT`
       } catch (error) {
         console.error(error);
         alert(error.message || "Erreur lors de la mise à jour du résultat.");
+      }
+    };
+
+
+    window.updateCandidateModuleResult = async (registrationId, moduleName, result) => {
+      const labels = {
+        passed: "valider ce module",
+        failed: "recaler ce module",
+        resit: "mettre ce module en rattrapage"
+      };
+
+      const confirmed = window.confirm(`Confirmer : ${labels[result] || "modifier ce module"} ?\n\n${moduleName}`);
+      if (!confirmed) return;
+
+      try {
+        const headers = await getAuthHeaders();
+
+        const res = await fetch("/api/update-training-module-result", {
+          method: "POST",
+          headers,
+          body: JSON.stringify({
+            registration_id: registrationId,
+            module_name: moduleName,
+            result
+          })
+        });
+
+        const apiResult = await parseApiResponse(res);
+
+        if (apiResult.success) {
+          alert(apiResult.message || "Module mis à jour.");
+          await loadTrainerRegistrations();
+          await loadArchives();
+          await loadTrainers();
+        } else {
+          alert(apiResult.error || "Erreur lors de la mise à jour du module.");
+        }
+      } catch (error) {
+        console.error(error);
+        alert(error.message || "Erreur lors de la mise à jour du module.");
       }
     };
 
