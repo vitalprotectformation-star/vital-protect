@@ -111,12 +111,35 @@ export default async function handler(req, res) {
     }
 
     const rows = (data || []).map(normalizeCandidate);
+    const emails = [...new Set(rows.map(row => normalizeEmail(row.email)).filter(Boolean))];
+    let activatedEmails = new Set();
+
+    if (emails.length) {
+      const { data: trainers, error: trainersError } = await supabase
+        .from("trainers")
+        .select("email, status, certification_status, affiliation_status")
+        .limit(1000);
+
+      if (!trainersError) {
+        activatedEmails = new Set(
+          (trainers || [])
+            .filter(trainer => emails.includes(normalizeEmail(trainer.email)))
+            .filter(trainer => !["candidate", "pending", "in_training"].includes(String(trainer.status || trainer.certification_status || "").trim().toLowerCase()))
+            .map(trainer => normalizeEmail(trainer.email))
+        );
+      }
+    }
+
+    const rowsWithActivation = rows.map(row => ({
+      ...row,
+      is_activated: activatedEmails.has(normalizeEmail(row.email))
+    }));
 
     return res.status(200).json({
       success: true,
       source: "list-trainer-registrations",
-      count: typeof count === "number" ? count : rows.length,
-      trainer_registrations: rows
+      count: typeof count === "number" ? count : rowsWithActivation.length,
+      trainer_registrations: rowsWithActivation
     });
   } catch (error) {
     return res.status(500).json({

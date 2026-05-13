@@ -1,6 +1,7 @@
 import Stripe from "stripe";
 import { createClient } from "@supabase/supabase-js";
 import { Resend } from "resend";
+import { randomBytes } from "crypto";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
@@ -244,6 +245,87 @@ async function sendEmailSafe(payload) {
   }
 }
 
+async function findAuthUserByEmail(email) {
+  const target = normalizeEmail(email);
+  if (!target) return null;
+  let page = 1;
+  const perPage = 1000;
+
+  while (page <= 20) {
+    const { data, error } = await supabase.auth.admin.listUsers({ page, perPage });
+    if (error) {
+      console.error("Erreur recherche utilisateur Auth:", error);
+      return null;
+    }
+
+    const users = data?.users || [];
+    const found = users.find(user => normalizeEmail(user.email) === target);
+    if (found) return found;
+    if (users.length < perPage) return null;
+    page += 1;
+  }
+
+  return null;
+}
+
+async function ensureCandidateDashboardAccess({ email, firstName, lastName, origin }) {
+  const cleanEmail = normalizeEmail(email);
+  if (!cleanEmail) return null;
+
+  const redirectOrigin = origin || process.env.APP_BASE_URL || "https://www.vital-protect.fr";
+  const redirectTo = `${String(redirectOrigin).replace(/\/$/, "")}/formateur-callback.html`;
+  let authUser = await findAuthUserByEmail(cleanEmail);
+
+  if (!authUser?.id) {
+    const temporaryPassword = `${randomBytes(18).toString("base64url")}aA1!`;
+    const { data: created, error: createError } = await supabase.auth.admin.createUser({
+      email: cleanEmail,
+      password: temporaryPassword,
+      email_confirm: true,
+      user_metadata: {
+        role: "trainer_candidate",
+        first_name: firstName || "",
+        last_name: lastName || "",
+        created_from: "trainer_checkout",
+        dashboard_access_created_at: new Date().toISOString()
+      }
+    });
+
+    if (createError) {
+      console.error("Erreur création utilisateur candidat formateur:", createError);
+      return null;
+    }
+
+    authUser = created?.user || null;
+  } else {
+    await supabase.auth.admin.updateUserById(authUser.id, {
+      email_confirm: true,
+      user_metadata: {
+        ...(authUser.user_metadata || {}),
+        role: authUser.user_metadata?.role || "trainer_candidate",
+        first_name: authUser.user_metadata?.first_name || firstName || "",
+        last_name: authUser.user_metadata?.last_name || lastName || "",
+        dashboard_access_updated_at: new Date().toISOString()
+      }
+    }).catch(error => {
+      console.error("Erreur mise à jour utilisateur candidat formateur:", error);
+    });
+  }
+
+  const { data: linkData, error: linkError } = await supabase.auth.admin.generateLink({
+    type: "magiclink",
+    email: cleanEmail,
+    options: { redirectTo }
+  });
+
+  if (linkError) {
+    console.error("Erreur génération lien dashboard candidat:", linkError);
+    return null;
+  }
+
+  return linkData?.properties?.action_link || linkData?.action_link || null;
+}
+
 function classifyModule(...values) {
   const text = values
     .filter(Boolean)
@@ -458,6 +540,7 @@ async function handleTrainerCheckout(session) {
 
 ");
   const trainerSessionId = metadata.session_id || null;
+  const origin = metadata.origin || process.env.APP_BASE_URL || "https://www.vital-protect.fr";
 
   if (!email) {
     throw new Error("Missing email for trainer checkout");
@@ -524,11 +607,18 @@ async function handleTrainerCheckout(session) {
     throw new Error("Failed to save trainer registration");
   }
 
+  const dashboardLink = await ensureCandidateDashboardAccess({
+    email,
+    firstName,
+    lastName,
+    origin
+  });
+
   await sendEmailSafe({
     from: "VITAL PROTECT <contact@vital-protect.fr>",
     to: email,
     replyTo: "contact@vital-protect.fr",
-    subject: "Parcours formateur Vital Protect enregistré",
+    subject: "Votre dashboard formateur Vital Protect est ouvert",
     html: `
       <h2>Parcours formateur enregistré ✅</h2>
       <p>Bonjour ${escapeHtml(firstName)} ${escapeHtml(lastName)},</p>
@@ -536,10 +626,12 @@ async function handleTrainerCheckout(session) {
       <ul>
         <li><strong>Module(s) :</strong> ${escapeHtml(trainingType)}</li>
         <li><strong>Statut paiement :</strong> empreinte bancaire autorisée</li>
-        <li><strong>Sessions :</strong> à choisir ensuite selon les disponibilités</li>
+        <li><strong>Dashboard :</strong> accès candidat formateur ouvert</li>
+        <li><strong>Sessions :</strong> à choisir ensuite depuis votre dashboard selon les disponibilités</li>
         <li><strong>Validation :</strong> en attente</li>
       </ul>
-      <p>Vous recevrez la suite des étapes prochainement, notamment les dates de validation disponibles pour vos modules.</p>
+      ${dashboardLink ? `<p style="margin:22px 0;"><a href="${escapeHtml(dashboardLink)}" style="display:inline-block;padding:12px 18px;border-radius:12px;background:#0b2e59;color:#ffffff;text-decoration:none;font-weight:700;">Accéder à mon dashboard formateur</a></p>` : `<p>Votre accès dashboard est en préparation. VITAL PROTECT reviendra vers vous avec vos informations de connexion.</p>`}
+      <p>Depuis votre dashboard, vous pourrez voir les sessions disponibles correspondant aux modules achetés. Les fonctionnalités de création de stage seront débloquées après activation par VITAL PROTECT.</p>
       <p><strong>VITAL PROTECT</strong></p>
     `
   });

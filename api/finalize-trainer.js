@@ -177,11 +177,11 @@ export default async function handler(req, res) {
       city: registration.city || "",
       certification_date: today,
       certification_expiry: addYears(today, 2),
-      certification_status: "certified",
+      certification_status: "active",
       affiliation_start: today,
       affiliation_end: addYears(today, 1),
       affiliation_status: "active",
-      status: "certified"
+      status: "active"
     };
 
     const { data: trainerData, error: trainerError } = await supabase
@@ -201,7 +201,7 @@ export default async function handler(req, res) {
       const trainerModulePayload = {
         trainer_id: trainerData.id,
         module_name: moduleName,
-        status: "certified",
+        status: "active",
         validated_at: today,
         expires_at: addYears(today, 2)
       };

@@ -368,6 +368,47 @@ function sanitizeStageForTrainer(stage, reservations, commissionTier) {
   };
 }
 
+function parseCandidateModules(row = {}) {
+  const rawParts = [];
+  if (row.training_type) rawParts.push(row.training_type);
+  if (row.selected_module) rawParts.push(row.selected_module);
+  if (row.message) {
+    const match = String(row.message).match(/Modules demandés\s*:\s*([^\n]+)/i);
+    if (match?.[1]) rawParts.push(match[1]);
+  }
+
+  const modules = [];
+  rawParts
+    .join(" | ")
+    .split(/\s*\|\s*|\s*,\s*/g)
+    .map(value => getCanonicalModuleName(replaceLegacyModuleNames(value)))
+    .filter(Boolean)
+    .forEach(moduleName => {
+      const key = normalize(moduleName);
+      if (!modules.some(existing => normalize(existing) === key)) {
+        modules.push(moduleName);
+      }
+    });
+
+  return modules.slice(0, 3);
+}
+
+async function findPaidTrainerCandidateByEmail(email) {
+  const cleanEmail = normalize(email);
+  if (!cleanEmail) return null;
+
+  const { data, error } = await supabase
+    .from("trainer_session_registrations")
+    .select("*")
+    .ilike("email", cleanEmail)
+    .in("payment_status", ["authorized", "captured", "paid", "checkout_created"])
+    .order("created_at", { ascending: false })
+    .limit(1);
+
+  if (error) throw error;
+  return data?.[0] || null;
+}
+
 async function requireTrainer(req) {
   const authHeader = req.headers.authorization || "";
   const token = authHeader.startsWith("Bearer ")
@@ -411,18 +452,38 @@ async function requireTrainer(req) {
     };
   }
 
-  if (!trainer) {
+  if (trainer) {
+    return {
+      ok: true,
+      account_type: "trainer",
+      user,
+      trainer
+    };
+  }
+
+  try {
+    const candidate = await findPaidTrainerCandidateByEmail(email);
+    if (candidate) {
+      return {
+        ok: true,
+        account_type: "candidate",
+        user,
+        candidate
+      };
+    }
+  } catch (candidateError) {
+    console.error("Candidate access check error:", candidateError);
     return {
       ok: false,
-      status: 403,
-      error: "Profil formateur introuvable"
+      status: 500,
+      error: "Erreur de vérification candidat formateur"
     };
   }
 
   return {
-    ok: true,
-    user,
-    trainer
+    ok: false,
+    status: 403,
+    error: "Profil formateur introuvable"
   };
 }
 
@@ -625,7 +686,93 @@ async function handleCreateStage(req, res, trainer) {
   });
 }
 
-async function handleDashboard(req, res, trainer) {
+
+function sameCanonicalModuleName(a, b) {
+  return normalize(getCanonicalModuleName(a)) === normalize(getCanonicalModuleName(b));
+}
+
+async function listCandidateSessionsForModules(modules = []) {
+  if (!modules.length) return [];
+
+  const { data, error } = await supabase
+    .from("trainer_sessions")
+    .select("*")
+    .in("status", ["open", "published"])
+    .order("start_date", { ascending: true });
+
+  if (error) throw error;
+
+  return (data || [])
+    .filter(session => {
+      const moduleName = getCanonicalModuleName(session.module_name || session.training_type || session.title || "");
+      return modules.some(selected => sameCanonicalModuleName(selected, moduleName));
+    })
+    .map(session => ({
+      id: session.id,
+      module_name: getCanonicalModuleName(session.module_name || session.training_type || session.title || ""),
+      title: session.title || session.module_name || "Session formateur",
+      city: session.city || "",
+      postal_code: session.postal_code || "",
+      department: session.department || "",
+      region: session.region || "",
+      address: session.address || "",
+      start_date: session.start_date || null,
+      end_date: session.end_date || null,
+      duration_days: session.duration_days || session.duration || null,
+      remaining_places: session.remaining_places ?? null,
+      max_places: session.max_places ?? null,
+      status: session.status || "open"
+    }));
+}
+
+async function handleCandidateDashboard(req, res, candidate) {
+  const selectedModules = parseCandidateModules(candidate);
+  let sessions = [];
+  try {
+    sessions = await listCandidateSessionsForModules(selectedModules);
+  } catch (error) {
+    console.error("Candidate sessions fetch error:", error);
+  }
+
+  return res.status(200).json({
+    success: true,
+    account_type: "candidate",
+    candidate: {
+      id: candidate.id,
+      first_name: candidate.first_name || "",
+      last_name: candidate.last_name || "",
+      email: candidate.email || "",
+      phone: candidate.phone || "",
+      city: candidate.city || "",
+      payment_status: candidate.payment_status || "authorized",
+      validation_status: candidate.validation_status || "pending",
+      training_result: candidate.training_result || "pending",
+      trainer_formula_module_count: Number(candidate.trainer_formula_module_count || selectedModules.length || 1),
+      trainer_formula_price: Number(candidate.trainer_formula_price || 0),
+      selected_modules: selectedModules,
+      created_at: candidate.created_at || null,
+      session_id: candidate.session_id || null
+    },
+    candidate_sessions: sessions,
+    stages: [],
+    reservations: [],
+    stats: {
+      access_level: "candidate",
+      can_create_stage: false,
+      can_view_payouts: false,
+      can_view_registrations: false,
+      next_step: "Choisir une session de validation correspondant aux modules achetés puis attendre l’activation VITAL PROTECT."
+    }
+  });
+}
+
+async function handleDashboard(req, res, access) {
+  if (access?.account_type === "candidate") {
+    return await handleCandidateDashboard(req, res, access.candidate);
+  }
+
+  const trainer = access?.trainer || access;
+
   const { data: stages, error: stagesError } = await supabase
     .from("stages")
     .select("*")
@@ -644,6 +791,8 @@ async function handleDashboard(req, res, trainer) {
   if (!stageIds.length) {
     return res.status(200).json({
       success: true,
+      account_type: "trainer",
+      trainer,
       stages: [],
       reservations: [],
       stats: {
@@ -712,6 +861,8 @@ async function handleDashboard(req, res, trainer) {
 
   return res.status(200).json({
     success: true,
+    account_type: "trainer",
+    trainer,
     stages: safeStageRows,
     reservations: safeReservationRows,
     stats: {
@@ -795,14 +946,20 @@ export default async function handler(req, res) {
     }
 
     if (action === "create_stage") {
+      if (trainerCheck.account_type !== "trainer") {
+        return res.status(403).json({ error: "Votre profil n’est pas encore activé. La création de stage sera disponible après validation VITAL PROTECT." });
+      }
       return await handleCreateStage(req, res, trainerCheck.trainer);
     }
 
     if (action === "dashboard") {
-      return await handleDashboard(req, res, trainerCheck.trainer);
+      return await handleDashboard(req, res, trainerCheck);
     }
 
     if (action === "update_stage_status") {
+      if (trainerCheck.account_type !== "trainer") {
+        return res.status(403).json({ error: "Votre profil n’est pas encore activé." });
+      }
       return await handleUpdateStageStatus(req, res, trainerCheck.trainer);
     }
 
