@@ -1269,3 +1269,78 @@ body:has(header) footer {
     min-height: 480px;
   }
 }
+
+
+/* v33 — sessions dashboard : utiliser uniquement le visuel officiel des cards formateur */
+.candidate-session-grid {
+  grid-template-columns: repeat(auto-fit, minmax(260px, 274px));
+  gap: 18px;
+}
+
+.candidate-stage-card {
+  min-height: 515px;
+  max-width: 274px;
+  border-radius: 24px;
+  background: var(--candidate-card-bg) center/cover no-repeat;
+  border: 1px solid rgba(140, 200, 255, 0.30);
+  box-shadow: 0 24px 56px rgba(0, 0, 0, 0.32);
+}
+
+.candidate-stage-card::before {
+  background: linear-gradient(180deg, rgba(3, 13, 26, 0.02) 0%, rgba(3, 13, 26, 0.03) 44%, rgba(4, 15, 31, 0.74) 72%, rgba(5, 18, 36, 0.96) 100%);
+}
+
+.candidate-stage-card::after {
+  left: -10%;
+  right: -10%;
+  bottom: 197px;
+  height: 86px;
+  background: linear-gradient(105deg, rgba(13, 82, 170, 0.96), rgba(22, 49, 111, 0.08));
+}
+
+.candidate-stage-card-overlay {
+  min-height: 44%;
+  padding: 0 16px 16px;
+}
+
+.candidate-stage-kicker {
+  color: #d8e9ff;
+  font-size: 0.72rem;
+}
+
+.candidate-stage-status {
+  padding: 6px 10px;
+  font-size: 0.74rem;
+}
+
+.candidate-stage-card h4 {
+  margin: 0 0 8px;
+  font-size: 0.98rem;
+  line-height: 1.02;
+  -webkit-line-clamp: 3;
+}
+
+.candidate-stage-location {
+  font-size: 0.76rem;
+  margin-bottom: 8px;
+}
+
+.candidate-stage-chips span {
+  font-size: 0.66rem;
+}
+
+.candidate-stage-action {
+  min-height: 42px;
+  font-size: 0.84rem;
+}
+
+@media (max-width: 760px) {
+  .candidate-session-grid {
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  }
+
+  .candidate-stage-card {
+    max-width: none;
+    min-height: 490px;
+  }
+}
