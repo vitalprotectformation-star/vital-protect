@@ -2346,18 +2346,22 @@
 
     function buildCandidateActions(row) {
       const actions = [];
+      const paymentStatus = normalize(row.payment_status || "");
+      const validationStatus = normalize(row.validation_status || "pending");
+      const result = normalize(row.training_result || "pending") || "pending";
 
-      const isAuthorized = row.payment_status === "authorized";
-      const isCaptured = row.payment_status === "captured";
-      const isPendingValidation = row.validation_status === "pending";
-      const isValidated = row.validation_status === "validated";
-      const result = row.training_result || "pending";
+      const isCheckoutCreated = paymentStatus === "checkout_created" || paymentStatus === "pending_payment";
+      const isAuthorized = paymentStatus === "authorized";
+      const isCaptured = paymentStatus === "captured" || paymentStatus === "paid";
+      const isPendingValidation = validationStatus === "pending";
+      const isValidated = validationStatus === "validated";
+      const isRejected = validationStatus === "rejected" || paymentStatus === "canceled" || paymentStatus === "failed";
       const existsAsTrainer = trainerAlreadyExists(row.email);
 
-      if (isAuthorized && isPendingValidation) {
+      if (!isRejected && isPendingValidation && (isAuthorized || isCheckoutCreated)) {
         actions.push(`
           <button class="btn btn-primary" onclick="window.captureTrainerPayment('${jsArg(row.id)}', '${jsArg(row.stripe_payment_intent_id || "")}')">
-            Accepter dossier et encaisser
+            Valider dossier et encaisser
           </button>
         `);
 
@@ -2408,6 +2412,10 @@
             Activer formateur
           </button>
         `);
+      }
+
+      if (isCaptured && isValidated && result === "passed" && existsAsTrainer) {
+        actions.push(`<span class="badge badge-success">Formateur déjà activé</span>`);
       }
 
       const candidateName = `${row.first_name || ""} ${row.last_name || ""}`.trim() || row.email || "ce candidat";
@@ -3242,7 +3250,10 @@ VITAL PROTECT`
     };
 
     window.captureTrainerPayment = async (registrationId, paymentIntentId) => {
-      const confirmed = window.confirm("Accepter le dossier de ce candidat et encaisser le paiement ?");
+      const confirmed = window.confirm(
+        "Valider ce dossier candidat et encaisser le paiement Stripe ?\n\n" +
+        "Si le paiement vient d'être effectué mais que le webhook n'a pas encore synchronisé le dossier, l'admin tentera de récupérer l'autorisation Stripe automatiquement."
+      );
       if (!confirmed) return;
 
       try {
