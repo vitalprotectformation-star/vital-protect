@@ -78,6 +78,7 @@ function normalizeCandidate(row) {
     trainer_formula_price: row.trainer_formula_price || row.formula_price || null,
     session_id: row.session_id || null,
     candidate_session_status: row.candidate_session_status || (row.session_id ? "session_requested" : "not_selected"),
+    training_module_results: row.training_module_results || {},
     candidate_session_requested_at: row.candidate_session_requested_at || null,
     candidate_session_confirmed_at: row.candidate_session_confirmed_at || null,
     candidate_session_admin_note: row.candidate_session_admin_note || null
