@@ -87,14 +87,10 @@ export default async function handler(req, res) {
     }
 
     const registrationId = sanitizeText(req.body?.registration_id);
-    const paymentIntentId = sanitizeText(req.body?.payment_intent_id);
+    let paymentIntentId = sanitizeText(req.body?.payment_intent_id);
 
     if (!registrationId) {
       return res.status(400).json({ error: "registration_id manquant" });
-    }
-
-    if (!paymentIntentId) {
-      return res.status(400).json({ error: "payment_intent_id manquant" });
     }
 
     const { data: registration, error } = await supabase
@@ -107,27 +103,62 @@ export default async function handler(req, res) {
       return res.status(404).json({ error: "Registration not found" });
     }
 
-    if (registration.payment_status === "captured") {
-      return res.status(400).json({ error: "Already captured" });
-    }
-
-    if (registration.payment_status !== "authorized") {
-      return res.status(400).json({
-        error: "Le paiement doit être autorisé avant capture"
-      });
-    }
-
     if (registration.validation_status === "rejected") {
       return res.status(400).json({
         error: "Impossible d'encaisser un dossier refusé"
       });
     }
 
-    await stripe.paymentIntents.capture(paymentIntentId);
+    if (["captured", "paid"].includes(String(registration.payment_status || "").toLowerCase())) {
+      const { error: alreadyUpdateError } = await supabase
+        .from("trainer_session_registrations")
+        .update({ validation_status: "validated" })
+        .eq("id", registrationId);
+
+      if (alreadyUpdateError) {
+        console.error("Registration validation update error:", alreadyUpdateError);
+        return res.status(500).json({ error: alreadyUpdateError.message });
+      }
+
+      return res.status(200).json({ success: true, already_captured: true });
+    }
+
+    if (!paymentIntentId && registration.stripe_payment_intent_id) {
+      paymentIntentId = sanitizeText(registration.stripe_payment_intent_id);
+    }
+
+    if (!paymentIntentId && registration.stripe_session_id) {
+      const checkoutSession = await stripe.checkout.sessions.retrieve(
+        registration.stripe_session_id,
+        { expand: ["payment_intent"] }
+      );
+
+      const paymentIntent = checkoutSession.payment_intent;
+      paymentIntentId = typeof paymentIntent === "string" ? paymentIntent : paymentIntent?.id;
+    }
+
+    if (!paymentIntentId) {
+      return res.status(400).json({
+        error: "payment_intent_id manquant : impossible de synchroniser ce paiement Stripe"
+      });
+    }
+
+    const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
+
+    if (paymentIntent.status === "requires_capture") {
+      await stripe.paymentIntents.capture(paymentIntentId);
+    } else if (paymentIntent.status === "succeeded") {
+      // Paiement déjà capturé côté Stripe : on synchronise simplement Supabase.
+    } else {
+      return res.status(400).json({
+        error: `Le paiement Stripe n'est pas capturable actuellement : ${paymentIntent.status}`
+      });
+    }
 
     const { error: updateError } = await supabase
       .from("trainer_session_registrations")
       .update({
+        stripe_payment_intent_id: paymentIntentId,
         payment_status: "captured",
         validation_status: "validated"
       })
