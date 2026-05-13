@@ -2376,14 +2376,20 @@
       const isRejected = validationStatus === "rejected" || paymentStatus === "canceled" || paymentStatus === "failed";
       const existsAsTrainer = trainerAlreadyExists(row.email);
       const portalCreated = Boolean(row.portal_account_created_at || row.auth_user_id);
-      const canSendPortalAccess = !existsAsTrainer && !portalCreated && ["checkout_created", "pending_payment", "authorized", "captured", "paid"].includes(paymentStatus);
+      const portalInviteSent = Boolean(row.portal_invite_sent_at);
+      const hasUsablePayment = ["checkout_created", "pending_payment", "authorized", "captured", "paid"].includes(paymentStatus);
+      const canSendPortalAccess = !portalCreated && !isRejected && hasUsablePayment;
 
       if (canSendPortalAccess) {
         actions.push(`
           <button class="btn btn-secondary" type="button" onclick="window.sendTrainerAccessEmail('${jsArg(row.id)}')">
-            Envoyer accès dashboard
+            ${portalInviteSent ? "Renvoyer accès dashboard" : "Envoyer accès dashboard"}
           </button>
         `);
+      }
+
+      if (portalCreated) {
+        actions.push(`<span class="badge badge-success">Accès dashboard créé</span>`);
       }
 
       if (!isRejected && isPendingValidation && (isAuthorized || isCheckoutCreated)) {
