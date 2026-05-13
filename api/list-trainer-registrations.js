@@ -129,7 +129,10 @@ export default async function handler(req, res) {
         activatedEmails = new Set(
           (trainers || [])
             .filter(trainer => emails.includes(normalizeEmail(trainer.email)))
-            .filter(trainer => !["candidate", "pending", "in_training"].includes(String(trainer.status || trainer.certification_status || "").trim().toLowerCase()))
+            .filter(trainer => {
+              const status = String(trainer.status || trainer.certification_status || "").trim().toLowerCase();
+              return ["active", "certified"].includes(status) || trainer.is_active === true;
+            })
             .map(trainer => normalizeEmail(trainer.email))
         );
       }
