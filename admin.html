@@ -2454,8 +2454,8 @@
 
       const candidateName = `${row.first_name || ""} ${row.last_name || ""}`.trim() || row.email || "ce candidat";
       actions.push(`
-        <button class="btn btn-danger" type="button" onclick="window.deleteTrainerCandidate('${jsArg(row.id)}', '${jsArg(candidateName)}')">
-          Supprimer candidat
+        <button class="btn btn-danger" type="button" onclick="window.deleteTrainerCandidate('${jsArg(row.id)}', '${jsArg(candidateName)}', '${jsArg(paymentStatus)}', ${portalCreated ? "true" : "false"}, ${existsAsTrainer ? "true" : "false"})">
+          Supprimer complètement
         </button>
       `);
 
@@ -3478,15 +3478,30 @@ VITAL PROTECT`
       }
     };
 
-    window.deleteTrainerCandidate = async (registrationId, candidateName) => {
+    window.deleteTrainerCandidate = async (registrationId, candidateName, paymentStatus = "", portalCreated = false, existsAsTrainer = false) => {
+      const normalizedPaymentStatus = normalize(paymentStatus);
+      const paymentAlreadyCaptured = ["captured", "paid"].includes(normalizedPaymentStatus);
+
       const confirmed = window.confirm(
-        `Supprimer définitivement ${candidateName || "ce candidat"} ?\n\n` +
-        `Si son paiement est seulement autorisé, l'autorisation Stripe sera annulée.\n` +
-        `Si son paiement est déjà encaissé, la suppression sera bloquée pour éviter une erreur comptable.\n\n` +
-        `Cette action est irréversible.`
+        `Supprimer complètement ${candidateName || "ce candidat"} ?\n\n` +
+        `Cette action supprimera :\n` +
+        `- le dossier candidat ;\n` +
+        `- le lien d'accès dashboard éventuel ;\n` +
+        `${portalCreated ? "- le compte dashboard Supabase Auth associé ;\n" : ""}` +
+        `${existsAsTrainer ? "- le profil formateur et ses modules habilités ;\n" : ""}` +
+        `${paymentAlreadyCaptured ? "\nAttention : le paiement semble déjà encaissé. Cette suppression ne rembourse pas automatiquement Stripe et ne remplace pas le traitement comptable.\n" : ""}` +
+        `\nCette action est irréversible.`
       );
 
       if (!confirmed) return;
+
+      if (paymentAlreadyCaptured) {
+        const secondConfirm = window.confirm(
+          `Confirmation obligatoire : le paiement de ${candidateName || "ce candidat"} semble déjà encaissé.\n\n` +
+          `Supprimer quand même le dossier côté site ?`
+        );
+        if (!secondConfirm) return;
+      }
 
       try {
         const headers = await getAuthHeaders();
@@ -3495,16 +3510,25 @@ VITAL PROTECT`
           method: "POST",
           headers,
           body: JSON.stringify({
-            registration_id: registrationId
+            registration_id: registrationId,
+            force_delete: true,
+            delete_auth_user: true,
+            delete_trainer_profile: true
           })
         });
 
         const result = await parseApiResponse(res);
 
         if (result.success) {
-          alert(result.stripe_authorization_canceled
-            ? "Candidat supprimé et autorisation Stripe annulée."
-            : "Candidat supprimé."
+          const details = [];
+          if (result.stripe_authorization_canceled) details.push("autorisation Stripe annulée");
+          if (result.auth_user_deleted) details.push("accès dashboard supprimé");
+          if (result.trainer_profile_deleted) details.push("profil formateur supprimé");
+          if (result.captured_payment_was_not_refunded) details.push("paiement encaissé non remboursé automatiquement");
+
+          alert(details.length
+            ? `Candidat supprimé complètement (${details.join(", ")}).`
+            : "Candidat supprimé complètement."
           );
           await loadTrainerRegistrations();
           await loadArchives();
