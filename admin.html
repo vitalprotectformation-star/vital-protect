@@ -2725,7 +2725,7 @@
 
     function renderTrainerRegistrations(rows) {
       trainerRegistrationsCount.textContent = rows.length;
-      capturedTrainerPaymentsCount.textContent = rows.filter(r => ["captured", "paid", "authorized", "checkout_created"].includes(r.payment_status)).length;
+      capturedTrainerPaymentsCount.textContent = rows.filter(r => ["captured", "paid", "authorized", "checkout_created", "pending_payment"].includes(normalize(r.payment_status))).length;
 
       if (!rows.length) {
         trainerRegistrationsWrap.innerHTML = `<div class="empty">Aucun candidat formateur pour le moment.</div>`;
@@ -2875,15 +2875,17 @@
     }
 
     function isCandidateActivated(row) {
-      // Ne pas masquer un candidat uniquement parce qu'un compte/dashboard existe.
-      // On masque seulement quand le dossier est réellement terminé/activé.
-      const paymentStatus = normalize(row?.payment_status || "");
-      const validationStatus = normalize(row?.validation_status || "");
-      const overallResult = getCandidateOverallResultValue(row);
-      return Boolean(row?.is_activated)
-        && ["captured", "paid"].includes(paymentStatus)
-        && validationStatus === "validated"
-        && overallResult === "passed";
+      // v38 : on ne masque plus un candidat parce qu'un email existe dans trainers.
+      // Seuls les dossiers explicitement archivés/activés par une colonne dédiée sont retirés.
+      const explicitStatus = normalize(row?.validation_status || row?.candidate_status || "");
+      const archiveReason = normalize(row?.archive_reason || "");
+      return Boolean(
+        row?.activated_at ||
+        row?.trainer_activated_at ||
+        row?.candidate_activated_at ||
+        explicitStatus === "activated" ||
+        archiveReason === "activated"
+      );
     }
 
     function trainerRecycleReasons(row) {
@@ -3185,33 +3187,43 @@
     }
 
     function applyCandidateFilters() {
-      const search = normalize(document.getElementById("candidateSearch").value);
-      const validation = document.getElementById("candidateValidationFilter").value;
-      const result = document.getElementById("candidateResultFilter").value;
-      const payment = document.getElementById("candidatePaymentFilter").value;
+      try {
+        const search = normalize(document.getElementById("candidateSearch").value);
+        const validation = document.getElementById("candidateValidationFilter").value;
+        const result = document.getElementById("candidateResultFilter").value;
+        const payment = document.getElementById("candidatePaymentFilter").value;
 
-      const filtered = trainerRegistrationsData.filter(row => {
-        if (isCandidateActivated(row)) return false;
-        const text = [
-          row.first_name,
-          row.last_name,
-          row.email,
-          row.city,
-          row.phone,
-          row.session_id,
-          row.message,
-          getCandidateModulesLabel(row)
-        ].map(normalize).join(" ");
+        const filtered = trainerRegistrationsData.filter(row => {
+          if (isCandidateActivated(row)) return false;
+          const text = [
+            row.first_name,
+            row.last_name,
+            row.email,
+            row.city,
+            row.phone,
+            row.session_id,
+            row.message,
+            getCandidateModulesLabel(row)
+          ].map(normalize).join(" ");
 
-        const searchOk = !search || text.includes(search);
-        const validationOk = !validation || row.validation_status === validation;
-        const resultOk = !result || getCandidateOverallResultValue(row) === result;
-        const paymentOk = !payment || row.payment_status === payment;
+          const searchOk = !search || text.includes(search);
+          const validationOk = !validation || normalize(row.validation_status || "pending") === validation;
+          const resultOk = !result || getCandidateOverallResultValue(row) === result;
+          const paymentOk = !payment || normalize(row.payment_status || "") === payment;
 
-        return searchOk && validationOk && resultOk && paymentOk;
-      });
+          return searchOk && validationOk && resultOk && paymentOk;
+        });
 
-      renderTrainerRegistrations(filtered);
+        renderTrainerRegistrations(filtered);
+      } catch (error) {
+        console.error("Erreur affichage candidats", error, trainerRegistrationsData);
+        trainerRegistrationsWrap.innerHTML = `
+          <div class="error">
+            Erreur d'affichage des candidats : ${escapeHtml(error.message || error)}<br />
+            <small>${trainerRegistrationsData.length} ligne(s) ont bien été chargée(s) depuis Supabase.</small>
+          </div>
+        `;
+      }
     }
 
     function applyArchiveFilters() {
@@ -3390,7 +3402,8 @@
           headers
         });
         const result = await parseApiResponse(res);
-        trainerRegistrationsData = result.trainer_registrations || [];
+        trainerRegistrationsData = Array.isArray(result.trainer_registrations) ? result.trainer_registrations : [];
+        console.info(`[admin] candidats chargés : ${trainerRegistrationsData.length}`, trainerRegistrationsData);
         applyCandidateFilters();
         updateFinance();
         return;
@@ -3401,7 +3414,8 @@
 
       try {
         const result = await callAdminTool("list_trainer_registrations");
-        trainerRegistrationsData = result.trainer_registrations || [];
+        trainerRegistrationsData = Array.isArray(result.trainer_registrations) ? result.trainer_registrations : [];
+        console.info(`[admin] candidats chargés : ${trainerRegistrationsData.length}`, trainerRegistrationsData);
         applyCandidateFilters();
         updateFinance();
         return;
@@ -3877,6 +3891,35 @@ VITAL PROTECT`
       }
     };
 
+
+    window.updateCandidateSessionStatus = async (registrationId, status) => {
+      const labels = {
+        session_confirmed: "confirmer cette session",
+        session_declined: "refuser cette session",
+        not_selected: "retirer cette session"
+      };
+
+      const confirmed = window.confirm(`Confirmer : ${labels[status] || "modifier la session"} ?`);
+      if (!confirmed) return;
+
+      try {
+        const result = await callAdminTool("update_candidate_session_status", {
+          registration_id: registrationId,
+          status
+        });
+
+        if (!result.success) {
+          alert(result.error || "Mise à jour impossible.");
+          return;
+        }
+
+        alert("Statut de session mis à jour.");
+        await loadTrainerRegistrations();
+      } catch (error) {
+        console.error(error);
+        alert(error.message || "Erreur lors de la mise à jour de la session.");
+      }
+    };
 
     window.updateCandidateModuleResult = async (registrationId, moduleName, result) => {
       const labels = {
