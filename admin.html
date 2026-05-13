@@ -2897,6 +2897,7 @@
               <th>Prix lancement</th>
               <th>Places restantes</th>
               <th>Statut</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -2912,6 +2913,11 @@
                 <td>${formatPrice(row.launch_price || row.standard_price || 0)}</td>
                 <td>${row.remaining_places ?? 0}</td>
                 <td><span class="badge ${row.status === "open" ? "badge-success" : "badge-warning"}">${escapeHtml(row.status || "—")}</span></td>
+                <td>
+                  <button class="btn btn-danger" type="button" onclick="window.deleteTrainerSession('${jsArg(row.id)}', '${jsArg(row.title || row.module_name || "Session formateur")}')">
+                    Supprimer
+                  </button>
+                </td>
               </tr>
             `).join("")}
           </tbody>
@@ -3249,6 +3255,33 @@
       trainerSessionsData = data || [];
       renderTrainerSessions(trainerSessionsData);
     }
+
+    window.deleteTrainerSession = async (sessionId, sessionTitle) => {
+      const confirmed = window.confirm(
+        `Supprimer la session de formation formateur "${sessionTitle}" ?\n\n` +
+        "Les candidats éventuellement rattachés à cette session repasseront en statut à planifier.\n\n" +
+        "Cette action est irréversible."
+      );
+
+      if (!confirmed) return;
+
+      try {
+        const result = await callAdminTool("delete_trainer_session", {
+          trainer_session_id: sessionId
+        });
+
+        if (result.success) {
+          alert("Session formateur supprimée.");
+          await loadTrainerSessions();
+          await loadTrainerRegistrations();
+        } else {
+          alert(result.error || "Erreur lors de la suppression de la session formateur.");
+        }
+      } catch (error) {
+        console.error(error);
+        alert(error.message || "Erreur lors de la suppression de la session formateur.");
+      }
+    };
 
     window.contactStageRegistrants = async (stageId, stageTitle) => {
       const { data, error } = await supabase

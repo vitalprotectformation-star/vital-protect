@@ -1025,7 +1025,7 @@
       const seen = new Set();
       return (trainerModules || [])
         .filter(item =>
-          normalize(item.status) === "certified" &&
+          ["certified", "active"].includes(normalize(item.status || "certified")) &&
           isFutureOrToday(item.expires_at) &&
           item.module_name
         )
