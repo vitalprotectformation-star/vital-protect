@@ -788,6 +788,74 @@ async function listCandidateSessionsForModules(modules = []) {
     });
 }
 
+
+async function handlePreferCandidateSession(req, res, candidate) {
+  const sessionId = sanitizeText(req.body?.session_id);
+
+  if (!sessionId) {
+    return res.status(400).json({ error: "session_id manquant" });
+  }
+
+  const selectedModules = parseCandidateModules(candidate);
+  if (!selectedModules.length) {
+    return res.status(400).json({ error: "Aucun module financé retrouvé sur votre dossier" });
+  }
+
+  const { data: session, error: sessionError } = await supabase
+    .from("trainer_sessions")
+    .select("*")
+    .eq("id", sessionId)
+    .maybeSingle();
+
+  if (sessionError) {
+    return res.status(500).json({ error: sessionError.message });
+  }
+
+  if (!session) {
+    return res.status(404).json({ error: "Session introuvable" });
+  }
+
+  const sessionStatus = normalize(session.status || "open");
+  if (!["open", "published"].includes(sessionStatus)) {
+    return res.status(400).json({ error: "Cette session n’est plus ouverte" });
+  }
+
+  const sessionModuleName = getOfficialModuleName(session.module_name || session.training_type || session.title || "");
+  if (!sessionModuleName) {
+    return res.status(400).json({ error: "Module de session non reconnu" });
+  }
+
+  const allowed = selectedModules.some(moduleName => sameCanonicalModuleName(moduleName, sessionModuleName));
+  if (!allowed) {
+    return res.status(403).json({ error: "Cette session ne correspond pas à vos modules financés" });
+  }
+
+  const { data: updated, error: updateError } = await supabase
+    .from("trainer_session_registrations")
+    .update({ session_id: sessionId })
+    .eq("id", candidate.id)
+    .select("*")
+    .single();
+
+  if (updateError) {
+    return res.status(500).json({ error: updateError.message });
+  }
+
+  return res.status(200).json({
+    success: true,
+    message: "Votre préférence de session est enregistrée. VITAL PROTECT vous confirmera la validation finale.",
+    session: {
+      id: session.id,
+      module_name: sessionModuleName,
+      city: session.city || "",
+      department: session.department || "",
+      start_date: session.start_date || null,
+      end_date: session.end_date || null
+    },
+    candidate: updated
+  });
+}
+
 async function handleCandidateDashboard(req, res, candidate) {
   const selectedModules = parseCandidateModules(candidate);
   let sessions = [];
@@ -1020,6 +1088,13 @@ export default async function handler(req, res) {
 
     if (action === "dashboard") {
       return await handleDashboard(req, res, trainerCheck);
+    }
+
+    if (action === "prefer_candidate_session") {
+      if (trainerCheck.account_type !== "candidate") {
+        return res.status(403).json({ error: "Cette action est réservée aux candidats formateurs en parcours." });
+      }
+      return await handlePreferCandidateSession(req, res, trainerCheck.candidate);
     }
 
     if (action === "update_stage_status") {
