@@ -76,7 +76,11 @@ function normalizeCandidate(row) {
     training_result: row.training_result || "pending",
     trainer_formula_module_count: moduleCount || row.trainer_formula_module_count,
     trainer_formula_price: row.trainer_formula_price || row.formula_price || null,
-    session_id: row.session_id || null
+    session_id: row.session_id || null,
+    candidate_session_status: row.candidate_session_status || (row.session_id ? "session_requested" : "not_selected"),
+    candidate_session_requested_at: row.candidate_session_requested_at || null,
+    candidate_session_confirmed_at: row.candidate_session_confirmed_at || null,
+    candidate_session_admin_note: row.candidate_session_admin_note || null
   };
 }
 

@@ -230,6 +230,44 @@ async function insertWithOptionalColumns(table, payload, optionalColumns = []) {
   };
 }
 
+
+async function updateWithOptionalColumns(table, payload, filters, optionalColumns = []) {
+  const omittedColumns = [];
+  let currentPayload = withoutUndefined({ ...payload });
+
+  for (let attempt = 0; attempt <= optionalColumns.length; attempt += 1) {
+    let query = supabase.from(table).update(currentPayload);
+
+    for (const filter of filters) {
+      query = query.eq(filter.column, filter.value);
+    }
+
+    const { data, error } = await query.select().single();
+
+    if (!error) {
+      return { data, error: null, omittedColumns };
+    }
+
+    const missingColumn = optionalColumns.find(
+      columnName => Object.prototype.hasOwnProperty.call(currentPayload, columnName) && isMissingColumnError(error, columnName)
+    );
+
+    if (!missingColumn) {
+      return { data: null, error, omittedColumns };
+    }
+
+    omittedColumns.push(missingColumn);
+    currentPayload = { ...currentPayload };
+    delete currentPayload[missingColumn];
+  }
+
+  return {
+    data: null,
+    error: new Error("Impossible de mettre à jour : colonnes optionnelles incompatibles"),
+    omittedColumns
+  };
+}
+
 function parseNumber(value, fallback = 0) {
   const n = Number(value);
   return Number.isFinite(n) ? n : fallback;
@@ -830,20 +868,28 @@ async function handlePreferCandidateSession(req, res, candidate) {
     return res.status(403).json({ error: "Cette session ne correspond pas à vos modules financés" });
   }
 
-  const { data: updated, error: updateError } = await supabase
-    .from("trainer_session_registrations")
-    .update({ session_id: sessionId })
-    .eq("id", candidate.id)
-    .select("*")
-    .single();
+  const updateResult = await updateWithOptionalColumns(
+    "trainer_session_registrations",
+    {
+      session_id: sessionId,
+      candidate_session_status: "session_requested",
+      candidate_session_requested_at: new Date().toISOString(),
+      candidate_session_confirmed_at: null,
+      candidate_session_admin_note: null
+    },
+    [{ column: "id", value: candidate.id }],
+    ["candidate_session_status", "candidate_session_requested_at", "candidate_session_confirmed_at", "candidate_session_admin_note"]
+  );
 
-  if (updateError) {
-    return res.status(500).json({ error: updateError.message });
+  if (updateResult.error) {
+    return res.status(500).json({ error: updateResult.error.message });
   }
+
+  const updated = updateResult.data;
 
   return res.status(200).json({
     success: true,
-    message: "Votre préférence de session est enregistrée. VITAL PROTECT vous confirmera la validation finale.",
+    message: "Votre choix de session est enregistré. Statut : en attente de confirmation VITAL PROTECT.",
     session: {
       id: session.id,
       module_name: sessionModuleName,
@@ -885,7 +931,11 @@ async function handleCandidateDashboard(req, res, candidate) {
       selected_module: candidate.selected_module || "",
       message: candidate.message || "",
       created_at: candidate.created_at || null,
-      session_id: candidate.session_id || null
+      session_id: candidate.session_id || null,
+      candidate_session_status: candidate.candidate_session_status || (candidate.session_id ? "session_requested" : "not_selected"),
+      candidate_session_requested_at: candidate.candidate_session_requested_at || null,
+      candidate_session_confirmed_at: candidate.candidate_session_confirmed_at || null,
+      candidate_session_admin_note: candidate.candidate_session_admin_note || ""
     },
     candidate_sessions: sessions,
     stages: [],

@@ -891,10 +891,20 @@ async function handleDeleteTrainerSession(req, res) {
   }
 
   // Si des candidats pointent encore vers cette session, on les repasse à planifier au lieu de les supprimer.
-  const { error: registrationUpdateError } = await supabase
-    .from("trainer_session_registrations")
-    .update({ session_id: null })
-    .eq("session_id", trainerSessionId);
+  const registrationReset = await updateWithOptionalColumns(
+    "trainer_session_registrations",
+    {
+      session_id: null,
+      candidate_session_status: "not_selected",
+      candidate_session_requested_at: null,
+      candidate_session_confirmed_at: null,
+      candidate_session_admin_note: null
+    },
+    [{ column: "session_id", value: trainerSessionId }],
+    ["candidate_session_status", "candidate_session_requested_at", "candidate_session_confirmed_at", "candidate_session_admin_note"]
+  );
+
+  const registrationUpdateError = registrationReset.error;
 
   if (registrationUpdateError) {
     console.error("Trainer session registrations detach error:", registrationUpdateError);
@@ -913,6 +923,82 @@ async function handleDeleteTrainerSession(req, res) {
   return res.status(200).json({
     success: true,
     deleted_session_id: trainerSessionId
+  });
+}
+
+
+async function handleUpdateCandidateSessionStatus(req, res) {
+  const registrationId = sanitizeText(req.body?.registration_id);
+  const requestedStatus = sanitizeText(req.body?.status || req.body?.candidate_session_status);
+  const note = sanitizeText(req.body?.note || req.body?.admin_note || "");
+
+  if (!registrationId) {
+    return res.status(400).json({ error: "registration_id manquant" });
+  }
+
+  const allowedStatuses = ["session_requested", "session_confirmed", "session_declined", "not_selected"];
+  if (!allowedStatuses.includes(requestedStatus)) {
+    return res.status(400).json({ error: "Statut de session candidat invalide" });
+  }
+
+  const { data: registration, error: fetchError } = await supabase
+    .from("trainer_session_registrations")
+    .select("id, session_id")
+    .eq("id", registrationId)
+    .maybeSingle();
+
+  if (fetchError) {
+    return res.status(500).json({ error: fetchError.message });
+  }
+
+  if (!registration) {
+    return res.status(404).json({ error: "Candidat introuvable" });
+  }
+
+  if (["session_requested", "session_confirmed", "session_declined"].includes(requestedStatus) && !registration.session_id) {
+    return res.status(400).json({ error: "Aucune session n’est rattachée à ce candidat" });
+  }
+
+  const now = new Date().toISOString();
+  const payload = {
+    candidate_session_status: requestedStatus,
+    candidate_session_admin_note: note || null
+  };
+
+  if (requestedStatus === "session_confirmed") {
+    payload.candidate_session_confirmed_at = now;
+  }
+
+  if (requestedStatus === "session_requested") {
+    payload.candidate_session_requested_at = now;
+    payload.candidate_session_confirmed_at = null;
+  }
+
+  if (requestedStatus === "session_declined") {
+    payload.candidate_session_confirmed_at = null;
+  }
+
+  if (requestedStatus === "not_selected") {
+    payload.session_id = null;
+    payload.candidate_session_requested_at = null;
+    payload.candidate_session_confirmed_at = null;
+  }
+
+  const result = await updateWithOptionalColumns(
+    "trainer_session_registrations",
+    payload,
+    [{ column: "id", value: registrationId }],
+    ["candidate_session_status", "candidate_session_requested_at", "candidate_session_confirmed_at", "candidate_session_admin_note"]
+  );
+
+  if (result.error) {
+    return res.status(500).json({ error: result.error.message });
+  }
+
+  return res.status(200).json({
+    success: true,
+    registration: result.data,
+    omitted_columns: result.omittedColumns || []
   });
 }
 
@@ -1234,6 +1320,10 @@ export default async function handler(req, res) {
 
     if (action === "delete_trainer_session") {
       return await handleDeleteTrainerSession(req, res);
+    }
+
+    if (action === "update_candidate_session_status") {
+      return await handleUpdateCandidateSessionStatus(req, res);
     }
 
     if (action === "update_stage_status") {
