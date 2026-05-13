@@ -132,6 +132,70 @@ function getCanonicalModuleName(value) {
   return type ? VP_MODULE_NAMES[type] : String(value || "").trim();
 }
 
+function getOfficialModuleName(value) {
+  const type = getCanonicalModuleType(value);
+  return type ? VP_MODULE_NAMES[type] : "";
+}
+
+function isOfficialModuleName(value) {
+  return Boolean(getOfficialModuleName(value));
+}
+
+function pushOfficialModule(modules, value) {
+  const moduleName = getOfficialModuleName(value);
+  if (!moduleName) return;
+  const key = normalizeModuleKey(moduleName);
+  if (!modules.some(existing => normalizeModuleKey(existing) === key)) {
+    modules.push(moduleName);
+  }
+}
+
+function extractOfficialModulesFromText(value) {
+  const raw = String(value || "").trim();
+  if (!raw) return [];
+
+  let items = [];
+  if (raw.startsWith("[") && raw.endsWith("]")) {
+    try {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) items = parsed;
+    } catch (_) {
+      items = [];
+    }
+  }
+
+  if (!items.length) {
+    items = raw.split(/\s*\|\s*|\s*;\s*|\n+/g);
+  }
+
+  const modules = [];
+  items.forEach(item => {
+    pushOfficialModule(modules, item);
+  });
+
+  // Filet de sécurité : détecter plusieurs modules dans un même champ texte,
+  // sans jamais découper les noms officiels sur leurs virgules.
+  const normalized = normalizeModuleKey(raw);
+  if (normalized.includes("module 1") || normalized.includes("niveau 1")) pushOfficialModule(modules, VP_MODULE_NAMES.module1);
+  if (normalized.includes("module 2") || normalized.includes("niveau 2")) pushOfficialModule(modules, VP_MODULE_NAMES.module2);
+  if (
+    normalized.includes("professionnel") ||
+    normalized.includes("professionnelle") ||
+    normalized.includes("entreprise") ||
+    normalized.includes("salarie") ||
+    normalized.includes("salaries") ||
+    normalized.includes("equipe") ||
+    normalized.includes("agressif") ||
+    normalized.includes("agressive") ||
+    normalized.includes("tendu") ||
+    normalized.includes("tendue") ||
+    normalized.includes("comportement") ||
+    normalized.includes("self pro")
+  ) pushOfficialModule(modules, VP_MODULE_NAMES.pro);
+
+  return modules.slice(0, 3);
+}
+
 function replaceLegacyModuleNames(value) {
   let text = String(value || "").trim();
   if (!text) return "";
@@ -736,8 +800,8 @@ async function handleCreateStage(req, res) {
 
 async function handleCreateTrainerSession(req, res) {
   const rawModuleName = sanitizeText(req.body?.module_name);
-  const moduleName = getCanonicalModuleName(rawModuleName);
-  const title = replaceLegacyModuleNames(sanitizeText(req.body?.title || moduleName));
+  const moduleName = getOfficialModuleName(rawModuleName);
+  const title = moduleName;
   const city = sanitizeText(req.body?.city);
   const department = sanitizeText(req.body?.department);
   const region = sanitizeText(req.body?.region);
@@ -754,7 +818,7 @@ async function handleCreateTrainerSession(req, res) {
   const status = sanitizeText(req.body?.status || "open");
 
   if (!moduleName) {
-    return res.status(400).json({ error: "module_name manquant" });
+    return res.status(400).json({ error: "Module formateur invalide : seuls les modules officiels VITAL PROTECT sont autorisés." });
   }
 
   if (!city) {
@@ -802,6 +866,53 @@ async function handleCreateTrainerSession(req, res) {
     success: true,
     trainer_session: insertResult.data,
     omitted_columns: insertResult.omittedColumns || []
+  });
+}
+
+async function handleDeleteTrainerSession(req, res) {
+  const trainerSessionId = sanitizeText(req.body?.trainer_session_id || req.body?.session_id);
+
+  if (!trainerSessionId) {
+    return res.status(400).json({ error: "trainer_session_id manquant" });
+  }
+
+  const { data: sessionRow, error: sessionFetchError } = await supabase
+    .from("trainer_sessions")
+    .select("id, title, module_name")
+    .eq("id", trainerSessionId)
+    .maybeSingle();
+
+  if (sessionFetchError) {
+    return res.status(500).json({ error: sessionFetchError.message });
+  }
+
+  if (!sessionRow) {
+    return res.status(404).json({ error: "Session formateur introuvable" });
+  }
+
+  // Si des candidats pointent encore vers cette session, on les repasse à planifier au lieu de les supprimer.
+  const { error: registrationUpdateError } = await supabase
+    .from("trainer_session_registrations")
+    .update({ session_id: null })
+    .eq("session_id", trainerSessionId);
+
+  if (registrationUpdateError) {
+    console.error("Trainer session registrations detach error:", registrationUpdateError);
+    return res.status(500).json({ error: registrationUpdateError.message });
+  }
+
+  const { error: deleteError } = await supabase
+    .from("trainer_sessions")
+    .delete()
+    .eq("id", trainerSessionId);
+
+  if (deleteError) {
+    return res.status(500).json({ error: deleteError.message });
+  }
+
+  return res.status(200).json({
+    success: true,
+    deleted_session_id: trainerSessionId
   });
 }
 
@@ -1119,6 +1230,10 @@ export default async function handler(req, res) {
 
     if (action === "create_trainer_session") {
       return await handleCreateTrainerSession(req, res);
+    }
+
+    if (action === "delete_trainer_session") {
+      return await handleDeleteTrainerSession(req, res);
     }
 
     if (action === "update_stage_status") {

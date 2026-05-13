@@ -100,6 +100,70 @@ function getCanonicalModuleName(value) {
   return type ? VP_MODULE_NAMES[type] : String(value || "").trim();
 }
 
+function getOfficialModuleName(value) {
+  const type = getCanonicalModuleType(value);
+  return type ? VP_MODULE_NAMES[type] : "";
+}
+
+function isOfficialModuleName(value) {
+  return Boolean(getOfficialModuleName(value));
+}
+
+function pushOfficialModule(modules, value) {
+  const moduleName = getOfficialModuleName(value);
+  if (!moduleName) return;
+  const key = normalizeModuleKey(moduleName);
+  if (!modules.some(existing => normalizeModuleKey(existing) === key)) {
+    modules.push(moduleName);
+  }
+}
+
+function extractOfficialModulesFromText(value) {
+  const raw = String(value || "").trim();
+  if (!raw) return [];
+
+  let items = [];
+  if (raw.startsWith("[") && raw.endsWith("]")) {
+    try {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) items = parsed;
+    } catch (_) {
+      items = [];
+    }
+  }
+
+  if (!items.length) {
+    items = raw.split(/\s*\|\s*|\s*;\s*|\n+/g);
+  }
+
+  const modules = [];
+  items.forEach(item => {
+    pushOfficialModule(modules, item);
+  });
+
+  // Filet de sécurité : détecter plusieurs modules dans un même champ texte,
+  // sans jamais découper les noms officiels sur leurs virgules.
+  const normalized = normalizeModuleKey(raw);
+  if (normalized.includes("module 1") || normalized.includes("niveau 1")) pushOfficialModule(modules, VP_MODULE_NAMES.module1);
+  if (normalized.includes("module 2") || normalized.includes("niveau 2")) pushOfficialModule(modules, VP_MODULE_NAMES.module2);
+  if (
+    normalized.includes("professionnel") ||
+    normalized.includes("professionnelle") ||
+    normalized.includes("entreprise") ||
+    normalized.includes("salarie") ||
+    normalized.includes("salaries") ||
+    normalized.includes("equipe") ||
+    normalized.includes("agressif") ||
+    normalized.includes("agressive") ||
+    normalized.includes("tendu") ||
+    normalized.includes("tendue") ||
+    normalized.includes("comportement") ||
+    normalized.includes("self pro")
+  ) pushOfficialModule(modules, VP_MODULE_NAMES.pro);
+
+  return modules.slice(0, 3);
+}
+
 function replaceLegacyModuleNames(value) {
   let text = String(value || "").trim();
   if (!text) return "";
@@ -547,17 +611,14 @@ function parseTrainerSelectedModules(metadata = {}) {
   }
 
   if (!values.length) {
-    values = String(raw || "").split(/\s*\|\s*|\s*,\s*/g);
+    values = String(raw || "").split(/\s*\|\s*|\s*;\s*|\n+/g);
   }
 
   const modules = [];
   values.forEach((value) => {
-    const canonical = getCanonicalModuleName(value);
-    if (!canonical) return;
-    if (!modules.some((existing) => existing.toLowerCase() === canonical.toLowerCase())) {
-      modules.push(canonical);
-    }
+    extractOfficialModulesFromText(value).forEach(moduleName => pushOfficialModule(modules, moduleName));
   });
+  extractOfficialModulesFromText(raw).forEach(moduleName => pushOfficialModule(modules, moduleName));
 
   return modules.slice(0, 3);
 }

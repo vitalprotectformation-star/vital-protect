@@ -67,6 +67,70 @@ function getCanonicalModuleName(value) {
   return type ? VP_MODULE_NAMES[type] : String(value || "").trim();
 }
 
+function getOfficialModuleName(value) {
+  const type = getCanonicalModuleType(value);
+  return type ? VP_MODULE_NAMES[type] : "";
+}
+
+function isOfficialModuleName(value) {
+  return Boolean(getOfficialModuleName(value));
+}
+
+function pushOfficialModule(modules, value) {
+  const moduleName = getOfficialModuleName(value);
+  if (!moduleName) return;
+  const key = normalizeModuleKey(moduleName);
+  if (!modules.some(existing => normalizeModuleKey(existing) === key)) {
+    modules.push(moduleName);
+  }
+}
+
+function extractOfficialModulesFromText(value) {
+  const raw = String(value || "").trim();
+  if (!raw) return [];
+
+  let items = [];
+  if (raw.startsWith("[") && raw.endsWith("]")) {
+    try {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) items = parsed;
+    } catch (_) {
+      items = [];
+    }
+  }
+
+  if (!items.length) {
+    items = raw.split(/\s*\|\s*|\s*;\s*|\n+/g);
+  }
+
+  const modules = [];
+  items.forEach(item => {
+    pushOfficialModule(modules, item);
+  });
+
+  // Filet de sécurité : détecter plusieurs modules dans un même champ texte,
+  // sans jamais découper les noms officiels sur leurs virgules.
+  const normalized = normalizeModuleKey(raw);
+  if (normalized.includes("module 1") || normalized.includes("niveau 1")) pushOfficialModule(modules, VP_MODULE_NAMES.module1);
+  if (normalized.includes("module 2") || normalized.includes("niveau 2")) pushOfficialModule(modules, VP_MODULE_NAMES.module2);
+  if (
+    normalized.includes("professionnel") ||
+    normalized.includes("professionnelle") ||
+    normalized.includes("entreprise") ||
+    normalized.includes("salarie") ||
+    normalized.includes("salaries") ||
+    normalized.includes("equipe") ||
+    normalized.includes("agressif") ||
+    normalized.includes("agressive") ||
+    normalized.includes("tendu") ||
+    normalized.includes("tendue") ||
+    normalized.includes("comportement") ||
+    normalized.includes("self pro")
+  ) pushOfficialModule(modules, VP_MODULE_NAMES.pro);
+
+  return modules.slice(0, 3);
+}
+
 function replaceLegacyModuleNames(value) {
   let text = String(value || "").trim();
   if (!text) return "";
@@ -220,32 +284,31 @@ function getTrainerFormulaPrice(moduleCount) {
 
 function parseSelectedModules(value) {
   let rawItems = [];
+  let rawText = "";
 
   if (Array.isArray(value)) {
     rawItems = value;
+    rawText = value.join(" | ");
   } else if (typeof value === "string") {
-    const trimmed = value.trim();
-    if (trimmed.startsWith("[") && trimmed.endsWith("]")) {
+    rawText = value.trim();
+    if (rawText.startsWith("[") && rawText.endsWith("]")) {
       try {
-        const parsed = JSON.parse(trimmed);
+        const parsed = JSON.parse(rawText);
         if (Array.isArray(parsed)) rawItems = parsed;
       } catch (_) {
         rawItems = [];
       }
     }
     if (!rawItems.length) {
-      rawItems = trimmed.split(/\s*\|\s*|\s*,\s*/g);
+      rawItems = rawText.split(/\s*\|\s*|\s*;\s*|\n+/g);
     }
   }
 
   const modules = [];
   rawItems.forEach((item) => {
-    const canonical = getCanonicalModuleName(replaceLegacyModuleNames(item));
-    if (!canonical) return;
-    if (!modules.some((existing) => existing.toLowerCase() === canonical.toLowerCase())) {
-      modules.push(canonical);
-    }
+    extractOfficialModulesFromText(replaceLegacyModuleNames(item)).forEach(moduleName => pushOfficialModule(modules, moduleName));
   });
+  extractOfficialModulesFromText(rawText).forEach(moduleName => pushOfficialModule(modules, moduleName));
 
   return modules.slice(0, 3);
 }
@@ -284,7 +347,7 @@ export default async function handler(req, res) {
     const cleanCity = sanitizeText(city);
     const cleanPostalCode = sanitizeText(postal_code);
     const requestedModules = parseSelectedModules(selected_modules);
-    const fallbackModule = getCanonicalModuleName(sanitizeText(selected_module || training_type));
+    const fallbackModule = getOfficialModuleName(sanitizeText(selected_module || training_type));
     const cleanSelectedModules = requestedModules.length ? requestedModules : (fallbackModule ? [fallbackModule] : []);
     const requestedModuleCount = Number(selected_module_count || module_count || cleanSelectedModules.length || 1);
     const cleanModuleCount = Math.max(1, Math.min(3, requestedModuleCount));

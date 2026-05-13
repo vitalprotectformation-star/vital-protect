@@ -19,23 +19,120 @@ function sanitizeText(value, fallback = "") {
   return String(value || fallback).trim();
 }
 
+function pushUniqueModule(modules, moduleName) {
+  const clean = sanitizeText(moduleName);
+  if (!clean) return;
+  if (!modules.some((existing) => existing.toLowerCase() === clean.toLowerCase())) {
+    modules.push(clean);
+  }
+}
+
+const VP_MODULE_NAMES = {
+  module1: "Prévenir, éviter, réagir – Module 1",
+  module2: "Prévenir, éviter, réagir – Module 2",
+  pro: "Faire face aux situations tendues et comportements agressifs en milieu professionnel"
+};
+
+function normalizeModuleKey(value) {
+  return String(value || "")
+    .trim()
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim();
+}
+
+function getCanonicalModuleType(...values) {
+  const text = values.map(normalizeModuleKey).filter(Boolean).join(" ");
+  if (!text) return "";
+  if (text.includes("niveau 2") || text.includes("niv 2") || text.includes("module 2")) return "module2";
+  if (
+    text.includes("professionnel") ||
+    text.includes("professionnelle") ||
+    text.includes("entreprise") ||
+    text.includes("salarie") ||
+    text.includes("salaries") ||
+    text.includes("equipe") ||
+    text.includes("agressif") ||
+    text.includes("agressive") ||
+    text.includes("tendu") ||
+    text.includes("tendue") ||
+    text.includes("comportement") ||
+    text.includes("self pro")
+  ) return "pro";
+  if (
+    text.includes("niveau 1") ||
+    text.includes("niv 1") ||
+    text.includes("module 1") ||
+    text.includes("self defense") ||
+    text.includes("securite personnelle") ||
+    text.includes("prevenir eviter reagir")
+  ) return "module1";
+  return "";
+}
+
+function getOfficialModuleName(value) {
+  const type = getCanonicalModuleType(value);
+  return type ? VP_MODULE_NAMES[type] : "";
+}
+
+function pushOfficialModule(modules, value) {
+  const moduleName = getOfficialModuleName(value);
+  if (!moduleName) return;
+  if (!modules.some((existing) => normalizeModuleKey(existing) === normalizeModuleKey(moduleName))) {
+    modules.push(moduleName);
+  }
+}
+
+function parseModuleList(value) {
+  const text = String(value || "").trim();
+  if (!text) return [];
+
+  let items = [];
+  if (text.startsWith("[") && text.endsWith("]")) {
+    try {
+      const parsed = JSON.parse(text);
+      if (Array.isArray(parsed)) items = parsed;
+    } catch (_) {
+      items = [];
+    }
+  }
+
+  if (!items.length) {
+    // Ne jamais découper sur les virgules : les noms officiels des modules en contiennent.
+    items = text.split(/\s*\|\s*|\s*;\s*|\n+/g);
+  }
+
+  const modules = [];
+  items.forEach((item) => pushOfficialModule(modules, item));
+
+  const normalized = normalizeModuleKey(text);
+  if (normalized.includes("module 1") || normalized.includes("niveau 1")) pushOfficialModule(modules, VP_MODULE_NAMES.module1);
+  if (normalized.includes("module 2") || normalized.includes("niveau 2")) pushOfficialModule(modules, VP_MODULE_NAMES.module2);
+  if (
+    normalized.includes("professionnel") ||
+    normalized.includes("professionnelle") ||
+    normalized.includes("entreprise") ||
+    normalized.includes("salarie") ||
+    normalized.includes("salaries") ||
+    normalized.includes("equipe") ||
+    normalized.includes("agressif") ||
+    normalized.includes("agressive") ||
+    normalized.includes("tendu") ||
+    normalized.includes("tendue") ||
+    normalized.includes("comportement") ||
+    normalized.includes("self pro")
+  ) pushOfficialModule(modules, VP_MODULE_NAMES.pro);
+
+  return modules.slice(0, 3);
+}
+
 function parseRequestedModulesFromMessage(message) {
   const text = String(message || "");
   const match = text.match(/Modules demandés\s*:\s*([^\n]+)/i);
   if (!match) return [];
-
-  const modules = [];
-  match[1]
-    .split(/\s*\|\s*|\s*,\s*/g)
-    .map((value) => sanitizeText(value))
-    .filter(Boolean)
-    .forEach((moduleName) => {
-      if (!modules.some((existing) => existing.toLowerCase() === moduleName.toLowerCase())) {
-        modules.push(moduleName);
-      }
-    });
-
-  return modules.slice(0, 3);
+  return parseModuleList(match[1]);
 }
 
 async function requireAdmin(req) {
@@ -165,8 +262,7 @@ export default async function handler(req, res) {
     }
 
     if (!moduleNames.length) {
-      const moduleName = sanitizeText(registration.training_type || "");
-      if (moduleName) moduleNames = [moduleName];
+      moduleNames = parseModuleList(registration.training_type || "");
     }
 
     const trainerPayload = {
@@ -201,7 +297,7 @@ export default async function handler(req, res) {
       const trainerModulePayload = {
         trainer_id: trainerData.id,
         module_name: moduleName,
-        status: "active",
+        status: "certified",
         validated_at: today,
         expires_at: addYears(today, 2)
       };

@@ -68,6 +68,70 @@ function getCanonicalModuleName(value) {
   return type ? VP_MODULE_NAMES[type] : String(value || "").trim();
 }
 
+function getOfficialModuleName(value) {
+  const type = getCanonicalModuleType(value);
+  return type ? VP_MODULE_NAMES[type] : "";
+}
+
+function isOfficialModuleName(value) {
+  return Boolean(getOfficialModuleName(value));
+}
+
+function pushOfficialModule(modules, value) {
+  const moduleName = getOfficialModuleName(value);
+  if (!moduleName) return;
+  const key = normalizeModuleKey(moduleName);
+  if (!modules.some(existing => normalizeModuleKey(existing) === key)) {
+    modules.push(moduleName);
+  }
+}
+
+function extractOfficialModulesFromText(value) {
+  const raw = String(value || "").trim();
+  if (!raw) return [];
+
+  let items = [];
+  if (raw.startsWith("[") && raw.endsWith("]")) {
+    try {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) items = parsed;
+    } catch (_) {
+      items = [];
+    }
+  }
+
+  if (!items.length) {
+    items = raw.split(/\s*\|\s*|\s*;\s*|\n+/g);
+  }
+
+  const modules = [];
+  items.forEach(item => {
+    pushOfficialModule(modules, item);
+  });
+
+  // Filet de sécurité : détecter plusieurs modules dans un même champ texte,
+  // sans jamais découper les noms officiels sur leurs virgules.
+  const normalized = normalizeModuleKey(raw);
+  if (normalized.includes("module 1") || normalized.includes("niveau 1")) pushOfficialModule(modules, VP_MODULE_NAMES.module1);
+  if (normalized.includes("module 2") || normalized.includes("niveau 2")) pushOfficialModule(modules, VP_MODULE_NAMES.module2);
+  if (
+    normalized.includes("professionnel") ||
+    normalized.includes("professionnelle") ||
+    normalized.includes("entreprise") ||
+    normalized.includes("salarie") ||
+    normalized.includes("salaries") ||
+    normalized.includes("equipe") ||
+    normalized.includes("agressif") ||
+    normalized.includes("agressive") ||
+    normalized.includes("tendu") ||
+    normalized.includes("tendue") ||
+    normalized.includes("comportement") ||
+    normalized.includes("self pro")
+  ) pushOfficialModule(modules, VP_MODULE_NAMES.pro);
+
+  return modules.slice(0, 3);
+}
+
 function replaceLegacyModuleNames(value) {
   let text = String(value || "").trim();
   if (!text) return "";
@@ -378,17 +442,9 @@ function parseCandidateModules(row = {}) {
   }
 
   const modules = [];
-  rawParts
-    .join(" | ")
-    .split(/\s*\|\s*|\s*,\s*/g)
-    .map(value => getCanonicalModuleName(replaceLegacyModuleNames(value)))
-    .filter(Boolean)
-    .forEach(moduleName => {
-      const key = normalize(moduleName);
-      if (!modules.some(existing => normalize(existing) === key)) {
-        modules.push(moduleName);
-      }
-    });
+  rawParts.forEach(value => {
+    extractOfficialModulesFromText(replaceLegacyModuleNames(value)).forEach(moduleName => pushOfficialModule(modules, moduleName));
+  });
 
   return modules.slice(0, 3);
 }
@@ -627,7 +683,8 @@ async function handleCreateStage(req, res, trainer) {
     });
   }
 
-  if (normalize(trainerModule.status) !== "certified") {
+  const trainerModuleStatus = normalize(trainerModule.status || "certified");
+  if (!["certified", "active"].includes(trainerModuleStatus)) {
     return res.status(403).json({
       error: "Ce module n'est pas certifié"
     });
@@ -704,13 +761,16 @@ async function listCandidateSessionsForModules(modules = []) {
 
   return (data || [])
     .filter(session => {
-      const moduleName = getCanonicalModuleName(session.module_name || session.training_type || session.title || "");
+      const moduleName = getOfficialModuleName(session.module_name || session.training_type || session.title || "");
+      if (!moduleName) return false;
       return modules.some(selected => sameCanonicalModuleName(selected, moduleName));
     })
-    .map(session => ({
+    .map(session => {
+      const moduleName = getOfficialModuleName(session.module_name || session.training_type || session.title || "");
+      return ({
       id: session.id,
-      module_name: getCanonicalModuleName(session.module_name || session.training_type || session.title || ""),
-      title: session.title || session.module_name || "Session formateur",
+      module_name: moduleName,
+      title: moduleName,
       city: session.city || "",
       postal_code: session.postal_code || "",
       department: session.department || "",
@@ -722,7 +782,8 @@ async function listCandidateSessionsForModules(modules = []) {
       remaining_places: session.remaining_places ?? null,
       max_places: session.max_places ?? null,
       status: session.status || "open"
-    }));
+      });
+    });
 }
 
 async function handleCandidateDashboard(req, res, candidate) {
