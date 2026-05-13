@@ -1831,13 +1831,14 @@ VITAL PROTECT`;
                       const durationLabel = session.duration_days ? `${session.duration_days} jour${Number(session.duration_days) > 1 ? "s" : ""}` : "À confirmer";
                       const cardImage = getCandidateSessionVisual(canonicalModuleName);
                       const cardClass = getCandidateModuleCardClass(canonicalModuleName);
+                      const isSelected = String(candidate.session_id || "") && String(candidate.session_id || "") === String(session.id || "");
                       return `
-                        <article class="candidate-stage-card ${cardClass}" style="--candidate-card-bg:url('${escapeAttr(cardImage)}')">
+                        <article class="candidate-stage-card ${cardClass}${isSelected ? " candidate-stage-card-selected" : ""}" style="--candidate-card-bg:url('${escapeAttr(cardImage)}')">
                           <div class="candidate-stage-card-image" aria-hidden="true"></div>
                           <div class="candidate-stage-card-overlay">
                             <div class="candidate-stage-card-top">
                               <span class="candidate-stage-kicker">Module financé</span>
-                              <span class="candidate-stage-status">Disponible</span>
+                              <span class="candidate-stage-status">${isSelected ? "Choisie" : "Disponible"}</span>
                             </div>
                             <h4>${escapeHtml(canonicalModuleName)}</h4>
                             <p class="candidate-stage-location">${escapeHtml(locationLabel)}</p>
@@ -1846,10 +1847,10 @@ VITAL PROTECT`;
                               <span>${escapeHtml(durationLabel)}</span>
                               <span>${escapeHtml(placesLabel)} place${remaining === 1 ? "" : "s"}</span>
                             </div>
-                            <button class="candidate-stage-action candidate-session-prefer" type="button" data-session-id="${escapeAttr(session.id || "")}" data-session-label="${escapeAttr(`${canonicalModuleName} — ${locationLabel} — ${formatDate(session.start_date)}`)}">
-                              Préférer cette session
+                            <button class="candidate-stage-action candidate-session-prefer" type="button" data-session-id="${escapeAttr(session.id || "")}" data-session-label="${escapeAttr(`${canonicalModuleName} — ${locationLabel} — ${formatDate(session.start_date)}`)}" ${isSelected ? "disabled" : ""}>
+                              ${isSelected ? "Session préférée enregistrée" : "Préférer cette session"}
                             </button>
-                            <small>Votre choix sera confirmé par VITAL PROTECT.</small>
+                            <small>${isSelected ? "Votre préférence est enregistrée. VITAL PROTECT confirmera définitivement votre positionnement." : "Votre choix sera confirmé par VITAL PROTECT."}</small>
                           </div>
                         </article>
                       `;
@@ -1870,11 +1871,43 @@ VITAL PROTECT`;
 
     function attachCandidateSessionActions() {
       document.querySelectorAll(".candidate-session-prefer").forEach((button) => {
-        button.addEventListener("click", () => {
+        button.addEventListener("click", async () => {
+          if (button.disabled) return;
+
+          const sessionId = button.dataset.sessionId || "";
           const label = button.dataset.sessionLabel || "session de validation";
-          const subject = encodeURIComponent("Choix de session de validation formateur");
-          const body = encodeURIComponent(`Bonjour VITAL PROTECT,\n\nJe souhaite me positionner sur la session suivante :\n${label}\n\nMerci de me confirmer la prise en compte de ce choix.\n`);
-          window.location.href = `mailto:contact@vital-protect.fr?subject=${subject}&body=${body}`;
+
+          if (!sessionId) {
+            alert("Session introuvable. Rechargez la page puis réessayez.");
+            return;
+          }
+
+          if (!window.confirm(`Confirmer votre préférence pour :\n${label} ?`)) return;
+
+          const previousText = button.textContent;
+          button.disabled = true;
+          button.textContent = "Enregistrement...";
+
+          try {
+            const headers = await getTrainerAuthHeaders();
+            const res = await fetch("/api/trainer-tools", {
+              method: "POST",
+              headers,
+              body: JSON.stringify({
+                action: "prefer_candidate_session",
+                session_id: sessionId
+              })
+            });
+
+            const result = await parseApiResponse(res);
+            alert(result.message || "Votre préférence de session est enregistrée.");
+            await refreshTrainerDashboard();
+          } catch (error) {
+            console.error(error);
+            alert(error.message || "Impossible d’enregistrer votre choix de session.");
+            button.disabled = false;
+            button.textContent = previousText;
+          }
         });
       });
     }
