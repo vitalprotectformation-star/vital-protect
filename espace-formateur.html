@@ -660,7 +660,9 @@
         normalized.includes("tendu") ||
         normalized.includes("tendue") ||
         normalized.includes("comportement") ||
-        normalized.includes("self pro")
+        normalized.includes("self pro") ||
+        normalized.includes("module 3") ||
+        normalized.includes("mod 3")
       ) pushOfficialModule(modules, VP_MODULE_NAMES.pro);
 
       return modules.slice(0, 3);
@@ -1728,19 +1730,59 @@ VITAL PROTECT`;
 
     function groupCandidateSessionsByModule(sessions = []) {
       return sessions.reduce((groups, session) => {
-        const moduleName = getOfficialModuleName(session.module_name || session.title || "Module");
+        const moduleName = getOfficialModuleName(session.module_name || session.training_type || session.title || "Module");
         if (!moduleName) return groups;
         if (!groups[moduleName]) groups[moduleName] = [];
-        groups[moduleName].push(session);
+        groups[moduleName].push({ ...session, module_name: moduleName, title: moduleName });
         return groups;
       }, {});
+    }
+
+    function getCandidateSessionVisual(moduleName) {
+      const type = getCanonicalModuleType(moduleName);
+      if (type === "pro") return "vp-card-self-pro-photo.webp";
+      return "vp-card-prevenir-photo.webp";
+    }
+
+    function getCandidateModuleCardClass(moduleName) {
+      const type = getCanonicalModuleType(moduleName);
+      if (type === "pro") return "candidate-stage-card-pro";
+      if (type === "module2") return "candidate-stage-card-module2";
+      return "candidate-stage-card-module1";
+    }
+
+    function getCleanCandidateModules(candidate = {}) {
+      const modules = [];
+      const selected = Array.isArray(candidate.selected_modules) ? candidate.selected_modules : [];
+      selected.forEach(moduleName => pushOfficialModule(modules, moduleName));
+
+      // Sécurité : si d'anciennes données ont été découpées sur les virgules
+      // (ex. "Prévenir" / "éviter" / "réagir – Module 1"), on reconstruit
+      // uniquement les 3 modules officiels à partir du texte complet disponible.
+      [
+        selected.join(" | "),
+        candidate.training_type,
+        candidate.selected_module,
+        candidate.message
+      ].forEach(value => {
+        extractOfficialModulesFromText(value).forEach(moduleName => pushOfficialModule(modules, moduleName));
+      });
+
+      return modules.slice(0, 3);
+    }
+
+    function formatCandidateDateRange(startDate, endDate) {
+      const start = formatDate(startDate);
+      const end = formatDate(endDate);
+      if (start === "—" && end === "—") return "Date à confirmer";
+      if (end === "—" || start === end) return start;
+      return `${start} → ${end}`;
     }
 
     function buildCandidateSessionsSection(data) {
       const candidate = data?.candidate || {};
       const sessions = data?.candidate_sessions || [];
-      const selectedModules = [];
-      (candidate.selected_modules || []).forEach(moduleName => pushOfficialModule(selectedModules, moduleName));
+      const selectedModules = getCleanCandidateModules(candidate);
       const grouped = groupCandidateSessionsByModule(sessions);
 
       if (!selectedModules.length) {
@@ -1786,39 +1828,28 @@ VITAL PROTECT`;
                       const placesLabel = maxPlaces ? `${remaining} / ${maxPlaces}` : `${remaining}`;
                       const locationBits = [session.city, session.department || session.region].filter(Boolean);
                       const locationLabel = locationBits.length ? locationBits.join(" · ") : "Lieu à confirmer";
+                      const durationLabel = session.duration_days ? `${session.duration_days} jour${Number(session.duration_days) > 1 ? "s" : ""}` : "À confirmer";
+                      const cardImage = getCandidateSessionVisual(canonicalModuleName);
+                      const cardClass = getCandidateModuleCardClass(canonicalModuleName);
                       return `
-                        <article class="candidate-session-card">
-                          <div class="candidate-session-card-top">
-                            <span class="session-module-chip">${escapeHtml(canonicalModuleName)}</span>
-                            <span class="badge badge-success">Disponible</span>
-                          </div>
-                          <h4>${escapeHtml(session.title || canonicalModuleName)}</h4>
-                          <p class="candidate-session-location">${escapeHtml(locationLabel)}</p>
-
-                          <div class="candidate-session-meta">
-                            <div>
-                              <span>Début</span>
-                              <strong>${formatDate(session.start_date)}</strong>
+                        <article class="candidate-stage-card ${cardClass}" style="--candidate-card-bg:url('${escapeAttr(cardImage)}')">
+                          <div class="candidate-stage-card-image" aria-hidden="true"></div>
+                          <div class="candidate-stage-card-overlay">
+                            <div class="candidate-stage-card-top">
+                              <span class="candidate-stage-kicker">Module financé</span>
+                              <span class="candidate-stage-status">Disponible</span>
                             </div>
-                            <div>
-                              <span>Fin</span>
-                              <strong>${formatDate(session.end_date)}</strong>
+                            <h4>${escapeHtml(canonicalModuleName)}</h4>
+                            <p class="candidate-stage-location">${escapeHtml(locationLabel)}</p>
+                            <div class="candidate-stage-chips">
+                              <span>${escapeHtml(formatCandidateDateRange(session.start_date, session.end_date))}</span>
+                              <span>${escapeHtml(durationLabel)}</span>
+                              <span>${escapeHtml(placesLabel)} place${remaining === 1 ? "" : "s"}</span>
                             </div>
-                            <div>
-                              <span>Durée</span>
-                              <strong>${escapeHtml(session.duration_days ? `${session.duration_days} jour${Number(session.duration_days) > 1 ? "s" : ""}` : "À confirmer")}</strong>
-                            </div>
-                            <div>
-                              <span>Places</span>
-                              <strong>${escapeHtml(placesLabel)}</strong>
-                            </div>
-                          </div>
-
-                          <div class="candidate-session-card-footer">
-                            <button class="btn btn-primary candidate-session-prefer" type="button" data-session-id="${escapeHtml(session.id || "")}" data-session-label="${escapeHtml(`${canonicalModuleName} — ${locationLabel} — ${formatDate(session.start_date)}`)}">
+                            <button class="candidate-stage-action candidate-session-prefer" type="button" data-session-id="${escapeAttr(session.id || "")}" data-session-label="${escapeAttr(`${canonicalModuleName} — ${locationLabel} — ${formatDate(session.start_date)}`)}">
                               Préférer cette session
                             </button>
-                            <span class="candidate-session-note">Votre choix sera confirmé par VITAL PROTECT.</span>
+                            <small>Votre choix sera confirmé par VITAL PROTECT.</small>
                           </div>
                         </article>
                       `;
@@ -1850,8 +1881,7 @@ VITAL PROTECT`;
 
     function renderCandidateDashboard(data, sessionEmail) {
       const candidate = data?.candidate || {};
-      const modules = [];
-      (candidate.selected_modules || []).forEach(moduleName => pushOfficialModule(modules, moduleName));
+      const modules = getCleanCandidateModules(candidate);
       const price = Number(candidate.trainer_formula_price || 0);
       const count = Number(candidate.trainer_formula_module_count || modules.length || 1);
       const app = document.getElementById("app");
