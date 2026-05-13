@@ -426,7 +426,7 @@ export default async function handler(req, res) {
         origin
       },
 
-      success_url: `${origin}/trainer-success.html?checkout=success&module_count=${encodeURIComponent(String(cleanModuleCount))}`,
+      success_url: `${origin}/creer-acces-formateur.html?checkout=success&session_id={CHECKOUT_SESSION_ID}&module_count=${encodeURIComponent(String(cleanModuleCount))}`,
       cancel_url: `${origin}/trainer-cancel.html?checkout=cancel&module_count=${encodeURIComponent(String(cleanModuleCount))}`
     });
 

@@ -326,6 +326,44 @@ async function ensureCandidateDashboardAccess({ email, firstName, lastName, orig
   return linkData?.properties?.action_link || linkData?.action_link || null;
 }
 
+
+async function createCandidatePasswordSetupLink({ registrationId, origin }) {
+  const cleanRegistrationId = String(registrationId || "").trim();
+  if (!cleanRegistrationId) return null;
+
+  const token = randomBytes(32).toString("base64url");
+  const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
+  const sentAt = new Date().toISOString();
+  const redirectOrigin = String(origin || process.env.APP_BASE_URL || "https://www.vital-protect.fr").replace(/\/$/, "");
+
+  const { data: existing } = await supabase
+    .from("trainer_session_registrations")
+    .select("portal_invite_count")
+    .eq("id", cleanRegistrationId)
+    .maybeSingle();
+
+  const inviteCount = Number(existing?.portal_invite_count || 0) + 1;
+
+  const result = await updateWithOptionalColumns(
+    "trainer_session_registrations",
+    {
+      portal_access_token: token,
+      portal_access_token_expires_at: expiresAt,
+      portal_invite_sent_at: sentAt,
+      portal_invite_count: inviteCount
+    },
+    [{ column: "id", value: cleanRegistrationId }],
+    ["portal_access_token", "portal_access_token_expires_at", "portal_invite_sent_at", "portal_invite_count"]
+  );
+
+  if (result.error || result.omittedColumns?.includes("portal_access_token")) {
+    console.error("Erreur génération lien création mot de passe formateur:", result.error);
+    return null;
+  }
+
+  return `${redirectOrigin}/creer-acces-formateur.html?registration_id=${encodeURIComponent(cleanRegistrationId)}&token=${encodeURIComponent(token)}`;
+}
+
 function classifyModule(...values) {
   const text = values
     .filter(Boolean)
@@ -607,7 +645,12 @@ async function handleTrainerCheckout(session) {
     throw new Error("Failed to save trainer registration");
   }
 
-  const dashboardLink = await ensureCandidateDashboardAccess({
+  const passwordSetupLink = await createCandidatePasswordSetupLink({
+    registrationId: trainerRegistrationResult.data?.id || existingTrainerRegistration?.id,
+    origin
+  });
+
+  const dashboardLink = passwordSetupLink || await ensureCandidateDashboardAccess({
     email,
     firstName,
     lastName,
@@ -618,7 +661,7 @@ async function handleTrainerCheckout(session) {
     from: "VITAL PROTECT <contact@vital-protect.fr>",
     to: email,
     replyTo: "contact@vital-protect.fr",
-    subject: "Votre dashboard formateur Vital Protect est ouvert",
+    subject: "Créez votre accès au dashboard formateur Vital Protect",
     html: `
       <h2>Parcours formateur enregistré ✅</h2>
       <p>Bonjour ${escapeHtml(firstName)} ${escapeHtml(lastName)},</p>
@@ -626,12 +669,12 @@ async function handleTrainerCheckout(session) {
       <ul>
         <li><strong>Module(s) :</strong> ${escapeHtml(trainingType)}</li>
         <li><strong>Statut paiement :</strong> empreinte bancaire autorisée</li>
-        <li><strong>Dashboard :</strong> accès candidat formateur ouvert</li>
+        <li><strong>Dashboard :</strong> accès candidat formateur à créer maintenant</li>
         <li><strong>Sessions :</strong> à choisir ensuite depuis votre dashboard selon les disponibilités</li>
         <li><strong>Validation :</strong> en attente</li>
       </ul>
-      ${dashboardLink ? `<p style="margin:22px 0;"><a href="${escapeHtml(dashboardLink)}" style="display:inline-block;padding:12px 18px;border-radius:12px;background:#0b2e59;color:#ffffff;text-decoration:none;font-weight:700;">Accéder à mon dashboard formateur</a></p>` : `<p>Votre accès dashboard est en préparation. VITAL PROTECT reviendra vers vous avec vos informations de connexion.</p>`}
-      <p>Depuis votre dashboard, vous pourrez voir les sessions disponibles correspondant aux modules achetés. Les fonctionnalités de création de stage seront débloquées après activation par VITAL PROTECT.</p>
+      ${dashboardLink ? `<p style="margin:22px 0;"><a href="${escapeHtml(dashboardLink)}" style="display:inline-block;padding:12px 18px;border-radius:12px;background:#0b2e59;color:#ffffff;text-decoration:none;font-weight:700;">Créer mon accès formateur</a></p>` : `<p>Votre accès dashboard est en préparation. VITAL PROTECT reviendra vers vous avec vos informations de connexion.</p>`}
+      <p>Créez votre mot de passe depuis le lien ci-dessus pour accéder au dashboard formateur. Les fonctionnalités de création de stage seront débloquées après activation par VITAL PROTECT.</p>
       <p><strong>VITAL PROTECT</strong></p>
     `
   });
