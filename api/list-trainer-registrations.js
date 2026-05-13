@@ -116,37 +116,28 @@ export default async function handler(req, res) {
     }
 
     const rows = (data || []).map(normalizeCandidate);
-    const emails = [...new Set(rows.map(row => normalizeEmail(row.email)).filter(Boolean))];
-    let activatedEmails = new Set();
 
-    if (emails.length) {
-      const { data: trainers, error: trainersError } = await supabase
-        .from("trainers")
-        .select("email, status, certification_status, affiliation_status")
-        .limit(1000);
-
-      if (!trainersError) {
-        activatedEmails = new Set(
-          (trainers || [])
-            .filter(trainer => emails.includes(normalizeEmail(trainer.email)))
-            .filter(trainer => {
-              const status = String(trainer.status || trainer.certification_status || "").trim().toLowerCase();
-              return ["active", "certified"].includes(status) || trainer.is_active === true;
-            })
-            .map(trainer => normalizeEmail(trainer.email))
-        );
-      }
-    }
-
+    // IMPORTANT : ne pas masquer un candidat uniquement parce que son email existe déjà
+    // dans la table trainers. La création de l'accès dashboard ou d'anciennes données de test
+    // peuvent créer une ligne technique avec le même email.
+    // La page admin décidera ensuite quoi afficher, mais l'endpoint doit toujours retourner
+    // les candidatures présentes dans trainer_session_registrations.
     const rowsWithActivation = rows.map(row => ({
       ...row,
-      is_activated: activatedEmails.has(normalizeEmail(row.email))
+      is_activated: Boolean(
+        row.activated_at ||
+        row.trainer_activated_at ||
+        row.candidate_activated_at ||
+        row.validation_status === "activated" ||
+        row.archive_reason === "activated"
+      )
     }));
 
     return res.status(200).json({
       success: true,
       source: "list-trainer-registrations",
       count: typeof count === "number" ? count : rowsWithActivation.length,
+      raw_count: typeof count === "number" ? count : rows.length,
       trainer_registrations: rowsWithActivation
     });
   } catch (error) {
