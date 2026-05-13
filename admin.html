@@ -552,7 +552,8 @@
         <button class="nav-btn active" data-tab="dashboard">Dashboard</button>
         <button class="nav-btn" data-tab="candidats">Candidats</button>
         <button class="nav-btn" data-tab="archives">Archives candidats</button>
-        <button class="nav-btn" data-tab="formateurs">Formateurs</button>
+        <button class="nav-btn" data-tab="formateurs">Formateurs actifs</button>
+        <button class="nav-btn" data-tab="recyclage">À recycler</button>
         <button class="nav-btn" data-tab="modules">Modules certifiés</button>
         <button class="nav-btn" data-tab="stages">Stages</button>
         <button class="nav-btn" data-tab="formations">Formations formateur</button>
@@ -737,8 +738,8 @@
         <div class="card">
           <div class="card-header">
             <div>
-              <h2>Formateurs</h2>
-              <p>Recherche par identité, zone géographique et statut.</p>
+              <h2>Formateurs actifs</h2>
+              <p>Formateurs habilités et autorisés à créer des stages.</p>
             </div>
           </div>
           <div class="card-body">
@@ -782,6 +783,22 @@
 
             <div class="table-wrap" id="trainersWrap">
               <div class="loading">Chargement des formateurs...</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="tab-recyclage" class="tab-panel">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h2>Formateurs à recycler</h2>
+              <p>Formateurs actifs dont l’habilitation, l’affiliation ou l’activité nécessite une action.</p>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="table-wrap" id="recycleTrainersWrap">
+              <div class="loading">Chargement des formateurs à recycler...</div>
             </div>
           </div>
         </div>
@@ -1353,6 +1370,7 @@
     const trainerRegistrationsWrap = document.getElementById("trainerRegistrationsWrap");
     const archivesWrap = document.getElementById("archivesWrap");
     const trainersWrap = document.getElementById("trainersWrap");
+    const recycleTrainersWrap = document.getElementById("recycleTrainersWrap");
     const trainerModulesWrap = document.getElementById("trainerModulesWrap");
     const trainerSessionsWrap = document.getElementById("trainerSessionsWrap");
     const trainerPayoutsWrap = document.getElementById("trainerPayoutsWrap");
@@ -2580,6 +2598,95 @@
       `;
     }
 
+    function isTrainerCandidateRow(row) {
+      const status = normalize(row?.status || row?.trainer_status || row?.certification_status || "");
+      return ["candidate", "pending", "checkout_created", "authorized", "in_training"].includes(status);
+    }
+
+    function isCandidateActivated(row) {
+      return Boolean(row?.is_activated) || trainerAlreadyExists(row.email);
+    }
+
+    function trainerRecycleReasons(row) {
+      if (!row || isTrainerCandidateRow(row)) return [];
+      const today = getToday();
+      const certExpiry = row.certification_expiry ? new Date(row.certification_expiry) : null;
+      const affExpiry = row.affiliation_end ? new Date(row.affiliation_end) : null;
+      const reasons = [];
+
+      if (!certExpiry || certExpiry < today || normalize(row.certification_status) === "expired") {
+        reasons.push("Habilitation expirée");
+      }
+
+      if (!affExpiry || affExpiry < today || normalize(row.affiliation_status) !== "active") {
+        reasons.push("Affiliation à renouveler");
+      }
+
+      const activityStartDate = row.certification_date || row.affiliation_start || row.created_at;
+      const activityStart = activityStartDate ? new Date(activityStartDate) : null;
+      const twelveMonthsAgo = new Date(today);
+      twelveMonthsAgo.setFullYear(twelveMonthsAgo.getFullYear() - 1);
+      const activityControlApplies = activityStart && !Number.isNaN(activityStart.getTime()) && activityStart <= twelveMonthsAgo;
+      const completedCount = trainerCompletedStageCount12m(row.id);
+      if (activityControlApplies && completedCount < 2) {
+        reasons.push(`${completedCount}/2 stage(s) réalisé(s) sur 12 mois`);
+      }
+
+      return reasons;
+    }
+
+    function isTrainerActiveRow(row) {
+      return !isTrainerCandidateRow(row) && trainerRecycleReasons(row).length === 0;
+    }
+
+    function renderRecycleTrainers() {
+      if (!recycleTrainersWrap) return;
+      const rows = trainersData
+        .filter(row => !isTrainerCandidateRow(row) && trainerRecycleReasons(row).length > 0)
+        .sort((a, b) => String(a.last_name || "").localeCompare(String(b.last_name || "")));
+
+      if (!rows.length) {
+        recycleTrainersWrap.innerHTML = `<div class="empty">Aucun formateur à recycler pour le moment.</div>`;
+        return;
+      }
+
+      recycleTrainersWrap.innerHTML = `
+        <table>
+          <thead>
+            <tr>
+              <th>Formateur</th>
+              <th>Contact</th>
+              <th>Raison</th>
+              <th>Stages / 12 mois</th>
+              <th>Habilitation</th>
+              <th>Affiliation</th>
+              <th>Accès</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rows.map(row => {
+              const reasons = trainerRecycleReasons(row);
+              return `
+                <tr>
+                  <td><strong>${escapeHtml(row.first_name || "")} ${escapeHtml(row.last_name || "")}</strong><span>${escapeHtml(row.city || "—")}</span></td>
+                  <td><strong>${escapeHtml(row.email || "—")}</strong><span>${escapeHtml(row.phone || "—")}</span></td>
+                  <td>${reasons.map(reason => `<span class="badge badge-warning" style="margin:2px;">${escapeHtml(reason)}</span>`).join(" ")}</td>
+                  <td>${trainerCompletedStageCount12m(row.id)}</td>
+                  <td>${formatShortDate(row.certification_expiry)}</td>
+                  <td>${formatShortDate(row.affiliation_end)}</td>
+                  <td>
+                    <button class="btn btn-secondary" type="button" onclick="window.setTrainerPassword('${jsArg(row.id)}', '${jsArg(row.email || '')}')">
+                      Définir mot de passe
+                    </button>
+                  </td>
+                </tr>
+              `;
+            }).join("")}
+          </tbody>
+        </table>
+      `;
+    }
+
     function renderTrainers(rows) {
       if (!rows.length) {
         trainersWrap.innerHTML = `<div class="empty">Aucun formateur.</div>`;
@@ -2799,6 +2906,7 @@
       const payment = document.getElementById("candidatePaymentFilter").value;
 
       const filtered = trainerRegistrationsData.filter(row => {
+        if (isCandidateActivated(row)) return false;
         const text = [
           row.first_name,
           row.last_name,
@@ -2859,6 +2967,7 @@
       const today = getToday();
 
       const filtered = trainersData.filter(row => {
+        if (!isTrainerActiveRow(row)) return false;
         const certExpiry = row.certification_expiry ? new Date(row.certification_expiry) : null;
         const affExpiry = row.affiliation_end ? new Date(row.affiliation_end) : null;
 
@@ -2978,6 +3087,8 @@
         stagesData = result.stages || [];
         renderStages(stagesData);
         applyPayoutFilters();
+        applyTrainerFilters();
+        renderRecycleTrainers();
       } catch (error) {
         console.error(error);
         stagesWrap.innerHTML = `<div class="error">Impossible de charger les stages : ${escapeHtml(error.message || "erreur inconnue")}</div>`;
@@ -2995,7 +3106,7 @@
         });
         const result = await parseApiResponse(res);
         trainerRegistrationsData = result.trainer_registrations || [];
-        renderTrainerRegistrations(trainerRegistrationsData);
+        applyCandidateFilters();
         updateFinance();
         return;
       } catch (directApiError) {
@@ -3006,7 +3117,7 @@
       try {
         const result = await callAdminTool("list_trainer_registrations");
         trainerRegistrationsData = result.trainer_registrations || [];
-        renderTrainerRegistrations(trainerRegistrationsData);
+        applyCandidateFilters();
         updateFinance();
         return;
       } catch (adminToolError) {
@@ -3054,8 +3165,9 @@
 
       trainersData = data || [];
       populateTrainerModuleTrainerSelect();
-      renderTrainers(trainersData);
-      renderTrainerRegistrations(trainerRegistrationsData);
+      applyTrainerFilters();
+      applyCandidateFilters();
+      renderRecycleTrainers();
       renderTrainerModules(trainerModulesData);
       updateFinance();
     }
@@ -3074,6 +3186,7 @@
 
       trainerModulesData = data || [];
       renderTrainerModules(trainerModulesData);
+      renderRecycleTrainers();
     }
 
     async function loadTrainerSessions() {

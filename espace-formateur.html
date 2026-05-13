@@ -752,6 +752,116 @@
       return { known: true, amount: total };
     }
 
+
+    function trainerPayoutStatusLabel(status) {
+      const value = normalize(status || "scheduled");
+      const labels = {
+        scheduled: "Prévu",
+        validated: "Validé par VITAL PROTECT",
+        paid: "Payé",
+        blocked: "Bloqué"
+      };
+      return labels[value] || status || "Prévu";
+    }
+
+    function trainerPayoutStatusClass(status) {
+      const value = normalize(status || "scheduled");
+      if (value === "paid") return "badge-success";
+      if (value === "blocked") return "badge-danger";
+      return "badge-warning";
+    }
+
+    function reservationPayoutStatus(row) {
+      if (row?.trainer_payout_paid_at) return "paid";
+      return normalize(row?.trainer_payout_status || "scheduled");
+    }
+
+    function aggregateTrainerPayoutStatus(reservations) {
+      const rows = (reservations || []).filter(row => normalize(row.payment_status || "paid") === "paid");
+      if (!rows.length) return "scheduled";
+      const statuses = rows.map(reservationPayoutStatus);
+      if (statuses.every(status => status === "paid")) return "paid";
+      if (statuses.some(status => status === "blocked")) return "blocked";
+      if (statuses.some(status => status === "validated")) return "validated";
+      return "scheduled";
+    }
+
+    function buildTrainerPayoutRows() {
+      return dashboardStages
+        .map(stage => {
+          const reservations = paidReservationsForStage(stage.id);
+          const summary = payoutSummaryForStage(stage.id);
+          const status = aggregateTrainerPayoutStatus(reservations);
+          const dueDate = reservations.find(row => row.trainer_payout_due_date)?.trainer_payout_due_date || stage.trainer_payout_due_date;
+          const paidAt = reservations.find(row => row.trainer_payout_paid_at)?.trainer_payout_paid_at || null;
+          return {
+            stage,
+            reservations,
+            summary,
+            status,
+            dueDate,
+            paidAt
+          };
+        })
+        .filter(row => row.reservations.length || Number(row.summary.amount || 0) > 0)
+        .sort((a, b) => String(a.dueDate || "9999-12-31").localeCompare(String(b.dueDate || "9999-12-31")) || String(a.stage.stage_date || "").localeCompare(String(b.stage.stage_date || "")));
+    }
+
+    function buildTrainerPayoutsSection() {
+      const rows = buildTrainerPayoutRows();
+      const totalUpcoming = rows
+        .filter(row => row.status !== "paid" && row.status !== "blocked")
+        .reduce((sum, row) => sum + Number(row.summary.amount || 0), 0);
+      const totalPaid = rows
+        .filter(row => row.status === "paid")
+        .reduce((sum, row) => sum + Number(row.summary.amount || 0), 0);
+
+      return `
+        <div class="dashboard-header" style="margin-top: 18px;">
+          <div>
+            <h3 style="margin: 0;">Mes reversements</h3>
+            <p class="muted">VITAL PROTECT encaisse les inscriptions puis prépare les reversements après réalisation des stages, selon le cycle mensuel du 20.</p>
+          </div>
+        </div>
+        <div class="dashboard-kpis" style="margin-bottom: 14px;">
+          <div class="kpi-card">
+            <span class="kpi-label">À recevoir estimé</span>
+            <div class="kpi-value">${formatPrice(totalUpcoming)}</div>
+          </div>
+          <div class="kpi-card">
+            <span class="kpi-label">Déjà payé</span>
+            <div class="kpi-value">${formatPrice(totalPaid)}</div>
+          </div>
+        </div>
+        ${rows.length ? `
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Stage</th>
+                  <th>Date stage</th>
+                  <th>Montant prévu</th>
+                  <th>Échéance</th>
+                  <th>Statut</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${rows.map(row => `
+                  <tr>
+                    <td><strong>${escapeHtml(displayStageTitle(row.stage))}</strong><span>${escapeHtml(row.stage.city || "—")}</span></td>
+                    <td>${formatDate(row.stage.stage_date)}</td>
+                    <td><strong>${formatTrainerPayout(row.summary)}</strong><span>${row.reservations.length} réservation${row.reservations.length > 1 ? "s" : ""} payée${row.reservations.length > 1 ? "s" : ""}</span></td>
+                    <td>${row.status === "paid" ? formatDate(row.paidAt) : formatDate(row.dueDate)}</td>
+                    <td><span class="badge ${trainerPayoutStatusClass(row.status)}">${escapeHtml(trainerPayoutStatusLabel(row.status))}</span></td>
+                  </tr>
+                `).join("")}
+              </tbody>
+            </table>
+          </div>
+        ` : `<div class="empty-state">Aucun reversement à afficher pour le moment. Les reversements apparaîtront dès qu’un stage aura des réservations payées.</div>`}
+      `;
+    }
+
     function formatTrainerPayout(summary) {
       if (!summary || summary.known === false || summary.amount === null || summary.amount === undefined) {
         return "À définir";
@@ -996,6 +1106,8 @@
             <strong>${escapeHtml(stats.commission_label || "Niveau formateur")}</strong> — ${escapeHtml(stats.commission_description || "Commission calculée sur les stages réalisés sur 12 mois.")}
             <br />Minimum habilitation : ${Number(stats.habilitation_minimum_required || 2)} stages réalisés sur 12 mois. Reversements préparés après stage, cycle mensuel le ${Number(stats.next_payout_day || 20)}.
           </div>
+
+          ${buildTrainerPayoutsSection()}
 
           ${stages.length ? `
             <div class="dashboard-toolbar">
@@ -1536,6 +1648,149 @@ VITAL PROTECT`;
       });
     }
 
+    function candidateStatusLabel(candidate) {
+      const payment = normalize(candidate?.payment_status || "");
+      const validation = normalize(candidate?.validation_status || "pending");
+      const result = normalize(candidate?.training_result || "pending");
+
+      if (["captured", "paid"].includes(payment) && validation === "validated" && result === "passed") return "Réussi — activation à finaliser";
+      if (result === "resit") return "Rattrapage à planifier";
+      if (result === "failed") return "Recalé";
+      if (validation === "validated") return "Dossier validé — sessions / résultat à suivre";
+      if (["authorized", "captured", "paid", "checkout_created"].includes(payment)) return "Paiement enregistré — dossier à planifier";
+      return "Dossier en cours";
+    }
+
+    function groupCandidateSessionsByModule(sessions = []) {
+      return sessions.reduce((groups, session) => {
+        const moduleName = getCanonicalModuleName(session.module_name || session.title || "Module");
+        if (!groups[moduleName]) groups[moduleName] = [];
+        groups[moduleName].push(session);
+        return groups;
+      }, {});
+    }
+
+    function buildCandidateSessionsSection(data) {
+      const candidate = data?.candidate || {};
+      const sessions = data?.candidate_sessions || [];
+      const selectedModules = candidate.selected_modules || [];
+      const grouped = groupCandidateSessionsByModule(sessions);
+
+      return `
+        <div class="card">
+          <h2 class="section-title">Choisir mes sessions de validation</h2>
+          <p class="muted">Les sessions ci-dessous correspondent aux modules que vous avez financés. Vous pouvez repérer les dates qui vous conviennent ; VITAL PROTECT garde la main sur la validation finale de votre parcours.</p>
+
+          ${selectedModules.map(moduleName => {
+            const rows = grouped[getCanonicalModuleName(moduleName)] || [];
+            return `
+              <div class="info-box" style="margin-bottom: 14px;">
+                <h3 style="margin:0 0 10px;">${escapeHtml(getCanonicalModuleName(moduleName))}</h3>
+                ${rows.length ? `
+                  <div class="table-wrap">
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>Ville</th>
+                          <th>Début</th>
+                          <th>Fin</th>
+                          <th>Places</th>
+                          <th>Statut</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        ${rows.map(session => `
+                          <tr>
+                            <td><strong>${escapeHtml(session.city || "—")}</strong><span>${escapeHtml(session.department || session.region || "")}</span></td>
+                            <td>${formatDate(session.start_date)}</td>
+                            <td>${formatDate(session.end_date)}</td>
+                            <td>${session.remaining_places === null || session.remaining_places === undefined ? "—" : Number(session.remaining_places)}</td>
+                            <td><span class="badge badge-success">Disponible</span></td>
+                          </tr>
+                        `).join("")}
+                      </tbody>
+                    </table>
+                  </div>
+                ` : `
+                  <div class="alert alert-warning" style="margin:0;">
+                    Aucune session ouverte pour ce module actuellement. VITAL PROTECT vous proposera une prochaine date.
+                  </div>
+                `}
+              </div>
+            `;
+          }).join("")}
+        </div>
+      `;
+    }
+
+    function renderCandidateDashboard(data, sessionEmail) {
+      const candidate = data?.candidate || {};
+      const modules = candidate.selected_modules || [];
+      const price = Number(candidate.trainer_formula_price || 0);
+      const count = Number(candidate.trainer_formula_module_count || modules.length || 1);
+      const app = document.getElementById("app");
+
+      app.innerHTML = `
+        <h1>Dashboard formateur</h1>
+        <p class="muted">Votre espace est ouvert. Certaines fonctionnalités seront débloquées après validation et activation par VITAL PROTECT.</p>
+
+        <div class="alert alert-warning">
+          <h2>Candidat formateur</h2>
+          <p>${escapeHtml(candidateStatusLabel(candidate))}</p>
+        </div>
+
+        <div class="grid" style="margin-top:18px;">
+          <div class="info-box">
+            <span class="label">Candidat</span>
+            <div class="value">${escapeHtml(candidate.first_name || "")} ${escapeHtml(candidate.last_name || "")}</div>
+          </div>
+          <div class="info-box">
+            <span class="label">Email</span>
+            <div class="value">${escapeHtml(candidate.email || sessionEmail || "—")}</div>
+          </div>
+          <div class="info-box">
+            <span class="label">Formule</span>
+            <div class="value">${count} module${count > 1 ? "s" : ""}${price ? ` — ${formatPrice(price)}` : ""}</div>
+          </div>
+          <div class="info-box">
+            <span class="label">Statut</span>
+            <div class="value"><span class="badge badge-warning">En attente d’activation</span></div>
+          </div>
+        </div>
+
+        <div class="card" style="padding:18px; margin-top:18px;">
+          <h2 class="section-title">Mes modules financés</h2>
+          ${modules.length ? `
+            <div class="grid">
+              ${modules.map(moduleName => `
+                <div class="info-box">
+                  <span class="label">Module</span>
+                  <div class="value">${escapeHtml(getCanonicalModuleName(moduleName))}</div>
+                </div>
+              `).join("")}
+            </div>
+          ` : `<p class="muted">Aucun module retrouvé. Contactez VITAL PROTECT si le problème persiste.</p>`}
+        </div>
+
+        ${buildCandidateSessionsSection(data)}
+
+        <div class="card" style="padding:18px; margin-top:18px;">
+          <h2 class="section-title">Fonctionnalités verrouillées</h2>
+          <p class="muted">La création de stages, la liste des inscrits et les reversements seront disponibles après réussite du parcours et activation de votre profil formateur.</p>
+          <div class="actions">
+            <a href="mailto:contact@vital-protect.fr" class="btn btn-primary">Contacter VITAL PROTECT</a>
+            <button id="logoutBtn" class="btn btn-secondary" type="button">Déconnexion</button>
+          </div>
+        </div>
+
+        <div class="debug diagnostic">Email session : ${escapeHtml(sessionEmail)}
+Statut dashboard : candidat formateur
+ID candidat : ${escapeHtml(candidate.id || "—")}</div>
+      `;
+
+      attachLogoutButtons();
+    }
+
     async function renderFullActiveView(trainer, sessionEmail, certValid, affiliationValid) {
       const app = document.getElementById("app");
       const affiliationFeedback = buildAffiliationFeedback();
@@ -1779,40 +2034,38 @@ Date fin habilitation : ${escapeHtml(trainer.certification_expiry || "—")}</di
 
       const sessionEmail = session.user.email.trim().toLowerCase();
 
-      const { data: trainer, error } = await supabase
-        .from("trainers")
-        .select("*")
-        .ilike("email", sessionEmail)
-        .maybeSingle();
+      try {
+        const dashboardData = await loadTrainerDashboardData();
 
-      if (error) {
-        console.error("Erreur Supabase:", error);
-        app.innerHTML = `
-          <h1>Erreur de chargement</h1>
-          <p class="muted">Impossible de charger les données du formateur.</p>
-          <div class="debug diagnostic">${escapeHtml(error.message)}</div>
-        `;
-        attachLogoutButtons();
-        return;
-      }
+        if (dashboardData.account_type === "candidate") {
+          renderCandidateDashboard(dashboardData, sessionEmail);
+          return;
+        }
 
-      if (!trainer) {
+        const trainer = dashboardData.trainer;
+
+        if (!trainer) {
+          throw new Error("Profil formateur introuvable dans la réponse dashboard.");
+        }
+
+        certifiedModules = await loadCertifiedModules(trainer);
+        await buildTrainerView(trainer, sessionEmail);
+      } catch (error) {
+        console.error("Erreur chargement dashboard formateur:", error);
         await supabase.auth.signOut();
         app.innerHTML = `
-          <h1>Profil formateur introuvable</h1>
-          <p class="muted">Aucun profil formateur ne correspond à votre session.</p>
-          <div class="debug diagnostic">Email session : ${escapeHtml(sessionEmail)}</div>
+          <h1>Dashboard formateur indisponible</h1>
+          <p class="muted">Impossible de charger votre dashboard formateur.</p>
+          <div class="alert alert-warning">${escapeHtml(error.message || "Erreur inconnue")}</div>
+          <div class="actions">
+            <a href="/formateur-login.html" class="btn btn-primary">Retour connexion</a>
+            <a href="/" class="btn btn-secondary">Retour au site</a>
+          </div>
         `;
         attachLogoutButtons();
-        setTimeout(() => {
-          (window.VitalPageTransition ? window.VitalPageTransition.go("/formateur-login.html") : (window.location.href = "/formateur-login.html"));
-        }, 1500);
-        return;
       }
-
-      certifiedModules = await loadCertifiedModules(trainer);
-      await buildTrainerView(trainer, sessionEmail);
     }
+
 
     document.getElementById("headerLogoutBtn").addEventListener("click", logoutTrainer);
 

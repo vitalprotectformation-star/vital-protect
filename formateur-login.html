@@ -276,17 +276,34 @@
     }
 
     async function checkTrainerAccess(email) {
-      const { data: trainer, error } = await supabase
-        .from("trainers")
-        .select("id, email, certification_status, affiliation_status")
-        .ilike("email", email)
-        .maybeSingle();
+      const {
+        data: { session }
+      } = await supabase.auth.getSession();
 
-      if (error) {
-        throw new Error(error.message || "Erreur lors de la vérification formateur.");
+      const token = session?.access_token;
+      if (!token) return false;
+
+      const res = await fetch("/api/trainer-tools", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ action: "dashboard" })
+      });
+
+      let data = {};
+      try {
+        data = await res.json();
+      } catch (_) {
+        data = {};
       }
 
-      return Boolean(trainer);
+      if (!res.ok) {
+        throw new Error(data.error || "Accès formateur refusé.");
+      }
+
+      return Boolean(data.success && ["trainer", "candidate"].includes(data.account_type));
     }
 
     form.addEventListener("submit", async (e) => {
@@ -319,7 +336,7 @@
 
         if (!allowed) {
           await supabase.auth.signOut();
-          setStatus("Accès refusé : aucun profil formateur ne correspond à cet email.", "error");
+          setStatus("Accès refusé : aucun dashboard formateur ne correspond à cet email.", "error");
           return;
         }
 
