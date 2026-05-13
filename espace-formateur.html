@@ -1680,51 +1680,109 @@ VITAL PROTECT`;
       const selectedModules = candidate.selected_modules || [];
       const grouped = groupCandidateSessionsByModule(sessions);
 
+      if (!selectedModules.length) {
+        return `
+          <div class="card candidate-session-panel">
+            <h2 class="section-title">Choisir mes sessions de validation</h2>
+            <p class="muted">Aucun module financé n’a été retrouvé sur votre dossier. Contactez VITAL PROTECT si le problème persiste.</p>
+          </div>
+        `;
+      }
+
       return `
-        <div class="card">
-          <h2 class="section-title">Choisir mes sessions de validation</h2>
-          <p class="muted">Les sessions ci-dessous correspondent aux modules que vous avez financés. Vous pouvez repérer les dates qui vous conviennent ; VITAL PROTECT garde la main sur la validation finale de votre parcours.</p>
+        <div class="card candidate-session-panel">
+          <div class="candidate-session-heading">
+            <div>
+              <span class="premium-eyebrow">Planning de validation</span>
+              <h2 class="section-title">Choisir mes sessions de validation</h2>
+              <p class="muted">Les sessions ci-dessous correspondent aux modules que vous avez financés. Repérez les dates qui vous conviennent ; VITAL PROTECT garde la main sur la validation finale de votre parcours.</p>
+            </div>
+            <span class="candidate-session-count">${sessions.length} session${sessions.length > 1 ? "s" : ""} ouverte${sessions.length > 1 ? "s" : ""}</span>
+          </div>
 
           ${selectedModules.map(moduleName => {
-            const rows = grouped[getCanonicalModuleName(moduleName)] || [];
+            const canonicalModuleName = getCanonicalModuleName(moduleName);
+            const rows = grouped[canonicalModuleName] || [];
             return `
-              <div class="info-box" style="margin-bottom: 14px;">
-                <h3 style="margin:0 0 10px;">${escapeHtml(getCanonicalModuleName(moduleName))}</h3>
+              <section class="candidate-module-block">
+                <div class="candidate-module-head">
+                  <div>
+                    <span class="label">Module financé</span>
+                    <h3>${escapeHtml(canonicalModuleName)}</h3>
+                  </div>
+                  <span class="badge ${rows.length ? "badge-success" : "badge-warning"}">
+                    ${rows.length ? `${rows.length} date${rows.length > 1 ? "s" : ""} disponible${rows.length > 1 ? "s" : ""}` : "À programmer"}
+                  </span>
+                </div>
+
                 ${rows.length ? `
-                  <div class="table-wrap">
-                    <table>
-                      <thead>
-                        <tr>
-                          <th>Ville</th>
-                          <th>Début</th>
-                          <th>Fin</th>
-                          <th>Places</th>
-                          <th>Statut</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        ${rows.map(session => `
-                          <tr>
-                            <td><strong>${escapeHtml(session.city || "—")}</strong><span>${escapeHtml(session.department || session.region || "")}</span></td>
-                            <td>${formatDate(session.start_date)}</td>
-                            <td>${formatDate(session.end_date)}</td>
-                            <td>${session.remaining_places === null || session.remaining_places === undefined ? "—" : Number(session.remaining_places)}</td>
-                            <td><span class="badge badge-success">Disponible</span></td>
-                          </tr>
-                        `).join("")}
-                      </tbody>
-                    </table>
+                  <div class="candidate-session-grid">
+                    ${rows.map(session => {
+                      const remaining = session.remaining_places === null || session.remaining_places === undefined ? "—" : Number(session.remaining_places);
+                      const maxPlaces = session.max_places === null || session.max_places === undefined ? null : Number(session.max_places);
+                      const placesLabel = maxPlaces ? `${remaining} / ${maxPlaces}` : `${remaining}`;
+                      const locationBits = [session.city, session.department || session.region].filter(Boolean);
+                      const locationLabel = locationBits.length ? locationBits.join(" · ") : "Lieu à confirmer";
+                      return `
+                        <article class="candidate-session-card">
+                          <div class="candidate-session-card-top">
+                            <span class="session-module-chip">${escapeHtml(canonicalModuleName)}</span>
+                            <span class="badge badge-success">Disponible</span>
+                          </div>
+                          <h4>${escapeHtml(session.title || canonicalModuleName)}</h4>
+                          <p class="candidate-session-location">${escapeHtml(locationLabel)}</p>
+
+                          <div class="candidate-session-meta">
+                            <div>
+                              <span>Début</span>
+                              <strong>${formatDate(session.start_date)}</strong>
+                            </div>
+                            <div>
+                              <span>Fin</span>
+                              <strong>${formatDate(session.end_date)}</strong>
+                            </div>
+                            <div>
+                              <span>Durée</span>
+                              <strong>${escapeHtml(session.duration_days ? `${session.duration_days} jour${Number(session.duration_days) > 1 ? "s" : ""}` : "À confirmer")}</strong>
+                            </div>
+                            <div>
+                              <span>Places</span>
+                              <strong>${escapeHtml(placesLabel)}</strong>
+                            </div>
+                          </div>
+
+                          <div class="candidate-session-card-footer">
+                            <button class="btn btn-primary candidate-session-prefer" type="button" data-session-id="${escapeHtml(session.id || "")}" data-session-label="${escapeHtml(`${canonicalModuleName} — ${locationLabel} — ${formatDate(session.start_date)}`)}">
+                              Préférer cette session
+                            </button>
+                            <span class="candidate-session-note">Votre choix sera confirmé par VITAL PROTECT.</span>
+                          </div>
+                        </article>
+                      `;
+                    }).join("")}
                   </div>
                 ` : `
-                  <div class="alert alert-warning" style="margin:0;">
-                    Aucune session ouverte pour ce module actuellement. VITAL PROTECT vous proposera une prochaine date.
+                  <div class="candidate-empty-session">
+                    <strong>Aucune session ouverte pour ce module actuellement.</strong>
+                    <span>VITAL PROTECT vous proposera une prochaine date ou vous recontactera dès l’ouverture d’une session.</span>
                   </div>
                 `}
-              </div>
+              </section>
             `;
           }).join("")}
         </div>
       `;
+    }
+
+    function attachCandidateSessionActions() {
+      document.querySelectorAll(".candidate-session-prefer").forEach((button) => {
+        button.addEventListener("click", () => {
+          const label = button.dataset.sessionLabel || "session de validation";
+          const subject = encodeURIComponent("Choix de session de validation formateur");
+          const body = encodeURIComponent(`Bonjour VITAL PROTECT,\n\nJe souhaite me positionner sur la session suivante :\n${label}\n\nMerci de me confirmer la prise en compte de ce choix.\n`);
+          window.location.href = `mailto:contact@vital-protect.fr?subject=${subject}&body=${body}`;
+        });
+      });
     }
 
     function renderCandidateDashboard(data, sessionEmail) {
@@ -1793,6 +1851,7 @@ ID candidat : ${escapeHtml(candidate.id || "—")}</div>
       `;
 
       attachLogoutButtons();
+      attachCandidateSessionActions();
     }
 
     async function renderFullActiveView(trainer, sessionEmail, certValid, affiliationValid) {

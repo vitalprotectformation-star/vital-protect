@@ -838,3 +838,227 @@ body:has(header) footer {
     padding: 18px !important;
   }
 }
+
+/* Candidate trainer session cards */
+.candidate-session-panel {
+  padding: 24px !important;
+  margin-top: 18px !important;
+}
+
+.candidate-session-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  align-items: flex-start;
+  margin-bottom: 22px;
+}
+
+.candidate-session-heading .section-title {
+  margin-bottom: 8px;
+}
+
+.candidate-session-count {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 38px;
+  padding: 8px 13px;
+  border-radius: 999px;
+  color: var(--vp-cockpit-cyan-2);
+  background: rgba(36, 217, 255, 0.09);
+  border: 1px solid rgba(36, 217, 255, 0.18);
+  font-size: 0.82rem;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.candidate-module-block {
+  padding: 18px;
+  border-radius: 22px;
+  border: 1px solid var(--vp-cockpit-line);
+  background:
+    radial-gradient(circle at 92% 5%, rgba(36, 217, 255, 0.08), transparent 28%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.032), rgba(255, 255, 255, 0.018));
+  margin-top: 16px;
+}
+
+.candidate-module-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+
+.candidate-module-head h3 {
+  margin: 6px 0 0;
+  font-size: clamp(1.05rem, 2vw, 1.35rem);
+  line-height: 1.2;
+  letter-spacing: -0.035em;
+}
+
+.candidate-session-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.candidate-session-card {
+  position: relative;
+  overflow: hidden;
+  min-height: 360px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 18px;
+  border-radius: 22px;
+  background:
+    radial-gradient(circle at 12% 8%, rgba(63, 124, 255, 0.18), transparent 34%),
+    radial-gradient(circle at 90% 4%, rgba(36, 217, 255, 0.13), transparent 30%),
+    linear-gradient(180deg, rgba(12, 30, 54, 0.92), rgba(8, 24, 43, 0.94));
+  border: 1px solid rgba(129, 163, 214, 0.20);
+  box-shadow: 0 22px 55px rgba(0, 0, 0, 0.24);
+  transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.candidate-session-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.024) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.024) 1px, transparent 1px);
+  background-size: 34px 34px;
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.55), transparent 90%);
+}
+
+.candidate-session-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(36, 217, 255, 0.42);
+  box-shadow: 0 28px 70px rgba(36, 217, 255, 0.12), 0 26px 70px rgba(0,0,0,.28);
+}
+
+.candidate-session-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+.candidate-session-card-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.session-module-chip {
+  display: inline-flex;
+  max-width: 75%;
+  padding: 7px 10px;
+  border-radius: 999px;
+  color: #bfefff;
+  background: rgba(36, 217, 255, 0.09);
+  border: 1px solid rgba(36, 217, 255, 0.16);
+  font-size: 0.72rem;
+  font-weight: 900;
+  line-height: 1.2;
+}
+
+.candidate-session-card h4 {
+  margin: 0;
+  font-size: 1.12rem;
+  line-height: 1.22;
+  letter-spacing: -0.035em;
+}
+
+.candidate-session-location {
+  margin: -4px 0 0;
+  color: var(--vp-cockpit-cyan-2);
+  font-size: 0.92rem;
+  font-weight: 800;
+}
+
+.candidate-session-meta {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.candidate-session-meta > div {
+  padding: 12px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.042);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.candidate-session-meta span {
+  display: block;
+  margin-bottom: 5px;
+  color: var(--vp-cockpit-muted-2) !important;
+  font-size: 0.68rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.11em;
+}
+
+.candidate-session-meta strong {
+  display: block;
+  font-size: 0.98rem;
+  line-height: 1.25;
+}
+
+.candidate-session-card-footer {
+  margin-top: auto;
+  display: grid;
+  gap: 10px;
+}
+
+.candidate-session-prefer {
+  width: 100%;
+  justify-content: center;
+  min-height: 46px;
+}
+
+.candidate-session-note {
+  display: block;
+  color: var(--vp-cockpit-muted) !important;
+  font-size: 0.78rem;
+  line-height: 1.35;
+  text-align: center;
+}
+
+.candidate-empty-session {
+  display: grid;
+  gap: 6px;
+  padding: 16px 18px;
+  border-radius: 18px;
+  background: rgba(255, 180, 77, 0.10);
+  border: 1px solid rgba(255, 180, 77, 0.22);
+  color: #ffd08c;
+}
+
+.candidate-empty-session strong {
+  color: #ffd08c;
+}
+
+.candidate-empty-session span {
+  color: #f6d7a8 !important;
+  line-height: 1.45;
+}
+
+@media (max-width: 760px) {
+  .candidate-session-heading,
+  .candidate-module-head {
+    display: block;
+  }
+
+  .candidate-session-count,
+  .candidate-module-head .badge {
+    margin-top: 10px;
+  }
+
+  .candidate-session-grid {
+    grid-template-columns: 1fr;
+  }
+}
