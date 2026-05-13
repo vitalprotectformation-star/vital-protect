@@ -50,7 +50,9 @@ function getCanonicalModuleType(...values) {
     text.includes("tendu") ||
     text.includes("tendue") ||
     text.includes("comportement") ||
-    text.includes("self pro")
+    text.includes("self pro") ||
+    text.includes("module 3") ||
+    text.includes("mod 3")
   ) return "pro";
   if (
     text.includes("niveau 1") ||
@@ -811,6 +813,9 @@ async function handleCandidateDashboard(req, res, candidate) {
       trainer_formula_module_count: Number(candidate.trainer_formula_module_count || selectedModules.length || 1),
       trainer_formula_price: Number(candidate.trainer_formula_price || 0),
       selected_modules: selectedModules,
+      training_type: candidate.training_type || "",
+      selected_module: candidate.selected_module || "",
+      message: candidate.message || "",
       created_at: candidate.created_at || null,
       session_id: candidate.session_id || null
     },
