@@ -1779,6 +1779,60 @@ VITAL PROTECT`;
       return `${start} → ${end}`;
     }
 
+    function getCandidateSessionStatus(candidate = {}) {
+      if (!candidate.session_id) return "not_selected";
+      return candidate.candidate_session_status || "session_requested";
+    }
+
+    function getCandidateSessionStatusText(candidate = {}) {
+      const status = normalize(getCandidateSessionStatus(candidate));
+      if (status === "session_confirmed") return "Session confirmée par VITAL PROTECT";
+      if (status === "session_declined") return "Session refusée — VITAL PROTECT vous proposera une autre date";
+      if (status === "session_requested") return "Session souhaitée — en attente de confirmation VITAL PROTECT";
+      return "Aucune session choisie";
+    }
+
+    function getCandidateSessionCardText(candidate = {}, isSelected = false) {
+      if (!isSelected) {
+        return {
+          badge: "Disponible",
+          button: "Préférer cette session",
+          note: "Votre demande sera envoyée à VITAL PROTECT pour confirmation.",
+          disabled: false,
+          className: ""
+        };
+      }
+
+      const status = normalize(getCandidateSessionStatus(candidate));
+      if (status === "session_confirmed") {
+        return {
+          badge: "Confirmée",
+          button: "Session confirmée",
+          note: "Votre place est confirmée par VITAL PROTECT.",
+          disabled: true,
+          className: " candidate-stage-card-confirmed"
+        };
+      }
+
+      if (status === "session_declined") {
+        return {
+          badge: "Refusée",
+          button: "Choisir à nouveau",
+          note: "Cette session n’a pas été confirmée. Vous pouvez sélectionner une autre date.",
+          disabled: false,
+          className: " candidate-stage-card-declined"
+        };
+      }
+
+      return {
+        badge: "Souhaitée",
+        button: "Session souhaitée",
+        note: "Votre demande est enregistrée. VITAL PROTECT doit encore confirmer votre positionnement.",
+        disabled: true,
+        className: " candidate-stage-card-requested"
+      };
+    }
+
     function buildCandidateSessionsSection(data) {
       const candidate = data?.candidate || {};
       const sessions = data?.candidate_sessions || [];
@@ -1800,7 +1854,8 @@ VITAL PROTECT`;
             <div>
               <span class="premium-eyebrow">Planning de validation</span>
               <h2 class="section-title">Choisir mes sessions de validation</h2>
-              <p class="muted">Les sessions ci-dessous correspondent aux modules que vous avez financés. Repérez les dates qui vous conviennent ; VITAL PROTECT garde la main sur la validation finale de votre parcours.</p>
+              <p class="muted">Les sessions ci-dessous correspondent aux modules que vous avez financés. Choisissez la date qui vous convient ; elle apparaîtra ensuite côté admin pour confirmation VITAL PROTECT.</p>
+              ${candidate.session_id ? `<p class="candidate-session-current-status">${escapeHtml(getCandidateSessionStatusText(candidate))}</p>` : ""}
             </div>
             <span class="candidate-session-count">${sessions.length} session${sessions.length > 1 ? "s" : ""} ouverte${sessions.length > 1 ? "s" : ""}</span>
           </div>
@@ -1832,13 +1887,14 @@ VITAL PROTECT`;
                       const cardImage = getCandidateSessionVisual(canonicalModuleName);
                       const cardClass = getCandidateModuleCardClass(canonicalModuleName);
                       const isSelected = String(candidate.session_id || "") && String(candidate.session_id || "") === String(session.id || "");
+                      const cardState = getCandidateSessionCardText(candidate, Boolean(isSelected));
                       return `
-                        <article class="candidate-stage-card ${cardClass}${isSelected ? " candidate-stage-card-selected" : ""}" style="--candidate-card-bg:url('${escapeAttr(cardImage)}')">
+                        <article class="candidate-stage-card ${cardClass}${isSelected ? " candidate-stage-card-selected" : ""}${cardState.className}" style="--candidate-card-bg:url('${escapeAttr(cardImage)}')">
                           <div class="candidate-stage-card-image" aria-hidden="true"></div>
                           <div class="candidate-stage-card-overlay">
                             <div class="candidate-stage-card-top">
                               <span class="candidate-stage-kicker">Module financé</span>
-                              <span class="candidate-stage-status">${isSelected ? "Choisie" : "Disponible"}</span>
+                              <span class="candidate-stage-status">${escapeHtml(cardState.badge)}</span>
                             </div>
                             <h4>${escapeHtml(canonicalModuleName)}</h4>
                             <p class="candidate-stage-location">${escapeHtml(locationLabel)}</p>
@@ -1847,10 +1903,10 @@ VITAL PROTECT`;
                               <span>${escapeHtml(durationLabel)}</span>
                               <span>${escapeHtml(placesLabel)} place${remaining === 1 ? "" : "s"}</span>
                             </div>
-                            <button class="candidate-stage-action candidate-session-prefer" type="button" data-session-id="${escapeAttr(session.id || "")}" data-session-label="${escapeAttr(`${canonicalModuleName} — ${locationLabel} — ${formatDate(session.start_date)}`)}" ${isSelected ? "disabled" : ""}>
-                              ${isSelected ? "Session préférée enregistrée" : "Préférer cette session"}
+                            <button class="candidate-stage-action candidate-session-prefer" type="button" data-session-id="${escapeAttr(session.id || "")}" data-session-label="${escapeAttr(`${canonicalModuleName} — ${locationLabel} — ${formatDate(session.start_date)}`)}" ${cardState.disabled ? "disabled" : ""}>
+                              ${escapeHtml(cardState.button)}
                             </button>
-                            <small>${isSelected ? "Votre préférence est enregistrée. VITAL PROTECT confirmera définitivement votre positionnement." : "Votre choix sera confirmé par VITAL PROTECT."}</small>
+                            <small>${escapeHtml(cardState.note)}</small>
                           </div>
                         </article>
                       `;

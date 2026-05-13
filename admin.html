@@ -2548,6 +2548,33 @@
         actions.push(`<span class="badge badge-success">Formateur déjà activé</span>`);
       }
 
+      const sessionStatus = getCandidateSessionStatus(row);
+      const hasRequestedSession = Boolean(row.session_id);
+
+      if (hasRequestedSession && sessionStatus !== "session_confirmed") {
+        actions.push(`
+          <button class="btn btn-success" type="button" onclick="window.updateCandidateSessionStatus('${jsArg(row.id)}', 'session_confirmed')">
+            Confirmer session
+          </button>
+        `);
+      }
+
+      if (hasRequestedSession && sessionStatus !== "session_declined") {
+        actions.push(`
+          <button class="btn btn-warning" type="button" onclick="window.updateCandidateSessionStatus('${jsArg(row.id)}', 'session_declined')">
+            Refuser session
+          </button>
+        `);
+      }
+
+      if (hasRequestedSession) {
+        actions.push(`
+          <button class="btn btn-secondary" type="button" onclick="window.updateCandidateSessionStatus('${jsArg(row.id)}', 'not_selected')">
+            Retirer session
+          </button>
+        `);
+      }
+
       const candidateName = `${row.first_name || ""} ${row.last_name || ""}`.trim() || row.email || "ce candidat";
       actions.push(`
         <button class="btn btn-danger" type="button" onclick="window.deleteTrainerCandidate('${jsArg(row.id)}', '${jsArg(candidateName)}', '${jsArg(paymentStatus)}', ${portalCreated ? "true" : "false"}, ${existsAsTrainer ? "true" : "false"})">
@@ -2580,8 +2607,42 @@
     }
 
 
+    function getTrainerSessionById(sessionId) {
+      if (!sessionId) return null;
+      return trainerSessionsData.find(session => String(session.id || "") === String(sessionId || "")) || null;
+    }
+
+    function getCandidateSessionStatus(row) {
+      if (!row.session_id) return "not_selected";
+      return row.candidate_session_status || "session_requested";
+    }
+
+    function candidateSessionStatusLabel(status) {
+      const value = normalize(status || "not_selected");
+      if (value === "session_confirmed") return "Session confirmée";
+      if (value === "session_declined") return "Session refusée";
+      if (value === "session_requested") return "Session souhaitée";
+      return "À planifier";
+    }
+
+    function candidateSessionStatusBadgeClass(status) {
+      const value = normalize(status || "not_selected");
+      if (value === "session_confirmed") return "badge-success";
+      if (value === "session_declined") return "badge-danger";
+      if (value === "session_requested") return "badge-warning";
+      return "badge-warning";
+    }
+
     function getCandidateSessionLabel(row) {
-      return row.session_id || "À planifier après paiement";
+      if (!row.session_id) return "À planifier après paiement";
+      const session = getTrainerSessionById(row.session_id);
+      if (!session) return `Session sélectionnée — ${row.session_id}`;
+      const moduleName = getCanonicalModuleName(session.module_name || session.title || "Session formateur");
+      const place = [session.city, session.department || session.region].filter(Boolean).join(" · ") || "Lieu à confirmer";
+      const dates = [formatDate(session.start_date), formatDate(session.end_date)]
+        .filter(value => value && value !== "—")
+        .join(" → ") || "Date à confirmer";
+      return `${moduleName} — ${place} — ${dates}`;
     }
 
     function renderTrainerRegistrations(rows) {
@@ -2641,7 +2702,9 @@
                   </td>
                   <td>
                     <strong>${escapeHtml(getCandidateSessionLabel(row))}</strong>
-                    <span>${escapeHtml(getCandidateModulesLabel(row))}</span>
+                    <span>${escapeHtml(getCandidateModulesLabel(row))}</span><br />
+                    <span class="badge ${candidateSessionStatusBadgeClass(getCandidateSessionStatus(row))}">${escapeHtml(candidateSessionStatusLabel(getCandidateSessionStatus(row)))}</span>
+                    ${row.candidate_session_confirmed_at ? `<br /><span>Confirmée le ${formatDate(row.candidate_session_confirmed_at)}</span>` : ""}
                   </td>
                   <td><span class="badge ${paymentBadgeClass}">${escapeHtml(row.payment_status || "—")}</span></td>
                   <td><span class="badge ${validationBadgeClass}">${escapeHtml(row.validation_status || "—")}</span></td>
@@ -2707,7 +2770,9 @@
                   </td>
                   <td>
                     <strong>${escapeHtml(getCandidateSessionLabel(row))}</strong>
-                    <span>${escapeHtml(getCandidateModulesLabel(row))}</span>
+                    <span>${escapeHtml(getCandidateModulesLabel(row))}</span><br />
+                    <span class="badge ${candidateSessionStatusBadgeClass(getCandidateSessionStatus(row))}">${escapeHtml(candidateSessionStatusLabel(getCandidateSessionStatus(row)))}</span>
+                    ${row.candidate_session_confirmed_at ? `<br /><span>Confirmée le ${formatDate(row.candidate_session_confirmed_at)}</span>` : ""}
                   </td>
                   <td><span class="badge ${paymentBadgeClass}">${escapeHtml(row.payment_status || "—")}</span></td>
                   <td><span class="badge ${validationBadgeClass}">${escapeHtml(row.validation_status || "—")}</span></td>
@@ -3333,6 +3398,7 @@
 
       trainerSessionsData = data || [];
       renderTrainerSessions(trainerSessionsData);
+      applyCandidateFilters();
     }
 
     window.deleteTrainerSession = async (sessionId, sessionTitle) => {
