@@ -2525,32 +2525,7 @@
         actions.push(`<span class="badge badge-success">Formateur déjà activé</span>`);
       }
 
-      const sessionStatus = getCandidateSessionStatus(row);
-      const hasRequestedSession = Boolean(row.session_id);
-
-      if (hasRequestedSession && sessionStatus !== "session_confirmed") {
-        actions.push(`
-          <button class="btn btn-success" type="button" onclick="window.updateCandidateSessionStatus('${jsArg(row.id)}', 'session_confirmed')">
-            Confirmer session
-          </button>
-        `);
-      }
-
-      if (hasRequestedSession && sessionStatus !== "session_declined") {
-        actions.push(`
-          <button class="btn btn-warning" type="button" onclick="window.updateCandidateSessionStatus('${jsArg(row.id)}', 'session_declined')">
-            Refuser session
-          </button>
-        `);
-      }
-
-      if (hasRequestedSession) {
-        actions.push(`
-          <button class="btn btn-secondary" type="button" onclick="window.updateCandidateSessionStatus('${jsArg(row.id)}', 'not_selected')">
-            Retirer session
-          </button>
-        `);
-      }
+      // Les actions de session sont maintenant gérées module par module dans la carte.
 
       const candidateName = `${row.first_name || ""} ${row.last_name || ""}`.trim() || row.email || "ce candidat";
       actions.push(`
@@ -2610,6 +2585,68 @@
       return normalized;
     }
 
+    function normalizeCandidateModuleSessions(value) {
+      if (!value) return {};
+      if (typeof value === "string") {
+        try {
+          value = JSON.parse(value);
+        } catch (_) {
+          return {};
+        }
+      }
+      if (typeof value !== "object" || Array.isArray(value)) return {};
+
+      const normalized = {};
+      Object.entries(value).forEach(([key, rawEntry]) => {
+        const entry = rawEntry && typeof rawEntry === "object" && !Array.isArray(rawEntry) ? rawEntry : {};
+        const moduleName = getOfficialModuleName(key) || getOfficialModuleName(entry.module_name) || getOfficialModuleName(entry.title);
+        if (!moduleName) return;
+        const status = normalize(entry.status || entry.candidate_session_status || "not_selected");
+        normalized[moduleName] = {
+          module_name: moduleName,
+          session_id: String(entry.session_id || entry.id || "").trim(),
+          status: ["not_selected", "session_requested", "session_confirmed", "session_declined"].includes(status) ? status : "not_selected",
+          requested_at: entry.requested_at || entry.candidate_session_requested_at || null,
+          confirmed_at: entry.confirmed_at || entry.candidate_session_confirmed_at || null,
+          admin_note: entry.admin_note || entry.candidate_session_admin_note || ""
+        };
+      });
+
+      return normalized;
+    }
+
+    function getCandidateModuleSession(row, moduleName) {
+      const officialModuleName = getOfficialModuleName(moduleName) || getCanonicalModuleName(moduleName);
+      const map = normalizeCandidateModuleSessions(row.candidate_module_sessions);
+      const entry = map[officialModuleName];
+      if (entry && entry.session_id) {
+        return {
+          ...entry,
+          session: getTrainerSessionById(entry.session_id),
+          status: entry.status || "session_requested"
+        };
+      }
+
+      // Compatibilité ancienne version : session_id global.
+      const legacySession = getTrainerSessionById(row.session_id);
+      if (legacySession) {
+        const legacyModule = getCanonicalModuleName(legacySession.module_name || legacySession.title || "");
+        if (legacyModule === officialModuleName) {
+          return {
+            module_name: officialModuleName,
+            session_id: row.session_id,
+            session: legacySession,
+            status: row.candidate_session_status || "session_requested",
+            requested_at: row.candidate_session_requested_at || null,
+            confirmed_at: row.candidate_session_confirmed_at || null,
+            admin_note: row.candidate_session_admin_note || ""
+          };
+        }
+      }
+
+      return null;
+    }
+
     function candidateModuleResultLabel(result) {
       const value = normalize(result || "pending");
       if (value === "passed") return "Validé";
@@ -2659,43 +2696,37 @@
       const validationStatus = normalize(row.validation_status || "pending");
       const canValidateModules = ["captured", "paid"].includes(paymentStatus) && validationStatus === "validated";
       const results = normalizeModuleResults(row.training_module_results);
-      const selectedSession = getTrainerSessionById(row.session_id);
-      const selectedSessionModule = selectedSession
-        ? getCanonicalModuleName(selectedSession.module_name || selectedSession.title || "")
-        : "";
-      const sessionStatus = getCandidateSessionStatus(row);
 
       return `
         <div class="candidate-module-review">
           <div class="candidate-module-review-title">Validation par module</div>
           ${modules.map(moduleName => {
             const status = results[moduleName] || "pending";
-            const sessionForModule = selectedSession && selectedSessionModule === moduleName ? selectedSession : null;
-            const moduleSessionStatus = sessionForModule ? sessionStatus : "not_selected";
-            const sessionPlace = sessionForModule
-              ? [sessionForModule.city, sessionForModule.department || sessionForModule.region].filter(Boolean).join(" · ") || "Lieu à confirmer"
-              : "Aucune session choisie pour ce module";
-            const sessionDates = sessionForModule
-              ? [formatDate(sessionForModule.start_date), formatDate(sessionForModule.end_date)].filter(value => value && value !== "—").join(" → ") || "Date à confirmer"
-              : "À planifier";
+            const moduleSession = getCandidateModuleSession(row, moduleName);
+            const sessionForModule = moduleSession?.session || null;
+            const moduleSessionStatus = moduleSession?.status || "not_selected";
+            const sessionLabel = sessionForModule ? formatSessionMiniLabel(sessionForModule) : "Aucune session choisie pour ce module";
+            const sessionId = moduleSession?.session_id || "";
             return `
               <div class="candidate-module-review-row">
                 <div class="candidate-module-review-info">
                   <strong>${escapeHtml(moduleName)}</strong>
                   <div class="candidate-module-session-line">
-                    <span>Session : ${escapeHtml(sessionPlace)}</span>
-                    <span>${escapeHtml(sessionDates)}</span>
+                    <span>Session : ${escapeHtml(sessionLabel)}</span>
                     <span class="badge ${candidateSessionStatusBadgeClass(moduleSessionStatus)}">${escapeHtml(candidateSessionStatusLabel(moduleSessionStatus))}</span>
                   </div>
                   <span class="badge ${candidateModuleResultBadgeClass(status)}">Résultat : ${escapeHtml(candidateModuleResultLabel(status))}</span>
                 </div>
-                ${canValidateModules ? `
-                  <div class="candidate-module-actions">
-                    ${status !== "passed" ? `<button class="btn btn-success btn-mini" type="button" onclick="window.updateCandidateModuleResult('${jsArg(row.id)}', '${jsArg(moduleName)}', 'passed')">Valider</button>` : ""}
+                <div class="candidate-module-actions candidate-module-actions-stack">
+                  ${sessionId && moduleSessionStatus !== "session_confirmed" ? `<button class="btn btn-success btn-mini" type="button" onclick="window.updateCandidateSessionStatus('${jsArg(row.id)}', 'session_confirmed', '${jsArg(moduleName)}')">Confirmer session</button>` : ""}
+                  ${sessionId && moduleSessionStatus !== "session_declined" ? `<button class="btn btn-warning btn-mini" type="button" onclick="window.updateCandidateSessionStatus('${jsArg(row.id)}', 'session_declined', '${jsArg(moduleName)}')">Refuser session</button>` : ""}
+                  ${sessionId ? `<button class="btn btn-secondary btn-mini" type="button" onclick="window.updateCandidateSessionStatus('${jsArg(row.id)}', 'not_selected', '${jsArg(moduleName)}')">Retirer session</button>` : ""}
+                  ${canValidateModules ? `
+                    ${status !== "passed" ? `<button class="btn btn-success btn-mini" type="button" onclick="window.updateCandidateModuleResult('${jsArg(row.id)}', '${jsArg(moduleName)}', 'passed')">Valider module</button>` : ""}
                     ${status !== "resit" ? `<button class="btn btn-warning btn-mini" type="button" onclick="window.updateCandidateModuleResult('${jsArg(row.id)}', '${jsArg(moduleName)}', 'resit')">Rattrapage</button>` : ""}
                     ${status !== "failed" ? `<button class="btn btn-danger btn-mini" type="button" onclick="window.updateCandidateModuleResult('${jsArg(row.id)}', '${jsArg(moduleName)}', 'failed')">Recaler</button>` : ""}
-                  </div>
-                ` : `<small>Validez le dossier et encaissez le paiement pour débloquer ce module.</small>`}
+                  ` : `<small>Validez le dossier et encaissez le paiement pour débloquer la validation.</small>`}
+                </div>
               </div>
             `;
           }).join("")}
@@ -2708,9 +2739,23 @@
       return trainerSessionsData.find(session => String(session.id || "") === String(sessionId || "")) || null;
     }
 
-    function getCandidateSessionStatus(row) {
-      if (!row.session_id) return "not_selected";
-      return row.candidate_session_status || "session_requested";
+    function getCandidateSessionStatus(row, moduleName = "") {
+      if (moduleName) {
+        const moduleSession = getCandidateModuleSession(row, moduleName);
+        if (!moduleSession?.session_id) return "not_selected";
+        return moduleSession.status || "session_requested";
+      }
+
+      const modules = getCandidateModules(row);
+      const moduleSessions = modules.map(moduleName => getCandidateModuleSession(row, moduleName)).filter(Boolean);
+      if (!moduleSessions.length) {
+        if (!row.session_id) return "not_selected";
+        return row.candidate_session_status || "session_requested";
+      }
+      if (moduleSessions.some(item => item.status === "session_requested")) return "session_requested";
+      if (moduleSessions.some(item => item.status === "session_declined")) return "session_declined";
+      if (moduleSessions.every(item => item.status === "session_confirmed")) return "session_confirmed";
+      return "session_requested";
     }
 
     function candidateSessionStatusLabel(status) {
@@ -2729,16 +2774,29 @@
       return "badge-warning";
     }
 
-    function getCandidateSessionLabel(row) {
-      if (!row.session_id) return "À planifier après paiement";
-      const session = getTrainerSessionById(row.session_id);
-      if (!session) return `Session sélectionnée — ${row.session_id}`;
-      const moduleName = getCanonicalModuleName(session.module_name || session.title || "Session formateur");
+    function formatSessionMiniLabel(session) {
+      if (!session) return "À planifier";
       const place = [session.city, session.department || session.region].filter(Boolean).join(" · ") || "Lieu à confirmer";
       const dates = [formatDate(session.start_date), formatDate(session.end_date)]
         .filter(value => value && value !== "—")
         .join(" → ") || "Date à confirmer";
-      return `${moduleName} — ${place} — ${dates}`;
+      return `${place} — ${dates}`;
+    }
+
+    function getCandidateSessionLabel(row) {
+      const modules = getCandidateModules(row);
+      if (modules.length) {
+        const labels = modules.map(moduleName => {
+          const moduleSession = getCandidateModuleSession(row, moduleName);
+          return `${moduleName} : ${moduleSession?.session ? formatSessionMiniLabel(moduleSession.session) : "à planifier"}`;
+        });
+        return labels.join(" | ");
+      }
+      if (!row.session_id) return "À planifier après paiement";
+      const session = getTrainerSessionById(row.session_id);
+      if (!session) return `Session sélectionnée — ${row.session_id}`;
+      const moduleName = getCanonicalModuleName(session.module_name || session.title || "Session formateur");
+      return `${moduleName} — ${formatSessionMiniLabel(session)}`;
     }
 
     function getCandidateNextAction(row) {
@@ -2751,8 +2809,12 @@
 
       if (["checkout_created", "pending_payment", "authorized"].includes(paymentStatus)) return "Valider dossier et encaisser";
       if (validationStatus !== "validated") return "Valider le dossier";
-      if (row.session_id && getCandidateSessionStatus(row) === "session_requested") return "Confirmer la session souhaitée";
-      if (!row.session_id) return "Planifier au moins une session";
+
+      const moduleSessions = modules.map(moduleName => getCandidateModuleSession(row, moduleName));
+      const requestedCount = moduleSessions.filter(item => item?.status === "session_requested").length;
+      const plannedCount = moduleSessions.filter(item => item?.session_id).length;
+      if (requestedCount) return `Confirmer ${requestedCount} session${requestedCount > 1 ? "s" : ""} souhaitée${requestedCount > 1 ? "s" : ""}`;
+      if (modules.length && plannedCount < modules.length) return `Planifier les sessions (${plannedCount}/${modules.length})`;
       if (modules.length && passedCount < modules.length) return `Valider les modules (${passedCount}/${modules.length})`;
       if (!existsAsTrainer) return "Activer le formateur";
       return "Dossier suivi";
@@ -2780,13 +2842,23 @@
     }
 
     function renderCandidateSessionSummary(row) {
-      const sessionStatus = getCandidateSessionStatus(row);
+      const modules = getCandidateModules(row);
+      const lines = modules.length ? modules.map(moduleName => {
+        const moduleSession = getCandidateModuleSession(row, moduleName);
+        const status = moduleSession?.status || "not_selected";
+        return `
+          <div class="admin-candidate-session-line">
+            <strong>${escapeHtml(moduleName)}</strong>
+            <span>${escapeHtml(moduleSession?.session ? formatSessionMiniLabel(moduleSession.session) : "À planifier")}</span>
+            <span class="badge ${candidateSessionStatusBadgeClass(status)}">${escapeHtml(candidateSessionStatusLabel(status))}</span>
+          </div>
+        `;
+      }).join("") : `<div class="admin-candidate-session-line"><strong>Session</strong><span>${escapeHtml(getCandidateSessionLabel(row))}</span><span class="badge ${candidateSessionStatusBadgeClass(getCandidateSessionStatus(row))}">${escapeHtml(candidateSessionStatusLabel(getCandidateSessionStatus(row)))}</span></div>`;
+
       return `
         <div class="admin-candidate-session-box">
-          <span class="admin-candidate-section-title">Session souhaitée</span>
-          <strong>${escapeHtml(getCandidateSessionLabel(row))}</strong>
-          <span class="badge ${candidateSessionStatusBadgeClass(sessionStatus)}">${escapeHtml(candidateSessionStatusLabel(sessionStatus))}</span>
-          ${row.candidate_session_confirmed_at ? `<small>Confirmée le ${formatDate(row.candidate_session_confirmed_at)}</small>` : ""}
+          <span class="admin-candidate-section-title">Sessions par module</span>
+          <div class="admin-candidate-session-list">${lines}</div>
           <small>${escapeHtml(getCandidateModulesLabel(row))}</small>
         </div>
       `;
@@ -3970,20 +4042,22 @@ VITAL PROTECT`
     };
 
 
-    window.updateCandidateSessionStatus = async (registrationId, status) => {
+    window.updateCandidateSessionStatus = async (registrationId, status, moduleName = "") => {
       const labels = {
         session_confirmed: "confirmer cette session",
         session_declined: "refuser cette session",
         not_selected: "retirer cette session"
       };
 
-      const confirmed = window.confirm(`Confirmer : ${labels[status] || "modifier la session"} ?`);
+      const target = moduleName ? ` pour le module :\n${moduleName}` : "";
+      const confirmed = window.confirm(`Confirmer : ${labels[status] || "modifier la session"}${target} ?`);
       if (!confirmed) return;
 
       try {
         const result = await callAdminTool("update_candidate_session_status", {
           registration_id: registrationId,
-          status
+          status,
+          module_name: moduleName
         });
 
         if (!result.success) {

@@ -1771,6 +1771,57 @@ VITAL PROTECT`;
       return modules.slice(0, 3);
     }
 
+    function normalizeCandidateModuleSessions(value) {
+      if (!value) return {};
+      if (typeof value === "string") {
+        try {
+          value = JSON.parse(value);
+        } catch (_) {
+          return {};
+        }
+      }
+      if (typeof value !== "object" || Array.isArray(value)) return {};
+
+      const normalized = {};
+      Object.entries(value).forEach(([key, rawEntry]) => {
+        const entry = rawEntry && typeof rawEntry === "object" && !Array.isArray(rawEntry) ? rawEntry : {};
+        const moduleName = getOfficialModuleName(key) || getOfficialModuleName(entry.module_name) || getOfficialModuleName(entry.title);
+        if (!moduleName) return;
+        const status = normalize(entry.status || entry.candidate_session_status || "not_selected");
+        normalized[moduleName] = {
+          module_name: moduleName,
+          session_id: String(entry.session_id || entry.id || "").trim(),
+          status: ["not_selected", "session_requested", "session_confirmed", "session_declined"].includes(status) ? status : "not_selected",
+          requested_at: entry.requested_at || entry.candidate_session_requested_at || null,
+          confirmed_at: entry.confirmed_at || entry.candidate_session_confirmed_at || null,
+          admin_note: entry.admin_note || entry.candidate_session_admin_note || ""
+        };
+      });
+
+      return normalized;
+    }
+
+    function getCandidateModuleSession(candidate = {}, moduleName = "") {
+      const officialModuleName = getOfficialModuleName(moduleName) || getCanonicalModuleName(moduleName);
+      const moduleSessions = normalizeCandidateModuleSessions(candidate.candidate_module_sessions);
+      const entry = moduleSessions[officialModuleName];
+      if (entry && entry.session_id) return entry;
+
+      // Compatibilité anciennes données : session_id global.
+      if (candidate.session_id && !entry) {
+        return {
+          module_name: officialModuleName,
+          session_id: candidate.session_id,
+          status: candidate.candidate_session_status || "session_requested",
+          requested_at: candidate.candidate_session_requested_at || null,
+          confirmed_at: candidate.candidate_session_confirmed_at || null,
+          admin_note: candidate.candidate_session_admin_note || ""
+        };
+      }
+
+      return null;
+    }
+
     function formatCandidateDateRange(startDate, endDate) {
       const start = formatDate(startDate);
       const end = formatDate(endDate);
@@ -1779,20 +1830,32 @@ VITAL PROTECT`;
       return `${start} → ${end}`;
     }
 
-    function getCandidateSessionStatus(candidate = {}) {
+    function getCandidateSessionStatus(candidate = {}, moduleName = "") {
+      if (moduleName) {
+        const moduleSession = getCandidateModuleSession(candidate, moduleName);
+        if (!moduleSession?.session_id) return "not_selected";
+        return moduleSession.status || "session_requested";
+      }
+      const moduleSessions = normalizeCandidateModuleSessions(candidate.candidate_module_sessions);
+      const entries = Object.values(moduleSessions).filter(entry => entry && entry.session_id);
+      if (entries.length) {
+        if (entries.some(entry => entry.status === "session_requested")) return "session_requested";
+        if (entries.some(entry => entry.status === "session_declined")) return "session_declined";
+        if (entries.every(entry => entry.status === "session_confirmed")) return "session_confirmed";
+      }
       if (!candidate.session_id) return "not_selected";
       return candidate.candidate_session_status || "session_requested";
     }
 
-    function getCandidateSessionStatusText(candidate = {}) {
-      const status = normalize(getCandidateSessionStatus(candidate));
+    function getCandidateSessionStatusText(candidate = {}, moduleName = "") {
+      const status = normalize(getCandidateSessionStatus(candidate, moduleName));
       if (status === "session_confirmed") return "Session confirmée par VITAL PROTECT";
       if (status === "session_declined") return "Session refusée — VITAL PROTECT vous proposera une autre date";
       if (status === "session_requested") return "Session souhaitée — en attente de confirmation VITAL PROTECT";
       return "Aucune session choisie";
     }
 
-    function getCandidateSessionCardText(candidate = {}, isSelected = false) {
+    function getCandidateSessionCardText(candidate = {}, isSelected = false, moduleName = "") {
       if (!isSelected) {
         return {
           badge: "Disponible",
@@ -1803,7 +1866,7 @@ VITAL PROTECT`;
         };
       }
 
-      const status = normalize(getCandidateSessionStatus(candidate));
+      const status = normalize(getCandidateSessionStatus(candidate, moduleName));
       if (status === "session_confirmed") {
         return {
           badge: "Confirmée",
@@ -1855,7 +1918,7 @@ VITAL PROTECT`;
               <span class="premium-eyebrow">Planning de validation</span>
               <h2 class="section-title">Choisir mes sessions de validation</h2>
               <p class="muted">Les sessions ci-dessous correspondent aux modules que vous avez financés. Choisissez la date qui vous convient ; elle apparaîtra ensuite côté admin pour confirmation VITAL PROTECT.</p>
-              ${candidate.session_id ? `<p class="candidate-session-current-status">${escapeHtml(getCandidateSessionStatusText(candidate))}</p>` : ""}
+              ${Object.values(normalizeCandidateModuleSessions(candidate.candidate_module_sessions)).some(entry => entry?.session_id) || candidate.session_id ? `<p class="candidate-session-current-status">${escapeHtml(getCandidateSessionStatusText(candidate))}</p>` : ""}
             </div>
             <span class="candidate-session-count">${sessions.length} session${sessions.length > 1 ? "s" : ""} ouverte${sessions.length > 1 ? "s" : ""}</span>
           </div>
@@ -1886,8 +1949,9 @@ VITAL PROTECT`;
                       const durationLabel = session.duration_days ? `${session.duration_days} jour${Number(session.duration_days) > 1 ? "s" : ""}` : "À confirmer";
                       const cardImage = getCandidateSessionVisual(canonicalModuleName);
                       const cardClass = getCandidateModuleCardClass(canonicalModuleName);
-                      const isSelected = String(candidate.session_id || "") && String(candidate.session_id || "") === String(session.id || "");
-                      const cardState = getCandidateSessionCardText(candidate, Boolean(isSelected));
+                      const moduleSession = getCandidateModuleSession(candidate, canonicalModuleName);
+                      const isSelected = String(moduleSession?.session_id || "") && String(moduleSession?.session_id || "") === String(session.id || "");
+                      const cardState = getCandidateSessionCardText(candidate, Boolean(isSelected), canonicalModuleName);
                       return `
                         <article class="candidate-stage-card ${cardClass}${isSelected ? " candidate-stage-card-selected" : ""}${cardState.className}" style="--candidate-card-bg:url('${escapeAttr(cardImage)}')">
                           <div class="candidate-stage-card-image" aria-hidden="true"></div>
@@ -1903,7 +1967,7 @@ VITAL PROTECT`;
                               <span>${escapeHtml(durationLabel)}</span>
                               <span>${escapeHtml(placesLabel)} place${remaining === 1 ? "" : "s"}</span>
                             </div>
-                            <button class="candidate-stage-action candidate-session-prefer" type="button" data-session-id="${escapeAttr(session.id || "")}" data-session-label="${escapeAttr(`${canonicalModuleName} — ${locationLabel} — ${formatDate(session.start_date)}`)}" ${cardState.disabled ? "disabled" : ""}>
+                            <button class="candidate-stage-action candidate-session-prefer" type="button" data-session-id="${escapeAttr(session.id || "")}" data-module-name="${escapeAttr(canonicalModuleName)}" data-session-label="${escapeAttr(`${canonicalModuleName} — ${locationLabel} — ${formatDate(session.start_date)}`)}" ${cardState.disabled ? "disabled" : ""}>
                               ${escapeHtml(cardState.button)}
                             </button>
                             <small>${escapeHtml(cardState.note)}</small>
@@ -1932,6 +1996,7 @@ VITAL PROTECT`;
 
           const sessionId = button.dataset.sessionId || "";
           const label = button.dataset.sessionLabel || "session de validation";
+          const moduleName = button.dataset.moduleName || "";
 
           if (!sessionId) {
             alert("Session introuvable. Rechargez la page puis réessayez.");
@@ -1951,7 +2016,8 @@ VITAL PROTECT`;
               headers,
               body: JSON.stringify({
                 action: "prefer_candidate_session",
-                session_id: sessionId
+                session_id: sessionId,
+                module_name: moduleName
               })
             });
 
