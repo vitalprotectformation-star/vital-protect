@@ -1911,3 +1911,95 @@ body:has(header) footer {
     min-width: 0;
   }
 }
+
+/* v43 — Admin candidats : correction débordements affichage sessions/modules */
+#tab-candidats .admin-candidate-card,
+#tab-candidats .admin-candidate-section,
+#tab-candidats .admin-candidate-mini-card,
+#tab-candidats .admin-candidate-session-box,
+#tab-candidats .candidate-module-review,
+#tab-candidats .candidate-module-review-row,
+#tab-candidats .candidate-module-review-info {
+  min-width: 0;
+}
+
+#tab-candidats .admin-candidate-card-body {
+  grid-template-columns: minmax(320px, 0.9fr) minmax(0, 1.7fr) minmax(230px, 0.55fr);
+}
+
+#tab-candidats .admin-candidate-section-overview .admin-candidate-session-line {
+  grid-template-columns: 1fr;
+  align-items: start;
+  gap: 7px;
+}
+
+#tab-candidats .admin-candidate-section-overview .admin-candidate-session-line .badge {
+  width: fit-content;
+  max-width: 100%;
+}
+
+#tab-candidats .admin-candidate-session-line strong,
+#tab-candidats .admin-candidate-session-line span:not(.badge),
+#tab-candidats .candidate-module-review-row strong,
+#tab-candidats .candidate-module-session-line > span:not(.badge) {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+
+#tab-candidats .admin-candidate-section-modules .candidate-module-review-row {
+  grid-template-columns: minmax(0, 1fr) 136px;
+  overflow: hidden;
+}
+
+#tab-candidats .candidate-module-session-line {
+  min-width: 0;
+  max-width: 100%;
+}
+
+#tab-candidats .candidate-module-session-line > span:not(.badge) {
+  flex: 1 1 240px;
+}
+
+#tab-candidats .candidate-module-session-line .badge,
+#tab-candidats .candidate-module-review-info > .badge {
+  width: fit-content;
+  max-width: 100%;
+  white-space: normal;
+}
+
+#tab-candidats .admin-candidate-section-modules .candidate-module-actions.candidate-module-actions-stack {
+  display: grid;
+  grid-template-columns: 1fr;
+  width: 136px;
+  min-width: 136px;
+  max-width: 136px;
+  justify-self: end;
+}
+
+#tab-candidats .admin-candidate-section-modules .candidate-module-actions.candidate-module-actions-stack .btn-mini {
+  width: 100%;
+  white-space: normal;
+  line-height: 1.1 !important;
+}
+
+@media (max-width: 1380px) {
+  #tab-candidats .admin-candidate-card-body {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 760px) {
+  #tab-candidats .admin-candidate-section-modules .candidate-module-review-row {
+    grid-template-columns: 1fr;
+  }
+
+  #tab-candidats .admin-candidate-section-modules .candidate-module-actions.candidate-module-actions-stack {
+    width: 100%;
+    min-width: 0;
+    max-width: none;
+    justify-self: stretch;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  }
+}
