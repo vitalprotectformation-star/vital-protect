@@ -5,6 +5,20 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY
 );
 
+
+function normalizeCandidateModuleSessions(value) {
+  if (!value) return {};
+  if (typeof value === "string") {
+    try {
+      value = JSON.parse(value);
+    } catch (_) {
+      return {};
+    }
+  }
+  if (typeof value !== "object" || Array.isArray(value)) return {};
+  return value;
+}
+
 function normalizeEmail(value) {
   return String(value || "").trim().toLowerCase();
 }
@@ -79,6 +93,7 @@ function normalizeCandidate(row) {
     session_id: row.session_id || null,
     candidate_session_status: row.candidate_session_status || (row.session_id ? "session_requested" : "not_selected"),
     training_module_results: row.training_module_results || {},
+    candidate_module_sessions: normalizeCandidateModuleSessions(row.candidate_module_sessions),
     candidate_session_requested_at: row.candidate_session_requested_at || null,
     candidate_session_confirmed_at: row.candidate_session_confirmed_at || null,
     candidate_session_admin_note: row.candidate_session_admin_note || null

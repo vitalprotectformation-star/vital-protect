@@ -149,6 +149,41 @@ function replaceLegacyModuleNames(value) {
   return text;
 }
 
+
+function normalizeCandidateModuleSessions(value) {
+  if (!value) return {};
+  if (typeof value === "string") {
+    try {
+      value = JSON.parse(value);
+    } catch (_) {
+      return {};
+    }
+  }
+  if (typeof value !== "object" || Array.isArray(value)) return {};
+
+  const normalized = {};
+  Object.entries(value).forEach(([key, rawEntry]) => {
+    const entry = rawEntry && typeof rawEntry === "object" && !Array.isArray(rawEntry) ? rawEntry : {};
+    const moduleName = getOfficialModuleName(key) || getOfficialModuleName(entry.module_name) || getOfficialModuleName(entry.title);
+    if (!moduleName) return;
+    const status = sanitizeText(entry.status || entry.candidate_session_status || "not_selected");
+    normalized[moduleName] = {
+      module_name: moduleName,
+      session_id: sanitizeText(entry.session_id || entry.id || ""),
+      status: ["not_selected", "session_requested", "session_confirmed", "session_declined"].includes(status) ? status : "not_selected",
+      requested_at: entry.requested_at || entry.candidate_session_requested_at || null,
+      confirmed_at: entry.confirmed_at || entry.candidate_session_confirmed_at || null,
+      admin_note: sanitizeText(entry.admin_note || entry.candidate_session_admin_note || "")
+    };
+  });
+
+  return normalized;
+}
+
+function countSelectedModuleSessions(moduleSessions = {}) {
+  return Object.values(moduleSessions).filter(entry => entry && entry.session_id).length;
+}
+
 function getModuleNameCandidates(value) {
   const raw = String(value || "").trim();
   const canonical = getCanonicalModuleName(raw);
@@ -868,17 +903,33 @@ async function handlePreferCandidateSession(req, res, candidate) {
     return res.status(403).json({ error: "Cette session ne correspond pas à vos modules financés" });
   }
 
+  const now = new Date().toISOString();
+  const moduleSessions = normalizeCandidateModuleSessions(candidate.candidate_module_sessions);
+  moduleSessions[sessionModuleName] = {
+    module_name: sessionModuleName,
+    session_id: sessionId,
+    status: "session_requested",
+    requested_at: now,
+    confirmed_at: null,
+    admin_note: ""
+  };
+
+  const selectedCount = countSelectedModuleSessions(moduleSessions);
+
   const updateResult = await updateWithOptionalColumns(
     "trainer_session_registrations",
     {
-      session_id: sessionId,
-      candidate_session_status: "session_requested",
-      candidate_session_requested_at: new Date().toISOString(),
+      // session_id reste renseigné pour compatibilité avec les anciens écrans,
+      // mais la vraie source devient candidate_module_sessions : 1 session par module.
+      session_id: candidate.session_id || sessionId,
+      candidate_module_sessions: moduleSessions,
+      candidate_session_status: selectedCount ? "session_requested" : "not_selected",
+      candidate_session_requested_at: now,
       candidate_session_confirmed_at: null,
       candidate_session_admin_note: null
     },
     [{ column: "id", value: candidate.id }],
-    ["candidate_session_status", "candidate_session_requested_at", "candidate_session_confirmed_at", "candidate_session_admin_note"]
+    ["candidate_module_sessions", "candidate_session_status", "candidate_session_requested_at", "candidate_session_confirmed_at", "candidate_session_admin_note"]
   );
 
   if (updateResult.error) {
@@ -932,6 +983,7 @@ async function handleCandidateDashboard(req, res, candidate) {
       message: candidate.message || "",
       created_at: candidate.created_at || null,
       session_id: candidate.session_id || null,
+      candidate_module_sessions: normalizeCandidateModuleSessions(candidate.candidate_module_sessions),
       candidate_session_status: candidate.candidate_session_status || (candidate.session_id ? "session_requested" : "not_selected"),
       candidate_session_requested_at: candidate.candidate_session_requested_at || null,
       candidate_session_confirmed_at: candidate.candidate_session_confirmed_at || null,

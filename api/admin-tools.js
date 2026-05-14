@@ -211,6 +211,46 @@ function replaceLegacyModuleNames(value) {
   return text;
 }
 
+
+function normalizeCandidateModuleSessions(value) {
+  if (!value) return {};
+  if (typeof value === "string") {
+    try {
+      value = JSON.parse(value);
+    } catch (_) {
+      return {};
+    }
+  }
+  if (typeof value !== "object" || Array.isArray(value)) return {};
+
+  const normalized = {};
+  Object.entries(value).forEach(([key, rawEntry]) => {
+    const entry = rawEntry && typeof rawEntry === "object" && !Array.isArray(rawEntry) ? rawEntry : {};
+    const moduleName = getOfficialModuleName(key) || getOfficialModuleName(entry.module_name) || getOfficialModuleName(entry.title);
+    if (!moduleName) return;
+    const status = sanitizeText(entry.status || entry.candidate_session_status || "not_selected");
+    normalized[moduleName] = {
+      module_name: moduleName,
+      session_id: sanitizeText(entry.session_id || entry.id || ""),
+      status: ["not_selected", "session_requested", "session_confirmed", "session_declined"].includes(status) ? status : "not_selected",
+      requested_at: entry.requested_at || entry.candidate_session_requested_at || null,
+      confirmed_at: entry.confirmed_at || entry.candidate_session_confirmed_at || null,
+      admin_note: sanitizeText(entry.admin_note || entry.candidate_session_admin_note || "")
+    };
+  });
+
+  return normalized;
+}
+
+function aggregateCandidateSessionStatus(moduleSessions = {}, legacyStatus = "not_selected") {
+  const entries = Object.values(moduleSessions).filter(entry => entry && entry.session_id);
+  if (!entries.length) return "not_selected";
+  if (entries.some(entry => entry.status === "session_requested")) return "session_requested";
+  if (entries.some(entry => entry.status === "session_declined")) return "session_declined";
+  if (entries.every(entry => entry.status === "session_confirmed")) return "session_confirmed";
+  return legacyStatus || "session_requested";
+}
+
 function getModuleNameCandidates(value) {
   const raw = String(value || "").trim();
   const canonical = getCanonicalModuleName(raw);
@@ -931,6 +971,7 @@ async function handleUpdateCandidateSessionStatus(req, res) {
   const registrationId = sanitizeText(req.body?.registration_id);
   const requestedStatus = sanitizeText(req.body?.status || req.body?.candidate_session_status);
   const note = sanitizeText(req.body?.note || req.body?.admin_note || "");
+  const requestedModuleName = getOfficialModuleName(req.body?.module_name || req.body?.module || "");
 
   if (!registrationId) {
     return res.status(400).json({ error: "registration_id manquant" });
@@ -943,7 +984,7 @@ async function handleUpdateCandidateSessionStatus(req, res) {
 
   const { data: registration, error: fetchError } = await supabase
     .from("trainer_session_registrations")
-    .select("id, session_id")
+    .select("id, session_id, candidate_session_status, candidate_module_sessions")
     .eq("id", registrationId)
     .maybeSingle();
 
@@ -955,15 +996,80 @@ async function handleUpdateCandidateSessionStatus(req, res) {
     return res.status(404).json({ error: "Candidat introuvable" });
   }
 
+  const now = new Date().toISOString();
+  const payload = {
+    candidate_session_admin_note: note || null
+  };
+
+  // Nouveau workflow : une session par module acheté.
+  if (requestedModuleName) {
+    const moduleSessions = normalizeCandidateModuleSessions(registration.candidate_module_sessions);
+    const currentEntry = moduleSessions[requestedModuleName];
+
+    if (["session_requested", "session_confirmed", "session_declined"].includes(requestedStatus) && !currentEntry?.session_id) {
+      return res.status(400).json({ error: "Aucune session n’est rattachée à ce module" });
+    }
+
+    if (requestedStatus === "not_selected") {
+      delete moduleSessions[requestedModuleName];
+    } else {
+      moduleSessions[requestedModuleName] = {
+        ...(currentEntry || {}),
+        module_name: requestedModuleName,
+        status: requestedStatus,
+        admin_note: note || ""
+      };
+
+      if (requestedStatus === "session_confirmed") {
+        moduleSessions[requestedModuleName].confirmed_at = now;
+      }
+      if (requestedStatus === "session_requested") {
+        moduleSessions[requestedModuleName].requested_at = now;
+        moduleSessions[requestedModuleName].confirmed_at = null;
+      }
+      if (requestedStatus === "session_declined") {
+        moduleSessions[requestedModuleName].confirmed_at = null;
+      }
+    }
+
+    const remainingEntries = Object.values(moduleSessions).filter(entry => entry && entry.session_id);
+    payload.candidate_module_sessions = moduleSessions;
+    payload.candidate_session_status = aggregateCandidateSessionStatus(moduleSessions, registration.candidate_session_status || "not_selected");
+
+    if (!remainingEntries.length) {
+      payload.session_id = null;
+      payload.candidate_session_requested_at = null;
+      payload.candidate_session_confirmed_at = null;
+    } else {
+      payload.session_id = remainingEntries[0].session_id;
+      payload.candidate_session_requested_at = now;
+      payload.candidate_session_confirmed_at = remainingEntries.every(entry => entry.status === "session_confirmed") ? now : null;
+    }
+
+    const result = await updateWithOptionalColumns(
+      "trainer_session_registrations",
+      payload,
+      [{ column: "id", value: registrationId }],
+      ["candidate_module_sessions", "candidate_session_status", "candidate_session_requested_at", "candidate_session_confirmed_at", "candidate_session_admin_note"]
+    );
+
+    if (result.error) {
+      return res.status(500).json({ error: result.error.message });
+    }
+
+    return res.status(200).json({
+      success: true,
+      registration: result.data,
+      omitted_columns: result.omittedColumns || []
+    });
+  }
+
+  // Compatibilité ancienne version : une seule session globale.
   if (["session_requested", "session_confirmed", "session_declined"].includes(requestedStatus) && !registration.session_id) {
     return res.status(400).json({ error: "Aucune session n’est rattachée à ce candidat" });
   }
 
-  const now = new Date().toISOString();
-  const payload = {
-    candidate_session_status: requestedStatus,
-    candidate_session_admin_note: note || null
-  };
+  payload.candidate_session_status = requestedStatus;
 
   if (requestedStatus === "session_confirmed") {
     payload.candidate_session_confirmed_at = now;
