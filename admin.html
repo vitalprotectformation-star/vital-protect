@@ -2659,17 +2659,35 @@
       const validationStatus = normalize(row.validation_status || "pending");
       const canValidateModules = ["captured", "paid"].includes(paymentStatus) && validationStatus === "validated";
       const results = normalizeModuleResults(row.training_module_results);
+      const selectedSession = getTrainerSessionById(row.session_id);
+      const selectedSessionModule = selectedSession
+        ? getCanonicalModuleName(selectedSession.module_name || selectedSession.title || "")
+        : "";
+      const sessionStatus = getCandidateSessionStatus(row);
 
       return `
         <div class="candidate-module-review">
           <div class="candidate-module-review-title">Validation par module</div>
           ${modules.map(moduleName => {
             const status = results[moduleName] || "pending";
+            const sessionForModule = selectedSession && selectedSessionModule === moduleName ? selectedSession : null;
+            const moduleSessionStatus = sessionForModule ? sessionStatus : "not_selected";
+            const sessionPlace = sessionForModule
+              ? [sessionForModule.city, sessionForModule.department || sessionForModule.region].filter(Boolean).join(" · ") || "Lieu à confirmer"
+              : "Aucune session choisie pour ce module";
+            const sessionDates = sessionForModule
+              ? [formatDate(sessionForModule.start_date), formatDate(sessionForModule.end_date)].filter(value => value && value !== "—").join(" → ") || "Date à confirmer"
+              : "À planifier";
             return `
               <div class="candidate-module-review-row">
-                <div>
+                <div class="candidate-module-review-info">
                   <strong>${escapeHtml(moduleName)}</strong>
-                  <span class="badge ${candidateModuleResultBadgeClass(status)}">${escapeHtml(candidateModuleResultLabel(status))}</span>
+                  <div class="candidate-module-session-line">
+                    <span>Session : ${escapeHtml(sessionPlace)}</span>
+                    <span>${escapeHtml(sessionDates)}</span>
+                    <span class="badge ${candidateSessionStatusBadgeClass(moduleSessionStatus)}">${escapeHtml(candidateSessionStatusLabel(moduleSessionStatus))}</span>
+                  </div>
+                  <span class="badge ${candidateModuleResultBadgeClass(status)}">Résultat : ${escapeHtml(candidateModuleResultLabel(status))}</span>
                 </div>
                 ${canValidateModules ? `
                   <div class="candidate-module-actions">
@@ -2721,6 +2739,57 @@
         .filter(value => value && value !== "—")
         .join(" → ") || "Date à confirmer";
       return `${moduleName} — ${place} — ${dates}`;
+    }
+
+    function getCandidateNextAction(row) {
+      const paymentStatus = normalize(row.payment_status || "");
+      const validationStatus = normalize(row.validation_status || "pending");
+      const modules = getCandidateModules(row);
+      const results = normalizeModuleResults(row.training_module_results);
+      const passedCount = modules.filter(moduleName => results[moduleName] === "passed").length;
+      const existsAsTrainer = trainerAlreadyExists(row.email);
+
+      if (["checkout_created", "pending_payment", "authorized"].includes(paymentStatus)) return "Valider dossier et encaisser";
+      if (validationStatus !== "validated") return "Valider le dossier";
+      if (row.session_id && getCandidateSessionStatus(row) === "session_requested") return "Confirmer la session souhaitée";
+      if (!row.session_id) return "Planifier au moins une session";
+      if (modules.length && passedCount < modules.length) return `Valider les modules (${passedCount}/${modules.length})`;
+      if (!existsAsTrainer) return "Activer le formateur";
+      return "Dossier suivi";
+    }
+
+    function renderCandidatePaymentAccess(row) {
+      const price = row.trainer_formula_price || row.formula_price || row.amount || row.total_amount;
+      const moduleCount = row.trainer_formula_module_count || row.selected_module_count || row.module_count || getCandidateModules(row).length;
+      const portalCreated = Boolean(row.portal_account_created_at || row.auth_user_id);
+      const accessLabel = portalCreated ? "Accès dashboard créé" : (row.portal_invite_sent_at ? "Lien dashboard envoyé" : "Accès dashboard à créer");
+      return `
+        <div class="admin-candidate-mini-grid">
+          <div class="admin-candidate-mini-card">
+            <span>Paiement</span>
+            <strong>${escapeHtml(row.payment_status || "—")}</strong>
+            <small>${price ? `${escapeHtml(formatCurrency(price))} · Formule ${escapeHtml(moduleCount)} module${Number(moduleCount) > 1 ? "s" : ""}` : "Montant à vérifier"}</small>
+          </div>
+          <div class="admin-candidate-mini-card">
+            <span>Accès dashboard</span>
+            <strong>${escapeHtml(accessLabel)}</strong>
+            <small>${row.portal_invite_sent_at ? `Dernier lien : ${formatDate(row.portal_invite_sent_at)}` : "Lien disponible depuis les actions"}</small>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderCandidateSessionSummary(row) {
+      const sessionStatus = getCandidateSessionStatus(row);
+      return `
+        <div class="admin-candidate-session-box">
+          <span class="admin-candidate-section-title">Session souhaitée</span>
+          <strong>${escapeHtml(getCandidateSessionLabel(row))}</strong>
+          <span class="badge ${candidateSessionStatusBadgeClass(sessionStatus)}">${escapeHtml(candidateSessionStatusLabel(sessionStatus))}</span>
+          ${row.candidate_session_confirmed_at ? `<small>Confirmée le ${formatDate(row.candidate_session_confirmed_at)}</small>` : ""}
+          <small>${escapeHtml(getCandidateModulesLabel(row))}</small>
+        </div>
+      `;
     }
 
     function renderTrainerRegistrations(rows) {
@@ -2781,14 +2850,15 @@
                   </div>
                 </div>
 
+                <div class="admin-candidate-next-action">
+                  <span>Prochaine action</span>
+                  <strong>${escapeHtml(getCandidateNextAction(row))}</strong>
+                </div>
+
                 <div class="admin-candidate-card-body">
-                  <section class="admin-candidate-section admin-candidate-section-session">
-                    <span class="admin-candidate-section-title">Session souhaitée</span>
-                    <strong>${escapeHtml(sessionLabel)}</strong>
-                    <span class="badge ${candidateSessionStatusBadgeClass(sessionStatus)}">${escapeHtml(candidateSessionStatusLabel(sessionStatus))}</span>
-                    ${row.candidate_session_confirmed_at ? `<small>Confirmée le ${formatDate(row.candidate_session_confirmed_at)}</small>` : ""}
-                    <small>${escapeHtml(accessStatus)}</small>
-                    <small>${escapeHtml(getCandidateModulesLabel(row))}</small>
+                  <section class="admin-candidate-section admin-candidate-section-overview">
+                    ${renderCandidatePaymentAccess(row)}
+                    ${renderCandidateSessionSummary(row)}
                   </section>
 
                   <section class="admin-candidate-section admin-candidate-section-modules">
