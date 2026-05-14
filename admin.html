@@ -2733,69 +2733,77 @@
       }
 
       trainerRegistrationsWrap.innerHTML = `
-        <table>
-          <thead>
-            <tr>
-              <th>Candidat</th>
-              <th>Contact</th>
-              <th>Parcours / modules</th>
-              <th>Paiement</th>
-              <th>Dossier</th>
-              <th>Modules</th>
-              <th>Date</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${rows.map(row => {
-              const paymentBadgeClass =
-                row.payment_status === "captured" ? "badge-success" :
-                row.payment_status === "authorized" ? "badge-ok" :
-                row.payment_status === "checkout_created" ? "badge-warning" :
-                row.payment_status === "pending_payment" ? "badge-warning" :
-                row.payment_status === "canceled" ? "badge-danger" :
-                "badge-warning";
+        <div class="admin-candidates-list">
+          ${rows.map(row => {
+            const paymentBadgeClass =
+              row.payment_status === "captured" ? "badge-success" :
+              row.payment_status === "authorized" ? "badge-ok" :
+              row.payment_status === "checkout_created" ? "badge-warning" :
+              row.payment_status === "pending_payment" ? "badge-warning" :
+              row.payment_status === "canceled" ? "badge-danger" :
+              "badge-warning";
 
-              const validationBadgeClass =
-                row.validation_status === "validated" ? "badge-success" :
-                row.validation_status === "rejected" ? "badge-danger" :
-                "badge-warning";
+            const validationBadgeClass =
+              row.validation_status === "validated" ? "badge-success" :
+              row.validation_status === "rejected" ? "badge-danger" :
+              "badge-warning";
 
-              const resultValue = getCandidateOverallResultValue(row);
+            const resultValue = getCandidateOverallResultValue(row);
+            const resultBadgeClass =
+              resultValue === "passed" ? "badge-success" :
+              resultValue === "failed" ? "badge-danger" :
+              resultValue === "resit" ? "badge-warning" :
+              "badge-warning";
 
-              const resultBadgeClass =
-                resultValue === "passed" ? "badge-success" :
-                resultValue === "failed" ? "badge-danger" :
-                resultValue === "resit" ? "badge-warning" :
-                "badge-warning";
+            const fullName = `${row.first_name || ""} ${row.last_name || ""}`.trim() || "Candidat formateur";
+            const initials = fullName.split(/\s+/).slice(0, 2).map(part => part.charAt(0)).join("").toUpperCase() || "CF";
+            const accessStatus = row.portal_account_created_at || row.auth_user_id ? "Accès dashboard créé" : (row.portal_invite_sent_at ? "Lien dashboard envoyé" : "Accès dashboard à créer");
+            const sessionLabel = getCandidateSessionLabel(row);
+            const sessionStatus = getCandidateSessionStatus(row);
 
-              return `
-                <tr>
-                  <td><strong>${escapeHtml(row.first_name || "")} ${escapeHtml(row.last_name || "")}</strong></td>
-                  <td>
-                    <strong>${escapeHtml(row.email || "—")}</strong>
-                    <span>${escapeHtml(row.phone || "—")}</span><br />
-                    <span>${escapeHtml(row.city || "—")}</span><br />
-                    <span>Accès dashboard : ${row.portal_account_created_at || row.auth_user_id ? "créé" : (row.portal_invite_sent_at ? "lien envoyé" : "à créer")}</span>
-                  </td>
-                  <td class="candidate-path-cell">
-                    <div class="candidate-session-summary">
-                      <strong>${escapeHtml(getCandidateSessionLabel(row))}</strong>
-                      <span class="badge ${candidateSessionStatusBadgeClass(getCandidateSessionStatus(row))}">${escapeHtml(candidateSessionStatusLabel(getCandidateSessionStatus(row)))}</span>
-                      ${row.candidate_session_confirmed_at ? `<span>Confirmée le ${formatDate(row.candidate_session_confirmed_at)}</span>` : ""}
+            return `
+              <article class="admin-candidate-card">
+                <div class="admin-candidate-card-header">
+                  <div class="admin-candidate-identity">
+                    <span class="admin-candidate-avatar">${escapeHtml(initials)}</span>
+                    <div>
+                      <h3>${escapeHtml(fullName)}</h3>
+                      <p>${escapeHtml(row.email || "—")}</p>
+                      <p>${escapeHtml(row.phone || "—")} · ${escapeHtml(row.city || "—")}</p>
                     </div>
+                  </div>
+
+                  <div class="admin-candidate-statusbar">
+                    <span class="badge ${paymentBadgeClass}">${escapeHtml(row.payment_status || "—")}</span>
+                    <span class="badge ${validationBadgeClass}">${escapeHtml(row.validation_status || "—")}</span>
+                    <span class="badge ${resultBadgeClass}">${escapeHtml(getCandidateModuleSummary(row))}</span>
+                    <span class="admin-candidate-date">${formatDate(row.created_at)}</span>
+                  </div>
+                </div>
+
+                <div class="admin-candidate-card-body">
+                  <section class="admin-candidate-section admin-candidate-section-session">
+                    <span class="admin-candidate-section-title">Session souhaitée</span>
+                    <strong>${escapeHtml(sessionLabel)}</strong>
+                    <span class="badge ${candidateSessionStatusBadgeClass(sessionStatus)}">${escapeHtml(candidateSessionStatusLabel(sessionStatus))}</span>
+                    ${row.candidate_session_confirmed_at ? `<small>Confirmée le ${formatDate(row.candidate_session_confirmed_at)}</small>` : ""}
+                    <small>${escapeHtml(accessStatus)}</small>
+                    <small>${escapeHtml(getCandidateModulesLabel(row))}</small>
+                  </section>
+
+                  <section class="admin-candidate-section admin-candidate-section-modules">
                     ${renderCandidateModuleValidation(row)}
-                  </td>
-                  <td><span class="badge ${paymentBadgeClass}">${escapeHtml(row.payment_status || "—")}</span></td>
-                  <td><span class="badge ${validationBadgeClass}">${escapeHtml(row.validation_status || "—")}</span></td>
-                  <td><span class="badge ${resultBadgeClass}">${escapeHtml(getCandidateModuleSummary(row))}</span></td>
-                  <td>${formatDate(row.created_at)}</td>
-                  <td>${buildCandidateActions(row)}</td>
-                </tr>
-              `;
-            }).join("")}
-          </tbody>
-        </table>
+                  </section>
+
+                  <section class="admin-candidate-section admin-candidate-section-actions">
+                    <span class="admin-candidate-section-title">Actions</span>
+                    ${buildCandidateActions(row)}
+                  </section>
+                </div>
+              </article>
+            `;
+          }).join("")}
+        </div>
       `;
     }
 
