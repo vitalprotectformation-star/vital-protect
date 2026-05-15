@@ -555,6 +555,7 @@
       <div class="nav-group">
         <button class="nav-btn active" data-tab="dashboard">Dashboard</button>
         <button class="nav-btn" data-tab="candidats">Candidats</button>
+        <button class="nav-btn" data-tab="documents">Documents formateurs</button>
         <button class="nav-btn" data-tab="archives">Archives candidats</button>
         <button class="nav-btn" data-tab="formateurs">Formateurs actifs</button>
         <button class="nav-btn" data-tab="recyclage">À recycler</button>
@@ -717,6 +718,58 @@
 
             <div class="table-wrap" id="trainerRegistrationsWrap">
               <div class="loading">Chargement des candidats formateurs...</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="tab-documents" class="tab-panel">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h2>Documents formateurs</h2>
+              <p>Justificatifs transmis depuis le dashboard formateur : B3, RC pro, diplôme / certification et charte.</p>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="filters filters-4">
+              <div class="field">
+                <label>Recherche</label>
+                <input id="documentSearch" type="text" placeholder="Nom, email, fichier..." />
+              </div>
+              <div class="field">
+                <label>Type</label>
+                <select id="documentTypeFilter">
+                  <option value="">Tous</option>
+                  <option value="criminal_record">Casier judiciaire B3</option>
+                  <option value="liability_insurance">RC pro</option>
+                  <option value="diploma">Diplôme / certification</option>
+                  <option value="charter">Charte</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>Statut</label>
+                <select id="documentStatusFilter">
+                  <option value="">Tous</option>
+                  <option value="submitted">Envoyé</option>
+                  <option value="in_review">En vérification</option>
+                  <option value="validated">Validé</option>
+                  <option value="refused">Refusé</option>
+                  <option value="expired">Expiré</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>Sensible</label>
+                <select id="documentSensitiveFilter">
+                  <option value="">Tous</option>
+                  <option value="sensitive">Documents sensibles</option>
+                  <option value="standard">Documents standards</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="table-wrap" id="trainerDocumentsWrap">
+              <div class="loading">Chargement des documents formateurs...</div>
             </div>
           </div>
         </div>
@@ -1392,6 +1445,7 @@
     let trainersData = [];
     let trainerModulesData = [];
     let trainerSessionsData = [];
+    let trainerDocumentsData = [];
 
     const reservationsWrap = document.getElementById("reservationsWrap");
     const stagesWrap = document.getElementById("stagesWrap");
@@ -1401,6 +1455,7 @@
     const recycleTrainersWrap = document.getElementById("recycleTrainersWrap");
     const trainerModulesWrap = document.getElementById("trainerModulesWrap");
     const trainerSessionsWrap = document.getElementById("trainerSessionsWrap");
+    const trainerDocumentsWrap = document.getElementById("trainerDocumentsWrap");
     const trainerPayoutsWrap = document.getElementById("trainerPayoutsWrap");
 
     const reservationsCount = document.getElementById("reservationsCount");
@@ -1810,6 +1865,96 @@
       const amount = Number(value || 0);
       if (!Number.isFinite(amount)) return "—";
       return `${amount.toFixed(0)} €`;
+    }
+
+
+    function formatFileSize(bytes) {
+      const value = Number(bytes || 0);
+      if (!Number.isFinite(value) || value <= 0) return "—";
+      if (value < 1024 * 1024) return `${Math.round(value / 1024)} Ko`;
+      return `${Math.round((value / (1024 * 1024)) * 10) / 10} Mo`;
+    }
+
+    function trainerDocumentStatusLabel(status) {
+      const labels = {
+        submitted: "Envoyé",
+        in_review: "En vérification",
+        validated: "Validé",
+        refused: "Refusé",
+        expired: "Expiré"
+      };
+      return labels[normalize(status)] || status || "Envoyé";
+    }
+
+    function trainerDocumentStatusClass(status) {
+      const value = normalize(status || "submitted");
+      if (value === "validated") return "badge-success";
+      if (value === "refused" || value === "expired") return "badge-danger";
+      return "badge-warning";
+    }
+
+    function trainerDocumentDisplayName(row = {}) {
+      const name = `${row.first_name || ""} ${row.last_name || ""}`.trim();
+      return name || row.email || "Formateur";
+    }
+
+    function renderTrainerDocuments(rows = []) {
+      if (!trainerDocumentsWrap) return;
+
+      if (!rows.length) {
+        trainerDocumentsWrap.innerHTML = `<div class="empty">Aucun document formateur à afficher.</div>`;
+        return;
+      }
+
+      trainerDocumentsWrap.innerHTML = `
+        <table>
+          <thead>
+            <tr>
+              <th>Formateur</th>
+              <th>Document</th>
+              <th>Fichier</th>
+              <th>Statut</th>
+              <th>Dates</th>
+              <th>Note admin</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rows.map(row => `
+              <tr>
+                <td>
+                  <strong>${escapeHtml(trainerDocumentDisplayName(row))}</strong>
+                  <span>${escapeHtml(row.email || "—")}</span>
+                </td>
+                <td>
+                  <strong>${escapeHtml(row.document_label || row.document_type || "Document")}</strong>
+                  <span>${row.sensitive ? "Document sensible" : "Document standard"}</span>
+                </td>
+                <td>
+                  <strong>${escapeHtml(row.file_name || (row.has_file ? "Fichier privé" : "—"))}</strong>
+                  <span>${escapeHtml(formatFileSize(row.file_size_bytes))}</span>
+                </td>
+                <td><span class="badge ${trainerDocumentStatusClass(row.status)}">${escapeHtml(trainerDocumentStatusLabel(row.status))}</span></td>
+                <td>
+                  <strong>Envoi : ${escapeHtml(formatDateTime(row.uploaded_at || row.accepted_at || row.updated_at))}</strong>
+                  <span>Validation : ${escapeHtml(formatDateTime(row.validated_at))}</span>
+                  ${row.expires_at ? `<span>Expire : ${escapeHtml(formatShortDate(row.expires_at))}</span>` : ""}
+                </td>
+                <td>${escapeHtml(row.admin_note || "—")}</td>
+                <td>
+                  <div class="action-stack">
+                    ${row.has_file ? `<button class="btn btn-secondary" type="button" onclick="window.openTrainerDocument('${jsArg(row.id)}')">Voir</button>` : ""}
+                    ${normalize(row.status) !== "validated" ? `<button class="btn btn-primary" type="button" onclick="window.updateTrainerDocumentStatus('${jsArg(row.id)}', 'validated')">Valider</button>` : ""}
+                    ${normalize(row.status) !== "in_review" ? `<button class="btn btn-secondary" type="button" onclick="window.updateTrainerDocumentStatus('${jsArg(row.id)}', 'in_review')">En vérification</button>` : ""}
+                    ${normalize(row.status) !== "refused" ? `<button class="btn btn-danger" type="button" onclick="window.updateTrainerDocumentStatus('${jsArg(row.id)}', 'refused')">Refuser</button>` : ""}
+                    ${normalize(row.status) !== "expired" ? `<button class="btn btn-secondary" type="button" onclick="window.updateTrainerDocumentStatus('${jsArg(row.id)}', 'expired')">Expirer</button>` : ""}
+                  </div>
+                </td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+      `;
     }
 
     function normalize(value) {
@@ -3341,6 +3486,36 @@
       financeTotal.textContent = formatPrice(total);
     }
 
+
+    function applyDocumentFilters() {
+      if (!trainerDocumentsWrap) return;
+      const search = normalize(document.getElementById("documentSearch")?.value || "");
+      const type = normalize(document.getElementById("documentTypeFilter")?.value || "");
+      const status = normalize(document.getElementById("documentStatusFilter")?.value || "");
+      const sensitive = normalize(document.getElementById("documentSensitiveFilter")?.value || "");
+
+      const filtered = trainerDocumentsData.filter(row => {
+        const text = [
+          row.first_name,
+          row.last_name,
+          row.email,
+          row.document_label,
+          row.document_type,
+          row.file_name,
+          row.admin_note,
+          row.trainer_note
+        ].map(normalize).join(" ");
+
+        const searchOk = !search || text.includes(search);
+        const typeOk = !type || normalize(row.document_type) === type;
+        const statusOk = !status || normalize(row.status) === status;
+        const sensitiveOk = !sensitive || (sensitive === "sensitive" && row.sensitive) || (sensitive === "standard" && !row.sensitive);
+        return searchOk && typeOk && statusOk && sensitiveOk;
+      });
+
+      renderTrainerDocuments(filtered);
+    }
+
     function applyCandidateFilters() {
       try {
         const search = normalize(document.getElementById("candidateSearch").value);
@@ -3658,6 +3833,22 @@
       trainerSessionsData = data || [];
       renderTrainerSessions(trainerSessionsData);
       applyCandidateFilters();
+    }
+
+    async function loadTrainerDocuments() {
+      if (!trainerDocumentsWrap) return;
+      try {
+        const result = await callAdminTool("list_trainer_documents");
+        trainerDocumentsData = Array.isArray(result.trainer_documents) ? result.trainer_documents : [];
+        if (result.setup_required) {
+          trainerDocumentsWrap.innerHTML = `<div class="error">Module documents non initialisé : exécute la SQL v46 dans Supabase.</div>`;
+          return;
+        }
+        applyDocumentFilters();
+      } catch (error) {
+        console.error(error);
+        trainerDocumentsWrap.innerHTML = `<div class="error">Impossible de charger les documents formateurs : ${escapeHtml(error.message || "erreur inconnue")}</div>`;
+      }
     }
 
     window.deleteTrainerSession = async (sessionId, sessionTitle) => {
@@ -4342,6 +4533,11 @@ VITAL PROTECT`
     document.getElementById("trainerSessionCityFilter").addEventListener("input", applyTrainerSessionFilters);
     document.getElementById("trainerSessionStatusFilter").addEventListener("change", applyTrainerSessionFilters);
 
+    document.getElementById("documentSearch")?.addEventListener("input", applyDocumentFilters);
+    document.getElementById("documentTypeFilter")?.addEventListener("change", applyDocumentFilters);
+    document.getElementById("documentStatusFilter")?.addEventListener("change", applyDocumentFilters);
+    document.getElementById("documentSensitiveFilter")?.addEventListener("change", applyDocumentFilters);
+
     document.getElementById("payoutSearch")?.addEventListener("input", applyPayoutFilters);
     document.getElementById("payoutStatusFilter")?.addEventListener("change", applyPayoutFilters);
     document.getElementById("payoutReadinessFilter")?.addEventListener("change", applyPayoutFilters);
@@ -4521,6 +4717,7 @@ VITAL PROTECT`
       await loadArchives();
       await loadTrainerModules();
       await loadTrainerSessions();
+      await loadTrainerDocuments();
     }
   </script>
 </body>

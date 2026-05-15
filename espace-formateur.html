@@ -405,6 +405,61 @@
       color: var(--muted);
     }
 
+    .trainer-documents-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 14px;
+    }
+
+    .trainer-document-card {
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 16px;
+      background: #fbfdff;
+      min-width: 0;
+    }
+
+    .trainer-document-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .trainer-document-head h3 {
+      margin: 0;
+      font-size: 1.02rem;
+    }
+
+    .trainer-document-card input[type="file"] {
+      padding: 10px;
+      background: white;
+    }
+
+    .trainer-document-meta {
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin: 8px 0 0;
+    }
+
+    .trainer-document-note {
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: #fff4df;
+      color: #8a5a00;
+      font-size: 0.9rem;
+    }
+
+    .trainer-document-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+
     .stage-details-panel {
       margin-top: 14px;
       border: 1px solid var(--border);
@@ -496,7 +551,8 @@
     @media (max-width: 900px) {
       .grid,
       .grid-3,
-      .dashboard-kpis {
+      .dashboard-kpis,
+      .trainer-documents-grid {
         grid-template-columns: 1fr;
       }
     }
@@ -735,6 +791,217 @@
         currency: "EUR",
         maximumFractionDigits: 0
       }).format(Number.isFinite(amount) ? amount : 0);
+    }
+
+
+    const TRAINER_DOCUMENT_FALLBACK_REQUIREMENTS = [
+      { type: "identity", label: "Pièce d’identité", category: "external", required: true, description: "Vérification via Stripe Identity / Stripe Connect. Aucun scan n’est stocké ici." },
+      { type: "bank_account", label: "RIB / compte bancaire", category: "external", required: true, description: "Compte bancaire à connecter via Stripe Connect pour les reversements. Aucun RIB PDF n’est stocké ici." },
+      { type: "criminal_record", label: "Casier judiciaire B3", category: "upload", required: true, sensitive: true, description: "À transmettre pour vérification par VITAL PROTECT." },
+      { type: "liability_insurance", label: "Attestation RC pro", category: "upload", required: true, description: "Attestation d’assurance responsabilité civile professionnelle." },
+      { type: "diploma", label: "Diplôme / certification", category: "upload", required: false, description: "Diplôme, certification ou justificatif d’expérience." },
+      { type: "charter", label: "Charte VITAL PROTECT", category: "acceptance", required: true, description: "Acceptation numérique de la charte réseau VITAL PROTECT." }
+    ];
+
+    function formatFileSize(bytes) {
+      const value = Number(bytes || 0);
+      if (!Number.isFinite(value) || value <= 0) return "—";
+      if (value < 1024 * 1024) return `${Math.round(value / 1024)} Ko`;
+      return `${Math.round((value / (1024 * 1024)) * 10) / 10} Mo`;
+    }
+
+    function documentStatusLabel(status, category = "") {
+      const value = normalize(status || "not_submitted");
+      const labels = {
+        not_submitted: category === "external" ? "Hors site" : "À fournir",
+        submitted: "Envoyé",
+        in_review: "En vérification",
+        validated: "Validé",
+        refused: "Refusé",
+        expired: "Expiré"
+      };
+      return labels[value] || status || "À fournir";
+    }
+
+    function documentStatusBadgeClass(status, category = "") {
+      const value = normalize(status || "not_submitted");
+      if (value === "validated") return "badge-success";
+      if (value === "refused" || value === "expired") return "badge-danger";
+      if (value === "submitted" || value === "in_review" || category === "external") return "badge-warning";
+      return "badge-warning";
+    }
+
+    function getTrainerDocumentByType(documents = [], type = "") {
+      return (documents || []).find(item => normalize(item.document_type) === normalize(type)) || null;
+    }
+
+    function buildTrainerDocumentsSection(data = {}) {
+      const requirements = Array.isArray(data.document_requirements) && data.document_requirements.length
+        ? data.document_requirements
+        : TRAINER_DOCUMENT_FALLBACK_REQUIREMENTS;
+      const documents = Array.isArray(data.trainer_documents) ? data.trainer_documents : [];
+      const setupRequired = Boolean(data.documents_setup_required);
+
+      return `
+        <div class="card" id="trainerDocumentsMount" style="padding:18px; margin-top:18px;">
+          <div class="dashboard-header">
+            <div>
+              <h2 class="section-title">Mon dossier formateur</h2>
+              <p class="muted">Après paiement, transmettez les justificatifs utiles. Les pièces sensibles sont stockées en espace privé et consultées uniquement par l’admin.</p>
+            </div>
+          </div>
+
+          ${setupRequired ? `
+            <div class="alert alert-warning">
+              Le module documents n’est pas encore initialisé côté base de données. VITAL PROTECT doit exécuter la SQL v46.
+            </div>
+          ` : ""}
+
+          <div class="trainer-documents-grid">
+            ${requirements.map(requirement => {
+              const documentRow = getTrainerDocumentByType(documents, requirement.type);
+              const status = documentRow?.status || "not_submitted";
+              const category = requirement.category || documentRow?.category || "upload";
+              const documentLabel = requirement.label || documentRow?.document_label || "Document";
+              const isValidated = normalize(status) === "validated";
+              const isRefused = normalize(status) === "refused";
+              const hasFile = Boolean(documentRow?.file_name);
+
+              return `
+                <article class="trainer-document-card">
+                  <div class="trainer-document-head">
+                    <div>
+                      <h3>${escapeHtml(documentLabel)}</h3>
+                      <p class="trainer-document-meta">${escapeHtml(requirement.description || "")}</p>
+                    </div>
+                    <span class="badge ${documentStatusBadgeClass(status, category)}">${escapeHtml(documentStatusLabel(status, category))}</span>
+                  </div>
+
+                  ${hasFile ? `
+                    <p class="trainer-document-meta">
+                      Fichier : <strong>${escapeHtml(documentRow.file_name)}</strong><br />
+                      Taille : ${escapeHtml(formatFileSize(documentRow.file_size_bytes))} — envoyé le ${escapeHtml(formatDateTime(documentRow.uploaded_at))}
+                    </p>
+                  ` : ""}
+
+                  ${documentRow?.admin_note ? `
+                    <div class="trainer-document-note"><strong>Note admin :</strong> ${escapeHtml(documentRow.admin_note)}</div>
+                  ` : ""}
+
+                  ${category === "upload" ? `
+                    <div class="field" style="margin-top: 12px;">
+                      <label for="docUpload-${escapeAttr(requirement.type)}">${isRefused ? "Remplacer le document" : hasFile ? "Remplacer si nécessaire" : "Joindre un fichier"}</label>
+                      <input id="docUpload-${escapeAttr(requirement.type)}" type="file" accept=".pdf,.jpg,.jpeg,.png,.webp,application/pdf,image/jpeg,image/png,image/webp" ${isValidated ? "" : ""} />
+                    </div>
+                    ${requirement.sensitive ? `<p class="trainer-document-meta">Document sensible : évitez tout envoi par email. Format PDF/JPG/PNG/WEBP, 4 Mo max.</p>` : `<p class="trainer-document-meta">Format PDF/JPG/PNG/WEBP, 4 Mo max.</p>`}
+                    <div class="trainer-document-actions">
+                      <button class="btn btn-primary btn-small" type="button" data-document-upload="${escapeAttr(requirement.type)}">Envoyer</button>
+                    </div>
+                  ` : ""}
+
+                  ${category === "acceptance" ? `
+                    <div class="trainer-document-actions">
+                      <button class="btn ${isValidated ? "btn-secondary" : "btn-primary"} btn-small" type="button" data-document-charter ${isValidated ? "disabled" : ""}>
+                        ${isValidated ? "Charte acceptée" : "J’accepte la charte"}
+                      </button>
+                    </div>
+                  ` : ""}
+
+                  ${category === "external" ? `
+                    <p class="trainer-document-meta">Ce point sera traité via Stripe Connect / vérification externe. Aucun fichier à déposer ici.</p>
+                  ` : ""}
+                </article>
+              `;
+            }).join("")}
+          </div>
+        </div>
+      `;
+    }
+
+    function readFileAsDataUrl(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = () => reject(reader.error || new Error("Lecture du fichier impossible"));
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function attachTrainerDocumentActions() {
+      document.querySelectorAll("[data-document-upload]").forEach(button => {
+        button.addEventListener("click", async () => {
+          const type = button.dataset.documentUpload || "";
+          const input = document.getElementById(`docUpload-${type}`);
+          const file = input?.files?.[0];
+
+          if (!file) {
+            alert("Choisissez un fichier à transmettre.");
+            return;
+          }
+
+          if (file.size > 4 * 1024 * 1024) {
+            alert("Fichier trop lourd. Taille maximum : 4 Mo.");
+            return;
+          }
+
+          const previousText = button.textContent;
+          button.disabled = true;
+          button.textContent = "Envoi...";
+
+          try {
+            const fileData = await readFileAsDataUrl(file);
+            const headers = await getTrainerAuthHeaders();
+            const res = await fetch("/api/trainer-tools", {
+              method: "POST",
+              headers,
+              body: JSON.stringify({
+                action: "upload_trainer_document",
+                document_type: type,
+                file_name: file.name,
+                file_mime_type: file.type,
+                file_data: fileData
+              })
+            });
+
+            const result = await parseApiResponse(res);
+            alert(result.message || "Document transmis.");
+            window.location.reload();
+          } catch (error) {
+            console.error(error);
+            alert(error.message || "Impossible d’envoyer le document.");
+            button.disabled = false;
+            button.textContent = previousText;
+          }
+        });
+      });
+
+      document.querySelectorAll("[data-document-charter]").forEach(button => {
+        button.addEventListener("click", async () => {
+          if (button.disabled) return;
+          if (!window.confirm("Confirmer l’acceptation de la charte VITAL PROTECT ?")) return;
+
+          const previousText = button.textContent;
+          button.disabled = true;
+          button.textContent = "Validation...";
+
+          try {
+            const headers = await getTrainerAuthHeaders();
+            const res = await fetch("/api/trainer-tools", {
+              method: "POST",
+              headers,
+              body: JSON.stringify({ action: "accept_trainer_charter" })
+            });
+            const result = await parseApiResponse(res);
+            alert(result.message || "Charte acceptée.");
+            window.location.reload();
+          } catch (error) {
+            console.error(error);
+            alert(error.message || "Impossible d’accepter la charte.");
+            button.disabled = false;
+            button.textContent = previousText;
+          }
+        });
+      });
     }
 
     function isPastStage(dateString) {
@@ -2083,6 +2350,8 @@ VITAL PROTECT`;
           ` : `<p class="muted">Aucun module retrouvé. Contactez VITAL PROTECT si le problème persiste.</p>`}
         </div>
 
+        ${buildTrainerDocumentsSection(data)}
+
         ${buildCandidateSessionsSection(data)}
 
         <div class="card" style="padding:18px; margin-top:18px;">
@@ -2100,6 +2369,7 @@ ID candidat : ${escapeHtml(candidate.id || "—")}</div>
       `;
 
       attachLogoutButtons();
+      attachTrainerDocumentActions();
       attachCandidateSessionActions();
     }
 
@@ -2163,6 +2433,8 @@ ID candidat : ${escapeHtml(candidate.id || "—")}</div>
           </div>
         </div>
 
+        ${buildTrainerDocumentsSection(latestTrainerDashboard)}
+
         ${buildTrainerDashboardSection(latestTrainerDashboard)}
 
         ${buildCreateStageSection(trainer)}
@@ -2176,6 +2448,7 @@ Modules habilités valides : ${escapeHtml(certifiedModules.map(getCanonicalModul
       `;
 
       attachLogoutButtons();
+      attachTrainerDocumentActions();
       attachTrainerDashboardActions();
       await handleCreateStageSubmit();
     }
