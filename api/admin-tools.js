@@ -129,7 +129,6 @@ function sanitizeTrainerDocumentRow(row = {}) {
     refused_at: row.refused_at || null,
     expires_at: row.expires_at || null,
     admin_note: row.admin_note || "",
-    trainer_note: row.trainer_note || "",
     updated_at: row.updated_at || row.created_at || null
   };
 }

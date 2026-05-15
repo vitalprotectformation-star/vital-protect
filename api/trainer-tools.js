@@ -164,7 +164,6 @@ function sanitizeTrainerDocumentRow(row = {}) {
     refused_at: row.refused_at || null,
     expires_at: row.expires_at || null,
     admin_note: row.admin_note || "",
-    trainer_note: row.trainer_note || "",
     updated_at: row.updated_at || row.created_at || null
   };
 }
@@ -1221,7 +1220,6 @@ async function handleUploadTrainerDocument(req, res, access) {
     refused_at: null,
     expires_at: null,
     admin_note: null,
-    trainer_note: sanitizeText(req.body?.trainer_note || ""),
     updated_at: now
   };
 
@@ -1267,7 +1265,6 @@ async function handleAcceptTrainerCharter(req, res, access) {
     validated_at: now,
     refused_at: null,
     admin_note: null,
-    trainer_note: "Charte acceptée numériquement depuis le dashboard formateur.",
     updated_at: now
   };
 
