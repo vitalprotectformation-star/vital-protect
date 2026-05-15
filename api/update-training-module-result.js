@@ -337,6 +337,13 @@ async function activateTrainerFromRegistration(registration, modules) {
     postal_code: registration.postal_code || "",
     department: registration.department || "",
     region: registration.region || "",
+    stripe_connect_account_id: registration.stripe_connect_account_id || "",
+    stripe_connect_onboarding_status: registration.stripe_connect_onboarding_status || "",
+    stripe_connect_details_submitted: Boolean(registration.stripe_connect_details_submitted),
+    stripe_connect_charges_enabled: Boolean(registration.stripe_connect_charges_enabled),
+    stripe_connect_payouts_enabled: Boolean(registration.stripe_connect_payouts_enabled),
+    stripe_connect_requirements_due: registration.stripe_connect_requirements_due || [],
+    stripe_connect_last_synced_at: registration.stripe_connect_last_synced_at || null,
     certification_date: today,
     certification_expiry: addYears(today, 2),
     certification_status: "active",
@@ -350,7 +357,18 @@ async function activateTrainerFromRegistration(registration, modules) {
     "trainers",
     trainerPayload,
     { onConflict: "email" },
-    ["postal_code", "department", "region"]
+    [
+      "postal_code",
+      "department",
+      "region",
+      "stripe_connect_account_id",
+      "stripe_connect_onboarding_status",
+      "stripe_connect_details_submitted",
+      "stripe_connect_charges_enabled",
+      "stripe_connect_payouts_enabled",
+      "stripe_connect_requirements_due",
+      "stripe_connect_last_synced_at"
+    ]
   );
 
   if (trainerResult.error) throw trainerResult.error;

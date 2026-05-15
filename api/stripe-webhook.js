@@ -40,6 +40,82 @@ function normalize(value) {
   return String(value || "").trim().toLowerCase();
 }
 
+function asArray(value) {
+  if (Array.isArray(value)) return value.filter(Boolean).map(item => String(item));
+  if (typeof value === "string" && value.trim()) {
+    try {
+      const parsed = JSON.parse(value);
+      return Array.isArray(parsed) ? parsed.filter(Boolean).map(item => String(item)) : [];
+    } catch (_) {
+      return value.split(",").map(item => item.trim()).filter(Boolean);
+    }
+  }
+  return [];
+}
+
+function uniqueArray(values = []) {
+  return [...new Set((values || []).filter(Boolean).map(item => String(item)))];
+}
+
+function getStripeRequirementKeys(account = {}) {
+  const requirements = account.requirements || {};
+  return uniqueArray([
+    ...asArray(requirements.currently_due),
+    ...asArray(requirements.eventually_due),
+    ...asArray(requirements.past_due),
+    ...asArray(requirements.pending_verification)
+  ]);
+}
+
+function getStripeConnectStatus(account = {}) {
+  const requirementsDue = getStripeRequirementKeys(account);
+  if (account.payouts_enabled) return "payouts_enabled";
+  if (requirementsDue.length) return "requirements_due";
+  if (account.details_submitted) return "pending_review";
+  return "onboarding_required";
+}
+
+async function updateStripeConnectTable(table, account, payload) {
+  const { error } = await supabase
+    .from(table)
+    .update(payload)
+    .eq("stripe_connect_account_id", account.id);
+
+  if (error) {
+    const missingStripeColumn = [
+      "stripe_connect_account_id",
+      "stripe_connect_onboarding_status",
+      "stripe_connect_details_submitted",
+      "stripe_connect_charges_enabled",
+      "stripe_connect_payouts_enabled",
+      "stripe_connect_requirements_due",
+      "stripe_connect_last_synced_at"
+    ].some(column => isMissingColumnError(error, column));
+
+    if (missingStripeColumn) {
+      console.warn(`Colonnes Stripe Connect manquantes sur ${table}. SQL v48 à exécuter.`);
+      return;
+    }
+    throw error;
+  }
+}
+
+async function handleStripeAccountUpdated(account) {
+  if (!account?.id) return;
+
+  const payload = {
+    stripe_connect_onboarding_status: getStripeConnectStatus(account),
+    stripe_connect_details_submitted: Boolean(account.details_submitted),
+    stripe_connect_charges_enabled: Boolean(account.charges_enabled),
+    stripe_connect_payouts_enabled: Boolean(account.payouts_enabled),
+    stripe_connect_requirements_due: getStripeRequirementKeys(account),
+    stripe_connect_last_synced_at: new Date().toISOString()
+  };
+
+  await updateStripeConnectTable("trainers", account, payload);
+  await updateStripeConnectTable("trainer_session_registrations", account, payload);
+}
+
 function escapeHtml(value) {
   return String(value ?? "")
     .replace(/&/g, "&amp;")
@@ -971,6 +1047,11 @@ export default async function handler(req, res) {
   }
 
   try {
+    if (event.type === "account.updated") {
+      await handleStripeAccountUpdated(event.data.object);
+      return res.status(200).json({ received: true });
+    }
+
     if (event.type !== "checkout.session.completed") {
       return res.status(200).json({ received: true });
     }

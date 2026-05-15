@@ -1,4 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
+import Stripe from "stripe";
 import { Buffer } from "node:buffer";
 
 const supabase = createClient(
@@ -12,6 +13,9 @@ const PAYOUT_DAY_OF_MONTH = 20;
 
 const TRAINER_DOCUMENT_BUCKET = process.env.TRAINER_DOCUMENT_BUCKET || "trainer-documents";
 const TRAINER_DOCUMENT_MAX_BYTES = 4 * 1024 * 1024;
+const STRIPE_CONNECT_ACCOUNT_TYPE = process.env.STRIPE_CONNECT_ACCOUNT_TYPE || "express";
+const STRIPE_CONNECT_COUNTRY = process.env.STRIPE_CONNECT_COUNTRY || "FR";
+let stripeClient = null;
 const TRAINER_DOCUMENT_ALLOWED_MIME_TYPES = new Set([
   "application/pdf",
   "image/jpeg",
@@ -25,14 +29,14 @@ const TRAINER_DOCUMENT_REQUIREMENTS = [
     label: "Pièce d’identité",
     category: "external",
     required: true,
-    description: "Vérification à réaliser via Stripe Identity / Stripe Connect. Aucun scan d’identité n’est stocké dans le site."
+    description: "Vérification externe via Stripe Connect. Aucun scan d’identité n’est stocké sur le site."
   },
   {
     type: "bank_account",
     label: "RIB / compte bancaire",
     category: "external",
     required: true,
-    description: "Compte bancaire à connecter via Stripe Connect pour les reversements. Aucun RIB PDF n’est stocké dans le site."
+    description: "À connecter via Stripe Connect pour les reversements. Aucun RIB PDF n’est stocké sur le site."
   },
   {
     type: "criminal_record",
@@ -72,6 +76,144 @@ function normalize(value) {
 
 function sanitizeText(value, fallback = "") {
   return String(value || fallback).trim();
+}
+
+
+function getStripe() {
+  if (!process.env.STRIPE_SECRET_KEY) {
+    throw new Error("Configuration Stripe manquante : STRIPE_SECRET_KEY");
+  }
+  if (!stripeClient) {
+    stripeClient = new Stripe(process.env.STRIPE_SECRET_KEY);
+  }
+  return stripeClient;
+}
+
+function getOrigin(req) {
+  return String(process.env.APP_BASE_URL || req.headers.origin || "https://www.vital-protect.fr")
+    .replace(/\/$/, "");
+}
+
+function asArray(value) {
+  if (Array.isArray(value)) return value.filter(Boolean).map(item => String(item));
+  if (typeof value === "string" && value.trim()) {
+    try {
+      const parsed = JSON.parse(value);
+      return Array.isArray(parsed) ? parsed.filter(Boolean).map(item => String(item)) : [];
+    } catch (_) {
+      return value.split(",").map(item => item.trim()).filter(Boolean);
+    }
+  }
+  return [];
+}
+
+function uniqueArray(values = []) {
+  return [...new Set((values || []).filter(Boolean).map(item => String(item)))];
+}
+
+function getStripeRequirementKeys(account = {}) {
+  const requirements = account.requirements || {};
+  return uniqueArray([
+    ...asArray(requirements.currently_due),
+    ...asArray(requirements.eventually_due),
+    ...asArray(requirements.past_due),
+    ...asArray(requirements.pending_verification)
+  ]);
+}
+
+function buildStripeConnectStatus(row = {}, account = null) {
+  const accountId = sanitizeText(account?.id || row.stripe_connect_account_id || "");
+  const detailsSubmitted = Boolean(account ? account.details_submitted : row.stripe_connect_details_submitted);
+  const chargesEnabled = Boolean(account ? account.charges_enabled : row.stripe_connect_charges_enabled);
+  const payoutsEnabled = Boolean(account ? account.payouts_enabled : row.stripe_connect_payouts_enabled);
+  const requirementsDue = account ? getStripeRequirementKeys(account) : asArray(row.stripe_connect_requirements_due);
+
+  let status = "not_connected";
+  if (accountId && payoutsEnabled) status = "payouts_enabled";
+  else if (accountId && requirementsDue.length) status = "requirements_due";
+  else if (accountId && detailsSubmitted) status = "pending_review";
+  else if (accountId) status = "onboarding_required";
+
+  return {
+    account_id: accountId,
+    status,
+    details_submitted: detailsSubmitted,
+    charges_enabled: chargesEnabled,
+    payouts_enabled: payoutsEnabled,
+    requirements_due: requirementsDue,
+    setup_required: false,
+    last_synced_at: row.stripe_connect_last_synced_at || null
+  };
+}
+
+function getStripeConnectRowFromAccess(access = {}) {
+  return access.account_type === "trainer" ? access.trainer || {} : access.candidate || {};
+}
+
+async function updateStripeConnectRow(access = {}, account = {}) {
+  const row = getStripeConnectRowFromAccess(access);
+  const table = access.account_type === "trainer" ? "trainers" : "trainer_session_registrations";
+  if (!row?.id || !account?.id) return { row, setupRequired: false };
+
+  const payload = {
+    stripe_connect_account_id: account.id,
+    stripe_connect_onboarding_status: buildStripeConnectStatus(row, account).status,
+    stripe_connect_details_submitted: Boolean(account.details_submitted),
+    stripe_connect_charges_enabled: Boolean(account.charges_enabled),
+    stripe_connect_payouts_enabled: Boolean(account.payouts_enabled),
+    stripe_connect_requirements_due: getStripeRequirementKeys(account),
+    stripe_connect_last_synced_at: new Date().toISOString()
+  };
+
+  const { data, error } = await supabase
+    .from(table)
+    .update(payload)
+    .eq("id", row.id)
+    .select()
+    .maybeSingle();
+
+  if (error) {
+    const missingStripeColumn = [
+      "stripe_connect_account_id",
+      "stripe_connect_onboarding_status",
+      "stripe_connect_details_submitted",
+      "stripe_connect_charges_enabled",
+      "stripe_connect_payouts_enabled",
+      "stripe_connect_requirements_due",
+      "stripe_connect_last_synced_at"
+    ].some(column => isMissingColumnError(error, column));
+
+    if (missingStripeColumn) {
+      return { row, setupRequired: true, error };
+    }
+    throw error;
+  }
+
+  return { row: data || row, setupRequired: false };
+}
+
+async function getStripeConnectForAccess(access = {}) {
+  const row = getStripeConnectRowFromAccess(access);
+  const accountId = sanitizeText(row.stripe_connect_account_id || "");
+  const fallback = buildStripeConnectStatus(row);
+
+  if (!accountId) return fallback;
+
+  try {
+    const account = await getStripe().accounts.retrieve(accountId);
+    const updateResult = await updateStripeConnectRow(access, account);
+    return {
+      ...buildStripeConnectStatus(updateResult.row, account),
+      setup_required: Boolean(updateResult.setupRequired)
+    };
+  } catch (error) {
+    console.error("Stripe Connect status refresh error:", error);
+    return {
+      ...fallback,
+      status: fallback.status === "not_connected" ? "not_connected" : "sync_error",
+      error: error.message || "Synchronisation Stripe impossible"
+    };
+  }
 }
 
 
@@ -1156,6 +1298,73 @@ async function handlePreferCandidateSession(req, res, candidate) {
 }
 
 
+
+async function handleCreateStripeConnectOnboarding(req, res, access) {
+  const owner = getAccessDocumentOwner(access);
+  const row = getStripeConnectRowFromAccess(access);
+
+  if (!owner.email) {
+    return res.status(400).json({ error: "Email formateur introuvable" });
+  }
+
+  let accountId = sanitizeText(row.stripe_connect_account_id || "");
+  let account = null;
+
+  try {
+    const stripe = getStripe();
+
+    if (accountId) {
+      try {
+        account = await stripe.accounts.retrieve(accountId);
+      } catch (retrieveError) {
+        console.warn("Compte Stripe Connect introuvable, création d’un nouveau compte :", retrieveError.message);
+        accountId = "";
+      }
+    }
+
+    if (!accountId) {
+      account = await stripe.accounts.create({
+        type: STRIPE_CONNECT_ACCOUNT_TYPE,
+        country: STRIPE_CONNECT_COUNTRY,
+        email: owner.email,
+        business_type: "individual",
+        capabilities: {
+          transfers: { requested: true }
+        },
+        metadata: {
+          vital_protect_role: "trainer",
+          account_type: owner.account_type || "trainer",
+          email: owner.email,
+          trainer_id: owner.trainer_id || "",
+          candidate_id: owner.candidate_id || ""
+        }
+      });
+    }
+
+    const updateResult = await updateStripeConnectRow(access, account);
+    if (updateResult.setupRequired) {
+      return res.status(500).json({ error: "Colonnes Stripe Connect manquantes. Exécute la SQL v48 puis réessaie." });
+    }
+
+    const origin = getOrigin(req);
+    const accountLink = await stripe.accountLinks.create({
+      account: account.id,
+      refresh_url: `${origin}/espace-formateur.html?stripe_connect=refresh`,
+      return_url: `${origin}/espace-formateur.html?stripe_connect=return`,
+      type: "account_onboarding"
+    });
+
+    return res.status(200).json({
+      success: true,
+      url: accountLink.url,
+      stripe_connect: buildStripeConnectStatus(updateResult.row, account)
+    });
+  } catch (error) {
+    console.error("Stripe Connect onboarding error:", error);
+    return res.status(500).json({ error: error.message || "Impossible de préparer l’onboarding Stripe Connect" });
+  }
+}
+
 async function handleUploadTrainerDocument(req, res, access) {
   const owner = getAccessDocumentOwner(access);
   const documentType = sanitizeText(req.body?.document_type).toLowerCase();
@@ -1308,6 +1517,12 @@ async function handleCandidateDashboard(req, res, candidate) {
     console.error("Candidate documents fetch error:", error);
   }
 
+  const stripeConnect = await getStripeConnectForAccess({
+    account_type: "candidate",
+    user: { email: candidate.email },
+    candidate
+  });
+
   return res.status(200).json({
     success: true,
     account_type: "candidate",
@@ -1339,6 +1554,7 @@ async function handleCandidateDashboard(req, res, candidate) {
     document_requirements: TRAINER_DOCUMENT_REQUIREMENTS,
     trainer_documents: documentsResult.rows,
     documents_setup_required: documentsResult.setupRequired,
+    stripe_connect: stripeConnect,
     stages: [],
     reservations: [],
     stats: {
@@ -1369,6 +1585,12 @@ async function handleDashboard(req, res, access) {
     console.error("Trainer documents fetch error:", error);
   }
 
+  const stripeConnect = await getStripeConnectForAccess({
+    account_type: "trainer",
+    user: access?.user || { email: trainer.email },
+    trainer
+  });
+
   const { data: stages, error: stagesError } = await supabase
     .from("stages")
     .select("*")
@@ -1392,6 +1614,7 @@ async function handleDashboard(req, res, access) {
       document_requirements: TRAINER_DOCUMENT_REQUIREMENTS,
       trainer_documents: documentsResult.rows,
       documents_setup_required: documentsResult.setupRequired,
+      stripe_connect: stripeConnect,
       stages: [],
       reservations: [],
       stats: {
@@ -1465,6 +1688,7 @@ async function handleDashboard(req, res, access) {
     document_requirements: TRAINER_DOCUMENT_REQUIREMENTS,
     trainer_documents: documentsResult.rows,
     documents_setup_required: documentsResult.setupRequired,
+    stripe_connect: stripeConnect,
     stages: safeStageRows,
     reservations: safeReservationRows,
     stats: {
@@ -1571,6 +1795,10 @@ export default async function handler(req, res) {
 
     if (action === "accept_trainer_charter") {
       return await handleAcceptTrainerCharter(req, res, trainerCheck);
+    }
+
+    if (action === "create_stripe_connect_onboarding") {
+      return await handleCreateStripeConnectOnboarding(req, res, trainerCheck);
     }
 
     if (action === "update_stage_status") {
