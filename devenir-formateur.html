@@ -2145,6 +2145,21 @@
 
     window.VP_FRANCE_LOCATION?.setupPostalCode("postalCode");
 
+    function inferLocationFromPostalCode(postalCode) {
+      const cleanPostalCode = String(postalCode || "").replace(/\D+/g, "").slice(0, 5);
+      if (!cleanPostalCode) return { department: "", region: "" };
+
+      const departmentCode = cleanPostalCode.startsWith("97") || cleanPostalCode.startsWith("98")
+        ? cleanPostalCode.slice(0, 3)
+        : cleanPostalCode.slice(0, 2);
+
+      const department = window.VP_FRANCE_LOCATION?.departments?.find((item) => item.code === departmentCode);
+      return {
+        department: department?.value || "",
+        region: department?.region || ""
+      };
+    }
+
     modulePayShortcut?.addEventListener("click", () => {
       if (modulePayShortcut.disabled) return;
       document.getElementById("formulaire")?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -2180,13 +2195,17 @@
       }
 
       const selectedModuleLabels = getSelectedModuleLabels();
+      const postalCodeValue = document.getElementById("postalCode").value.trim();
+      const inferredLocation = inferLocationFromPostalCode(postalCodeValue);
       const data = {
         first_name: document.getElementById("firstName").value.trim(),
         last_name: document.getElementById("lastName").value.trim(),
         email: document.getElementById("email").value.trim(),
         phone: document.getElementById("phone").value.trim(),
         city: document.getElementById("city").value.trim(),
-        postal_code: document.getElementById("postalCode").value.trim(),
+        postal_code: postalCodeValue,
+        department: inferredLocation.department,
+        region: inferredLocation.region,
         training_type: selectedModuleLabels.join(" | "),
         selected_module: selectedModuleLabels[0] || "",
         selected_modules: selectedModuleLabels,
