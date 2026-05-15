@@ -405,6 +405,28 @@
       color: var(--muted);
     }
 
+    .stripe-connect-card {
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 16px;
+      background: #fbfdff;
+      margin-top: 14px;
+    }
+
+    .stripe-connect-card .stripe-connect-status {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: flex-start;
+      flex-wrap: wrap;
+    }
+
+    .stripe-connect-card ul {
+      margin: 10px 0 0 18px;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
     .trainer-documents-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -833,6 +855,121 @@
 
     function getTrainerDocumentByType(documents = [], type = "") {
       return (documents || []).find(item => normalize(item.document_type) === normalize(type)) || null;
+    }
+
+    function stripeConnectStatusLabel(status = "") {
+      const value = normalize(status || "not_connected");
+      const labels = {
+        not_connected: "À connecter",
+        onboarding_required: "À compléter",
+        requirements_due: "Infos manquantes",
+        pending_review: "En vérification",
+        payouts_enabled: "Reversements activés",
+        sync_error: "Synchronisation à revoir"
+      };
+      return labels[value] || "À connecter";
+    }
+
+    function stripeConnectBadgeClass(status = "") {
+      const value = normalize(status || "not_connected");
+      if (value === "payouts_enabled") return "badge-success";
+      if (value === "sync_error") return "badge-danger";
+      return "badge-warning";
+    }
+
+    function buildStripeConnectSection(data = {}) {
+      const stripeConnect = data.stripe_connect || {};
+      const status = stripeConnect.status || "not_connected";
+      const setupRequired = Boolean(stripeConnect.setup_required);
+      const requirementsDue = Array.isArray(stripeConnect.requirements_due) ? stripeConnect.requirements_due : [];
+      const isReady = normalize(status) === "payouts_enabled";
+      const hasAccount = Boolean(stripeConnect.account_id);
+      const buttonLabel = hasAccount ? "Compléter mon compte Stripe" : "Connecter mon compte de reversement";
+
+      return `
+        <div class="card" id="stripeConnectMount" style="padding:18px; margin-top:18px;">
+          <div class="dashboard-header">
+            <div>
+              <h2 class="section-title">Compte de reversement</h2>
+              <p class="muted">Les reversements formateurs passent par Stripe Connect. VITAL PROTECT ne stocke ni RIB PDF, ni scan d’identité.</p>
+            </div>
+          </div>
+
+          ${setupRequired ? `
+            <div class="alert alert-warning">
+              Le module Stripe Connect n’est pas encore initialisé côté base de données. VITAL PROTECT doit exécuter la SQL v48.
+            </div>
+          ` : ""}
+
+          <div class="stripe-connect-card">
+            <div class="stripe-connect-status">
+              <div>
+                <h3 style="margin:0 0 6px;">Stripe Connect</h3>
+                <p class="trainer-document-meta">
+                  Stripe collecte les informations d’identité et le compte bancaire nécessaires aux reversements.
+                </p>
+              </div>
+              <span class="badge ${stripeConnectBadgeClass(status)}">${escapeHtml(stripeConnectStatusLabel(status))}</span>
+            </div>
+
+            ${isReady ? `
+              <p class="trainer-document-meta"><strong>Compte prêt :</strong> les reversements peuvent être programmés vers ce compte.</p>
+            ` : `
+              <ul>
+                <li>Renseigner les informations demandées par Stripe.</li>
+                <li>Ajouter le compte bancaire de réception dans l’interface Stripe.</li>
+                <li>Revenir ici après l’onboarding pour actualiser le statut.</li>
+              </ul>
+            `}
+
+            ${requirementsDue.length ? `
+              <p class="trainer-document-meta"><strong>Stripe demande encore :</strong> ${escapeHtml(requirementsDue.slice(0, 4).join(", "))}${requirementsDue.length > 4 ? "…" : ""}</p>
+            ` : ""}
+
+            ${stripeConnect.error ? `
+              <div class="trainer-document-note"><strong>Info :</strong> ${escapeHtml(stripeConnect.error)}</div>
+            ` : ""}
+
+            <div class="trainer-document-actions">
+              <button class="btn btn-primary btn-small" type="button" data-stripe-connect ${setupRequired ? "disabled" : ""}>
+                ${escapeHtml(isReady ? "Ouvrir / mettre à jour Stripe" : buttonLabel)}
+              </button>
+              <button class="btn btn-secondary btn-small" type="button" onclick="window.location.reload()">Actualiser</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function attachStripeConnectActions() {
+      document.querySelectorAll("[data-stripe-connect]").forEach(button => {
+        button.addEventListener("click", async () => {
+          const previousText = button.textContent;
+          button.disabled = true;
+          button.textContent = "Préparation Stripe...";
+
+          try {
+            const headers = await getTrainerAuthHeaders();
+            const res = await fetch("/api/trainer-tools", {
+              method: "POST",
+              headers,
+              body: JSON.stringify({ action: "create_stripe_connect_onboarding" })
+            });
+
+            const result = await parseApiResponse(res);
+            if (result.url) {
+              window.location.href = result.url;
+              return;
+            }
+            alert("Lien Stripe indisponible. Réessayez dans quelques instants.");
+          } catch (error) {
+            console.error(error);
+            alert(error.message || "Impossible d’ouvrir Stripe Connect.");
+            button.disabled = false;
+            button.textContent = previousText;
+          }
+        });
+      });
     }
 
     function buildTrainerDocumentsSection(data = {}) {
@@ -1406,7 +1543,7 @@
               <h2 class="section-title">Mes stages et inscriptions</h2>
               <p class="muted">Suivez vos dates, vos inscrits, votre taux de remplissage et le versement prévu par VITAL PROTECT.</p>
             </div>
-            <button class="btn btn-secondary btn-small" type="button" data-dashboard-refresh>Actualiser</button>
+            <button class="btn btn-secondary btn-small" type="button" onclick="window.location.reload()">Actualiser</button>
           </div>
 
           <div class="dashboard-kpis">
@@ -2350,6 +2487,8 @@ VITAL PROTECT`;
           ` : `<p class="muted">Aucun module retrouvé. Contactez VITAL PROTECT si le problème persiste.</p>`}
         </div>
 
+        ${buildStripeConnectSection(data)}
+
         ${buildTrainerDocumentsSection(data)}
 
         ${buildCandidateSessionsSection(data)}
@@ -2369,6 +2508,7 @@ ID candidat : ${escapeHtml(candidate.id || "—")}</div>
       `;
 
       attachLogoutButtons();
+      attachStripeConnectActions();
       attachTrainerDocumentActions();
       attachCandidateSessionActions();
     }
@@ -2433,6 +2573,8 @@ ID candidat : ${escapeHtml(candidate.id || "—")}</div>
           </div>
         </div>
 
+        ${buildStripeConnectSection(latestTrainerDashboard)}
+
         ${buildTrainerDocumentsSection(latestTrainerDashboard)}
 
         ${buildTrainerDashboardSection(latestTrainerDashboard)}
@@ -2448,6 +2590,7 @@ Modules habilités valides : ${escapeHtml(certifiedModules.map(getCanonicalModul
       `;
 
       attachLogoutButtons();
+      attachStripeConnectActions();
       attachTrainerDocumentActions();
       attachTrainerDashboardActions();
       await handleCreateStageSubmit();

@@ -1961,6 +1961,22 @@
       return String(value || "").trim().toLowerCase();
     }
 
+    function stripeConnectStatusLabel(row = {}) {
+      const explicit = normalize(row.stripe_connect_onboarding_status || "");
+      const requirementsDue = Array.isArray(row.stripe_connect_requirements_due) ? row.stripe_connect_requirements_due : [];
+      if (row.stripe_connect_payouts_enabled) return "Reversements OK";
+      if (!row.stripe_connect_account_id) return "À connecter";
+      if (requirementsDue.length || explicit === "requirements_due") return "Infos manquantes";
+      if (row.stripe_connect_details_submitted || explicit === "pending_review") return "En vérification";
+      return "À compléter";
+    }
+
+    function stripeConnectBadgeClass(row = {}) {
+      if (row.stripe_connect_payouts_enabled) return "badge-success";
+      if (row.stripe_connect_account_id && row.stripe_connect_details_submitted) return "badge-warning";
+      return "badge-warning";
+    }
+
     const PUBLIC_STAGE_UNIT_PRICE = 30;
     const ENTERPRISE_STAGE_PRICE = 390;
 
@@ -3311,6 +3327,7 @@
               <th>Affiliation expire le</th>
               <th>Certification</th>
               <th>Affiliation</th>
+              <th>Reversements</th>
               <th>Statut global</th>
               <th>Accès</th>
             </tr>
@@ -3335,6 +3352,10 @@
                   <td>${formatShortDate(row.affiliation_end)}</td>
                   <td><span class="badge ${certValid ? "badge-success" : "badge-danger"}">${certValid ? "Valide" : "Expirée"}</span></td>
                   <td><span class="badge ${affValid ? "badge-success" : "badge-danger"}">${affValid ? "Active" : "Expirée"}</span></td>
+                  <td>
+                    <span class="badge ${stripeConnectBadgeClass(row)}">${escapeHtml(stripeConnectStatusLabel(row))}</span>
+                    <span>${row.stripe_connect_account_id ? "Stripe connecté" : "Aucun compte connecté"}</span>
+                  </td>
                   <td><span class="badge ${globalValid ? "badge-success" : "badge-danger"}">${globalValid ? "OK" : "À traiter"}</span></td>
                   <td>
                     <button class="btn btn-secondary" type="button" onclick="window.setTrainerPassword('${jsArg(row.id)}', '${jsArg(row.email || '')}')">
