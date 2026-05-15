@@ -1,4 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
+import { Buffer } from "node:buffer";
 
 const supabase = createClient(
   process.env.SUPABASE_URL,
@@ -9,12 +10,214 @@ const PUBLIC_STAGE_UNIT_PRICE = 30;
 const ENTERPRISE_STAGE_PRICE = 390;
 const PAYOUT_DAY_OF_MONTH = 20;
 
+const TRAINER_DOCUMENT_BUCKET = process.env.TRAINER_DOCUMENT_BUCKET || "trainer-documents";
+const TRAINER_DOCUMENT_MAX_BYTES = 4 * 1024 * 1024;
+const TRAINER_DOCUMENT_ALLOWED_MIME_TYPES = new Set([
+  "application/pdf",
+  "image/jpeg",
+  "image/png",
+  "image/webp"
+]);
+
+const TRAINER_DOCUMENT_REQUIREMENTS = [
+  {
+    type: "identity",
+    label: "Pièce d’identité",
+    category: "external",
+    required: true,
+    description: "Vérification à réaliser via Stripe Identity / Stripe Connect. Aucun scan d’identité n’est stocké dans le site."
+  },
+  {
+    type: "bank_account",
+    label: "RIB / compte bancaire",
+    category: "external",
+    required: true,
+    description: "Compte bancaire à connecter via Stripe Connect pour les reversements. Aucun RIB PDF n’est stocké dans le site."
+  },
+  {
+    type: "criminal_record",
+    label: "Casier judiciaire B3",
+    category: "upload",
+    required: true,
+    sensitive: true,
+    description: "À transmettre pour vérification. Conservation limitée recommandée après validation."
+  },
+  {
+    type: "liability_insurance",
+    label: "Attestation RC pro",
+    category: "upload",
+    required: true,
+    description: "À transmettre si vous exercez avec une assurance responsabilité civile professionnelle."
+  },
+  {
+    type: "diploma",
+    label: "Diplôme / certification",
+    category: "upload",
+    required: false,
+    description: "Diplôme, certification ou justificatif d’expérience utile au dossier."
+  },
+  {
+    type: "charter",
+    label: "Charte VITAL PROTECT",
+    category: "acceptance",
+    required: true,
+    description: "Acceptation numérique de la charte et des règles réseau VITAL PROTECT."
+  }
+];
+
+
 function normalize(value) {
   return String(value || "").trim().toLowerCase();
 }
 
 function sanitizeText(value, fallback = "") {
   return String(value || fallback).trim();
+}
+
+
+function isMissingRelationError(error) {
+  const message = String(error?.message || "").toLowerCase();
+  return error?.code === "42P01" || message.includes("relation") || message.includes("does not exist");
+}
+
+function getTrainerDocumentRequirement(type) {
+  return TRAINER_DOCUMENT_REQUIREMENTS.find(item => item.type === String(type || "").trim());
+}
+
+function isUploadDocumentType(type) {
+  return getTrainerDocumentRequirement(type)?.category === "upload";
+}
+
+function sanitizeFileName(value) {
+  const fallback = "document.pdf";
+  const raw = String(value || fallback).trim().split(/[\\/]/).pop() || fallback;
+  return raw
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-zA-Z0-9._-]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 120) || fallback;
+}
+
+function sanitizeStorageSegment(value, fallback = "formateur") {
+  return String(value || fallback)
+    .trim()
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "") || fallback;
+}
+
+function parseBase64File(fileData = "", fileMimeType = "") {
+  let data = String(fileData || "").trim();
+  let mimeType = String(fileMimeType || "").trim().toLowerCase();
+
+  const match = data.match(/^data:([^;]+);base64,(.+)$/);
+  if (match) {
+    mimeType = String(match[1] || mimeType).toLowerCase();
+    data = match[2] || "";
+  }
+
+  if (!data) {
+    return { error: "Fichier manquant" };
+  }
+
+  if (!TRAINER_DOCUMENT_ALLOWED_MIME_TYPES.has(mimeType)) {
+    return { error: "Format refusé. Formats acceptés : PDF, JPG, PNG ou WEBP." };
+  }
+
+  const buffer = Buffer.from(data, "base64");
+
+  if (!buffer.length) {
+    return { error: "Fichier vide ou illisible" };
+  }
+
+  if (buffer.length > TRAINER_DOCUMENT_MAX_BYTES) {
+    return { error: "Fichier trop lourd. Taille maximum : 4 Mo." };
+  }
+
+  return { buffer, mimeType };
+}
+
+function sanitizeTrainerDocumentRow(row = {}) {
+  const requirement = getTrainerDocumentRequirement(row.document_type) || {};
+  return {
+    id: row.id,
+    candidate_id: row.candidate_id || null,
+    trainer_id: row.trainer_id || null,
+    email: row.email || "",
+    first_name: row.first_name || "",
+    last_name: row.last_name || "",
+    document_type: row.document_type || "",
+    document_label: row.document_label || requirement.label || row.document_type || "Document",
+    category: requirement.category || "upload",
+    required: requirement.required !== false,
+    sensitive: Boolean(requirement.sensitive),
+    status: row.status || "submitted",
+    file_name: row.file_name || "",
+    file_mime_type: row.file_mime_type || "",
+    file_size_bytes: Number(row.file_size_bytes || 0),
+    uploaded_at: row.uploaded_at || null,
+    accepted_at: row.accepted_at || null,
+    validated_at: row.validated_at || null,
+    refused_at: row.refused_at || null,
+    expires_at: row.expires_at || null,
+    admin_note: row.admin_note || "",
+    trainer_note: row.trainer_note || "",
+    updated_at: row.updated_at || row.created_at || null
+  };
+}
+
+function getAccessDocumentOwner(access = {}) {
+  const isTrainer = access.account_type === "trainer";
+  const owner = isTrainer ? access.trainer : access.candidate;
+  return {
+    account_type: access.account_type,
+    trainer_id: isTrainer ? owner?.id || null : null,
+    candidate_id: !isTrainer ? owner?.id || null : null,
+    email: normalize(access.user?.email || owner?.email || ""),
+    first_name: sanitizeText(owner?.first_name || ""),
+    last_name: sanitizeText(owner?.last_name || "")
+  };
+}
+
+async function listTrainerDocumentsForAccess(access = {}) {
+  const owner = getAccessDocumentOwner(access);
+  if (!owner.email) return { rows: [], setupRequired: false };
+
+  const { data, error } = await supabase
+    .from("trainer_documents")
+    .select("*")
+    .ilike("email", owner.email)
+    .order("updated_at", { ascending: false });
+
+  if (error) {
+    if (isMissingRelationError(error)) {
+      return { rows: [], setupRequired: true };
+    }
+    throw error;
+  }
+
+  return {
+    rows: (data || []).map(sanitizeTrainerDocumentRow),
+    setupRequired: false
+  };
+}
+
+async function ensureTrainerDocumentBucket() {
+  const { data, error } = await supabase.storage.getBucket(TRAINER_DOCUMENT_BUCKET);
+  if (!error && data?.id) return;
+
+  const { error: createError } = await supabase.storage.createBucket(TRAINER_DOCUMENT_BUCKET, {
+    public: false,
+    fileSizeLimit: TRAINER_DOCUMENT_MAX_BYTES,
+    allowedMimeTypes: Array.from(TRAINER_DOCUMENT_ALLOWED_MIME_TYPES)
+  });
+
+  if (createError && !String(createError.message || "").toLowerCase().includes("already exists")) {
+    throw createError;
+  }
 }
 
 
@@ -953,13 +1156,159 @@ async function handlePreferCandidateSession(req, res, candidate) {
   });
 }
 
+
+async function handleUploadTrainerDocument(req, res, access) {
+  const owner = getAccessDocumentOwner(access);
+  const documentType = sanitizeText(req.body?.document_type).toLowerCase();
+  const requirement = getTrainerDocumentRequirement(documentType);
+
+  if (!owner.email) {
+    return res.status(400).json({ error: "Email formateur introuvable" });
+  }
+
+  if (!requirement) {
+    return res.status(400).json({ error: "Type de document inconnu" });
+  }
+
+  if (!isUploadDocumentType(documentType)) {
+    return res.status(400).json({ error: "Ce justificatif ne doit pas être téléversé sur le site" });
+  }
+
+  const parsed = parseBase64File(req.body?.file_data, req.body?.file_mime_type);
+  if (parsed.error) {
+    return res.status(400).json({ error: parsed.error });
+  }
+
+  const fileName = sanitizeFileName(req.body?.file_name || `${documentType}.pdf`);
+  const ownerSegment = sanitizeStorageSegment(owner.trainer_id || owner.candidate_id || owner.email);
+  const storagePath = `${owner.account_type || "formateur"}/${ownerSegment}/${documentType}/${Date.now()}-${fileName}`;
+  const now = new Date().toISOString();
+
+  try {
+    await ensureTrainerDocumentBucket();
+  } catch (bucketError) {
+    return res.status(500).json({ error: `Stockage documents indisponible : ${bucketError.message}` });
+  }
+
+  const { error: uploadError } = await supabase.storage
+    .from(TRAINER_DOCUMENT_BUCKET)
+    .upload(storagePath, parsed.buffer, {
+      contentType: parsed.mimeType,
+      upsert: true
+    });
+
+  if (uploadError) {
+    return res.status(500).json({ error: uploadError.message });
+  }
+
+  const payload = {
+    candidate_id: owner.candidate_id,
+    trainer_id: owner.trainer_id,
+    email: owner.email,
+    first_name: owner.first_name,
+    last_name: owner.last_name,
+    document_type: documentType,
+    document_label: requirement.label,
+    status: "submitted",
+    storage_bucket: TRAINER_DOCUMENT_BUCKET,
+    storage_path: storagePath,
+    file_name: fileName,
+    file_mime_type: parsed.mimeType,
+    file_size_bytes: parsed.buffer.length,
+    uploaded_at: now,
+    accepted_at: null,
+    validated_at: null,
+    refused_at: null,
+    expires_at: null,
+    admin_note: null,
+    trainer_note: sanitizeText(req.body?.trainer_note || ""),
+    updated_at: now
+  };
+
+  const { data, error } = await supabase
+    .from("trainer_documents")
+    .upsert(payload, { onConflict: "email,document_type" })
+    .select()
+    .single();
+
+  if (error) {
+    if (isMissingRelationError(error)) {
+      return res.status(500).json({ error: "Table trainer_documents manquante. Exécute la SQL v46 puis réessaie." });
+    }
+    return res.status(500).json({ error: error.message });
+  }
+
+  return res.status(200).json({
+    success: true,
+    document: sanitizeTrainerDocumentRow(data),
+    message: "Document transmis. VITAL PROTECT pourra le vérifier depuis le cockpit admin."
+  });
+}
+
+async function handleAcceptTrainerCharter(req, res, access) {
+  const owner = getAccessDocumentOwner(access);
+  const requirement = getTrainerDocumentRequirement("charter");
+  const now = new Date().toISOString();
+
+  if (!owner.email) {
+    return res.status(400).json({ error: "Email formateur introuvable" });
+  }
+
+  const payload = {
+    candidate_id: owner.candidate_id,
+    trainer_id: owner.trainer_id,
+    email: owner.email,
+    first_name: owner.first_name,
+    last_name: owner.last_name,
+    document_type: "charter",
+    document_label: requirement.label,
+    status: "validated",
+    accepted_at: now,
+    validated_at: now,
+    refused_at: null,
+    admin_note: null,
+    trainer_note: "Charte acceptée numériquement depuis le dashboard formateur.",
+    updated_at: now
+  };
+
+  const { data, error } = await supabase
+    .from("trainer_documents")
+    .upsert(payload, { onConflict: "email,document_type" })
+    .select()
+    .single();
+
+  if (error) {
+    if (isMissingRelationError(error)) {
+      return res.status(500).json({ error: "Table trainer_documents manquante. Exécute la SQL v46 puis réessaie." });
+    }
+    return res.status(500).json({ error: error.message });
+  }
+
+  return res.status(200).json({
+    success: true,
+    document: sanitizeTrainerDocumentRow(data),
+    message: "Charte VITAL PROTECT acceptée."
+  });
+}
+
 async function handleCandidateDashboard(req, res, candidate) {
   const selectedModules = parseCandidateModules(candidate);
   let sessions = [];
+  let documentsResult = { rows: [], setupRequired: false };
   try {
     sessions = await listCandidateSessionsForModules(selectedModules);
   } catch (error) {
     console.error("Candidate sessions fetch error:", error);
+  }
+
+  try {
+    documentsResult = await listTrainerDocumentsForAccess({
+      account_type: "candidate",
+      user: { email: candidate.email },
+      candidate
+    });
+  } catch (error) {
+    console.error("Candidate documents fetch error:", error);
   }
 
   return res.status(200).json({
@@ -990,6 +1339,9 @@ async function handleCandidateDashboard(req, res, candidate) {
       candidate_session_admin_note: candidate.candidate_session_admin_note || ""
     },
     candidate_sessions: sessions,
+    document_requirements: TRAINER_DOCUMENT_REQUIREMENTS,
+    trainer_documents: documentsResult.rows,
+    documents_setup_required: documentsResult.setupRequired,
     stages: [],
     reservations: [],
     stats: {
@@ -1008,6 +1360,17 @@ async function handleDashboard(req, res, access) {
   }
 
   const trainer = access?.trainer || access;
+  let documentsResult = { rows: [], setupRequired: false };
+
+  try {
+    documentsResult = await listTrainerDocumentsForAccess({
+      account_type: "trainer",
+      user: access?.user || { email: trainer.email },
+      trainer
+    });
+  } catch (error) {
+    console.error("Trainer documents fetch error:", error);
+  }
 
   const { data: stages, error: stagesError } = await supabase
     .from("stages")
@@ -1029,6 +1392,9 @@ async function handleDashboard(req, res, access) {
       success: true,
       account_type: "trainer",
       trainer,
+      document_requirements: TRAINER_DOCUMENT_REQUIREMENTS,
+      trainer_documents: documentsResult.rows,
+      documents_setup_required: documentsResult.setupRequired,
       stages: [],
       reservations: [],
       stats: {
@@ -1099,6 +1465,9 @@ async function handleDashboard(req, res, access) {
     success: true,
     account_type: "trainer",
     trainer,
+    document_requirements: TRAINER_DOCUMENT_REQUIREMENTS,
+    trainer_documents: documentsResult.rows,
+    documents_setup_required: documentsResult.setupRequired,
     stages: safeStageRows,
     reservations: safeReservationRows,
     stats: {
@@ -1197,6 +1566,14 @@ export default async function handler(req, res) {
         return res.status(403).json({ error: "Cette action est réservée aux candidats formateurs en parcours." });
       }
       return await handlePreferCandidateSession(req, res, trainerCheck.candidate);
+    }
+
+    if (action === "upload_trainer_document") {
+      return await handleUploadTrainerDocument(req, res, trainerCheck);
+    }
+
+    if (action === "accept_trainer_charter") {
+      return await handleAcceptTrainerCharter(req, res, trainerCheck);
     }
 
     if (action === "update_stage_status") {

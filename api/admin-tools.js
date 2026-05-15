@@ -9,6 +9,18 @@ const PUBLIC_STAGE_UNIT_PRICE = 30;
 const ENTERPRISE_STAGE_PRICE = 390;
 const PAYOUT_DAY_OF_MONTH = 20;
 
+const TRAINER_DOCUMENT_BUCKET = process.env.TRAINER_DOCUMENT_BUCKET || "trainer-documents";
+
+const TRAINER_DOCUMENT_REQUIREMENTS = [
+  { type: "identity", label: "Pièce d’identité", category: "external", required: true },
+  { type: "bank_account", label: "RIB / compte bancaire", category: "external", required: true },
+  { type: "criminal_record", label: "Casier judiciaire B3", category: "upload", required: true, sensitive: true },
+  { type: "liability_insurance", label: "Attestation RC pro", category: "upload", required: true },
+  { type: "diploma", label: "Diplôme / certification", category: "upload", required: false },
+  { type: "charter", label: "Charte VITAL PROTECT", category: "acceptance", required: true }
+];
+
+
 function normalizeEmail(value) {
   return String(value || "").trim().toLowerCase();
 }
@@ -79,6 +91,47 @@ function getTrainerSessionLaunchPrice(moduleCount) {
 
 function sanitizeText(value, fallback = "") {
   return String(value || fallback).trim();
+}
+
+
+function isMissingRelationError(error) {
+  const message = String(error?.message || "").toLowerCase();
+  return error?.code === "42P01" || message.includes("relation") || message.includes("does not exist");
+}
+
+function getTrainerDocumentRequirement(type) {
+  return TRAINER_DOCUMENT_REQUIREMENTS.find(item => item.type === String(type || "").trim());
+}
+
+function sanitizeTrainerDocumentRow(row = {}) {
+  const requirement = getTrainerDocumentRequirement(row.document_type) || {};
+  return {
+    id: row.id,
+    candidate_id: row.candidate_id || null,
+    trainer_id: row.trainer_id || null,
+    email: row.email || "",
+    first_name: row.first_name || "",
+    last_name: row.last_name || "",
+    document_type: row.document_type || "",
+    document_label: row.document_label || requirement.label || row.document_type || "Document",
+    category: requirement.category || "upload",
+    required: requirement.required !== false,
+    sensitive: Boolean(requirement.sensitive),
+    status: row.status || "submitted",
+    storage_bucket: row.storage_bucket || "",
+    has_file: Boolean(row.storage_path),
+    file_name: row.file_name || "",
+    file_mime_type: row.file_mime_type || "",
+    file_size_bytes: Number(row.file_size_bytes || 0),
+    uploaded_at: row.uploaded_at || null,
+    accepted_at: row.accepted_at || null,
+    validated_at: row.validated_at || null,
+    refused_at: row.refused_at || null,
+    expires_at: row.expires_at || null,
+    admin_note: row.admin_note || "",
+    trainer_note: row.trainer_note || "",
+    updated_at: row.updated_at || row.created_at || null
+  };
 }
 
 
@@ -1336,6 +1389,124 @@ async function handleUpsertTrainerModule(req, res) {
   });
 }
 
+
+async function handleListTrainerDocuments(req, res) {
+  const { data, error } = await supabase
+    .from("trainer_documents")
+    .select("*")
+    .order("updated_at", { ascending: false });
+
+  if (error) {
+    if (isMissingRelationError(error)) {
+      return res.status(200).json({
+        success: true,
+        setup_required: true,
+        document_requirements: TRAINER_DOCUMENT_REQUIREMENTS,
+        trainer_documents: []
+      });
+    }
+    return res.status(500).json({ error: error.message });
+  }
+
+  return res.status(200).json({
+    success: true,
+    setup_required: false,
+    document_requirements: TRAINER_DOCUMENT_REQUIREMENTS,
+    trainer_documents: (data || []).map(sanitizeTrainerDocumentRow)
+  });
+}
+
+async function handleGetTrainerDocumentUrl(req, res) {
+  const documentId = sanitizeText(req.body?.document_id);
+
+  if (!documentId) {
+    return res.status(400).json({ error: "document_id manquant" });
+  }
+
+  const { data: documentRow, error } = await supabase
+    .from("trainer_documents")
+    .select("id, storage_bucket, storage_path, file_name")
+    .eq("id", documentId)
+    .maybeSingle();
+
+  if (error) {
+    return res.status(500).json({ error: error.message });
+  }
+
+  if (!documentRow?.storage_path) {
+    return res.status(404).json({ error: "Fichier introuvable pour ce document" });
+  }
+
+  const bucket = documentRow.storage_bucket || TRAINER_DOCUMENT_BUCKET;
+  const { data: signed, error: signedError } = await supabase.storage
+    .from(bucket)
+    .createSignedUrl(documentRow.storage_path, 300, {
+      download: documentRow.file_name || undefined
+    });
+
+  if (signedError) {
+    return res.status(500).json({ error: signedError.message });
+  }
+
+  return res.status(200).json({
+    success: true,
+    signed_url: signed?.signedUrl || "",
+    expires_in_seconds: 300
+  });
+}
+
+async function handleUpdateTrainerDocumentStatus(req, res) {
+  const documentId = sanitizeText(req.body?.document_id);
+  const status = sanitizeText(req.body?.status).toLowerCase();
+  const adminNote = sanitizeText(req.body?.admin_note || "");
+  const expiresAt = sanitizeText(req.body?.expires_at || "");
+
+  if (!documentId) {
+    return res.status(400).json({ error: "document_id manquant" });
+  }
+
+  if (!["submitted", "in_review", "validated", "refused", "expired"].includes(status)) {
+    return res.status(400).json({ error: "Statut document invalide" });
+  }
+
+  if (expiresAt && !isValidDate(expiresAt)) {
+    return res.status(400).json({ error: "expires_at invalide" });
+  }
+
+  const now = new Date().toISOString();
+  const payload = {
+    status,
+    admin_note: adminNote || null,
+    expires_at: expiresAt || null,
+    updated_at: now
+  };
+
+  if (status === "validated") {
+    payload.validated_at = now;
+    payload.refused_at = null;
+  }
+
+  if (status === "refused") {
+    payload.refused_at = now;
+  }
+
+  const { data, error } = await supabase
+    .from("trainer_documents")
+    .update(payload)
+    .eq("id", documentId)
+    .select()
+    .single();
+
+  if (error) {
+    return res.status(500).json({ error: error.message });
+  }
+
+  return res.status(200).json({
+    success: true,
+    trainer_document: sanitizeTrainerDocumentRow(data)
+  });
+}
+
 async function handleUpdateTrainerModule(req, res) {
   const moduleId = sanitizeText(req.body?.module_id);
   const moduleAction = sanitizeText(req.body?.module_action).toLowerCase();
@@ -1477,6 +1648,18 @@ export default async function handler(req, res) {
 
     if (action === "update_payout_status") {
       return await handleUpdatePayoutStatus(req, res);
+    }
+
+    if (action === "list_trainer_documents") {
+      return await handleListTrainerDocuments(req, res);
+    }
+
+    if (action === "get_trainer_document_url") {
+      return await handleGetTrainerDocumentUrl(req, res);
+    }
+
+    if (action === "update_trainer_document_status") {
+      return await handleUpdateTrainerDocumentStatus(req, res);
     }
 
     if (action === "upsert_trainer_module") {
