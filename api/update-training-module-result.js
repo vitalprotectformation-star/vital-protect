@@ -194,6 +194,34 @@ function withoutUndefined(payload) {
   );
 }
 
+
+async function upsertWithOptionalColumns(table, payload, options = {}, optionalColumns = []) {
+  const omittedColumns = [];
+  let currentPayload = withoutUndefined({ ...payload });
+
+  for (let attempt = 0; attempt <= optionalColumns.length; attempt += 1) {
+    const { data, error } = await supabase
+      .from(table)
+      .upsert(currentPayload, options)
+      .select()
+      .single();
+
+    if (!error) return { data, error: null, omittedColumns };
+
+    const missingColumn = optionalColumns.find(
+      columnName => Object.prototype.hasOwnProperty.call(currentPayload, columnName) && isMissingColumnError(error, columnName)
+    );
+
+    if (!missingColumn) return { data: null, error, omittedColumns };
+
+    omittedColumns.push(missingColumn);
+    currentPayload = { ...currentPayload };
+    delete currentPayload[missingColumn];
+  }
+
+  return { data: null, error: new Error("Colonnes optionnelles incompatibles"), omittedColumns };
+}
+
 async function updateWithOptionalColumns(table, payload, filters, optionalColumns = []) {
   const omittedColumns = [];
   let currentPayload = withoutUndefined({ ...payload });
@@ -306,6 +334,9 @@ async function activateTrainerFromRegistration(registration, modules) {
     email: cleanEmail,
     phone: registration.phone || "",
     city: registration.city || "",
+    postal_code: registration.postal_code || "",
+    department: registration.department || "",
+    region: registration.region || "",
     certification_date: today,
     certification_expiry: addYears(today, 2),
     certification_status: "active",
@@ -315,13 +346,15 @@ async function activateTrainerFromRegistration(registration, modules) {
     status: "active"
   };
 
-  const { data: trainerData, error: trainerError } = await supabase
-    .from("trainers")
-    .upsert(trainerPayload, { onConflict: "email" })
-    .select()
-    .single();
+  const trainerResult = await upsertWithOptionalColumns(
+    "trainers",
+    trainerPayload,
+    { onConflict: "email" },
+    ["postal_code", "department", "region"]
+  );
 
-  if (trainerError) throw trainerError;
+  if (trainerResult.error) throw trainerResult.error;
+  const trainerData = trainerResult.data;
 
   const trainerModules = [];
   for (const moduleName of modules) {

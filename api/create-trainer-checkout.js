@@ -235,6 +235,9 @@ async function updateWithOptionalColumns(table, payload, filters, optionalColumn
 async function upsertTrainerRegistrationDraft(payload) {
   const optionalColumns = [
     "session_id",
+    "postal_code",
+    "department",
+    "region",
     "trainer_formula_module_count",
     "trainer_formula_price",
     "stripe_payment_intent_id",
@@ -330,6 +333,8 @@ export default async function handler(req, res) {
       phone,
       city,
       postal_code,
+      department,
+      region,
       selected_module,
       selected_modules,
       selected_module_count,
@@ -346,6 +351,8 @@ export default async function handler(req, res) {
     const cleanPhone = sanitizeText(phone);
     const cleanCity = sanitizeText(city);
     const cleanPostalCode = sanitizeText(postal_code);
+    const cleanDepartment = sanitizeText(department);
+    const cleanRegion = sanitizeText(region);
     const requestedModules = parseSelectedModules(selected_modules);
     const fallbackModule = getOfficialModuleName(sanitizeText(selected_module || training_type));
     const cleanSelectedModules = requestedModules.length ? requestedModules : (fallbackModule ? [fallbackModule] : []);
@@ -484,6 +491,8 @@ export default async function handler(req, res) {
         phone: cleanPhone,
         city: cleanCity,
         postal_code: cleanPostalCode,
+        department: cleanDepartment,
+        region: cleanRegion,
         experience: cleanExperience,
         message: cleanMessage,
         origin
@@ -502,6 +511,9 @@ export default async function handler(req, res) {
       email: cleanEmail,
       phone: cleanPhone,
       city: cleanCity,
+      postal_code: cleanPostalCode,
+      department: cleanDepartment,
+      region: cleanRegion,
       message: registrationMessage,
       session_id: cleanSessionId || undefined,
       stripe_session_id: checkoutSession.id,

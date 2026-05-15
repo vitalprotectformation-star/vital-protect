@@ -631,6 +631,9 @@ async function handleTrainerCheckout(session) {
   const email = normalizeEmail(metadata.email || session.customer_email || "");
   const phone = metadata.phone || "";
   const city = metadata.city || "";
+  const postalCode = metadata.postal_code || "";
+  const department = metadata.department || "";
+  const region = metadata.region || "";
   const selectedModules = parseTrainerSelectedModules(metadata);
   const trainingType = selectedModules.length ? selectedModules.join(" | ") : getCanonicalModuleName(metadata.training_type || "");
   const message = metadata.message || "";
@@ -671,6 +674,9 @@ async function handleTrainerCheckout(session) {
     email,
     phone,
     city,
+    postal_code: postalCode,
+    department,
+    region,
     message: registrationMessage,
     session_id: trainerSessionId || undefined,
     stripe_session_id: session.id,
@@ -685,6 +691,9 @@ async function handleTrainerCheckout(session) {
 
   const optionalColumns = [
     "session_id",
+    "postal_code",
+    "department",
+    "region",
     "stripe_payment_intent_id",
     "payment_mode",
     "training_type",
