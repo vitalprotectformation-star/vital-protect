@@ -3502,8 +3502,7 @@
           row.document_label,
           row.document_type,
           row.file_name,
-          row.admin_note,
-          row.trainer_note
+          row.admin_note
         ].map(normalize).join(" ");
 
         const searchOk = !search || text.includes(search);
