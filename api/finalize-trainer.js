@@ -135,6 +135,122 @@ function parseRequestedModulesFromMessage(message) {
   return parseModuleList(match[1]);
 }
 
+function isMissingColumnError(error, columnName) {
+  const message = `${error?.message || ""} ${error?.details || ""} ${error?.hint || ""}`.toLowerCase();
+  const column = String(columnName || "").toLowerCase();
+  return Boolean(
+    column &&
+    (message.includes(`'${column}'`) ||
+      message.includes(`"${column}"`) ||
+      message.includes(`column ${column}`) ||
+      message.includes(`column \"${column}\"`) ||
+      message.includes("could not find") ||
+      message.includes("schema cache"))
+  );
+}
+
+function withoutUndefined(payload) {
+  return Object.fromEntries(
+    Object.entries(payload).filter(([, value]) => value !== undefined)
+  );
+}
+
+async function updateWithOptionalColumns(table, payload, filters, optionalColumns = []) {
+  const omittedColumns = [];
+  let currentPayload = withoutUndefined({ ...payload });
+
+  for (let attempt = 0; attempt <= optionalColumns.length; attempt += 1) {
+    if (!Object.keys(currentPayload).length) {
+      return { data: null, error: null, omittedColumns };
+    }
+
+    let query = supabase.from(table).update(currentPayload);
+    for (const filter of filters) {
+      query = query.eq(filter.column, filter.value);
+    }
+
+    const { data, error } = await query.select().maybeSingle();
+    if (!error) return { data, error: null, omittedColumns };
+
+    const missingColumn = optionalColumns.find(
+      columnName => Object.prototype.hasOwnProperty.call(currentPayload, columnName) && isMissingColumnError(error, columnName)
+    );
+
+    if (!missingColumn) return { data: null, error, omittedColumns };
+
+    omittedColumns.push(missingColumn);
+    currentPayload = { ...currentPayload };
+    delete currentPayload[missingColumn];
+  }
+
+  return { data: null, error: null, omittedColumns };
+}
+
+async function archiveRegistration(registration, archiveReason) {
+  const now = new Date().toISOString();
+  const archivePayload = {
+    registration_id: registration.id,
+    session_id: registration.session_id || null,
+    first_name: registration.first_name || "",
+    last_name: registration.last_name || "",
+    email: registration.email || "",
+    phone: registration.phone || "",
+    city: registration.city || "",
+    stripe_session_id: registration.stripe_session_id || "",
+    stripe_payment_intent_id: registration.stripe_payment_intent_id || "",
+    payment_status: registration.payment_status || "",
+    validation_status: registration.validation_status || "",
+    training_result: registration.training_result || "",
+    archive_reason: archiveReason,
+    source_created_at: registration.created_at || null,
+    archived_at: now
+  };
+
+  const { data: existingArchive, error: archiveLookupError } = await supabase
+    .from("trainer_candidate_archives")
+    .select("id")
+    .eq("registration_id", registration.id)
+    .maybeSingle();
+
+  if (archiveLookupError) throw archiveLookupError;
+
+  if (existingArchive?.id) {
+    const { error: archiveUpdateError } = await supabase
+      .from("trainer_candidate_archives")
+      .update(archivePayload)
+      .eq("id", existingArchive.id);
+
+    if (archiveUpdateError) throw archiveUpdateError;
+    return;
+  }
+
+  const { error: archiveInsertError } = await supabase
+    .from("trainer_candidate_archives")
+    .insert(archivePayload);
+
+  if (archiveInsertError) throw archiveInsertError;
+}
+
+async function markRegistrationActivated(registrationId, trainerId, now) {
+  const updateResult = await updateWithOptionalColumns(
+    "trainer_session_registrations",
+    {
+      activated_at: now,
+      trainer_activated_at: now,
+      candidate_activated_at: now,
+      activated_trainer_id: trainerId || null,
+      archive_reason: "activated",
+      archived_at: now
+    },
+    [{ column: "id", value: registrationId }],
+    ["activated_at", "trainer_activated_at", "candidate_activated_at", "activated_trainer_id", "archive_reason", "archived_at"]
+  );
+
+  if (updateResult.error) {
+    console.warn("Marquage activation candidat ignoré :", updateResult.error.message || updateResult.error);
+  }
+}
+
 async function requireAdmin(req) {
   const authHeader = req.headers.authorization || "";
   const token = authHeader.startsWith("Bearer ")
@@ -222,7 +338,7 @@ export default async function handler(req, res) {
       return res.status(404).json({ error: "Registration not found" });
     }
 
-    if (registration.payment_status !== "captured") {
+    if (!["captured", "paid"].includes(registration.payment_status)) {
       return res.status(400).json({ error: "Payment not captured" });
     }
 
@@ -316,11 +432,22 @@ export default async function handler(req, res) {
       trainerModules.push(trainerModuleData);
     }
 
+    const now = new Date().toISOString();
+    await archiveRegistration(
+      {
+        ...registration,
+        training_result: "passed"
+      },
+      "activated"
+    );
+    await markRegistrationActivated(registration.id, trainerData.id, now);
+
     return res.status(200).json({
       success: true,
       trainer: trainerData,
       trainer_module: trainerModules[0] || null,
-      trainer_modules: trainerModules
+      trainer_modules: trainerModules,
+      activated: true
     });
   } catch (err) {
     console.error("Finalize trainer error:", err);

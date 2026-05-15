@@ -11,6 +11,12 @@ const VP_MODULE_NAMES = {
   pro: "Faire face aux situations tendues et comportements agressifs en milieu professionnel"
 };
 
+function addYears(date, years) {
+  const d = new Date(date);
+  d.setFullYear(d.getFullYear() + years);
+  return d.toISOString().split("T")[0];
+}
+
 function normalizeEmail(value) {
   return String(value || "").trim().toLowerCase();
 }
@@ -168,6 +174,185 @@ function normalizeModuleResults(results) {
   return normalized;
 }
 
+function isMissingColumnError(error, columnName) {
+  const message = `${error?.message || ""} ${error?.details || ""} ${error?.hint || ""}`.toLowerCase();
+  const column = String(columnName || "").toLowerCase();
+  return Boolean(
+    column &&
+    (message.includes(`'${column}'`) ||
+      message.includes(`"${column}"`) ||
+      message.includes(`column ${column}`) ||
+      message.includes(`column \"${column}\"`) ||
+      message.includes("could not find") ||
+      message.includes("schema cache"))
+  );
+}
+
+function withoutUndefined(payload) {
+  return Object.fromEntries(
+    Object.entries(payload).filter(([, value]) => value !== undefined)
+  );
+}
+
+async function updateWithOptionalColumns(table, payload, filters, optionalColumns = []) {
+  const omittedColumns = [];
+  let currentPayload = withoutUndefined({ ...payload });
+
+  for (let attempt = 0; attempt <= optionalColumns.length; attempt += 1) {
+    if (!Object.keys(currentPayload).length) {
+      return { data: null, error: null, omittedColumns };
+    }
+
+    let query = supabase.from(table).update(currentPayload);
+    for (const filter of filters) {
+      query = query.eq(filter.column, filter.value);
+    }
+
+    const { data, error } = await query.select().maybeSingle();
+    if (!error) return { data, error: null, omittedColumns };
+
+    const missingColumn = optionalColumns.find(
+      columnName => Object.prototype.hasOwnProperty.call(currentPayload, columnName) && isMissingColumnError(error, columnName)
+    );
+
+    if (!missingColumn) return { data: null, error, omittedColumns };
+
+    omittedColumns.push(missingColumn);
+    currentPayload = { ...currentPayload };
+    delete currentPayload[missingColumn];
+  }
+
+  return { data: null, error: null, omittedColumns };
+}
+
+async function archiveRegistration(registration, archiveReason) {
+  const now = new Date().toISOString();
+
+  const archivePayload = {
+    registration_id: registration.id,
+    session_id: registration.session_id || null,
+    first_name: registration.first_name || "",
+    last_name: registration.last_name || "",
+    email: registration.email || "",
+    phone: registration.phone || "",
+    city: registration.city || "",
+    stripe_session_id: registration.stripe_session_id || "",
+    stripe_payment_intent_id: registration.stripe_payment_intent_id || "",
+    payment_status: registration.payment_status || "",
+    validation_status: registration.validation_status || "",
+    training_result: registration.training_result || "",
+    archive_reason: archiveReason,
+    source_created_at: registration.created_at || null,
+    archived_at: now
+  };
+
+  const { data: existingArchive, error: archiveLookupError } = await supabase
+    .from("trainer_candidate_archives")
+    .select("id")
+    .eq("registration_id", registration.id)
+    .maybeSingle();
+
+  if (archiveLookupError) throw archiveLookupError;
+
+  if (existingArchive?.id) {
+    const { error: archiveUpdateError } = await supabase
+      .from("trainer_candidate_archives")
+      .update(archivePayload)
+      .eq("id", existingArchive.id);
+
+    if (archiveUpdateError) throw archiveUpdateError;
+    return;
+  }
+
+  const { error: archiveInsertError } = await supabase
+    .from("trainer_candidate_archives")
+    .insert(archivePayload);
+
+  if (archiveInsertError) throw archiveInsertError;
+}
+
+async function markRegistrationActivated(registrationId, trainerId, now) {
+  const updateResult = await updateWithOptionalColumns(
+    "trainer_session_registrations",
+    {
+      activated_at: now,
+      trainer_activated_at: now,
+      candidate_activated_at: now,
+      activated_trainer_id: trainerId || null,
+      archive_reason: "activated",
+      archived_at: now
+    },
+    [{ column: "id", value: registrationId }],
+    ["activated_at", "trainer_activated_at", "candidate_activated_at", "activated_trainer_id", "archive_reason", "archived_at"]
+  );
+
+  if (updateResult.error) {
+    console.warn("Marquage activation candidat ignoré :", updateResult.error.message || updateResult.error);
+  }
+}
+
+async function activateTrainerFromRegistration(registration, modules) {
+  const today = new Date().toISOString().split("T")[0];
+  const now = new Date().toISOString();
+  const cleanEmail = normalizeEmail(registration.email);
+
+  if (!cleanEmail) {
+    throw new Error("Email candidat manquant : activation formateur impossible");
+  }
+
+  const trainerPayload = {
+    first_name: registration.first_name || "",
+    last_name: registration.last_name || "",
+    email: cleanEmail,
+    phone: registration.phone || "",
+    city: registration.city || "",
+    certification_date: today,
+    certification_expiry: addYears(today, 2),
+    certification_status: "active",
+    affiliation_start: today,
+    affiliation_end: addYears(today, 1),
+    affiliation_status: "active",
+    status: "active"
+  };
+
+  const { data: trainerData, error: trainerError } = await supabase
+    .from("trainers")
+    .upsert(trainerPayload, { onConflict: "email" })
+    .select()
+    .single();
+
+  if (trainerError) throw trainerError;
+
+  const trainerModules = [];
+  for (const moduleName of modules) {
+    const { data: trainerModuleData, error: trainerModuleError } = await supabase
+      .from("trainer_modules")
+      .upsert({
+        trainer_id: trainerData.id,
+        module_name: moduleName,
+        status: "certified",
+        validated_at: today,
+        expires_at: addYears(today, 2)
+      }, { onConflict: "trainer_id,module_name" })
+      .select()
+      .single();
+
+    if (trainerModuleError) throw trainerModuleError;
+    trainerModules.push(trainerModuleData);
+  }
+
+  await archiveRegistration(
+    {
+      ...registration,
+      training_result: "passed"
+    },
+    "activated"
+  );
+  await markRegistrationActivated(registration.id, trainerData.id, now);
+
+  return { trainer: trainerData, trainer_modules: trainerModules };
+}
+
 async function requireAdmin(req) {
   const authHeader = req.headers.authorization || "";
   const token = authHeader.startsWith("Bearer ")
@@ -277,13 +462,28 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: updateError.message });
     }
 
+    let activation = null;
+    if (overallResult === "passed") {
+      activation = await activateTrainerFromRegistration(
+        {
+          ...registration,
+          training_module_results: moduleResults,
+          training_result: overallResult
+        },
+        modules
+      );
+    }
+
     return res.status(200).json({
       success: true,
       message: overallResult === "passed"
-        ? "Module validé. Tous les modules sont validés : le formateur peut être activé."
+        ? "Module validé. Tous les modules sont validés : le formateur est activé et déplacé vers Formateurs actifs."
         : "Résultat du module mis à jour.",
       training_result: overallResult,
-      training_module_results: moduleResults
+      training_module_results: moduleResults,
+      activated: Boolean(activation),
+      trainer: activation?.trainer || null,
+      trainer_modules: activation?.trainer_modules || []
     });
   } catch (err) {
     console.error("Update training module result error:", err);

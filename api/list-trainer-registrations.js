@@ -75,6 +75,12 @@ async function requireAdmin(req) {
   return { ok: true, user, adminUser };
 }
 
+function isActiveTrainer(row) {
+  const status = String(row?.status || "").trim().toLowerCase();
+  const certificationStatus = String(row?.certification_status || "").trim().toLowerCase();
+  return row?.is_active === true || ["active", "certified"].includes(status) || ["active", "certified"].includes(certificationStatus);
+}
+
 function normalizeCandidate(row) {
   const moduleCount = Number(
     row.trainer_formula_module_count ||
@@ -132,11 +138,26 @@ export default async function handler(req, res) {
 
     const rows = (data || []).map(normalizeCandidate);
 
-    // IMPORTANT : ne pas masquer un candidat uniquement parce que son email existe déjà
-    // dans la table trainers. La création de l'accès dashboard ou d'anciennes données de test
-    // peuvent créer une ligne technique avec le même email.
-    // La page admin décidera ensuite quoi afficher, mais l'endpoint doit toujours retourner
-    // les candidatures présentes dans trainer_session_registrations.
+    const candidateEmails = [...new Set(rows.map(row => normalizeEmail(row.email)).filter(Boolean))];
+    const activeTrainerEmails = new Set();
+
+    if (candidateEmails.length) {
+      const { data: trainers, error: trainersError } = await supabase
+        .from("trainers")
+        .select("email, status, certification_status, is_active")
+        .in("email", candidateEmails);
+
+      if (!trainersError) {
+        (trainers || []).forEach(trainer => {
+          if (isActiveTrainer(trainer)) activeTrainerEmails.add(normalizeEmail(trainer.email));
+        });
+      } else {
+        console.warn("Lecture formateurs actifs impossible pour le statut candidat :", trainersError.message || trainersError);
+      }
+    }
+
+    // IMPORTANT : ne pas masquer un candidat uniquement parce qu'un email existe déjà
+    // dans la table trainers. Seules les lignes réellement actives/certifiées sont utilisées.
     const rowsWithActivation = rows.map(row => ({
       ...row,
       is_activated: Boolean(
@@ -144,7 +165,8 @@ export default async function handler(req, res) {
         row.trainer_activated_at ||
         row.candidate_activated_at ||
         row.validation_status === "activated" ||
-        row.archive_reason === "activated"
+        row.archive_reason === "activated" ||
+        (row.training_result === "passed" && activeTrainerEmails.has(normalizeEmail(row.email)))
       )
     }));
 

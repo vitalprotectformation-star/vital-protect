@@ -724,6 +724,12 @@ async function handleListStages(req, res) {
   return res.status(200).json({ success: true, stages: data || [] });
 }
 
+function isActiveTrainerRow(row) {
+  const status = normalize(row?.status || "");
+  const certificationStatus = normalize(row?.certification_status || "");
+  return row?.is_active === true || ["active", "certified"].includes(status) || ["active", "certified"].includes(certificationStatus);
+}
+
 async function handleListTrainerRegistrations(req, res) {
   const { data, error } = await supabase
     .from("trainer_session_registrations")
@@ -734,9 +740,38 @@ async function handleListTrainerRegistrations(req, res) {
     return res.status(500).json({ error: error.message });
   }
 
+  const rows = data || [];
+  const candidateEmails = [...new Set(rows.map(row => normalizeEmail(row.email)).filter(Boolean))];
+  const activeTrainerEmails = new Set();
+
+  if (candidateEmails.length) {
+    const { data: trainers, error: trainersError } = await supabase
+      .from("trainers")
+      .select("email, status, certification_status, is_active")
+      .in("email", candidateEmails);
+
+    if (!trainersError) {
+      (trainers || []).forEach(trainer => {
+        if (isActiveTrainerRow(trainer)) activeTrainerEmails.add(normalizeEmail(trainer.email));
+      });
+    } else {
+      console.warn("Lecture formateurs actifs impossible pour le statut candidat :", trainersError.message || trainersError);
+    }
+  }
+
   return res.status(200).json({
     success: true,
-    trainer_registrations: data || []
+    trainer_registrations: rows.map(row => ({
+      ...row,
+      is_activated: Boolean(
+        row.activated_at ||
+        row.trainer_activated_at ||
+        row.candidate_activated_at ||
+        row.validation_status === "activated" ||
+        row.archive_reason === "activated" ||
+        (row.training_result === "passed" && activeTrainerEmails.has(normalizeEmail(row.email)))
+      )
+    }))
   });
 }
 
