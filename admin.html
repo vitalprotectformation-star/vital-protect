@@ -2062,6 +2062,7 @@
       if (reason === "dossier_rejected") return "Dossier refusé";
       if (reason === "training_failed") return "Formation recalée";
       if (reason === "deleted_by_admin") return "Supprimé par admin";
+      if (reason === "activated") return "Formateur activé";
       return reason || "—";
     }
 
@@ -3029,12 +3030,16 @@
       // Seuls les dossiers explicitement archivés/activés par une colonne dédiée sont retirés.
       const explicitStatus = normalize(row?.validation_status || row?.candidate_status || "");
       const archiveReason = normalize(row?.archive_reason || "");
+      const activeTrainerExists = row?.email && getCandidateOverallResultValue(row) === "passed" && trainerAlreadyExists(row.email);
+
       return Boolean(
+        row?.is_activated ||
         row?.activated_at ||
         row?.trainer_activated_at ||
         row?.candidate_activated_at ||
         explicitStatus === "activated" ||
-        archiveReason === "activated"
+        archiveReason === "activated" ||
+        activeTrainerExists
       );
     }
 
@@ -4100,9 +4105,10 @@ VITAL PROTECT`
 
         if (apiResult.success) {
           alert(apiResult.message || "Module mis à jour.");
+          await loadTrainers();
+          await loadTrainerModules();
           await loadTrainerRegistrations();
           await loadArchives();
-          await loadTrainers();
         } else {
           alert(apiResult.error || "Erreur lors de la mise à jour du module.");
         }
@@ -4131,9 +4137,10 @@ VITAL PROTECT`
 
         if (result.success) {
           alert("Formateur activé avec succès.");
-          await loadTrainerRegistrations();
           await loadTrainers();
           await loadTrainerModules();
+          await loadTrainerRegistrations();
+          await loadArchives();
         } else {
           alert(result.error || "Erreur lors de l’activation du formateur.");
         }
