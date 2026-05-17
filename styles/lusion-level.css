@@ -15587,3 +15587,100 @@ body.page-contact-clean .vpw-quick-link {
     width: min(1180px, calc(100% - 24px)) !important;
   }
 }
+
+/* =========================================================
+   v54 — Pages publiques : barre de menu haute plus lisible
+   ---------------------------------------------------------
+   Ciblage volontairement limité au header public .vpl-nav.
+   Aucun impact cockpit admin / dashboard formateur privé.
+   ========================================================= */
+@media (min-width: 1081px) {
+  body .vpl-nav,
+  body.vpl-home .vpl-nav,
+  body.vpl-inner-page .vpl-nav,
+  body.page-methode .vpl-nav,
+  body.page-stage-redesign .vpl-nav,
+  body.page-entreprise-ribbon-back > .vpl-nav,
+  body.page-entreprise-ribbon-back > header.vpl-nav,
+  body.page-formateur-redesign .vpl-nav,
+  body.page-contact-clean .vpl-nav {
+    min-height: 66px !important;
+    padding: 9px 12px !important;
+    gap: 12px !important;
+  }
+
+  body .vpl-brand img,
+  body.vpl-home .vpl-brand img,
+  body.vpl-inner-page .vpl-brand img {
+    width: 54px !important;
+    height: 54px !important;
+  }
+
+  body .vpl-brand b,
+  body.vpl-home .vpl-brand b,
+  body.vpl-inner-page .vpl-brand b {
+    font-size: 1.08rem !important;
+  }
+
+  body .vpl-brand span,
+  body.vpl-home .vpl-brand span,
+  body.vpl-inner-page .vpl-brand span {
+    font-size: .80rem !important;
+  }
+
+  body .vpl-menu a,
+  body .vpl-nav-ghost,
+  body.vpl-home .vpl-menu a,
+  body.vpl-home .vpl-nav-ghost,
+  body.vpl-inner-page .vpl-menu a,
+  body.vpl-inner-page .vpl-nav-ghost {
+    font-size: .96rem !important;
+    line-height: 1.1 !important;
+    padding: 13px 15px !important;
+  }
+
+  body .vpl-nav-cta,
+  body.vpl-home .vpl-nav-cta,
+  body.vpl-inner-page .vpl-nav-cta {
+    min-height: 52px !important;
+    padding-inline: 22px !important;
+    font-size: .98rem !important;
+  }
+}
+
+@media (min-width: 761px) and (max-width: 1080px) {
+  body .vpl-nav,
+  body.vpl-home .vpl-nav,
+  body.vpl-inner-page .vpl-nav,
+  body.page-entreprise-ribbon-back > .vpl-nav,
+  body.page-entreprise-ribbon-back > header.vpl-nav {
+    min-height: 62px !important;
+    max-height: 68px !important;
+    padding: 8px !important;
+  }
+
+  body .vpl-brand img,
+  body.vpl-home .vpl-brand img,
+  body.vpl-inner-page .vpl-brand img {
+    width: 50px !important;
+    height: 50px !important;
+  }
+
+  body .vpl-menu a,
+  body .vpl-nav-ghost,
+  body.vpl-home .vpl-menu a,
+  body.vpl-home .vpl-nav-ghost,
+  body.vpl-inner-page .vpl-menu a,
+  body.vpl-inner-page .vpl-nav-ghost {
+    font-size: .84rem !important;
+    padding: 10px 10px !important;
+  }
+
+  body .vpl-nav-cta,
+  body.vpl-home .vpl-nav-cta,
+  body.vpl-inner-page .vpl-nav-cta {
+    min-height: 44px !important;
+    padding-inline: 15px !important;
+    font-size: .88rem !important;
+  }
+}
