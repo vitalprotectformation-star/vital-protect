@@ -5,6 +5,7 @@ import { randomBytes } from "crypto";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
+const connectEndpointSecret = process.env.STRIPE_CONNECT_WEBHOOK_SECRET;
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 const supabase = createClient(
@@ -1023,6 +1024,30 @@ async function handleStageCheckout(session) {
   });
 }
 
+function constructStripeWebhookEvent(rawBody, signature) {
+  const secrets = [
+    { name: "STRIPE_WEBHOOK_SECRET", value: endpointSecret },
+    { name: "STRIPE_CONNECT_WEBHOOK_SECRET", value: connectEndpointSecret }
+  ].filter(secret => secret.value);
+
+  let lastError;
+
+  for (const secret of secrets) {
+    try {
+      const event = stripe.webhooks.constructEvent(rawBody, signature, secret.value);
+      return { event, matchedSecretName: secret.name };
+    } catch (error) {
+      lastError = error;
+    }
+  }
+
+  if (!secrets.length) {
+    throw new Error("Aucun secret webhook Stripe configuré");
+  }
+
+  throw lastError;
+}
+
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).send("Method not allowed");
@@ -1033,12 +1058,9 @@ export default async function handler(req, res) {
   try {
     const rawBody = await getRawBody(req);
     const signature = req.headers["stripe-signature"];
-
-    event = stripe.webhooks.constructEvent(
-      rawBody,
-      signature,
-      endpointSecret
-    );
+    const constructed = constructStripeWebhookEvent(rawBody, signature);
+    event = constructed.event;
+    console.log(`Stripe webhook vérifié avec ${constructed.matchedSecretName}: ${event.type}`);
   } catch (error) {
     console.error("Stripe webhook signature error:", error.message);
     return res.status(400).send(`Webhook Error: ${error.message}`);
