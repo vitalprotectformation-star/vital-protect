@@ -714,9 +714,7 @@ async function handleTrainerCheckout(session) {
   const trainingType = selectedModules.length ? selectedModules.join(" | ") : getCanonicalModuleName(metadata.training_type || "");
   const message = metadata.message || "";
   const modulesMessage = selectedModules.length ? `Modules demandés: ${selectedModules.join(" | ")}` : "";
-  const registrationMessage = [message, modulesMessage].filter(Boolean).join("
-
-");
+  const registrationMessage = [message, modulesMessage].filter(Boolean).join("\n\n");
   const trainerSessionId = metadata.session_id || null;
   const origin = metadata.origin || process.env.APP_BASE_URL || "https://www.vital-protect.fr";
 
