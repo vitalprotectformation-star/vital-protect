@@ -427,6 +427,53 @@ function buildStripeIdempotencyKey(prefix, values = []) {
   return `${prefix}_${hash}`.slice(0, 255);
 }
 
+
+function getStripeId(value) {
+  if (!value) return "";
+  if (typeof value === "string") return value;
+  return String(value.id || "");
+}
+
+async function getReservationStripeChargeId(reservation = {}) {
+  const directChargeId = sanitizeText(
+    reservation.stripe_charge_id ||
+    reservation.stripe_latest_charge_id ||
+    reservation.stripe_source_transaction_id ||
+    reservation.payment_charge_id ||
+    ""
+  );
+
+  if (directChargeId && directChargeId.startsWith("ch_")) return directChargeId;
+
+  const sessionId = sanitizeText(reservation.stripe_session_id || reservation.checkout_session_id || "");
+  if (!sessionId) return "";
+
+  const session = await stripe.checkout.sessions.retrieve(sessionId, {
+    expand: ["payment_intent.latest_charge"]
+  });
+
+  if (session.payment_status && session.payment_status !== "paid") {
+    throw new Error(`Réservation ${reservation.id} : paiement Stripe non encaissé (${session.payment_status}).`);
+  }
+
+  const paymentIntent = session.payment_intent;
+  const latestCharge = typeof paymentIntent === "object" && paymentIntent
+    ? paymentIntent.latest_charge
+    : null;
+
+  const chargeId = getStripeId(latestCharge);
+  if (chargeId && chargeId.startsWith("ch_")) return chargeId;
+
+  const paymentIntentId = getStripeId(paymentIntent) || sanitizeText(reservation.stripe_payment_intent_id || "");
+  if (!paymentIntentId) return "";
+
+  const retrievedPaymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId, {
+    expand: ["latest_charge"]
+  });
+
+  return getStripeId(retrievedPaymentIntent.latest_charge);
+}
+
 async function getTrainerCommissionTier(trainerId) {
   if (!trainerId) return getCommissionTier(0);
 
@@ -1692,7 +1739,9 @@ async function handleExecuteTrainerPayout(req, res) {
   }
 
   const commissionTier = await getTrainerCommissionTier(stage.trainer_id);
-  const reservationBreakdown = payableReservations.map(row => {
+  const reservationBreakdown = [];
+
+  for (const row of payableReservations) {
     const grossAmount = getReservationGrossAmount(row, stage);
     const storedRate = Number(row.vital_protect_commission_rate);
     const commissionRate = Number.isFinite(storedRate) && storedRate >= 0 && storedRate < 1 ? storedRate : commissionTier.rate;
@@ -1701,85 +1750,135 @@ async function handleExecuteTrainerPayout(req, res) {
       ? storedPayout
       : calculateTrainerPayout(grossAmount, commissionRate);
 
-    return {
+    let sourceChargeId = "";
+    try {
+      sourceChargeId = await getReservationStripeChargeId(row);
+    } catch (error) {
+      return res.status(400).json({
+        error: `Charge Stripe source introuvable pour la réservation ${row.id} : ${error.message}`
+      });
+    }
+
+    if (!sourceChargeId || !sourceChargeId.startsWith("ch_")) {
+      return res.status(400).json({
+        error: `Charge Stripe source introuvable pour la réservation ${row.id}. Impossible de lier le transfert au paiement client.`
+      });
+    }
+
+    reservationBreakdown.push({
       id: row.id,
+      stripe_session_id: row.stripe_session_id || "",
       grossAmount,
       commissionRate,
-      payoutAmount
-    };
-  });
+      payoutAmount,
+      sourceChargeId
+    });
+  }
 
-  const payoutAmount = Math.round(reservationBreakdown.reduce((sum, row) => sum + Number(row.payoutAmount || 0), 0) * 100) / 100;
-  const amountCents = eurosToCents(payoutAmount);
+  const totalPayoutAmount = Math.round(reservationBreakdown.reduce((sum, row) => sum + Number(row.payoutAmount || 0), 0) * 100) / 100;
+  const totalAmountCents = eurosToCents(totalPayoutAmount);
 
-  if (!amountCents) {
+  if (!totalAmountCents) {
     return res.status(400).json({ error: "Montant de reversement nul ou invalide." });
   }
 
-  const reservationIds = reservationBreakdown.map(row => row.id).sort();
-  const idempotencyKey = buildStripeIdempotencyKey("vp_trainer_payout", [stageId, connectAccountId, amountCents, ...reservationIds]);
+  const transfers = [];
+  const paidReservationIds = [];
 
-  let transfer;
-  try {
-    transfer = await stripe.transfers.create({
-      amount: amountCents,
-      currency: "eur",
-      destination: connectAccountId,
-      transfer_group: `vp_stage_${stageId}`,
-      metadata: {
-        platform: "vital_protect",
-        stage_id: stageId,
-        trainer_id: String(stage.trainer_id || ""),
-        trainer_email: String(trainer.email || ""),
-        reservation_count: String(reservationIds.length),
-        reservation_ids: reservationIds.join(",").slice(0, 500),
-        payout_amount_eur: String(payoutAmount),
-        commission_rate: String(commissionTier.rate)
+  for (const row of reservationBreakdown) {
+    const amountCents = eurosToCents(row.payoutAmount);
+    if (!amountCents) continue;
+
+    const idempotencyKey = buildStripeIdempotencyKey("vp_trainer_payout", [
+      stageId,
+      row.id,
+      connectAccountId,
+      amountCents,
+      row.sourceChargeId
+    ]);
+
+    let transfer;
+    try {
+      transfer = await stripe.transfers.create({
+        amount: amountCents,
+        currency: "eur",
+        destination: connectAccountId,
+        source_transaction: row.sourceChargeId,
+        transfer_group: `vp_stage_${stageId}`,
+        metadata: {
+          platform: "vital_protect",
+          stage_id: stageId,
+          trainer_id: String(stage.trainer_id || ""),
+          trainer_email: String(trainer.email || ""),
+          reservation_id: String(row.id || ""),
+          stripe_session_id: String(row.stripe_session_id || ""),
+          source_charge_id: row.sourceChargeId,
+          payout_amount_eur: String(row.payoutAmount),
+          commission_rate: String(row.commissionRate)
+        }
+      }, {
+        idempotencyKey
+      });
+    } catch (error) {
+      const failureNote = `Erreur transfert Stripe : ${error.message}`.slice(0, 1000);
+      await updateReservationsWithOptionalColumns([row.id], {
+        trainer_payout_status: "blocked",
+        trainer_payout_admin_note: failureNote
+      }, []);
+
+      if (paidReservationIds.length) {
+        return res.status(400).json({
+          error: `Transfert partiel : ${paidReservationIds.length} réservation(s) transférée(s), puis échec Stripe sur ${row.id} : ${error.message}`,
+          transfers,
+          paid_reservation_ids: paidReservationIds
+        });
       }
-    }, {
-      idempotencyKey
-    });
-  } catch (error) {
-    const failureNote = `Erreur transfert Stripe : ${error.message}`.slice(0, 1000);
-    await updateReservationsWithOptionalColumns(reservationIds, {
-      trainer_payout_status: "blocked",
-      trainer_payout_admin_note: failureNote
-    }, []);
 
-    return res.status(400).json({
-      error: `Transfert Stripe impossible : ${error.message}`
-    });
-  }
+      return res.status(400).json({
+        error: `Transfert Stripe impossible : ${error.message}`
+      });
+    }
 
-  const now = new Date().toISOString();
-  const updateResult = await updateReservationsWithOptionalColumns(reservationIds, {
-    trainer_payout_status: "paid",
-    trainer_payout_paid_at: now,
-    trainer_payout_transferred_at: now,
-    trainer_payout_stripe_transfer_id: transfer.id,
-    trainer_payout_admin_note: note || `Reversement Stripe Connect ${transfer.id}`
-  }, [
-    "trainer_payout_transferred_at",
-    "trainer_payout_stripe_transfer_id"
-  ]);
+    const now = new Date().toISOString();
+    const updateResult = await updateReservationsWithOptionalColumns([row.id], {
+      trainer_payout_status: "paid",
+      trainer_payout_paid_at: now,
+      trainer_payout_transferred_at: now,
+      trainer_payout_stripe_transfer_id: transfer.id,
+      trainer_payout_admin_note: note || `Reversement Stripe Connect ${transfer.id}`
+    }, [
+      "trainer_payout_transferred_at",
+      "trainer_payout_stripe_transfer_id"
+    ]);
 
-  if (updateResult.error) {
-    return res.status(500).json({
-      error: `Transfert Stripe créé (${transfer.id}), mais mise à jour Supabase impossible : ${updateResult.error.message}`,
-      transfer_id: transfer.id
+    if (updateResult.error) {
+      return res.status(500).json({
+        error: `Transfert Stripe créé (${transfer.id}), mais mise à jour Supabase impossible : ${updateResult.error.message}`,
+        transfer_id: transfer.id
+      });
+    }
+
+    transfers.push({
+      reservation_id: row.id,
+      transfer_id: transfer.id,
+      amount: row.payoutAmount,
+      amount_cents: amountCents,
+      currency: transfer.currency,
+      source_transaction: row.sourceChargeId
     });
+    paidReservationIds.push(row.id);
   }
 
   return res.status(200).json({
     success: true,
-    transfer_id: transfer.id,
-    amount: payoutAmount,
-    amount_cents: amountCents,
-    currency: transfer.currency,
+    transfers,
+    transfer_id: transfers.map(item => item.transfer_id).join(","),
+    amount: totalPayoutAmount,
+    amount_cents: totalAmountCents,
+    currency: "eur",
     destination: connectAccountId,
-    updated: updateResult.data.length,
-    rows: updateResult.data,
-    omitted_columns: updateResult.omittedColumns || []
+    updated: paidReservationIds.length,
+    paid_reservation_ids: paidReservationIds
   });
 }
 
