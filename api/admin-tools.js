@@ -1,5 +1,6 @@
 import Stripe from "stripe";
-import { createHash } from "crypto";
+import { Resend } from "resend";
+import { createHash, randomBytes } from "crypto";
 import { createClient } from "@supabase/supabase-js";
 
 const supabase = createClient(
@@ -8,6 +9,7 @@ const supabase = createClient(
 );
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "");
+const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 
 const PUBLIC_STAGE_UNIT_PRICE = 30;
 const ENTERPRISE_STAGE_PRICE = 390;
@@ -95,6 +97,176 @@ function getTrainerSessionLaunchPrice(moduleCount) {
 
 function sanitizeText(value, fallback = "") {
   return String(value || fallback).trim();
+}
+
+
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+function formatDateForEmail(value) {
+  if (!value) return "à confirmer";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return String(value || "");
+  return date.toLocaleDateString("fr-FR", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric"
+  });
+}
+
+function formatEuroAmount(value) {
+  const amount = Number(value || 0);
+  if (!Number.isFinite(amount)) return "0 €";
+  return new Intl.NumberFormat("fr-FR", {
+    style: "currency",
+    currency: "EUR"
+  }).format(amount);
+}
+
+
+function getPublicSiteUrl() {
+  return String(
+    process.env.PUBLIC_SITE_URL ||
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    process.env.SITE_URL ||
+    "https://www.vital-protect.fr"
+  ).replace(/\/+$/, "");
+}
+
+function generateReportResponseToken() {
+  return randomBytes(32).toString("hex");
+}
+
+function buildReportResponseUrl(token) {
+  return `${getPublicSiteUrl()}/reponse-report.html?token=${encodeURIComponent(token || "")}`;
+}
+
+function isReportResponseBlocking(row = {}) {
+  return ["pending", "refund_requested"].includes(normalize(row.report_response_status || ""));
+}
+
+function isReportResponseRefundRequested(row = {}) {
+  return normalize(row.report_response_status || "") === "refund_requested";
+}
+
+function getStageDisplayTitle(stage = {}, reservation = {}) {
+  return replaceLegacyModuleNames(
+    stage.title ||
+    stage.training_type ||
+    reservation.stage_title ||
+    reservation.stageTitle ||
+    "Stage VITAL PROTECT"
+  );
+}
+
+async function sendEmailSafe(payload) {
+  try {
+    if (!resend || !payload?.to) return { sent: false, skipped: true };
+    const response = await resend.emails.send({
+      from: process.env.RESEND_FROM || "VITAL PROTECT <contact@vital-protect.fr>",
+      replyTo: process.env.RESEND_REPLY_TO || "contact@vital-protect.fr",
+      ...payload
+    });
+    console.log("Email envoyé :", response);
+    return { sent: true, response };
+  } catch (error) {
+    console.error("Erreur envoi email :", error);
+    return { sent: false, error: error.message };
+  }
+}
+
+async function notifyReservationRescheduled({ stage = {}, reservation = {}, newStageDate = "", token = "" }) {
+  const email = normalizeEmail(reservation.email || reservation.customer_email || "");
+  if (!email) return { sent: false, skipped: true };
+
+  const title = getStageDisplayTitle(stage, reservation);
+  const oldDateLabel = formatDateForEmail(reservation.report_original_stage_date || reservation.original_stage_date || reservation.stage_date || stage.original_stage_date);
+  const dateLabel = formatDateForEmail(newStageDate || reservation.report_proposed_stage_date || stage.stage_date);
+  const timeLabel = stage.start_time ? ` à ${escapeHtml(stage.start_time)}` : "";
+  const cityLabel = stage.city || reservation.city || "à confirmer";
+  const responseUrl = buildReportResponseUrl(token || reservation.report_response_token || "");
+
+  return await sendEmailSafe({
+    to: email,
+    subject: "Action requise : nouvelle date proposée pour votre stage VITAL PROTECT",
+    html: `
+      <h2>Nouvelle date proposée pour votre stage</h2>
+      <p>Bonjour ${escapeHtml(reservation.first_name || "")} ${escapeHtml(reservation.last_name || "")},</p>
+      <p>Votre stage <strong>VITAL PROTECT</strong> ne peut pas être maintenu à la date initiale. Nous vous proposons une nouvelle date.</p>
+      <ul>
+        <li><strong>Stage :</strong> ${escapeHtml(title)}</li>
+        <li><strong>Date initiale :</strong> ${escapeHtml(oldDateLabel)}</li>
+        <li><strong>Nouvelle date proposée :</strong> ${escapeHtml(dateLabel)}${timeLabel}</li>
+        <li><strong>Lieu :</strong> ${escapeHtml(cityLabel)}</li>
+      </ul>
+      <p>Merci de confirmer votre choix depuis le lien sécurisé ci-dessous :</p>
+      <p>
+        <a href="${escapeHtml(responseUrl)}" style="display:inline-block;padding:12px 18px;border-radius:999px;background:#12324a;color:#ffffff;text-decoration:none;font-weight:700;">
+          Répondre à la proposition
+        </a>
+      </p>
+      <p>Vous pourrez accepter la nouvelle date ou demander le remboursement de votre réservation.</p>
+      <p><strong>VITAL PROTECT</strong></p>
+    `
+  });
+}
+
+async function notifyReservationRefunded({ stage = {}, reservation = {}, refund = null, amount = 0 }) {
+  const email = normalizeEmail(reservation.email || reservation.customer_email || "");
+  if (!email) return { sent: false, skipped: true };
+
+  const title = getStageDisplayTitle(stage, reservation);
+  const refundId = refund?.id || reservation.stripe_refund_id || "";
+  const amountLabel = formatEuroAmount(amount || reservation.refunded_amount || reservation.total_amount || 0);
+
+  return await sendEmailSafe({
+    to: email,
+    subject: "Remboursement de votre réservation VITAL PROTECT",
+    html: `
+      <h2>Votre remboursement a été lancé</h2>
+      <p>Bonjour ${escapeHtml(reservation.first_name || "")} ${escapeHtml(reservation.last_name || "")},</p>
+      <p>Votre réservation pour le stage ci-dessous a été remboursée.</p>
+      <ul>
+        <li><strong>Stage :</strong> ${escapeHtml(title)}</li>
+        <li><strong>Montant remboursé :</strong> ${escapeHtml(amountLabel)}</li>
+        ${refundId ? `<li><strong>Référence remboursement :</strong> ${escapeHtml(refundId)}</li>` : ""}
+      </ul>
+      <p>Selon votre banque, le remboursement peut mettre quelques jours à apparaître sur votre compte.</p>
+      <p><strong>VITAL PROTECT</strong></p>
+    `
+  });
+}
+
+async function notifyReservationTrainerChanged({ stage = {}, reservation = {}, trainer = {} }) {
+  const email = normalizeEmail(reservation.email || reservation.customer_email || "");
+  if (!email) return { sent: false, skipped: true };
+
+  const title = getStageDisplayTitle(stage, reservation);
+  const trainerName = `${trainer.first_name || ""} ${trainer.last_name || ""}`.trim() || "un formateur VITAL PROTECT";
+
+  return await sendEmailSafe({
+    to: email,
+    subject: "Votre stage VITAL PROTECT est maintenu avec un autre formateur",
+    html: `
+      <h2>Votre stage est maintenu</h2>
+      <p>Bonjour ${escapeHtml(reservation.first_name || "")} ${escapeHtml(reservation.last_name || "")},</p>
+      <p>Votre stage <strong>VITAL PROTECT</strong> est maintenu. Le formateur initial est remplacé.</p>
+      <ul>
+        <li><strong>Stage :</strong> ${escapeHtml(title)}</li>
+        <li><strong>Date :</strong> ${escapeHtml(formatDateForEmail(stage.stage_date))}${stage.start_time ? ` à ${escapeHtml(stage.start_time)}` : ""}</li>
+        <li><strong>Lieu :</strong> ${escapeHtml(stage.city || reservation.city || "à confirmer")}</li>
+        <li><strong>Nouveau formateur :</strong> ${escapeHtml(trainerName)}</li>
+      </ul>
+      <p>Votre réservation reste bien enregistrée.</p>
+      <p><strong>VITAL PROTECT</strong></p>
+    `
+  });
 }
 
 
@@ -1550,7 +1722,7 @@ async function handleUpdateStageTrainer(req, res) {
 
   const { data: paidReservations, error: reservationFetchError } = await supabase
     .from("reservations")
-    .select("id, trainer_payout_status, trainer_payout_paid_at, trainer_payout_stripe_transfer_id")
+    .select("*")
     .eq("stage_id", stageId)
     .eq("payment_status", "paid");
 
@@ -1572,6 +1744,11 @@ async function handleUpdateStageTrainer(req, res) {
     payoutRowsUpdated = updateResult.data.length;
   }
 
+  const emailResults = [];
+  for (const reservation of paidReservations || []) {
+    emailResults.push(await notifyReservationTrainerChanged({ stage, reservation, trainer }));
+  }
+
   return res.status(200).json({
     success: true,
     stage,
@@ -1581,7 +1758,8 @@ async function handleUpdateStageTrainer(req, res) {
       first_name: trainer.first_name,
       last_name: trainer.last_name
     },
-    payout_rows_updated: payoutRowsUpdated
+    payout_rows_updated: payoutRowsUpdated,
+    emails_sent: emailResults.filter(item => item?.sent).length
   });
 }
 
@@ -1598,6 +1776,17 @@ async function handleRescheduleStage(req, res) {
     return res.status(400).json({ error: "Nouvelle date invalide" });
   }
 
+  const { data: previousStage, error: previousStageError } = await supabase
+    .from("stages")
+    .select("*")
+    .eq("id", stageId)
+    .maybeSingle();
+
+  if (previousStageError) return res.status(500).json({ error: previousStageError.message });
+  if (!previousStage) return res.status(404).json({ error: "Stage introuvable" });
+
+  const originalStageDate = previousStage.stage_date || null;
+
   const { data: stage, error: stageError } = await supabase
     .from("stages")
     .update({
@@ -1612,32 +1801,200 @@ async function handleRescheduleStage(req, res) {
 
   const { data: paidReservations, error: reservationFetchError } = await supabase
     .from("reservations")
-    .select("id, trainer_payout_status, trainer_payout_paid_at, trainer_payout_stripe_transfer_id")
+    .select("*")
     .eq("stage_id", stageId)
     .eq("payment_status", "paid");
 
   if (reservationFetchError) return res.status(500).json({ error: reservationFetchError.message });
 
-  const reservationIds = (paidReservations || [])
-    .filter(row => !isReservationAlreadyTransferred(row))
-    .map(row => row.id);
+  const now = new Date().toISOString();
+  const emailResults = [];
+  const updatedReservationIds = [];
 
-  let payoutRowsUpdated = 0;
-  if (reservationIds.length) {
-    const updateResult = await updateReservationsWithOptionalColumns(reservationIds, {
-      trainer_payout_status: "scheduled",
+  for (const reservation of paidReservations || []) {
+    if (isReservationAlreadyTransferred(reservation) || isReservationRefunded(reservation)) {
+      continue;
+    }
+
+    const token = generateReportResponseToken();
+    const updateResult = await updateReservationsWithOptionalColumns([reservation.id], {
+      trainer_payout_status: "blocked",
       trainer_payout_paid_at: null,
       trainer_payout_due_date: getPayoutDateForStage(stageDate),
-      trainer_payout_admin_note: `${note} : reversement conservé sur la nouvelle date.`.slice(0, 1000)
-    }, ["trainer_payout_due_date"]);
+      trainer_payout_admin_note: `${note} : attente réponse client pour la nouvelle date.`.slice(0, 1000),
+      report_response_status: "pending",
+      report_response_token: token,
+      report_original_stage_date: originalStageDate,
+      report_proposed_stage_date: stageDate,
+      report_requested_at: now,
+      report_responded_at: null
+    }, [
+      "trainer_payout_due_date",
+      "report_response_status",
+      "report_response_token",
+      "report_original_stage_date",
+      "report_proposed_stage_date",
+      "report_requested_at",
+      "report_responded_at"
+    ]);
 
     if (updateResult.error) return res.status(500).json({ error: updateResult.error.message });
-    payoutRowsUpdated = updateResult.data.length;
+
+    updatedReservationIds.push(reservation.id);
+    emailResults.push(await notifyReservationRescheduled({
+      stage: { ...stage, original_stage_date: originalStageDate },
+      reservation: {
+        ...reservation,
+        report_response_token: token,
+        report_original_stage_date: originalStageDate,
+        report_proposed_stage_date: stageDate
+      },
+      newStageDate: stageDate,
+      token
+    }));
   }
 
-  return res.status(200).json({ success: true, stage, payout_rows_updated: payoutRowsUpdated });
+  return res.status(200).json({
+    success: true,
+    stage,
+    original_stage_date: originalStageDate,
+    proposed_stage_date: stageDate,
+    report_pending: updatedReservationIds.length,
+    payout_rows_updated: updatedReservationIds.length,
+    updated_reservation_ids: updatedReservationIds,
+    emails_sent: emailResults.filter(item => item?.sent).length
+  });
 }
 
+
+async function handleRefundReservation(req, res) {
+  const reservationId = sanitizeText(req.body?.reservation_id);
+  const note = sanitizeText(req.body?.note || "Remboursement demandé après proposition de report");
+
+  if (!reservationId) {
+    return res.status(400).json({ error: "reservation_id manquant" });
+  }
+
+  const { data: reservation, error: reservationError } = await supabase
+    .from("reservations")
+    .select("*")
+    .eq("id", reservationId)
+    .maybeSingle();
+
+  if (reservationError) return res.status(500).json({ error: reservationError.message });
+  if (!reservation) return res.status(404).json({ error: "Réservation introuvable" });
+
+  if (normalize(reservation.payment_status || "") !== "paid") {
+    return res.status(400).json({ error: "La réservation n’est pas payée ou a déjà été traitée." });
+  }
+
+  if (isReservationRefunded(reservation)) {
+    return res.status(400).json({ error: "Cette réservation est déjà remboursée." });
+  }
+
+  if (isReservationAlreadyTransferred(reservation)) {
+    return res.status(400).json({ error: "Remboursement automatique bloqué : cette réservation a déjà été reversée au formateur." });
+  }
+
+  const { data: stageRow, error: stageError } = await supabase
+    .from("stages")
+    .select("*")
+    .eq("id", reservation.stage_id)
+    .maybeSingle();
+
+  if (stageError) return res.status(500).json({ error: stageError.message });
+
+  const stage = stageRow || { id: reservation.stage_id, status: "cancelled", title: reservation.stage_title };
+  const grossAmount = getReservationGrossAmount(reservation, stage);
+  const amountCents = eurosToCents(grossAmount);
+
+  if (!amountCents) {
+    return res.status(400).json({ error: "Montant de remboursement invalide pour cette réservation." });
+  }
+
+  let paymentIntentId = "";
+  try {
+    paymentIntentId = await getReservationStripePaymentIntentId(reservation);
+  } catch (error) {
+    return res.status(400).json({ error: `PaymentIntent Stripe introuvable : ${error.message}` });
+  }
+
+  if (!paymentIntentId || !paymentIntentId.startsWith("pi_")) {
+    return res.status(400).json({ error: "PaymentIntent Stripe introuvable. Impossible de rembourser automatiquement." });
+  }
+
+  const idempotencyKey = buildStripeIdempotencyKey("vp_reservation_refund", [
+    reservation.id,
+    paymentIntentId,
+    amountCents
+  ]);
+
+  let refund;
+  try {
+    refund = await stripe.refunds.create({
+      payment_intent: paymentIntentId,
+      amount: amountCents,
+      reason: "requested_by_customer",
+      metadata: {
+        platform: "vital_protect",
+        stage_id: String(reservation.stage_id || ""),
+        reservation_id: String(reservation.id || ""),
+        stripe_session_id: String(reservation.stripe_session_id || ""),
+        refund_reason: "reschedule_refused",
+        admin_note: note.slice(0, 450)
+      }
+    }, { idempotencyKey });
+  } catch (error) {
+    const failureNote = `Erreur remboursement Stripe : ${error.message}`.slice(0, 1000);
+    await updateReservationsWithOptionalColumns([reservation.id], {
+      trainer_payout_status: "blocked",
+      trainer_payout_admin_note: failureNote
+    }, []);
+    return res.status(400).json({ error: `Remboursement Stripe impossible : ${error.message}` });
+  }
+
+  const now = new Date().toISOString();
+  const updateResult = await updateReservationsWithOptionalColumns([reservation.id], {
+    payment_status: "refunded",
+    refunded_at: now,
+    refunded_amount: Math.round((amountCents / 100) * 100) / 100,
+    stripe_refund_id: refund.id,
+    trainer_payout_status: "blocked",
+    trainer_payout_admin_note: note || `Remboursement Stripe ${refund.id}`,
+    report_response_status: "refunded",
+    report_responded_at: now
+  }, [
+    "refunded_at",
+    "refunded_amount",
+    "stripe_refund_id",
+    "report_response_status",
+    "report_responded_at"
+  ]);
+
+  if (updateResult.error) {
+    return res.status(500).json({
+      error: `Remboursement Stripe créé (${refund.id}), mais mise à jour Supabase impossible : ${updateResult.error.message}`,
+      refund_id: refund.id
+    });
+  }
+
+  const emailResult = await notifyReservationRefunded({
+    stage,
+    reservation,
+    refund,
+    amount: amountCents / 100
+  });
+
+  return res.status(200).json({
+    success: true,
+    reservation_id: reservation.id,
+    refund_id: refund.id,
+    amount: amountCents / 100,
+    amount_cents: amountCents,
+    currency: refund.currency,
+    email_sent: Boolean(emailResult?.sent)
+  });
+}
 
 async function handleRefundStageReservations(req, res) {
   const stageId = sanitizeText(req.body?.stage_id);
@@ -1777,6 +2134,13 @@ async function handleRefundStageReservations(req, res) {
       });
     }
 
+    const emailResult = await notifyReservationRefunded({
+      stage,
+      reservation,
+      refund,
+      amount: amountCents / 100
+    });
+
     refunds.push({
       reservation_id: reservation.id,
       refund_id: refund.id,
@@ -1784,7 +2148,8 @@ async function handleRefundStageReservations(req, res) {
       amount: amountCents / 100,
       amount_cents: amountCents,
       currency: refund.currency,
-      status: refund.status
+      status: refund.status,
+      email_sent: Boolean(emailResult?.sent)
     });
     refundedReservationIds.push(reservation.id);
   }
@@ -1802,7 +2167,8 @@ async function handleRefundStageReservations(req, res) {
     amount_cents: refunds.reduce((sum, item) => sum + Number(item.amount_cents || 0), 0),
     currency: "eur",
     updated: refundedReservationIds.length,
-    refunded_reservation_ids: refundedReservationIds
+    refunded_reservation_ids: refundedReservationIds,
+    emails_sent: refunds.filter(item => item.email_sent).length
   });
 }
 
@@ -1820,40 +2186,54 @@ async function handleUpdatePayoutStatus(req, res) {
     return res.status(400).json({ error: "status de reversement invalide" });
   }
 
+  let selectQuery = supabase.from("reservations").select("*").eq("payment_status", "paid");
+  if (reservationId) {
+    selectQuery = selectQuery.eq("id", reservationId);
+  } else {
+    selectQuery = selectQuery.eq("stage_id", stageId);
+  }
+
+  const { data: rows, error: selectError } = await selectQuery;
+  if (selectError) return res.status(500).json({ error: selectError.message });
+
+  const targetRows = (rows || []).filter(row => {
+    if (["validated", "scheduled"].includes(status) && isReportResponseBlocking(row)) return false;
+    if (isReservationRefunded(row)) return false;
+    return true;
+  });
+
+  if (!targetRows.length) {
+    return res.status(400).json({
+      error: "Aucune réservation éligible. Les réservations en attente de réponse client ou en demande de remboursement restent bloquées."
+    });
+  }
+
   const payload = {
     trainer_payout_status: status,
     trainer_payout_paid_at: status === "paid" ? new Date().toISOString() : null,
     trainer_payout_admin_note: note || null
   };
 
-  let query = supabase.from("reservations").update(payload);
+  const updateResult = await updateReservationsWithOptionalColumns(targetRows.map(row => row.id), payload, []);
 
-  if (reservationId) {
-    query = query.eq("id", reservationId);
-  } else {
-    query = query.eq("stage_id", stageId).eq("payment_status", "paid");
-  }
-
-  const { data, error } = await query.select("id, stage_id, trainer_payout_status, trainer_payout_paid_at");
-
-  if (error) {
-    const message = String(error.message || "");
+  if (updateResult.error) {
+    const message = String(updateResult.error.message || "");
     if (message.toLowerCase().includes("trainer_payout")) {
       return res.status(500).json({
         error: "Colonnes reversements manquantes dans Supabase. Exécute le fichier SUPABASE_REVERSEMENTS_FORMATEURS.sql puis réessaie."
       });
     }
-    return res.status(500).json({ error: error.message });
+    return res.status(500).json({ error: updateResult.error.message });
   }
 
   return res.status(200).json({
     success: true,
-    updated: Array.isArray(data) ? data.length : 0,
+    updated: updateResult.data.length,
+    skipped_report_pending: (rows || []).length - targetRows.length,
     payout_status: status,
-    rows: data || []
+    rows: updateResult.data || []
   });
 }
-
 
 
 async function handleExecuteTrainerPayout(req, res) {
@@ -1918,7 +2298,7 @@ async function handleExecuteTrainerPayout(req, res) {
 
   const payableReservations = (reservations || []).filter(row => {
     const status = normalize(row.trainer_payout_status || "scheduled");
-    return status !== "paid" && !row.trainer_payout_paid_at && !row.trainer_payout_stripe_transfer_id;
+    return !isReportResponseBlocking(row) && status !== "paid" && !row.trainer_payout_paid_at && !row.trainer_payout_stripe_transfer_id;
   });
 
   if (!payableReservations.length) {
@@ -2423,6 +2803,10 @@ export default async function handler(req, res) {
 
     if (action === "execute_trainer_payout") {
       return await handleExecuteTrainerPayout(req, res);
+    }
+
+    if (action === "refund_reservation") {
+      return await handleRefundReservation(req, res);
     }
 
     if (action === "refund_stage_reservations") {
