@@ -1090,6 +1090,20 @@
               </div>
             </div>
 
+            <div class="card section-spacer" id="cancelledStagesCard">
+              <div class="card-header">
+                <div>
+                  <h3>Stages annulés à traiter</h3>
+                  <p>Un stage annulé reste accessible ici pour choisir le traitement : remboursement clients, remplacement formateur ou report de date.</p>
+                </div>
+              </div>
+              <div class="card-body">
+                <div class="table-wrap" id="cancelledStagesWrap">
+                  <div class="empty">Aucun stage annulé à traiter.</div>
+                </div>
+              </div>
+            </div>
+
             <div class="table-wrap" id="stagesWrap">
               <div class="loading">Chargement des stages...</div>
             </div>
@@ -1449,6 +1463,7 @@
 
     const reservationsWrap = document.getElementById("reservationsWrap");
     const stagesWrap = document.getElementById("stagesWrap");
+    const cancelledStagesWrap = document.getElementById("cancelledStagesWrap");
     const trainerRegistrationsWrap = document.getElementById("trainerRegistrationsWrap");
     const archivesWrap = document.getElementById("archivesWrap");
     const trainersWrap = document.getElementById("trainersWrap");
@@ -1905,6 +1920,35 @@
         !row.stripe_refund_id &&
         !row.trainer_payout_stripe_transfer_id
       );
+    }
+
+    function isCancelledStageStatus(status) {
+      return ["cancelled", "canceled", "annulé", "annule"].includes(normalize(status || ""));
+    }
+
+    function stageReservations(stageId) {
+      return reservationsData.filter(row => String(row.stage_id || "") === String(stageId));
+    }
+
+    function buildStageFallbackFromReservations(stageId) {
+      const rows = stageReservations(stageId);
+      if (!rows.length) return null;
+      const first = rows[0] || {};
+      return {
+        id: stageId,
+        title: first.stage_title || "Stage supprimé / masqué",
+        training_type: first.training_type || first.stage_title || "",
+        city: first.city || first.stage_city || "—",
+        postal_code: first.postal_code || first.stage_postal_code || "",
+        stage_date: first.stage_date || first.date || first.created_at || "",
+        trainer_id: first.trainer_id || "",
+        status: "cancelled",
+        _fallback_from_reservations: true
+      };
+    }
+
+    function getStageByIdOrReservationFallback(stageId) {
+      return stagesData.find(item => String(item.id) === String(stageId)) || buildStageFallbackFromReservations(stageId);
     }
 
 
@@ -2397,6 +2441,7 @@
 
     function renderStages(rows) {
       stagesCount.textContent = rows.length;
+      renderCancelledStagesToProcess();
 
       if (!rows.length) {
         stagesWrap.innerHTML = `<div class="empty">Aucun stage trouvé.</div>`;
@@ -2426,7 +2471,7 @@
               const rate = trainerCommissionRate(row.trainer_id);
               const payout = stageTrainerPayout(row);
               const status = normalize(row.status || "published");
-              const statusClass = status === "published" || status === "completed" ? "badge-success" : status === "cancelled" ? "badge-danger" : "badge-warning";
+              const statusClass = status === "published" || status === "completed" ? "badge-success" : isCancelledStageStatus(status) ? "badge-danger" : "badge-warning";
               return `
                 <tr>
                   <td><strong>${escapeHtml(replaceLegacyModuleNames(row.title) || "—")}</strong><span>${escapeHtml(getCanonicalModuleName(row.training_type) || "—")}</span></td>
@@ -2445,9 +2490,105 @@
                       ${status !== "completed" ? `<button class="btn btn-secondary" type="button" onclick="window.updateStageStatus('${jsArg(row.id)}', 'completed')">Marquer réalisé</button>` : ""}
                       <button class="btn btn-secondary" type="button" onclick="window.reassignStageTrainer('${jsArg(row.id)}')">Remplacer formateur</button>
                       <button class="btn btn-secondary" type="button" onclick="window.rescheduleStage('${jsArg(row.id)}')">Reporter date</button>
-                      ${status === "cancelled" && hasRefundableReservations(row.id) ? `<button class="btn btn-danger" type="button" onclick="window.refundStageReservations('${jsArg(row.id)}')">Rembourser clients</button>` : ""}
-                      ${status !== "cancelled" ? `<button class="btn btn-secondary" type="button" onclick="window.updateStageStatus('${jsArg(row.id)}', 'cancelled')">Annuler</button>` : ""}
+                      ${isCancelledStageStatus(status) && hasRefundableReservations(row.id) ? `<button class="btn btn-danger" type="button" onclick="window.refundStageReservations('${jsArg(row.id)}')">Rembourser clients</button>` : ""}
+                      ${!isCancelledStageStatus(status) ? `<button class="btn btn-secondary" type="button" onclick="window.updateStageStatus('${jsArg(row.id)}', 'cancelled')">Annuler</button>` : ""}
                       <button class="btn btn-danger" type="button" onclick="window.deleteStage('${jsArg(row.id)}', '${jsArg(row.title || "")}')">Supprimer le stage</button>
+                    </div>
+                  </td>
+                </tr>
+              `;
+            }).join("")}
+          </tbody>
+        </table>
+      `;
+    }
+
+    function renderCancelledStagesToProcess() {
+      if (!cancelledStagesWrap) return;
+
+      const rowsById = new Map();
+      stagesData
+        .filter(stage => isCancelledStageStatus(stage.status))
+        .forEach(stage => rowsById.set(String(stage.id), stage));
+
+      reservationsData.forEach(reservation => {
+        const stageId = String(reservation.stage_id || "");
+        if (!stageId || rowsById.has(stageId)) return;
+        const existsInStages = stagesData.some(stage => String(stage.id) === stageId);
+        if (existsInStages) return;
+
+        const status = normalize(reservation.payment_status || "");
+        const hasMoneyState = status === "paid" || status === "refunded" || reservation.refunded_at || reservation.stripe_refund_id;
+        if (hasMoneyState) {
+          const fallback = buildStageFallbackFromReservations(stageId);
+          if (fallback) rowsById.set(stageId, fallback);
+        }
+      });
+
+      const rows = Array.from(rowsById.values()).filter(Boolean);
+
+      if (!rows.length) {
+        cancelledStagesWrap.innerHTML = `<div class="empty">Aucun stage annulé à traiter.</div>`;
+        return;
+      }
+
+      cancelledStagesWrap.innerHTML = `
+        <table>
+          <thead>
+            <tr>
+              <th>Stage</th>
+              <th>Date / lieu</th>
+              <th>Réservations</th>
+              <th>Situation</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rows.map(stage => {
+              const stageId = String(stage.id || "");
+              const reservations = stageReservations(stageId);
+              const paidRows = reservations.filter(row => normalize(row.payment_status || "") === "paid");
+              const refundableRows = paidRows.filter(row =>
+                !row.refunded_at &&
+                !row.stripe_refund_id &&
+                !row.trainer_payout_stripe_transfer_id
+              );
+              const refundedRows = reservations.filter(row => normalize(row.payment_status || "") === "refunded" || row.refunded_at || row.stripe_refund_id);
+              const transferredRows = reservations.filter(row => row.trainer_payout_stripe_transfer_id);
+              const paidAmount = paidRows.reduce((sum, row) => sum + Number(row.total_amount || 0), 0);
+              const refundedAmount = refundedRows.reduce((sum, row) => sum + Number(row.refunded_amount || row.total_amount || 0), 0);
+              const canRefund = refundableRows.length > 0 && transferredRows.length === 0;
+              const fallbackNote = stage._fallback_from_reservations
+                ? `<span class="badge badge-warning">Stage non visible dans la liste principale</span>`
+                : `<span class="badge badge-danger">Annulé</span>`;
+
+              return `
+                <tr>
+                  <td>
+                    <strong>${escapeHtml(replaceLegacyModuleNames(stage.title) || "Stage")}</strong>
+                    <span>${escapeHtml(getCanonicalModuleName(stage.training_type) || "—")}</span>
+                    ${fallbackNote}
+                  </td>
+                  <td>
+                    <strong>${formatStageDate(stage.stage_date)}</strong>
+                    <span>${escapeHtml(stage.city || "—")}${stage.postal_code ? ` · ${escapeHtml(stage.postal_code)}` : ""}</span>
+                  </td>
+                  <td>
+                    <strong>${paidRows.length} payée(s)</strong>
+                    <span>${formatPrice(paidAmount)} encaissé(s)</span>
+                    ${refundedRows.length ? `<span>${refundedRows.length} remboursée(s) · ${formatPrice(refundedAmount)}</span>` : ""}
+                  </td>
+                  <td>
+                    ${canRefund ? `<span class="badge badge-warning">Remboursement possible</span>` : ""}
+                    ${transferredRows.length ? `<span class="badge badge-danger">Reversement déjà effectué : traitement manuel</span>` : ""}
+                    ${!canRefund && !transferredRows.length ? `<span class="badge badge-success">Aucune réservation à rembourser</span>` : ""}
+                  </td>
+                  <td>
+                    <div class="action-stack">
+                      <button class="btn btn-secondary" type="button" onclick="window.contactStageRegistrants('${jsArg(stageId)}', '${jsArg(stage.title || '')}')">Contacter les inscrits</button>
+                      ${canRefund ? `<button class="btn btn-danger" type="button" onclick="window.refundStageReservations('${jsArg(stageId)}')">Rembourser clients</button>` : ""}
+                      ${!stage._fallback_from_reservations ? `<button class="btn btn-secondary" type="button" onclick="window.reassignStageTrainer('${jsArg(stageId)}')">Remplacer formateur</button>` : ""}
+                      ${!stage._fallback_from_reservations ? `<button class="btn btn-secondary" type="button" onclick="window.rescheduleStage('${jsArg(stageId)}')">Reporter date</button>` : ""}
                     </div>
                   </td>
                 </tr>
@@ -3821,7 +3962,7 @@
         const cityOk = !city || normalize(row.city).includes(city) || normalize(row.postal_code).includes(city);
         const trainerText = normalize(`${row.trainer_id || ""} ${getTrainerDisplay(row.trainer_id)}`);
         const trainerOk = !trainer || trainerText.includes(trainer);
-        const statusOk = !status || row.status === status;
+        const statusOk = !status || normalize(row.status || "") === normalize(status);
         return regionOk && departmentOk && cityOk && trainerOk && statusOk;
       });
 
@@ -4187,9 +4328,9 @@ VITAL PROTECT`
     };
 
     window.refundStageReservations = async (stageId) => {
-      const stage = stagesData.find(item => String(item.id) === String(stageId));
+      const stage = getStageByIdOrReservationFallback(stageId);
       if (!stage) {
-        alert("Stage introuvable.");
+        alert("Stage introuvable dans la liste, et aucune réservation rattachée n’a été trouvée.");
         return;
       }
 
