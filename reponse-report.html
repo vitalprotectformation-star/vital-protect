@@ -123,6 +123,29 @@
       font-size: 0.92rem;
       color: #66758a;
     }
+    .vp-report-complete-actions {
+      display: none;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 18px;
+    }
+    .vp-report-link-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      padding: 12px 18px;
+      background: #12324a;
+      color: #ffffff;
+      text-decoration: none;
+      font-weight: 900;
+    }
+    .vp-report-close-hint {
+      color: #66758a;
+      font-size: 0.92rem;
+      margin: 0;
+      align-self: center;
+    }
   </style>
 </head>
 <body>
@@ -162,6 +185,10 @@
       </div>
 
       <div class="vp-report-status" id="statusBox"></div>
+      <div class="vp-report-complete-actions" id="completeActions">
+        <a class="vp-report-link-btn" href="/">Retour au site</a>
+        <p class="vp-report-close-hint">Vous pouvez aussi fermer cette page.</p>
+      </div>
     </section>
   </main>
 
@@ -176,6 +203,8 @@
     const statusBox = document.getElementById("statusBox");
     const acceptBtn = document.getElementById("acceptBtn");
     const refundBtn = document.getElementById("refundBtn");
+    const completeActions = document.getElementById("completeActions");
+    const mainTitle = document.querySelector("h1");
 
     function escapeHtml(value) {
       return String(value ?? "")
@@ -197,6 +226,15 @@
       statusBox.textContent = message;
       statusBox.classList.toggle("error", Boolean(isError));
       statusBox.style.display = "block";
+    }
+
+    function showComplete(message) {
+      actions.hidden = true;
+      choiceText.hidden = true;
+      mainTitle.textContent = "Votre choix est bien enregistré";
+      showStatus(message, false);
+      completeActions.style.display = "flex";
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
     function setBusy(isBusy) {
@@ -237,15 +275,15 @@
         details.hidden = false;
 
         if (row.response_status === "accepted") {
-          showStatus("Vous avez déjà accepté la nouvelle date. Votre réservation reste confirmée.");
+          showComplete("Vous avez déjà accepté la nouvelle date. Votre réservation reste confirmée. Vous pouvez fermer cette page.");
           return;
         }
         if (row.response_status === "refund_requested") {
-          showStatus("Votre demande de remboursement a déjà été transmise à VITAL PROTECT.");
+          showComplete("Votre demande de remboursement a déjà été transmise à VITAL PROTECT. Vous pouvez fermer cette page.");
           return;
         }
         if (row.response_status === "refunded" || row.payment_status === "refunded") {
-          showStatus("Cette réservation a déjà été remboursée.");
+          showComplete("Cette réservation a déjà été remboursée. Vous pouvez fermer cette page.");
           return;
         }
 
@@ -270,12 +308,13 @@
           body: JSON.stringify({ token, decision })
         });
 
-        actions.hidden = true;
-        choiceText.hidden = true;
+        const mailText = result.client_email_sent
+          ? " Un email de confirmation vient de vous être envoyé."
+          : " Votre réponse est bien enregistrée. Si l’email de confirmation n’arrive pas, vérifiez vos courriers indésirables.";
         if (result.decision === "accepted") {
-          showStatus("Merci, votre réservation reste confirmée sur la nouvelle date.");
+          showComplete(`Merci, votre réservation reste confirmée sur la nouvelle date.${mailText}`);
         } else {
-          showStatus("Votre demande de remboursement a été transmise. VITAL PROTECT va la traiter dans l’admin.");
+          showComplete(`Votre demande de remboursement a été transmise à VITAL PROTECT.${mailText}`);
         }
       } catch (error) {
         showStatus(error.message || "Erreur lors de l’enregistrement de votre réponse.", true);
