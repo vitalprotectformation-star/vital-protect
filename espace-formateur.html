@@ -1216,51 +1216,70 @@
       return Number.isFinite(amount) ? amount : null;
     }
 
+    function getReservationGrossAmount(row) {
+      if (!row || row.trainer_payout_gross_amount === null || row.trainer_payout_gross_amount === undefined || row.trainer_payout_gross_amount === "") {
+        return null;
+      }
+      const amount = Number(row.trainer_payout_gross_amount);
+      return Number.isFinite(amount) ? amount : null;
+    }
+
+    function getReservationCommissionAmount(row) {
+      if (row && row.vital_protect_commission_amount !== null && row.vital_protect_commission_amount !== undefined && row.vital_protect_commission_amount !== "") {
+        const stored = Number(row.vital_protect_commission_amount);
+        if (Number.isFinite(stored)) return stored;
+      }
+      const gross = getReservationGrossAmount(row);
+      const payout = getReservationTrainerPayout(row);
+      if (gross === null || payout === null) return null;
+      return Math.max(0, Math.round((gross - payout) * 100) / 100);
+    }
+
     function payoutSummaryForStage(stageId) {
+      const reservations = paidReservationsForStage(stageId);
+      if (reservations.length) {
+        let total = 0;
+        for (const row of reservations) {
+          const amount = getReservationTrainerPayout(row);
+          if (amount === null) {
+            return { known: false, amount: null };
+          }
+          total += amount;
+        }
+        return { known: true, amount: total };
+      }
+
       const stage = dashboardStages.find(item => item.id === stageId);
       const stageAmount = Number(stage?.trainer_payout_estimate);
       if (Number.isFinite(stageAmount)) {
         return { known: true, amount: stageAmount };
       }
 
-      const reservations = paidReservationsForStage(stageId);
-      if (!reservations.length) {
-        return { known: true, amount: 0 };
-      }
-
-      let total = 0;
-      for (const row of reservations) {
-        const amount = getReservationTrainerPayout(row);
-        if (amount === null) {
-          return { known: false, amount: null };
-        }
-        total += amount;
-      }
-
-      return { known: true, amount: total };
+      return { known: true, amount: 0 };
     }
-
 
     function trainerPayoutStatusLabel(status) {
       const value = normalize(status || "scheduled");
       const labels = {
-        scheduled: "Prévu",
-        validated: "Validé par VITAL PROTECT",
+        scheduled: "À venir",
+        pending: "À venir",
+        validated: "Validé",
         paid: "Payé",
         blocked: "Bloqué"
       };
-      return labels[value] || status || "Prévu";
+      return labels[value] || status || "À venir";
     }
 
     function trainerPayoutStatusClass(status) {
       const value = normalize(status || "scheduled");
       if (value === "paid") return "badge-success";
       if (value === "blocked") return "badge-danger";
+      if (value === "validated") return "badge-success";
       return "badge-warning";
     }
 
     function reservationPayoutStatus(row) {
-      if (row?.trainer_payout_paid_at) return "paid";
+      if (row?.trainer_payout_transferred_at || row?.trainer_payout_paid_at || row?.trainer_payout_stripe_transfer_id) return "paid";
       return normalize(row?.trainer_payout_status || "scheduled");
     }
 
@@ -1274,6 +1293,19 @@
       return "scheduled";
     }
 
+    function formatCommissionRate(row, stage) {
+      const rate = Number(row?.vital_protect_commission_rate ?? stage?.vital_protect_commission_rate ?? stats.commission_rate ?? 0);
+      if (!Number.isFinite(rate)) return "—";
+      return `${Math.round(rate * 1000) / 10}%`;
+    }
+
+    function shortStripeId(value) {
+      const id = String(value || "").trim();
+      if (!id) return "";
+      if (id.length <= 18) return id;
+      return `${id.slice(0, 10)}…${id.slice(-6)}`;
+    }
+
     function buildTrainerPayoutRows() {
       return dashboardStages
         .map(stage => {
@@ -1281,44 +1313,78 @@
           const summary = payoutSummaryForStage(stage.id);
           const status = aggregateTrainerPayoutStatus(reservations);
           const dueDate = reservations.find(row => row.trainer_payout_due_date)?.trainer_payout_due_date || stage.trainer_payout_due_date;
-          const paidAt = reservations.find(row => row.trainer_payout_paid_at)?.trainer_payout_paid_at || null;
+          const paidAt = reservations.find(row => row.trainer_payout_transferred_at)?.trainer_payout_transferred_at || reservations.find(row => row.trainer_payout_paid_at)?.trainer_payout_paid_at || null;
+          const transferIds = reservations
+            .map(row => String(row.trainer_payout_stripe_transfer_id || "").trim())
+            .filter(Boolean);
+
+          const totalGrossFromReservations = reservations.reduce((sum, row) => sum + Number(getReservationGrossAmount(row) || 0), 0);
+          const totalPayoutFromReservations = reservations.reduce((sum, row) => sum + Number(getReservationTrainerPayout(row) || 0), 0);
+          const totalCommissionFromReservations = reservations.reduce((sum, row) => sum + Number(getReservationCommissionAmount(row) || 0), 0);
+
+          const stageGross = Number(stage.trainer_payout_gross_estimate);
+          const stageCommission = Number(stage.vital_protect_commission_estimate);
+
           return {
             stage,
             reservations,
             summary,
             status,
             dueDate,
-            paidAt
+            paidAt,
+            transferIds,
+            gross: totalGrossFromReservations || (Number.isFinite(stageGross) ? stageGross : null),
+            commission: totalCommissionFromReservations || (Number.isFinite(stageCommission) ? stageCommission : null),
+            payout: totalPayoutFromReservations || Number(summary.amount || 0)
           };
         })
         .filter(row => row.reservations.length || Number(row.summary.amount || 0) > 0)
-        .sort((a, b) => String(a.dueDate || "9999-12-31").localeCompare(String(b.dueDate || "9999-12-31")) || String(a.stage.stage_date || "").localeCompare(String(b.stage.stage_date || "")));
+        .sort((a, b) => {
+          const weight = { validated: 0, scheduled: 1, pending: 1, blocked: 2, paid: 3 };
+          const byStatus = (weight[a.status] ?? 1) - (weight[b.status] ?? 1);
+          if (byStatus) return byStatus;
+          return String(a.dueDate || "9999-12-31").localeCompare(String(b.dueDate || "9999-12-31")) || String(a.stage.stage_date || "").localeCompare(String(b.stage.stage_date || ""));
+        });
     }
 
     function buildTrainerPayoutsSection() {
       const rows = buildTrainerPayoutRows();
-      const totalUpcoming = rows
-        .filter(row => row.status !== "paid" && row.status !== "blocked")
-        .reduce((sum, row) => sum + Number(row.summary.amount || 0), 0);
+      const totalScheduled = rows
+        .filter(row => row.status !== "paid" && row.status !== "blocked" && row.status !== "validated")
+        .reduce((sum, row) => sum + Number(row.payout || 0), 0);
+      const totalValidated = rows
+        .filter(row => row.status === "validated")
+        .reduce((sum, row) => sum + Number(row.payout || 0), 0);
       const totalPaid = rows
         .filter(row => row.status === "paid")
-        .reduce((sum, row) => sum + Number(row.summary.amount || 0), 0);
+        .reduce((sum, row) => sum + Number(row.payout || 0), 0);
+      const totalBlocked = rows
+        .filter(row => row.status === "blocked")
+        .reduce((sum, row) => sum + Number(row.payout || 0), 0);
 
       return `
         <div class="dashboard-header" style="margin-top: 18px;">
           <div>
-            <h3 style="margin: 0;">Mes reversements</h3>
-            <p class="muted">VITAL PROTECT encaisse les inscriptions puis prépare les reversements après réalisation des stages, selon le cycle mensuel du 20.</p>
+            <h3 style="margin: 0;">Mes revenus / reversements</h3>
+            <p class="muted">Suivez les montants encaissés, la commission VITAL PROTECT et les reversements Stripe Connect.</p>
           </div>
         </div>
         <div class="dashboard-kpis" style="margin-bottom: 14px;">
           <div class="kpi-card">
-            <span class="kpi-label">À recevoir estimé</span>
-            <div class="kpi-value">${formatPrice(totalUpcoming)}</div>
+            <span class="kpi-label">À venir</span>
+            <div class="kpi-value">${formatPrice(totalScheduled)}</div>
+          </div>
+          <div class="kpi-card">
+            <span class="kpi-label">Validé</span>
+            <div class="kpi-value">${formatPrice(totalValidated)}</div>
           </div>
           <div class="kpi-card">
             <span class="kpi-label">Déjà payé</span>
             <div class="kpi-value">${formatPrice(totalPaid)}</div>
+          </div>
+          <div class="kpi-card">
+            <span class="kpi-label">Bloqué</span>
+            <div class="kpi-value">${formatPrice(totalBlocked)}</div>
           </div>
         </div>
         ${rows.length ? `
@@ -1327,10 +1393,12 @@
               <thead>
                 <tr>
                   <th>Stage</th>
-                  <th>Date stage</th>
-                  <th>Montant prévu</th>
-                  <th>Échéance</th>
+                  <th>Date</th>
+                  <th>Brut encaissé</th>
+                  <th>Commission VP</th>
+                  <th>À recevoir / payé</th>
                   <th>Statut</th>
+                  <th>Paiement</th>
                 </tr>
               </thead>
               <tbody>
@@ -1338,15 +1406,17 @@
                   <tr>
                     <td><strong>${escapeHtml(displayStageTitle(row.stage))}</strong><span>${escapeHtml(row.stage.city || "—")}</span></td>
                     <td>${formatDate(row.stage.stage_date)}</td>
-                    <td><strong>${formatTrainerPayout(row.summary)}</strong><span>${row.reservations.length} réservation${row.reservations.length > 1 ? "s" : ""} payée${row.reservations.length > 1 ? "s" : ""}</span></td>
-                    <td>${row.status === "paid" ? formatDate(row.paidAt) : formatDate(row.dueDate)}</td>
+                    <td><strong>${row.gross === null ? "—" : formatPrice(row.gross)}</strong><span>${row.reservations.length} réservation${row.reservations.length > 1 ? "s" : ""} payée${row.reservations.length > 1 ? "s" : ""}</span></td>
+                    <td><strong>${row.commission === null ? "—" : formatPrice(row.commission)}</strong><span>${escapeHtml(formatCommissionRate(row.reservations[0], row.stage))}</span></td>
+                    <td><strong>${formatTrainerPayout(row.summary)}</strong><span>${row.status === "paid" ? "Reversé" : "Prévision"}</span></td>
                     <td><span class="badge ${trainerPayoutStatusClass(row.status)}">${escapeHtml(trainerPayoutStatusLabel(row.status))}</span></td>
+                    <td>${row.status === "paid" ? `${formatDateTime(row.paidAt)}${row.transferIds.length ? `<span>Transfert ${escapeHtml(shortStripeId(row.transferIds[0]))}</span>` : ""}` : `<span>Échéance ${formatDate(row.dueDate)}</span>`}</td>
                   </tr>
                 `).join("")}
               </tbody>
             </table>
           </div>
-        ` : `<div class="empty-state">Aucun reversement à afficher pour le moment. Les reversements apparaîtront dès qu’un stage aura des réservations payées.</div>`}
+        ` : `<div class="empty-state">Aucun revenu à afficher pour le moment. Les revenus apparaîtront dès qu’un stage aura des réservations payées.</div>`}
       `;
     }
 
