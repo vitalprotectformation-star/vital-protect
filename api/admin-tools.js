@@ -474,6 +474,33 @@ async function getReservationStripeChargeId(reservation = {}) {
   return getStripeId(retrievedPaymentIntent.latest_charge);
 }
 
+async function getReservationStripePaymentIntentId(reservation = {}) {
+  const directPaymentIntentId = sanitizeText(
+    reservation.stripe_payment_intent_id ||
+    reservation.payment_intent_id ||
+    reservation.payment_intent ||
+    ""
+  );
+
+  if (directPaymentIntentId && directPaymentIntentId.startsWith("pi_")) {
+    return directPaymentIntentId;
+  }
+
+  const sessionId = sanitizeText(reservation.stripe_session_id || reservation.checkout_session_id || "");
+  if (!sessionId) return "";
+
+  const session = await stripe.checkout.sessions.retrieve(sessionId);
+  return getStripeId(session.payment_intent);
+}
+
+function isReservationRefunded(row = {}) {
+  return Boolean(
+    normalize(row.payment_status || "") === "refunded" ||
+    row.refunded_at ||
+    row.stripe_refund_id
+  );
+}
+
 async function getTrainerCommissionTier(trainerId) {
   if (!trainerId) return getCommissionTier(0);
 
@@ -1612,6 +1639,168 @@ async function handleRescheduleStage(req, res) {
 }
 
 
+async function handleRefundStageReservations(req, res) {
+  const stageId = sanitizeText(req.body?.stage_id);
+  const note = sanitizeText(req.body?.note || "Remboursement clients après annulation du stage");
+
+  if (!stageId) {
+    return res.status(400).json({ error: "stage_id manquant" });
+  }
+
+  const { data: stage, error: stageError } = await supabase
+    .from("stages")
+    .select("*")
+    .eq("id", stageId)
+    .maybeSingle();
+
+  if (stageError) return res.status(500).json({ error: stageError.message });
+  if (!stage) return res.status(404).json({ error: "Stage introuvable" });
+
+  const { data: reservations, error: reservationsError } = await supabase
+    .from("reservations")
+    .select("*")
+    .eq("stage_id", stageId)
+    .eq("payment_status", "paid");
+
+  if (reservationsError) return res.status(500).json({ error: reservationsError.message });
+
+  const paidReservations = reservations || [];
+  const alreadyTransferred = paidReservations.filter(row => isReservationAlreadyTransferred(row));
+
+  if (alreadyTransferred.length) {
+    return res.status(400).json({
+      error: "Remboursement automatique bloqué : au moins une réservation a déjà été reversée au formateur. Traiter ce cas manuellement dans Stripe/comptabilité."
+    });
+  }
+
+  const refundableReservations = paidReservations.filter(row => !isReservationRefunded(row));
+
+  if (!refundableReservations.length) {
+    return res.status(400).json({ error: "Aucune réservation payée à rembourser pour ce stage." });
+  }
+
+  const refunds = [];
+  const refundedReservationIds = [];
+
+  for (const reservation of refundableReservations) {
+    const grossAmount = getReservationGrossAmount(reservation, stage);
+    const amountCents = eurosToCents(grossAmount);
+
+    if (!amountCents) {
+      return res.status(400).json({
+        error: `Montant de remboursement invalide pour la réservation ${reservation.id}.`
+      });
+    }
+
+    let paymentIntentId = "";
+    try {
+      paymentIntentId = await getReservationStripePaymentIntentId(reservation);
+    } catch (error) {
+      return res.status(400).json({
+        error: `PaymentIntent Stripe introuvable pour la réservation ${reservation.id} : ${error.message}`
+      });
+    }
+
+    if (!paymentIntentId || !paymentIntentId.startsWith("pi_")) {
+      return res.status(400).json({
+        error: `PaymentIntent Stripe introuvable pour la réservation ${reservation.id}. Impossible de rembourser automatiquement.`
+      });
+    }
+
+    const idempotencyKey = buildStripeIdempotencyKey("vp_stage_refund", [
+      stageId,
+      reservation.id,
+      paymentIntentId,
+      amountCents
+    ]);
+
+    let refund;
+    try {
+      refund = await stripe.refunds.create({
+        payment_intent: paymentIntentId,
+        amount: amountCents,
+        reason: "requested_by_customer",
+        metadata: {
+          platform: "vital_protect",
+          stage_id: stageId,
+          reservation_id: String(reservation.id || ""),
+          stripe_session_id: String(reservation.stripe_session_id || ""),
+          refund_reason: "stage_cancelled",
+          admin_note: note.slice(0, 450)
+        }
+      }, {
+        idempotencyKey
+      });
+    } catch (error) {
+      const failureNote = `Erreur remboursement Stripe : ${error.message}`.slice(0, 1000);
+      await updateReservationsWithOptionalColumns([reservation.id], {
+        trainer_payout_status: "blocked",
+        trainer_payout_admin_note: failureNote
+      }, []);
+
+      if (refundedReservationIds.length) {
+        return res.status(400).json({
+          error: `Remboursement partiel : ${refundedReservationIds.length} réservation(s) remboursée(s), puis échec Stripe sur ${reservation.id} : ${error.message}`,
+          refunds,
+          refunded_reservation_ids: refundedReservationIds
+        });
+      }
+
+      return res.status(400).json({
+        error: `Remboursement Stripe impossible : ${error.message}`
+      });
+    }
+
+    const now = new Date().toISOString();
+    const updateResult = await updateReservationsWithOptionalColumns([reservation.id], {
+      payment_status: "refunded",
+      refunded_at: now,
+      refunded_amount: Math.round((amountCents / 100) * 100) / 100,
+      stripe_refund_id: refund.id,
+      trainer_payout_status: "blocked",
+      trainer_payout_admin_note: note || `Remboursement Stripe ${refund.id}`
+    }, [
+      "refunded_at",
+      "refunded_amount",
+      "stripe_refund_id"
+    ]);
+
+    if (updateResult.error) {
+      return res.status(500).json({
+        error: `Remboursement Stripe créé (${refund.id}), mais mise à jour Supabase impossible : ${updateResult.error.message}`,
+        refund_id: refund.id
+      });
+    }
+
+    refunds.push({
+      reservation_id: reservation.id,
+      refund_id: refund.id,
+      payment_intent: paymentIntentId,
+      amount: amountCents / 100,
+      amount_cents: amountCents,
+      currency: refund.currency,
+      status: refund.status
+    });
+    refundedReservationIds.push(reservation.id);
+  }
+
+  await supabase
+    .from("stages")
+    .update({ status: "cancelled" })
+    .eq("id", stageId);
+
+  return res.status(200).json({
+    success: true,
+    refunds,
+    refund_ids: refunds.map(item => item.refund_id).join(","),
+    amount: Math.round(refunds.reduce((sum, item) => sum + Number(item.amount || 0), 0) * 100) / 100,
+    amount_cents: refunds.reduce((sum, item) => sum + Number(item.amount_cents || 0), 0),
+    currency: "eur",
+    updated: refundedReservationIds.length,
+    refunded_reservation_ids: refundedReservationIds
+  });
+}
+
 async function handleUpdatePayoutStatus(req, res) {
   const stageId = sanitizeText(req.body?.stage_id);
   const reservationId = sanitizeText(req.body?.reservation_id);
@@ -2229,6 +2418,10 @@ export default async function handler(req, res) {
 
     if (action === "execute_trainer_payout") {
       return await handleExecuteTrainerPayout(req, res);
+    }
+
+    if (action === "refund_stage_reservations") {
+      return await handleRefundStageReservations(req, res);
     }
 
     if (action === "list_trainer_documents") {
