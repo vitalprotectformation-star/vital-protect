@@ -1323,7 +1323,7 @@
           <div class="card-header">
             <div>
               <h2>Reversements formateurs</h2>
-              <p>Préparez, validez puis déclenchez les transferts Stripe Connect dus après réalisation des stages.</p>
+              <p>Préparez, validez puis déclenchez les transferts Stripe Connect sur les stages non annulés dont les paiements sont encaissés.</p>
             </div>
           </div>
           <div class="card-body">
@@ -1365,8 +1365,8 @@
                 <label>État du stage</label>
                 <select id="payoutReadinessFilter">
                   <option value="">Tous</option>
-                  <option value="completed">Stage réalisé</option>
-                  <option value="not_completed">Pas encore réalisé</option>
+                  <option value="payable">Non annulé</option>
+                  <option value="cancelled">Annulé</option>
                   <option value="due">Date de versement atteinte</option>
                 </select>
               </div>
@@ -2399,6 +2399,8 @@
                       <button class="btn btn-secondary" type="button" onclick="window.contactStageRegistrants('${jsArg(row.id)}', '${jsArg(row.title || "")}')">Contacter les inscrits</button>
                       ${status !== "published" ? `<button class="btn btn-secondary" type="button" onclick="window.updateStageStatus('${jsArg(row.id)}', 'published')">Publier</button>` : `<button class="btn btn-secondary" type="button" onclick="window.updateStageStatus('${jsArg(row.id)}', 'hidden')">Masquer</button>`}
                       ${status !== "completed" ? `<button class="btn btn-secondary" type="button" onclick="window.updateStageStatus('${jsArg(row.id)}', 'completed')">Marquer réalisé</button>` : ""}
+                      <button class="btn btn-secondary" type="button" onclick="window.reassignStageTrainer('${jsArg(row.id)}')">Remplacer formateur</button>
+                      <button class="btn btn-secondary" type="button" onclick="window.rescheduleStage('${jsArg(row.id)}')">Reporter date</button>
                       ${status !== "cancelled" ? `<button class="btn btn-secondary" type="button" onclick="window.updateStageStatus('${jsArg(row.id)}', 'cancelled')">Annuler</button>` : ""}
                       <button class="btn btn-danger" type="button" onclick="window.deleteStage('${jsArg(row.id)}', '${jsArg(row.title || "")}')">Supprimer le stage</button>
                     </div>
@@ -2477,6 +2479,8 @@
             status,
             dueDate,
             completed: stageStatus === "completed",
+            cancelled: stageStatus === "cancelled" || stageStatus === "canceled",
+            payable: !(stageStatus === "cancelled" || stageStatus === "canceled"),
             stripeReady: isStripePayoutReady(trainer || {}),
             stripeStatusLabel: stripeConnectStatusLabel(trainer || {}),
             transferIds
@@ -2530,10 +2534,11 @@
                 ? `${row.trainer.first_name || ""} ${row.trainer.last_name || ""}`.trim() || row.trainer.email || "Formateur"
                 : getTrainerDisplay(stage.trainer_id);
               const status = normalize(row.status || "scheduled");
-              const completedWarning = row.completed ? "" : `<span>Stage pas encore marqué réalisé</span>`;
+              const completedWarning = row.completed ? "" : `<span>Stage non marqué réalisé : transfert possible seulement si vous confirmez que le stage ne sera pas annulé.</span>`;
+              const cancelledWarning = row.cancelled ? `<span>Stage annulé : aucun reversement formateur</span>` : "";
               const stripeWarning = row.stripeReady ? "" : `<span>${escapeHtml(row.stripeStatusLabel || "Stripe Connect non prêt")}</span>`;
               const transferInfo = row.transferIds.length ? `<span>Transfert ${escapeHtml(row.transferIds.join(", "))}</span>` : "";
-              const canTransfer = status === "validated" && row.completed && row.stripeReady && Number(row.payout || 0) > 0;
+              const canTransfer = status === "validated" && row.payable && row.stripeReady && Number(row.payout || 0) > 0;
               return `
                 <tr>
                   <td><strong>${escapeHtml(trainerName)}</strong><span>${escapeHtml(row.trainer?.email || stage.trainer_id || "—")}</span></td>
@@ -2542,7 +2547,7 @@
                   <td>${formatShortDate(row.dueDate)}</td>
                   <td>${formatPrice(row.gross)}<span>${row.reservations.length} réservation${row.reservations.length > 1 ? "s" : ""}</span></td>
                   <td>${Math.round(Number(row.rate || 0) * 1000) / 10}%</td>
-                  <td><strong>${formatPrice(row.payout)}</strong>${completedWarning}${transferInfo}</td>
+                  <td><strong>${formatPrice(row.payout)}</strong>${cancelledWarning}${!row.cancelled ? completedWarning : ""}${transferInfo}</td>
                   <td>${stripeConnectShortStatus(row.trainer || {})}${stripeWarning}</td>
                   <td><span class="badge ${payoutStatusClass(status)}">${escapeHtml(payoutStatusLabel(status))}</span></td>
                   <td>
@@ -2586,8 +2591,8 @@
         const dueDate = row.dueDate ? new Date(row.dueDate) : null;
         if (dueDate) dueDate.setHours(0, 0, 0, 0);
         const readinessOk = !readiness ||
-          (readiness === "completed" && row.completed) ||
-          (readiness === "not_completed" && !row.completed) ||
+          (readiness === "payable" && row.payable) ||
+          (readiness === "cancelled" && row.cancelled) ||
           (readiness === "due" && dueDate && dueDate <= today && row.status !== "paid");
 
         return searchOk && statusOk && readinessOk;
@@ -2611,9 +2616,13 @@
       };
 
       const isPaidAction = status === "paid";
-      const isCompleted = normalize(stage.status) === "completed";
-      const warning = isPaidAction && !isCompleted
-        ? "\n\nAttention : ce stage n’est pas encore marqué comme réalisé."
+      const isCancelled = ["cancelled", "canceled"].includes(normalize(stage.status));
+      if ((status === "validated" || status === "paid") && isCancelled) {
+        alert("Stage annulé : aucun reversement formateur ne doit être validé ou payé. Choisis remplacement formateur, report de date ou remboursement client.");
+        return;
+      }
+      const warning = isPaidAction
+        ? "\n\nAttention : marquer payé manuellement ne crée pas de transfert Stripe. Utilise plutôt ‘Reverser via Stripe’ si le compte Connect est prêt."
         : "";
       const confirmed = window.confirm(`Confirmer : ${labels[status] || "modifier ce reversement"} ?${warning}`);
       if (!confirmed) return;
@@ -2655,9 +2664,14 @@
         return;
       }
 
-      if (!row.completed) {
-        alert("Le stage doit être marqué comme réalisé avant reversement.");
+      if (row.cancelled) {
+        alert("Stage annulé : aucun reversement formateur ne doit être envoyé.");
         return;
+      }
+
+      if (!row.completed) {
+        const continueAnyway = window.confirm("Ce stage n’est pas marqué réalisé. Confirmer quand même le transfert car le stage n’est pas annulé et les paiements sont encaissés ?");
+        if (!continueAnyway) return;
       }
 
       if (!row.stripeReady) {
@@ -4016,7 +4030,10 @@ VITAL PROTECT`
         cancelled: "annuler",
         completed: "marquer comme réalisé"
       };
-      const confirmed = window.confirm(`Confirmer : ${labels[status] || "modifier"} ce stage ?`);
+      const warning = status === "cancelled"
+        ? "\n\nAnnuler un stage bloque automatiquement les reversements formateur non transférés. Ensuite il faudra choisir : remplacer le formateur, reporter le stage ou rembourser les clients."
+        : "";
+      const confirmed = window.confirm(`Confirmer : ${labels[status] || "modifier"} ce stage ?${warning}`);
       if (!confirmed) return;
 
       try {
@@ -4034,6 +4051,92 @@ VITAL PROTECT`
       } catch (error) {
         console.error(error);
         alert(error.message || "Erreur lors de la mise à jour du stage.");
+      }
+    };
+
+    window.reassignStageTrainer = async (stageId) => {
+      const stage = stagesData.find(item => String(item.id) === String(stageId));
+      if (!stage) {
+        alert("Stage introuvable.");
+        return;
+      }
+
+      const trainerEmail = window.prompt(
+        "Email du formateur remplaçant :\n\nLe stage restera publié, les paiements clients encaissés restent rattachés au stage, et le reversement ira au nouveau formateur.",
+        ""
+      );
+      if (trainerEmail === null) return;
+
+      const cleanEmail = String(trainerEmail || "").trim();
+      if (!cleanEmail) {
+        alert("Email formateur obligatoire.");
+        return;
+      }
+
+      const confirmed = window.confirm("Confirmer le remplacement du formateur sur ce stage ?\n\nOption 1 : un autre formateur prend le relais et encaissera le reversement formateur.");
+      if (!confirmed) return;
+
+      try {
+        const result = await callAdminTool("update_stage_trainer", {
+          stage_id: stageId,
+          trainer_email: cleanEmail,
+          note: "Remplacement formateur après annulation / indisponibilité"
+        });
+
+        if (!result.success) {
+          alert(result.error || "Remplacement formateur impossible.");
+          return;
+        }
+
+        alert("Formateur remplacé. Le reversement sera préparé pour le nouveau formateur.");
+        await loadStages();
+        await loadReservations();
+      } catch (error) {
+        console.error(error);
+        alert(error.message || "Erreur lors du remplacement du formateur.");
+      }
+    };
+
+    window.rescheduleStage = async (stageId) => {
+      const stage = stagesData.find(item => String(item.id) === String(stageId));
+      if (!stage) {
+        alert("Stage introuvable.");
+        return;
+      }
+
+      const newDate = window.prompt(
+        "Nouvelle date du stage au format AAAA-MM-JJ :\n\nOption 3 : proposition d’une autre date. Les paiements clients restent encaissés et le reversement sera reporté.",
+        stage.stage_date || ""
+      );
+      if (newDate === null) return;
+
+      const cleanDate = String(newDate || "").trim();
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(cleanDate)) {
+        alert("Date invalide. Format attendu : AAAA-MM-JJ.");
+        return;
+      }
+
+      const confirmed = window.confirm("Confirmer le report du stage à cette nouvelle date ?");
+      if (!confirmed) return;
+
+      try {
+        const result = await callAdminTool("reschedule_stage", {
+          stage_id: stageId,
+          stage_date: cleanDate,
+          note: "Report du stage proposé aux clients"
+        });
+
+        if (!result.success) {
+          alert(result.error || "Report impossible.");
+          return;
+        }
+
+        alert("Stage reporté. Le reversement reste préparé pour la nouvelle date.");
+        await loadStages();
+        await loadReservations();
+      } catch (error) {
+        console.error(error);
+        alert(error.message || "Erreur lors du report du stage.");
       }
     };
 
