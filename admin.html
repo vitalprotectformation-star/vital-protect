@@ -1867,6 +1867,46 @@
       return `${amount.toFixed(0)} €`;
     }
 
+    function paymentStatusLabel(status) {
+      const value = normalize(status || "paid");
+      const labels = {
+        paid: "Payé",
+        captured: "Payé",
+        authorized: "Autorisé",
+        pending_payment: "En attente",
+        checkout_created: "Checkout créé",
+        refunded: "Remboursé",
+        canceled: "Annulé",
+        cancelled: "Annulé",
+        failed: "Échec"
+      };
+      return labels[value] || status || "Payé";
+    }
+
+    function paymentStatusBadgeClass(status) {
+      const value = normalize(status || "paid");
+      if (["paid", "captured"].includes(value)) return "badge-success";
+      if (["refunded", "canceled", "cancelled", "failed"].includes(value)) return "badge-danger";
+      return "badge-warning";
+    }
+
+    function shortStripeId(value) {
+      const text = String(value || "").trim();
+      if (!text) return "";
+      if (text.length <= 18) return text;
+      return `${text.slice(0, 10)}…${text.slice(-6)}`;
+    }
+
+    function hasRefundableReservations(stageId) {
+      return reservationsData.some(row =>
+        String(row.stage_id || "") === String(stageId) &&
+        normalize(row.payment_status || "") === "paid" &&
+        !row.refunded_at &&
+        !row.stripe_refund_id &&
+        !row.trainer_payout_stripe_transfer_id
+      );
+    }
+
 
     function formatFileSize(bytes) {
       const value = Number(bytes || 0);
@@ -2338,7 +2378,11 @@
                 <td><strong>${escapeHtml(row.stage_title || row.stage_id || "Stage")}</strong></td>
                 <td>${row.places || 0}</td>
                 <td>${formatPrice(row.total_amount)}</td>
-                <td><span class="badge ${normalize(row.payment_status || "paid") === "paid" ? "badge-success" : "badge-warning"}">${escapeHtml(row.payment_status || "paid")}</span></td>
+                <td>
+                  <span class="badge ${paymentStatusBadgeClass(row.payment_status)}">${escapeHtml(paymentStatusLabel(row.payment_status))}</span>
+                  ${row.stripe_refund_id ? `<span>Refund ${escapeHtml(shortStripeId(row.stripe_refund_id))}</span>` : ""}
+                  ${row.refunded_at ? `<span>Remboursé le ${formatDate(row.refunded_at)}</span>` : ""}
+                </td>
                 <td>${formatDate(row.created_at)}</td>
               </tr>
             `).join("")}
@@ -2401,6 +2445,7 @@
                       ${status !== "completed" ? `<button class="btn btn-secondary" type="button" onclick="window.updateStageStatus('${jsArg(row.id)}', 'completed')">Marquer réalisé</button>` : ""}
                       <button class="btn btn-secondary" type="button" onclick="window.reassignStageTrainer('${jsArg(row.id)}')">Remplacer formateur</button>
                       <button class="btn btn-secondary" type="button" onclick="window.rescheduleStage('${jsArg(row.id)}')">Reporter date</button>
+                      ${status === "cancelled" && hasRefundableReservations(row.id) ? `<button class="btn btn-danger" type="button" onclick="window.refundStageReservations('${jsArg(row.id)}')">Rembourser clients</button>` : ""}
                       ${status !== "cancelled" ? `<button class="btn btn-secondary" type="button" onclick="window.updateStageStatus('${jsArg(row.id)}', 'cancelled')">Annuler</button>` : ""}
                       <button class="btn btn-danger" type="button" onclick="window.deleteStage('${jsArg(row.id)}', '${jsArg(row.title || "")}')">Supprimer le stage</button>
                     </div>
@@ -2556,6 +2601,7 @@
                       ${canTransfer ? `<button class="btn btn-primary" type="button" onclick="window.executeTrainerPayout('${jsArg(stage.id)}')">Reverser via Stripe</button>` : ""}
                       ${status === "validated" && !canTransfer && status !== "paid" ? `<button class="btn btn-secondary" type="button" disabled>Transfert indisponible</button>` : ""}
                       ${status !== "blocked" && status !== "paid" ? `<button class="btn btn-secondary" type="button" onclick="window.updatePayoutStatus('${jsArg(stage.id)}', 'blocked')">Bloquer</button>` : ""}
+                      ${row.cancelled && hasRefundableReservations(stage.id) ? `<button class="btn btn-danger" type="button" onclick="window.refundStageReservations('${jsArg(stage.id)}')">Rembourser clients</button>` : ""}
                       ${status !== "scheduled" && status !== "paid" ? `<button class="btn btn-secondary" type="button" onclick="window.updatePayoutStatus('${jsArg(stage.id)}', 'scheduled')">Repasser à préparer</button>` : ""}
                     </div>
                   </td>
@@ -4139,6 +4185,57 @@ VITAL PROTECT`
         alert(error.message || "Erreur lors du report du stage.");
       }
     };
+
+    window.refundStageReservations = async (stageId) => {
+      const stage = stagesData.find(item => String(item.id) === String(stageId));
+      if (!stage) {
+        alert("Stage introuvable.");
+        return;
+      }
+
+      const refundableRows = reservationsData.filter(row =>
+        String(row.stage_id || "") === String(stageId) &&
+        normalize(row.payment_status || "") === "paid" &&
+        !row.refunded_at &&
+        !row.stripe_refund_id &&
+        !row.trainer_payout_stripe_transfer_id
+      );
+
+      if (!refundableRows.length) {
+        alert("Aucune réservation payée remboursable pour ce stage, ou un reversement formateur a déjà été effectué.");
+        return;
+      }
+
+      const total = refundableRows.reduce((sum, row) => sum + Number(row.total_amount || 0), 0);
+      const confirmed = window.confirm(
+        `Confirmer le remboursement Stripe de ${formatPrice(total)} pour ${refundableRows.length} réservation(s) ?\n\n` +
+        "Option 2 : les clients sont remboursés, le stage reste annulé et aucun reversement formateur n’est envoyé."
+      );
+      if (!confirmed) return;
+
+      const note = window.prompt("Note interne pour ce remboursement :", "Stage annulé — remboursement clients");
+      if (note === null) return;
+
+      try {
+        const result = await callAdminTool("refund_stage_reservations", {
+          stage_id: stageId,
+          note: note || "Stage annulé — remboursement clients"
+        });
+
+        if (!result.success) {
+          alert(result.error || "Remboursement impossible.");
+          return;
+        }
+
+        alert(`Remboursement Stripe effectué : ${formatPrice(result.amount || total)}\nRefunds : ${result.refund_ids || "—"}`);
+        await loadStages();
+        await loadReservations();
+      } catch (error) {
+        console.error(error);
+        alert(error.message || "Erreur lors du remboursement Stripe.");
+      }
+    };
+
 
     window.deleteStage = async (stageId, stageTitle) => {
       const reservationCount = reservationsData.filter(r => r.stage_id === stageId).length;
