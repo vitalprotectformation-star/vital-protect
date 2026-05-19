@@ -1,9 +1,13 @@
+import Stripe from "stripe";
+import { createHash } from "crypto";
 import { createClient } from "@supabase/supabase-js";
 
 const supabase = createClient(
   process.env.SUPABASE_URL,
   process.env.SUPABASE_SERVICE_ROLE_KEY
 );
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "");
 
 const PUBLIC_STAGE_UNIT_PRICE = 30;
 const ENTERPRISE_STAGE_PRICE = 390;
@@ -338,6 +342,121 @@ function isValidDate(value) {
 function isMissingColumnError(error, columnName) {
   const message = String(error?.message || "").toLowerCase();
   return message.includes(String(columnName || "").toLowerCase()) && message.includes("column");
+}
+
+
+function isRealizedStage(row = {}) {
+  return ["completed", "realized", "réalisé", "realise"].includes(normalize(row.status || ""));
+}
+
+function isInLast12Months(dateString) {
+  if (!dateString) return false;
+  const date = new Date(dateString);
+  if (Number.isNaN(date.getTime())) return false;
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const start = new Date(today);
+  start.setFullYear(start.getFullYear() - 1);
+
+  date.setHours(0, 0, 0, 0);
+  return date >= start && date <= today;
+}
+
+function getCommissionTier(realizedStages12Months) {
+  const count = Number(realizedStages12Months || 0);
+  if (count >= 12) {
+    return { rate: 0.075, trainerShareRate: 0.925, label: "Formateur mensuel" };
+  }
+  if (count >= 6) {
+    return { rate: 0.15, trainerShareRate: 0.85, label: "Formateur régulier" };
+  }
+  return { rate: 0.30, trainerShareRate: 0.70, label: "Formateur lancement" };
+}
+
+function getReservationGrossAmount(reservation = {}, stage = {}) {
+  const storedTotal = Number(reservation.total_amount || 0);
+  if (Number.isFinite(storedTotal) && storedTotal > 0) return storedTotal;
+
+  const offerType = getStageOfferType(stage);
+  if (offerType === "enterprise") return ENTERPRISE_STAGE_PRICE;
+
+  const places = Number(reservation.places || 0);
+  return places * PUBLIC_STAGE_UNIT_PRICE;
+}
+
+function calculateTrainerPayout(grossAmount, commissionRate) {
+  const amount = Number(grossAmount || 0);
+  const rate = Number(commissionRate || 0);
+  if (!Number.isFinite(amount) || amount <= 0) return 0;
+  if (!Number.isFinite(rate) || rate < 0 || rate >= 1) return amount;
+  return Math.round(amount * (1 - rate) * 100) / 100;
+}
+
+function eurosToCents(value) {
+  const amount = Number(value || 0);
+  if (!Number.isFinite(amount) || amount <= 0) return 0;
+  return Math.round(amount * 100);
+}
+
+function buildStripeIdempotencyKey(prefix, values = []) {
+  const hash = createHash("sha256")
+    .update(values.map(value => String(value || "")).join("|"))
+    .digest("hex")
+    .slice(0, 32);
+  return `${prefix}_${hash}`.slice(0, 255);
+}
+
+async function getTrainerCommissionTier(trainerId) {
+  if (!trainerId) return getCommissionTier(0);
+
+  const { data, error } = await supabase
+    .from("stages")
+    .select("id, status, stage_date")
+    .eq("trainer_id", trainerId);
+
+  if (error) {
+    console.error("Supabase trainer commission fetch error:", error);
+    return getCommissionTier(0);
+  }
+
+  const realizedStages12Months = (data || []).filter(stage => isRealizedStage(stage) && isInLast12Months(stage.stage_date)).length;
+  return getCommissionTier(realizedStages12Months);
+}
+
+async function updateReservationsWithOptionalColumns(reservationIds, payload, optionalColumns = []) {
+  const attemptedMissingColumns = [];
+  let currentPayload = withoutUndefined({ ...payload });
+
+  for (let attempt = 0; attempt <= optionalColumns.length; attempt += 1) {
+    const { data, error } = await supabase
+      .from("reservations")
+      .update(currentPayload)
+      .in("id", reservationIds)
+      .select("id, stage_id, trainer_payout_status, trainer_payout_paid_at");
+
+    if (!error) {
+      return { data: data || [], error: null, omittedColumns: attemptedMissingColumns };
+    }
+
+    const missingColumn = optionalColumns.find(
+      columnName => Object.prototype.hasOwnProperty.call(currentPayload, columnName) && isMissingColumnError(error, columnName)
+    );
+
+    if (!missingColumn) {
+      return { data: null, error, omittedColumns: attemptedMissingColumns };
+    }
+
+    attemptedMissingColumns.push(missingColumn);
+    currentPayload = { ...currentPayload };
+    delete currentPayload[missingColumn];
+  }
+
+  return {
+    data: null,
+    error: new Error("Impossible de mettre à jour les réservations : colonnes optionnelles incompatibles"),
+    omittedColumns: attemptedMissingColumns
+  };
 }
 
 async function insertWithOptionalPostalCode(table, payload) {
@@ -1312,6 +1431,176 @@ async function handleUpdatePayoutStatus(req, res) {
   });
 }
 
+
+
+async function handleExecuteTrainerPayout(req, res) {
+  const stageId = sanitizeText(req.body?.stage_id);
+  const note = sanitizeText(req.body?.note || "");
+
+  if (!stageId) {
+    return res.status(400).json({ error: "stage_id manquant" });
+  }
+
+  const { data: stage, error: stageError } = await supabase
+    .from("stages")
+    .select("*")
+    .eq("id", stageId)
+    .maybeSingle();
+
+  if (stageError) return res.status(500).json({ error: stageError.message });
+  if (!stage) return res.status(404).json({ error: "Stage introuvable" });
+
+  if (!stage.trainer_id) {
+    return res.status(400).json({ error: "Aucun formateur rattaché à ce stage" });
+  }
+
+  if (!isRealizedStage(stage)) {
+    return res.status(400).json({ error: "Le stage doit être marqué comme réalisé avant reversement." });
+  }
+
+  const { data: trainer, error: trainerError } = await supabase
+    .from("trainers")
+    .select("*")
+    .eq("id", stage.trainer_id)
+    .maybeSingle();
+
+  if (trainerError) return res.status(500).json({ error: trainerError.message });
+  if (!trainer) return res.status(404).json({ error: "Formateur introuvable" });
+
+  const connectAccountId = sanitizeText(trainer.stripe_connect_account_id);
+  if (!connectAccountId) {
+    return res.status(400).json({ error: "Le formateur n’a pas encore connecté son compte Stripe Connect." });
+  }
+
+  let stripeAccount;
+  try {
+    stripeAccount = await stripe.accounts.retrieve(connectAccountId);
+  } catch (error) {
+    return res.status(400).json({ error: `Compte Stripe Connect introuvable ou inaccessible : ${error.message}` });
+  }
+
+  if (!stripeAccount.payouts_enabled) {
+    return res.status(400).json({
+      error: "Les reversements Stripe ne sont pas encore activés pour ce formateur. Il doit compléter son onboarding Stripe."
+    });
+  }
+
+  const { data: reservations, error: reservationsError } = await supabase
+    .from("reservations")
+    .select("*")
+    .eq("stage_id", stageId)
+    .eq("payment_status", "paid");
+
+  if (reservationsError) return res.status(500).json({ error: reservationsError.message });
+
+  const payableReservations = (reservations || []).filter(row => {
+    const status = normalize(row.trainer_payout_status || "scheduled");
+    return status !== "paid" && !row.trainer_payout_paid_at && !row.trainer_payout_stripe_transfer_id;
+  });
+
+  if (!payableReservations.length) {
+    return res.status(400).json({ error: "Aucun reversement restant à transférer pour ce stage." });
+  }
+
+  const notValidated = payableReservations.filter(row => normalize(row.trainer_payout_status || "scheduled") !== "validated");
+  if (notValidated.length) {
+    return res.status(400).json({
+      error: "Le reversement doit d’abord être validé par l’admin avant transfert Stripe."
+    });
+  }
+
+  const commissionTier = await getTrainerCommissionTier(stage.trainer_id);
+  const reservationBreakdown = payableReservations.map(row => {
+    const grossAmount = getReservationGrossAmount(row, stage);
+    const storedRate = Number(row.vital_protect_commission_rate);
+    const commissionRate = Number.isFinite(storedRate) && storedRate >= 0 && storedRate < 1 ? storedRate : commissionTier.rate;
+    const storedPayout = Number(row.trainer_payout_amount);
+    const payoutAmount = Number.isFinite(storedPayout) && storedPayout > 0
+      ? storedPayout
+      : calculateTrainerPayout(grossAmount, commissionRate);
+
+    return {
+      id: row.id,
+      grossAmount,
+      commissionRate,
+      payoutAmount
+    };
+  });
+
+  const payoutAmount = Math.round(reservationBreakdown.reduce((sum, row) => sum + Number(row.payoutAmount || 0), 0) * 100) / 100;
+  const amountCents = eurosToCents(payoutAmount);
+
+  if (!amountCents) {
+    return res.status(400).json({ error: "Montant de reversement nul ou invalide." });
+  }
+
+  const reservationIds = reservationBreakdown.map(row => row.id).sort();
+  const idempotencyKey = buildStripeIdempotencyKey("vp_trainer_payout", [stageId, connectAccountId, amountCents, ...reservationIds]);
+
+  let transfer;
+  try {
+    transfer = await stripe.transfers.create({
+      amount: amountCents,
+      currency: "eur",
+      destination: connectAccountId,
+      transfer_group: `vp_stage_${stageId}`,
+      metadata: {
+        platform: "vital_protect",
+        stage_id: stageId,
+        trainer_id: String(stage.trainer_id || ""),
+        trainer_email: String(trainer.email || ""),
+        reservation_count: String(reservationIds.length),
+        reservation_ids: reservationIds.join(",").slice(0, 500),
+        payout_amount_eur: String(payoutAmount),
+        commission_rate: String(commissionTier.rate)
+      }
+    }, {
+      idempotencyKey
+    });
+  } catch (error) {
+    const failureNote = `Erreur transfert Stripe : ${error.message}`.slice(0, 1000);
+    await updateReservationsWithOptionalColumns(reservationIds, {
+      trainer_payout_status: "blocked",
+      trainer_payout_admin_note: failureNote
+    }, []);
+
+    return res.status(400).json({
+      error: `Transfert Stripe impossible : ${error.message}`
+    });
+  }
+
+  const now = new Date().toISOString();
+  const updateResult = await updateReservationsWithOptionalColumns(reservationIds, {
+    trainer_payout_status: "paid",
+    trainer_payout_paid_at: now,
+    trainer_payout_transferred_at: now,
+    trainer_payout_stripe_transfer_id: transfer.id,
+    trainer_payout_admin_note: note || `Reversement Stripe Connect ${transfer.id}`
+  }, [
+    "trainer_payout_transferred_at",
+    "trainer_payout_stripe_transfer_id"
+  ]);
+
+  if (updateResult.error) {
+    return res.status(500).json({
+      error: `Transfert Stripe créé (${transfer.id}), mais mise à jour Supabase impossible : ${updateResult.error.message}`,
+      transfer_id: transfer.id
+    });
+  }
+
+  return res.status(200).json({
+    success: true,
+    transfer_id: transfer.id,
+    amount: payoutAmount,
+    amount_cents: amountCents,
+    currency: transfer.currency,
+    destination: connectAccountId,
+    updated: updateResult.data.length,
+    rows: updateResult.data,
+    omitted_columns: updateResult.omittedColumns || []
+  });
+}
+
 async function handleUpsertTrainerModule(req, res) {
   const trainerId = sanitizeText(req.body?.trainer_id);
   const moduleName = getCanonicalModuleName(sanitizeText(req.body?.module_name));
@@ -1647,6 +1936,10 @@ export default async function handler(req, res) {
 
     if (action === "update_payout_status") {
       return await handleUpdatePayoutStatus(req, res);
+    }
+
+    if (action === "execute_trainer_payout") {
+      return await handleExecuteTrainerPayout(req, res);
     }
 
     if (action === "list_trainer_documents") {

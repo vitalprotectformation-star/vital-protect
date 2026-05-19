@@ -808,6 +808,8 @@ function sanitizeReservationForTrainer(row, stage, commissionTier) {
     trainer_payout_status: row.trainer_payout_status || "scheduled",
     trainer_payout_due_date: row.trainer_payout_due_date || getPayoutDateForStage(stage?.stage_date),
     trainer_payout_paid_at: row.trainer_payout_paid_at || null,
+    trainer_payout_transferred_at: row.trainer_payout_transferred_at || null,
+    trainer_payout_stripe_transfer_id: row.trainer_payout_stripe_transfer_id || "",
     vital_protect_commission_rate: Number(row.vital_protect_commission_rate ?? commissionTier.rate)
   };
 }
