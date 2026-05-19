@@ -349,6 +349,18 @@ function isRealizedStage(row = {}) {
   return ["completed", "realized", "réalisé", "realise"].includes(normalize(row.status || ""));
 }
 
+function isCancelledStage(row = {}) {
+  return ["cancelled", "canceled", "annulé", "annule"].includes(normalize(row.status || ""));
+}
+
+function isReservationAlreadyTransferred(row = {}) {
+  return Boolean(
+    normalize(row.trainer_payout_status || "") === "paid" ||
+    row.trainer_payout_paid_at ||
+    row.trainer_payout_stripe_transfer_id
+  );
+}
+
 function isInLast12Months(dateString) {
   if (!dateString) return false;
   const date = new Date(dateString);
@@ -397,6 +409,14 @@ function eurosToCents(value) {
   const amount = Number(value || 0);
   if (!Number.isFinite(amount) || amount <= 0) return 0;
   return Math.round(amount * 100);
+}
+
+function getPayoutDateForStage(stageDateString) {
+  if (!stageDateString) return null;
+  const stageDate = new Date(stageDateString);
+  if (Number.isNaN(stageDate.getTime())) return null;
+  const payoutDate = new Date(stageDate.getFullYear(), stageDate.getMonth() + 1, 20);
+  return payoutDate.toISOString().slice(0, 10);
 }
 
 function buildStripeIdempotencyKey(prefix, values = []) {
@@ -1379,7 +1399,169 @@ async function handleUpdateStageStatus(req, res) {
     return res.status(500).json({ error: error.message });
   }
 
-  return res.status(200).json({ success: true, stage: data });
+  let payoutRowsUpdated = 0;
+
+  if (status === "cancelled") {
+    const { data: paidReservations, error: reservationFetchError } = await supabase
+      .from("reservations")
+      .select("id, trainer_payout_status, trainer_payout_paid_at, trainer_payout_stripe_transfer_id")
+      .eq("stage_id", stageId)
+      .eq("payment_status", "paid");
+
+    if (reservationFetchError) {
+      return res.status(500).json({ error: reservationFetchError.message });
+    }
+
+    const reservationIds = (paidReservations || [])
+      .filter(row => !isReservationAlreadyTransferred(row))
+      .map(row => row.id);
+
+    if (reservationIds.length) {
+      const updateResult = await updateReservationsWithOptionalColumns(reservationIds, {
+        trainer_payout_status: "blocked",
+        trainer_payout_admin_note: "Stage annulé : aucun reversement formateur. Choisir remplacement formateur, report de date ou remboursement client."
+      }, []);
+
+      if (updateResult.error) {
+        return res.status(500).json({ error: updateResult.error.message });
+      }
+
+      payoutRowsUpdated = updateResult.data.length;
+    }
+  }
+
+  return res.status(200).json({ success: true, stage: data, payout_rows_updated: payoutRowsUpdated });
+}
+
+async function handleUpdateStageTrainer(req, res) {
+  const stageId = sanitizeText(req.body?.stage_id);
+  const trainerIdInput = sanitizeText(req.body?.trainer_id);
+  const trainerEmailInput = sanitizeText(req.body?.trainer_email).toLowerCase();
+  const note = sanitizeText(req.body?.note || "Remplacement formateur");
+
+  if (!stageId) {
+    return res.status(400).json({ error: "stage_id manquant" });
+  }
+
+  if (!trainerIdInput && !trainerEmailInput) {
+    return res.status(400).json({ error: "trainer_id ou trainer_email manquant" });
+  }
+
+  let trainerQuery = supabase.from("trainers").select("*").limit(1);
+  if (trainerIdInput) {
+    trainerQuery = trainerQuery.eq("id", trainerIdInput);
+  } else {
+    trainerQuery = trainerQuery.ilike("email", trainerEmailInput);
+  }
+
+  const { data: trainers, error: trainerError } = await trainerQuery;
+  if (trainerError) return res.status(500).json({ error: trainerError.message });
+
+  const trainer = Array.isArray(trainers) ? trainers[0] : null;
+  if (!trainer) {
+    return res.status(404).json({ error: "Formateur remplaçant introuvable" });
+  }
+
+  const { data: stage, error: stageError } = await supabase
+    .from("stages")
+    .update({
+      trainer_id: trainer.id,
+      status: "published"
+    })
+    .eq("id", stageId)
+    .select()
+    .single();
+
+  if (stageError) return res.status(500).json({ error: stageError.message });
+
+  const { data: paidReservations, error: reservationFetchError } = await supabase
+    .from("reservations")
+    .select("id, trainer_payout_status, trainer_payout_paid_at, trainer_payout_stripe_transfer_id")
+    .eq("stage_id", stageId)
+    .eq("payment_status", "paid");
+
+  if (reservationFetchError) return res.status(500).json({ error: reservationFetchError.message });
+
+  const reservationIds = (paidReservations || [])
+    .filter(row => !isReservationAlreadyTransferred(row))
+    .map(row => row.id);
+
+  let payoutRowsUpdated = 0;
+  if (reservationIds.length) {
+    const updateResult = await updateReservationsWithOptionalColumns(reservationIds, {
+      trainer_payout_status: "scheduled",
+      trainer_payout_paid_at: null,
+      trainer_payout_admin_note: `${note} : reversement réattribué au nouveau formateur.`.slice(0, 1000)
+    }, []);
+
+    if (updateResult.error) return res.status(500).json({ error: updateResult.error.message });
+    payoutRowsUpdated = updateResult.data.length;
+  }
+
+  return res.status(200).json({
+    success: true,
+    stage,
+    trainer: {
+      id: trainer.id,
+      email: trainer.email,
+      first_name: trainer.first_name,
+      last_name: trainer.last_name
+    },
+    payout_rows_updated: payoutRowsUpdated
+  });
+}
+
+async function handleRescheduleStage(req, res) {
+  const stageId = sanitizeText(req.body?.stage_id);
+  const stageDate = sanitizeText(req.body?.stage_date);
+  const note = sanitizeText(req.body?.note || "Report du stage");
+
+  if (!stageId) {
+    return res.status(400).json({ error: "stage_id manquant" });
+  }
+
+  if (!isValidDate(stageDate)) {
+    return res.status(400).json({ error: "Nouvelle date invalide" });
+  }
+
+  const { data: stage, error: stageError } = await supabase
+    .from("stages")
+    .update({
+      stage_date: stageDate,
+      status: "published"
+    })
+    .eq("id", stageId)
+    .select()
+    .single();
+
+  if (stageError) return res.status(500).json({ error: stageError.message });
+
+  const { data: paidReservations, error: reservationFetchError } = await supabase
+    .from("reservations")
+    .select("id, trainer_payout_status, trainer_payout_paid_at, trainer_payout_stripe_transfer_id")
+    .eq("stage_id", stageId)
+    .eq("payment_status", "paid");
+
+  if (reservationFetchError) return res.status(500).json({ error: reservationFetchError.message });
+
+  const reservationIds = (paidReservations || [])
+    .filter(row => !isReservationAlreadyTransferred(row))
+    .map(row => row.id);
+
+  let payoutRowsUpdated = 0;
+  if (reservationIds.length) {
+    const updateResult = await updateReservationsWithOptionalColumns(reservationIds, {
+      trainer_payout_status: "scheduled",
+      trainer_payout_paid_at: null,
+      trainer_payout_due_date: getPayoutDateForStage(stageDate),
+      trainer_payout_admin_note: `${note} : reversement conservé sur la nouvelle date.`.slice(0, 1000)
+    }, ["trainer_payout_due_date"]);
+
+    if (updateResult.error) return res.status(500).json({ error: updateResult.error.message });
+    payoutRowsUpdated = updateResult.data.length;
+  }
+
+  return res.status(200).json({ success: true, stage, payout_rows_updated: payoutRowsUpdated });
 }
 
 
@@ -1454,8 +1636,8 @@ async function handleExecuteTrainerPayout(req, res) {
     return res.status(400).json({ error: "Aucun formateur rattaché à ce stage" });
   }
 
-  if (!isRealizedStage(stage)) {
-    return res.status(400).json({ error: "Le stage doit être marqué comme réalisé avant reversement." });
+  if (isCancelledStage(stage)) {
+    return res.status(400).json({ error: "Stage annulé : aucun reversement ne doit être envoyé au formateur." });
   }
 
   const { data: trainer, error: trainerError } = await supabase
@@ -1928,6 +2110,14 @@ export default async function handler(req, res) {
 
     if (action === "update_stage_status") {
       return await handleUpdateStageStatus(req, res);
+    }
+
+    if (action === "update_stage_trainer") {
+      return await handleUpdateStageTrainer(req, res);
+    }
+
+    if (action === "reschedule_stage") {
+      return await handleRescheduleStage(req, res);
     }
 
     if (action === "delete_stage") {
