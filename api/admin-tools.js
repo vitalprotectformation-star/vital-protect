@@ -1647,14 +1647,19 @@ async function handleRefundStageReservations(req, res) {
     return res.status(400).json({ error: "stage_id manquant" });
   }
 
-  const { data: stage, error: stageError } = await supabase
+  const { data: stageRow, error: stageError } = await supabase
     .from("stages")
     .select("*")
     .eq("id", stageId)
     .maybeSingle();
 
   if (stageError) return res.status(500).json({ error: stageError.message });
-  if (!stage) return res.status(404).json({ error: "Stage introuvable" });
+
+  // Un stage annulé peut être masqué de certaines vues publiques/admin. Le remboursement
+  // doit rester possible tant que les réservations payées existent et qu’aucun reversement
+  // formateur n’a été transféré. On utilise donc un fallback minimal si la ligne stage
+  // n’est plus visible/trouvable, avec les montants stockés dans reservations.
+  const stage = stageRow || { id: stageId, status: "cancelled" };
 
   const { data: reservations, error: reservationsError } = await supabase
     .from("reservations")
