@@ -791,7 +791,14 @@ function calculateTrainerPayout(grossAmount, commissionRate) {
 
 function sanitizeReservationForTrainer(row, stage, commissionTier) {
   const grossAmount = getReservationGrossAmount(row, stage);
-  const payoutAmount = calculateTrainerPayout(grossAmount, commissionTier.rate);
+  const commissionRate = Number(row.vital_protect_commission_rate ?? commissionTier.rate);
+  const safeCommissionRate = Number.isFinite(commissionRate) ? commissionRate : commissionTier.rate;
+  const payoutAmount = calculateTrainerPayout(grossAmount, safeCommissionRate);
+  const storedPayoutAmount = Number(row.trainer_payout_amount);
+  const trainerPayoutAmount = Number.isFinite(storedPayoutAmount) && storedPayoutAmount >= 0
+    ? storedPayoutAmount
+    : payoutAmount;
+  const commissionAmount = Math.max(0, Math.round((grossAmount - trainerPayoutAmount) * 100) / 100);
 
   return {
     id: row.id,
@@ -804,13 +811,15 @@ function sanitizeReservationForTrainer(row, stage, commissionTier) {
     places: row.places,
     payment_status: row.payment_status,
     created_at: row.created_at,
-    trainer_payout_amount: Number(row.trainer_payout_amount ?? payoutAmount),
+    trainer_payout_gross_amount: grossAmount,
+    vital_protect_commission_amount: commissionAmount,
+    trainer_payout_amount: trainerPayoutAmount,
     trainer_payout_status: row.trainer_payout_status || "scheduled",
     trainer_payout_due_date: row.trainer_payout_due_date || getPayoutDateForStage(stage?.stage_date),
     trainer_payout_paid_at: row.trainer_payout_paid_at || null,
     trainer_payout_transferred_at: row.trainer_payout_transferred_at || null,
     trainer_payout_stripe_transfer_id: row.trainer_payout_stripe_transfer_id || "",
-    vital_protect_commission_rate: Number(row.vital_protect_commission_rate ?? commissionTier.rate)
+    vital_protect_commission_rate: safeCommissionRate
   };
 }
 
@@ -819,6 +828,7 @@ function sanitizeStageForTrainer(stage, reservations, commissionTier) {
   const paidReservations = reservations.filter(row => normalize(row.payment_status || "paid") === "paid");
   const grossAmount = paidReservations.reduce((sum, row) => sum + getReservationGrossAmount(row, stage), 0);
   const payoutAmount = calculateTrainerPayout(grossAmount, commissionTier.rate);
+  const commissionAmount = Math.max(0, Math.round((grossAmount - payoutAmount) * 100) / 100);
   const inventoryCapacity = offerType === "enterprise" ? 1 : Number(stage.max_participants || 0);
   const paidUnits = offerType === "enterprise"
     ? paidReservations.length
@@ -844,6 +854,8 @@ function sanitizeStageForTrainer(stage, reservations, commissionTier) {
     status: stage.status,
     stage_kind: offerType,
     standard_price: getStandardStagePrice(offerType),
+    trainer_payout_gross_estimate: grossAmount,
+    vital_protect_commission_estimate: commissionAmount,
     trainer_payout_estimate: payoutAmount,
     trainer_payout_due_date: getPayoutDateForStage(stage.stage_date),
     vital_protect_commission_rate: commissionTier.rate,
