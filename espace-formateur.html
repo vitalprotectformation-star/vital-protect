@@ -619,6 +619,115 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/dashboard-premium.css" />
+  <style>
+    /* V59 — correction contraste espace formateur.
+       dashboard-premium.css est chargé après les styles locaux et impose des titres/strong blancs.
+       Ces overrides ciblent uniquement espace-formateur.html. */
+    .stripe-connect-card,
+    .trainer-document-card {
+      background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%) !important;
+      border-color: #dbe4f0 !important;
+      color: #142033 !important;
+    }
+
+    .stripe-connect-card h1,
+    .stripe-connect-card h2,
+    .stripe-connect-card h3,
+    .stripe-connect-card h4,
+    .stripe-connect-card strong,
+    .trainer-document-card h1,
+    .trainer-document-card h2,
+    .trainer-document-card h3,
+    .trainer-document-card h4,
+    .trainer-document-card strong {
+      color: #142033 !important;
+    }
+
+    .stripe-connect-card p,
+    .stripe-connect-card li,
+    .stripe-connect-card .trainer-document-meta,
+    .trainer-document-card p,
+    .trainer-document-card .trainer-document-meta,
+    .trainer-document-card .form-note {
+      color: #4f5f76 !important;
+    }
+
+    .trainer-document-card .field label,
+    .trainer-document-card label {
+      color: #2f4058 !important;
+      font-weight: 800 !important;
+    }
+
+    .trainer-document-card input[type="file"] {
+      background: #ffffff !important;
+      color: #142033 !important;
+      border: 1px solid #cbd6e5 !important;
+    }
+
+    .trainer-document-card input[type="file"]::file-selector-button {
+      color: #111827 !important;
+      background: #f3f7fc !important;
+      border: 1px solid #cbd6e5 !important;
+      border-radius: 8px !important;
+      padding: 7px 10px !important;
+      font-weight: 700 !important;
+    }
+
+    .stripe-connect-card .badge-warning,
+    .trainer-document-card .badge-warning {
+      background: #fff3d5 !important;
+      color: #925700 !important;
+      border: 1px solid #f2d48a !important;
+    }
+
+    .stripe-connect-card .badge-success,
+    .trainer-document-card .badge-success {
+      background: #e5f7ee !important;
+      color: #087344 !important;
+      border: 1px solid #bdebd2 !important;
+    }
+
+    .stripe-connect-card .badge-danger,
+    .trainer-document-card .badge-danger {
+      background: #fff1f1 !important;
+      color: #a32020 !important;
+      border: 1px solid #f2c7c7 !important;
+    }
+
+    .trainer-document-note {
+      background: #fff4df !important;
+      color: #7a4c00 !important;
+      border: 1px solid #f0d9a7 !important;
+    }
+
+    .trainer-document-note strong {
+      color: #5f3b00 !important;
+    }
+
+    /* Tables formateur : éviter le fond blanc local avec texte blanc hérité du thème cockpit. */
+    .table-wrap {
+      background: rgba(7, 19, 34, 0.64) !important;
+      border-color: rgba(129, 163, 214, 0.18) !important;
+    }
+
+    .table-wrap th {
+      color: #93a9c7 !important;
+      background: transparent !important;
+    }
+
+    .table-wrap td {
+      color: #e7f1ff !important;
+      background: rgba(255, 255, 255, 0.04) !important;
+    }
+
+    .table-wrap td strong {
+      color: #ffffff !important;
+    }
+
+    .table-wrap td span {
+      color: #a7bbd6 !important;
+    }
+  </style>
 </head>
 
 <body>
