@@ -1323,7 +1323,7 @@
           <div class="card-header">
             <div>
               <h2>Reversements formateurs</h2>
-              <p>Préparez, validez et marquez comme payés les reversements dus après réalisation des stages.</p>
+              <p>Préparez, validez puis déclenchez les transferts Stripe Connect dus après réalisation des stages.</p>
             </div>
           </div>
           <div class="card-body">
@@ -1337,7 +1337,7 @@
                 <div class="stat-value" id="payoutValidatedCount">0 €</div>
               </div>
               <div class="stat-card">
-                <span class="stat-label">Payés</span>
+                <span class="stat-label">Payés Stripe</span>
                 <div class="stat-value" id="payoutPaidCount">0 €</div>
               </div>
               <div class="stat-card">
@@ -1977,6 +1977,14 @@
       return "badge-warning";
     }
 
+    function stripeConnectShortStatus(row = {}) {
+      return `<span class="badge ${stripeConnectBadgeClass(row)}">${escapeHtml(stripeConnectStatusLabel(row))}</span>`;
+    }
+
+    function isStripePayoutReady(row = {}) {
+      return Boolean(row.stripe_connect_account_id && row.stripe_connect_payouts_enabled);
+    }
+
     const PUBLIC_STAGE_UNIT_PRICE = 30;
     const ENTERPRISE_STAGE_PRICE = 390;
 
@@ -2172,6 +2180,13 @@
     }
 
     function stageTrainerPayout(stage) {
+      const reservations = stagePaidReservations(stage.id);
+      const storedTotal = reservations.reduce((sum, row) => {
+        const amount = Number(row.trainer_payout_amount);
+        return Number.isFinite(amount) && amount > 0 ? sum + amount : sum;
+      }, 0);
+      if (storedTotal > 0) return Math.round(storedTotal * 100) / 100;
+
       const gross = stageGrossAmount(stage);
       const rate = trainerCommissionRate(stage.trainer_id);
       return Math.round(gross * (1 - rate) * 100) / 100;
@@ -2451,6 +2466,7 @@
           const dueDate = reservations.find(row => row.trainer_payout_due_date)?.trainer_payout_due_date || getPayoutDateForStage(stage.stage_date);
           const trainer = getTrainerById(stage.trainer_id);
           const stageStatus = normalize(stage.status || "published");
+          const transferIds = [...new Set(reservations.map(row => row.trainer_payout_stripe_transfer_id).filter(Boolean))];
           return {
             stage,
             trainer,
@@ -2460,7 +2476,10 @@
             payout,
             status,
             dueDate,
-            completed: stageStatus === "completed"
+            completed: stageStatus === "completed",
+            stripeReady: isStripePayoutReady(trainer || {}),
+            stripeStatusLabel: stripeConnectStatusLabel(trainer || {}),
+            transferIds
           };
         })
         .filter(row => row.reservations.length || row.gross > 0)
@@ -2499,6 +2518,7 @@
               <th>Brut encaissé</th>
               <th>Commission VP</th>
               <th>À reverser</th>
+              <th>Stripe Connect</th>
               <th>Statut</th>
               <th>Actions</th>
             </tr>
@@ -2511,6 +2531,9 @@
                 : getTrainerDisplay(stage.trainer_id);
               const status = normalize(row.status || "scheduled");
               const completedWarning = row.completed ? "" : `<span>Stage pas encore marqué réalisé</span>`;
+              const stripeWarning = row.stripeReady ? "" : `<span>${escapeHtml(row.stripeStatusLabel || "Stripe Connect non prêt")}</span>`;
+              const transferInfo = row.transferIds.length ? `<span>Transfert ${escapeHtml(row.transferIds.join(", "))}</span>` : "";
+              const canTransfer = status === "validated" && row.completed && row.stripeReady && Number(row.payout || 0) > 0;
               return `
                 <tr>
                   <td><strong>${escapeHtml(trainerName)}</strong><span>${escapeHtml(row.trainer?.email || stage.trainer_id || "—")}</span></td>
@@ -2519,14 +2542,16 @@
                   <td>${formatShortDate(row.dueDate)}</td>
                   <td>${formatPrice(row.gross)}<span>${row.reservations.length} réservation${row.reservations.length > 1 ? "s" : ""}</span></td>
                   <td>${Math.round(Number(row.rate || 0) * 1000) / 10}%</td>
-                  <td><strong>${formatPrice(row.payout)}</strong>${completedWarning}</td>
+                  <td><strong>${formatPrice(row.payout)}</strong>${completedWarning}${transferInfo}</td>
+                  <td>${stripeConnectShortStatus(row.trainer || {})}${stripeWarning}</td>
                   <td><span class="badge ${payoutStatusClass(status)}">${escapeHtml(payoutStatusLabel(status))}</span></td>
                   <td>
                     <div class="action-stack">
-                      ${status !== "validated" ? `<button class="btn btn-secondary" type="button" onclick="window.updatePayoutStatus('${jsArg(stage.id)}', 'validated')">Valider</button>` : ""}
-                      ${status !== "paid" ? `<button class="btn btn-secondary" type="button" onclick="window.updatePayoutStatus('${jsArg(stage.id)}', 'paid')">Marquer payé</button>` : ""}
-                      ${status !== "blocked" ? `<button class="btn btn-secondary" type="button" onclick="window.updatePayoutStatus('${jsArg(stage.id)}', 'blocked')">Bloquer</button>` : ""}
-                      ${status !== "scheduled" ? `<button class="btn btn-secondary" type="button" onclick="window.updatePayoutStatus('${jsArg(stage.id)}', 'scheduled')">Repasser à préparer</button>` : ""}
+                      ${status !== "validated" && status !== "paid" ? `<button class="btn btn-secondary" type="button" onclick="window.updatePayoutStatus('${jsArg(stage.id)}', 'validated')">Valider</button>` : ""}
+                      ${canTransfer ? `<button class="btn btn-primary" type="button" onclick="window.executeTrainerPayout('${jsArg(stage.id)}')">Reverser via Stripe</button>` : ""}
+                      ${status === "validated" && !canTransfer && status !== "paid" ? `<button class="btn btn-secondary" type="button" disabled>Transfert indisponible</button>` : ""}
+                      ${status !== "blocked" && status !== "paid" ? `<button class="btn btn-secondary" type="button" onclick="window.updatePayoutStatus('${jsArg(stage.id)}', 'blocked')">Bloquer</button>` : ""}
+                      ${status !== "scheduled" && status !== "paid" ? `<button class="btn btn-secondary" type="button" onclick="window.updatePayoutStatus('${jsArg(stage.id)}', 'scheduled')">Repasser à préparer</button>` : ""}
                     </div>
                   </td>
                 </tr>
@@ -2581,7 +2606,7 @@
       const labels = {
         scheduled: "repasser ce reversement à préparer",
         validated: "valider ce reversement",
-        paid: "marquer ce reversement comme payé",
+        paid: "marquer ce reversement comme payé manuellement",
         blocked: "bloquer ce reversement"
       };
 
@@ -2613,6 +2638,55 @@
       } catch (error) {
         console.error(error);
         alert(error.message || "Erreur lors de la mise à jour du reversement.");
+      }
+    };
+
+
+    window.executeTrainerPayout = async (stageId) => {
+      const stage = stagesData.find(item => String(item.id) === String(stageId));
+      if (!stage) {
+        alert("Stage introuvable.");
+        return;
+      }
+
+      const row = buildTrainerPayoutRows().find(item => String(item.stage.id) === String(stageId));
+      if (!row) {
+        alert("Reversement introuvable.");
+        return;
+      }
+
+      if (!row.completed) {
+        alert("Le stage doit être marqué comme réalisé avant reversement.");
+        return;
+      }
+
+      if (!row.stripeReady) {
+        alert("Le compte Stripe Connect du formateur n’est pas encore prêt pour les reversements.");
+        return;
+      }
+
+      const confirmed = window.confirm(`Déclencher le transfert Stripe Connect de ${formatPrice(row.payout)} vers le formateur ?\n\nCette action envoie réellement l’argent vers le compte connecté Stripe.`);
+      if (!confirmed) return;
+
+      const note = window.prompt("Note interne optionnelle pour ce reversement :", "");
+      if (note === null) return;
+
+      try {
+        const result = await callAdminTool("execute_trainer_payout", {
+          stage_id: stageId,
+          note: note || ""
+        });
+
+        if (!result.success) {
+          alert(result.error || "Transfert impossible.");
+          return;
+        }
+
+        alert(`Reversement Stripe envoyé : ${formatPrice(result.amount || row.payout)}\nTransfert : ${result.transfer_id || "—"}`);
+        await loadReservations();
+      } catch (error) {
+        console.error(error);
+        alert(error.message || "Erreur lors du transfert Stripe Connect.");
       }
     };
 
