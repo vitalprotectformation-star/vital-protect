@@ -1104,6 +1104,21 @@
               </div>
             </div>
 
+
+            <div class="card section-spacer" id="reportRequestsCard">
+              <div class="card-header">
+                <div>
+                  <h3>Reports proposés aux clients</h3>
+                  <p>Chaque client doit accepter la nouvelle date ou demander le remboursement. Les reversements restent bloqués tant que la réponse client n’est pas validée.</p>
+                </div>
+              </div>
+              <div class="card-body">
+                <div class="table-wrap" id="reportRequestsWrap">
+                  <div class="empty">Aucun report client en attente.</div>
+                </div>
+              </div>
+            </div>
+
             <div class="table-wrap" id="stagesWrap">
               <div class="loading">Chargement des stages...</div>
             </div>
@@ -1464,6 +1479,7 @@
     const reservationsWrap = document.getElementById("reservationsWrap");
     const stagesWrap = document.getElementById("stagesWrap");
     const cancelledStagesWrap = document.getElementById("cancelledStagesWrap");
+    const reportRequestsWrap = document.getElementById("reportRequestsWrap");
     const trainerRegistrationsWrap = document.getElementById("trainerRegistrationsWrap");
     const archivesWrap = document.getElementById("archivesWrap");
     const trainersWrap = document.getElementById("trainersWrap");
@@ -2442,6 +2458,7 @@
     function renderStages(rows) {
       stagesCount.textContent = rows.length;
       renderCancelledStagesToProcess();
+      renderReportRequestsToProcess();
 
       if (!rows.length) {
         stagesWrap.innerHTML = `<div class="empty">Aucun stage trouvé.</div>`;
@@ -2599,6 +2616,91 @@
       `;
     }
 
+
+    function reportResponseStatusLabel(status) {
+      const value = normalize(status || "none");
+      const labels = {
+        pending: "En attente réponse client",
+        accepted: "Nouvelle date acceptée",
+        refund_requested: "Remboursement demandé",
+        refunded: "Remboursé",
+        none: "—"
+      };
+      return labels[value] || status || "—";
+    }
+
+    function reportResponseStatusClass(status) {
+      const value = normalize(status || "");
+      if (value === "accepted") return "badge-success";
+      if (value === "refund_requested" || value === "refunded") return "badge-danger";
+      if (value === "pending") return "badge-warning";
+      return "badge-warning";
+    }
+
+    function reportResponseRows() {
+      return reservationsData
+        .filter(row => ["pending", "accepted", "refund_requested", "refunded"].includes(normalize(row.report_response_status || "")))
+        .sort((a, b) => String(b.report_requested_at || b.created_at || "").localeCompare(String(a.report_requested_at || a.created_at || "")));
+    }
+
+    function renderReportRequestsToProcess() {
+      if (!reportRequestsWrap) return;
+      const rows = reportResponseRows();
+
+      if (!rows.length) {
+        reportRequestsWrap.innerHTML = `<div class="empty">Aucun report client en attente.</div>`;
+        return;
+      }
+
+      reportRequestsWrap.innerHTML = `
+        <table>
+          <thead>
+            <tr>
+              <th>Client</th>
+              <th>Stage</th>
+              <th>Date initiale</th>
+              <th>Nouvelle date</th>
+              <th>Réponse</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rows.map(row => {
+              const stage = getStageByIdOrReservationFallback(row.stage_id) || {};
+              const status = normalize(row.report_response_status || "pending");
+              const canRefund = status === "refund_requested" && normalize(row.payment_status || "") === "paid" && !row.refunded_at && !row.stripe_refund_id && !row.trainer_payout_stripe_transfer_id;
+              return `
+                <tr>
+                  <td>
+                    <strong>${escapeHtml(`${row.first_name || ""} ${row.last_name || ""}`.trim() || "Client")}</strong>
+                    <span>${escapeHtml(row.email || row.customer_email || "—")}</span>
+                  </td>
+                  <td>
+                    <strong>${escapeHtml(replaceLegacyModuleNames(stage.title || row.stage_title || "Stage"))}</strong>
+                    <span>${escapeHtml(stage.city || row.city || "—")}</span>
+                  </td>
+                  <td>${formatStageDate(row.report_original_stage_date || row.stage_date)}</td>
+                  <td>${formatStageDate(row.report_proposed_stage_date || stage.stage_date)}</td>
+                  <td>
+                    <span class="badge ${reportResponseStatusClass(status)}">${escapeHtml(reportResponseStatusLabel(status))}</span>
+                    ${row.report_responded_at ? `<span>Répondu le ${formatDate(row.report_responded_at)}</span>` : ""}
+                    ${row.stripe_refund_id ? `<span>Refund ${escapeHtml(shortStripeId(row.stripe_refund_id))}</span>` : ""}
+                  </td>
+                  <td>
+                    <div class="action-stack">
+                      ${canRefund ? `<button class="btn btn-danger" type="button" onclick="window.refundReservation('${jsArg(row.id)}')">Rembourser ce client</button>` : ""}
+                      ${status === "accepted" ? `<span class="badge badge-success">Reversement replanifié après stage</span>` : ""}
+                      ${status === "pending" ? `<span class="badge badge-warning">Attente réponse client</span>` : ""}
+                      ${status === "refunded" ? `<span class="badge badge-success">Client remboursé</span>` : ""}
+                    </div>
+                  </td>
+                </tr>
+              `;
+            }).join("")}
+          </tbody>
+        </table>
+      `;
+    }
 
     function getPayoutDateForStage(stageDateString) {
       if (!stageDateString) return "";
@@ -4000,6 +4102,7 @@
       renderReservations(reservationsData);
       updateFinance();
       renderStages(stagesData);
+      renderReportRequestsToProcess();
       applyPayoutFilters();
     }
 
@@ -4275,7 +4378,7 @@ VITAL PROTECT`
           return;
         }
 
-        alert("Formateur remplacé. Le reversement sera préparé pour le nouveau formateur.");
+        alert(`Formateur remplacé. Le reversement sera préparé pour le nouveau formateur.\nEmails clients envoyés : ${result.emails_sent || 0}`);
         await loadStages();
         await loadReservations();
       } catch (error) {
@@ -4318,7 +4421,7 @@ VITAL PROTECT`
           return;
         }
 
-        alert("Stage reporté. Le reversement reste préparé pour la nouvelle date.");
+        alert(`Stage reporté. Le reversement reste préparé pour la nouvelle date.\nEmails clients envoyés : ${result.emails_sent || 0}`);
         await loadStages();
         await loadReservations();
       } catch (error) {
@@ -4368,7 +4471,7 @@ VITAL PROTECT`
           return;
         }
 
-        alert(`Remboursement Stripe effectué : ${formatPrice(result.amount || total)}\nRefunds : ${result.refund_ids || "—"}`);
+        alert(`Remboursement Stripe effectué : ${formatPrice(result.amount || total)}\nRefunds : ${result.refund_ids || "—"}\nEmails clients envoyés : ${result.emails_sent || 0}`);
         await loadStages();
         await loadReservations();
       } catch (error) {
@@ -4377,6 +4480,43 @@ VITAL PROTECT`
       }
     };
 
+
+    window.refundReservation = async (reservationId) => {
+      const reservation = reservationsData.find(row => String(row.id) === String(reservationId));
+      if (!reservation) {
+        alert("Réservation introuvable.");
+        return;
+      }
+
+      const amount = Number(reservation.total_amount || 0);
+      const confirmed = window.confirm(
+        `Confirmer le remboursement Stripe de ${formatPrice(amount)} pour ${reservation.email || "ce client"} ?\n\n` +
+        "Cette action ne doit être utilisée que si le client refuse la nouvelle date proposée."
+      );
+      if (!confirmed) return;
+
+      const note = window.prompt("Note interne pour ce remboursement :", "Client refuse le report — remboursement");
+      if (note === null) return;
+
+      try {
+        const result = await callAdminTool("refund_reservation", {
+          reservation_id: reservationId,
+          note: note || "Client refuse le report — remboursement"
+        });
+
+        if (!result.success) {
+          alert(result.error || "Remboursement impossible.");
+          return;
+        }
+
+        alert(`Remboursement Stripe effectué : ${formatPrice(result.amount || amount)}\nRefund : ${result.refund_id || "—"}\nEmail client envoyé : ${result.email_sent ? "oui" : "non"}`);
+        await loadStages();
+        await loadReservations();
+      } catch (error) {
+        console.error(error);
+        alert(error.message || "Erreur lors du remboursement client.");
+      }
+    };
 
     window.deleteStage = async (stageId, stageTitle) => {
       const reservationCount = reservationsData.filter(r => r.stage_id === stageId).length;

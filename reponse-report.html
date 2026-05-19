@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Réponse au report de stage — VITAL PROTECT</title>
+  <link rel="stylesheet" href="/styles/lusion-level.css" />
+  <style>
+    body {
+      min-height: 100vh;
+      margin: 0;
+      background: radial-gradient(circle at top, rgba(0, 195, 255, 0.14), transparent 34%), #07111f;
+      color: #10223a;
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    .vp-report-page {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 18px;
+    }
+    .vp-report-card {
+      width: min(760px, 100%);
+      background: #ffffff;
+      border-radius: 28px;
+      box-shadow: 0 28px 80px rgba(0, 0, 0, 0.26);
+      padding: clamp(24px, 4vw, 44px);
+      border: 1px solid rgba(15, 42, 74, 0.10);
+    }
+    .vp-report-logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: #12324a;
+      font-weight: 900;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      margin-bottom: 22px;
+    }
+    .vp-report-kicker {
+      color: #008fcc;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 0.78rem;
+      margin: 0 0 8px;
+    }
+    .vp-report-card h1 {
+      margin: 0 0 12px;
+      color: #0f243d;
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      line-height: 1.05;
+    }
+    .vp-report-card p {
+      color: #4d5f75;
+      line-height: 1.7;
+    }
+    .vp-report-details {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 14px;
+      margin: 24px 0;
+    }
+    .vp-report-detail {
+      background: #f4f8fb;
+      border: 1px solid #dce8f1;
+      border-radius: 18px;
+      padding: 16px;
+    }
+    .vp-report-detail span {
+      display: block;
+      color: #66758a;
+      font-size: 0.78rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 6px;
+    }
+    .vp-report-detail strong {
+      color: #132f4a;
+      font-size: 1.05rem;
+    }
+    .vp-report-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 26px;
+    }
+    .vp-report-btn {
+      border: 0;
+      border-radius: 999px;
+      padding: 14px 22px;
+      font-weight: 900;
+      cursor: pointer;
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
+    }
+    .vp-report-btn:hover { transform: translateY(-1px); }
+    .vp-report-btn.primary {
+      background: linear-gradient(135deg, #00b7ff, #0074d4);
+      color: #ffffff;
+      box-shadow: 0 14px 30px rgba(0, 116, 212, 0.22);
+    }
+    .vp-report-btn.secondary {
+      background: #fff2f1;
+      color: #a4312b;
+      border: 1px solid #ffd1cc;
+    }
+    .vp-report-status {
+      margin-top: 20px;
+      padding: 14px 16px;
+      border-radius: 16px;
+      background: #edf9f2;
+      color: #0d6b39;
+      font-weight: 800;
+      display: none;
+    }
+    .vp-report-status.error {
+      background: #fff1f1;
+      color: #9e241d;
+    }
+    .vp-report-muted {
+      font-size: 0.92rem;
+      color: #66758a;
+    }
+  </style>
+</head>
+<body>
+  <main class="vp-report-page">
+    <section class="vp-report-card">
+      <div class="vp-report-logo">VITAL PROTECT</div>
+      <p class="vp-report-kicker">Réponse client</p>
+      <h1>Nouvelle date proposée pour votre stage</h1>
+      <p id="introText">Chargement de votre réservation...</p>
+
+      <div class="vp-report-details" id="details" hidden>
+        <div class="vp-report-detail">
+          <span>Stage</span>
+          <strong id="stageTitle">—</strong>
+        </div>
+        <div class="vp-report-detail">
+          <span>Date initiale</span>
+          <strong id="oldDate">—</strong>
+        </div>
+        <div class="vp-report-detail">
+          <span>Nouvelle date proposée</span>
+          <strong id="newDate">—</strong>
+        </div>
+        <div class="vp-report-detail">
+          <span>Lieu</span>
+          <strong id="stagePlace">—</strong>
+        </div>
+      </div>
+
+      <p class="vp-report-muted" id="choiceText" hidden>
+        Choisissez l’option qui vous convient. Si vous demandez le remboursement, VITAL PROTECT traitera ensuite le remboursement Stripe de votre réservation.
+      </p>
+
+      <div class="vp-report-actions" id="actions" hidden>
+        <button class="vp-report-btn primary" type="button" id="acceptBtn">J’accepte la nouvelle date</button>
+        <button class="vp-report-btn secondary" type="button" id="refundBtn">Je demande le remboursement</button>
+      </div>
+
+      <div class="vp-report-status" id="statusBox"></div>
+    </section>
+  </main>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get("token") || "";
+
+    const introText = document.getElementById("introText");
+    const details = document.getElementById("details");
+    const actions = document.getElementById("actions");
+    const choiceText = document.getElementById("choiceText");
+    const statusBox = document.getElementById("statusBox");
+    const acceptBtn = document.getElementById("acceptBtn");
+    const refundBtn = document.getElementById("refundBtn");
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
+
+    function formatDate(value) {
+      if (!value) return "à confirmer";
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return value;
+      return date.toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit", year: "numeric" });
+    }
+
+    function showStatus(message, isError = false) {
+      statusBox.textContent = message;
+      statusBox.classList.toggle("error", Boolean(isError));
+      statusBox.style.display = "block";
+    }
+
+    function setBusy(isBusy) {
+      acceptBtn.disabled = isBusy;
+      refundBtn.disabled = isBusy;
+      acceptBtn.style.opacity = isBusy ? "0.65" : "1";
+      refundBtn.style.opacity = isBusy ? "0.65" : "1";
+    }
+
+    async function api(path, options = {}) {
+      const res = await fetch(path, {
+        ...options,
+        headers: {
+          "Content-Type": "application/json",
+          ...(options.headers || {})
+        }
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || `Erreur HTTP ${res.status}`);
+      return data;
+    }
+
+    async function loadReservation() {
+      if (!token) {
+        introText.textContent = "Lien de réponse invalide.";
+        showStatus("Le lien utilisé est incomplet ou expiré.", true);
+        return;
+      }
+
+      try {
+        const result = await api(`/api/respond-report?token=${encodeURIComponent(token)}`);
+        const row = result.reservation || {};
+        document.getElementById("stageTitle").textContent = row.stage_title || "Stage VITAL PROTECT";
+        document.getElementById("oldDate").textContent = formatDate(row.original_stage_date);
+        document.getElementById("newDate").textContent = formatDate(row.proposed_stage_date);
+        document.getElementById("stagePlace").textContent = [row.city, row.postal_code].filter(Boolean).join(" · ") || "à confirmer";
+        introText.textContent = `Bonjour ${[row.first_name, row.last_name].filter(Boolean).join(" ") || ""}, merci de confirmer votre choix pour cette proposition de report.`;
+        details.hidden = false;
+
+        if (row.response_status === "accepted") {
+          showStatus("Vous avez déjà accepté la nouvelle date. Votre réservation reste confirmée.");
+          return;
+        }
+        if (row.response_status === "refund_requested") {
+          showStatus("Votre demande de remboursement a déjà été transmise à VITAL PROTECT.");
+          return;
+        }
+        if (row.response_status === "refunded" || row.payment_status === "refunded") {
+          showStatus("Cette réservation a déjà été remboursée.");
+          return;
+        }
+
+        choiceText.hidden = false;
+        actions.hidden = false;
+      } catch (error) {
+        introText.textContent = "Impossible de charger votre réservation.";
+        showStatus(error.message || "Erreur lors du chargement.", true);
+      }
+    }
+
+    async function submitDecision(decision) {
+      const confirmText = decision === "accept"
+        ? "Confirmer que vous acceptez la nouvelle date ?"
+        : "Confirmer votre demande de remboursement ?";
+      if (!window.confirm(confirmText)) return;
+
+      setBusy(true);
+      try {
+        const result = await api("/api/respond-report", {
+          method: "POST",
+          body: JSON.stringify({ token, decision })
+        });
+
+        actions.hidden = true;
+        choiceText.hidden = true;
+        if (result.decision === "accepted") {
+          showStatus("Merci, votre réservation reste confirmée sur la nouvelle date.");
+        } else {
+          showStatus("Votre demande de remboursement a été transmise. VITAL PROTECT va la traiter dans l’admin.");
+        }
+      } catch (error) {
+        showStatus(error.message || "Erreur lors de l’enregistrement de votre réponse.", true);
+      } finally {
+        setBusy(false);
+      }
+    }
+
+    acceptBtn.addEventListener("click", () => submitDecision("accept"));
+    refundBtn.addEventListener("click", () => submitDecision("refund"));
+    loadReservation();
+  </script>
+</body>
+</html>
