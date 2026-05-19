@@ -188,31 +188,58 @@ async function notifyReservationRescheduled({ stage = {}, reservation = {}, newS
   const title = getStageDisplayTitle(stage, reservation);
   const oldDateLabel = formatDateForEmail(reservation.report_original_stage_date || reservation.original_stage_date || reservation.stage_date || stage.original_stage_date);
   const dateLabel = formatDateForEmail(newStageDate || reservation.report_proposed_stage_date || stage.stage_date);
-  const timeLabel = stage.start_time ? ` à ${escapeHtml(stage.start_time)}` : "";
+  const timeLabelPlain = stage.start_time ? ` à ${stage.start_time}` : "";
+  const timeLabelHtml = stage.start_time ? ` à ${escapeHtml(stage.start_time)}` : "";
   const cityLabel = stage.city || reservation.city || "à confirmer";
   const responseUrl = buildReportResponseUrl(token || reservation.report_response_token || "");
+  const clientName = `${reservation.first_name || ""} ${reservation.last_name || ""}`.trim();
 
   return await sendEmailSafe({
     to: email,
-    subject: "Action requise : nouvelle date proposée pour votre stage VITAL PROTECT",
+    subject: "Nouvelle date proposée pour votre stage Vital Protect",
+    text: [
+      `Bonjour ${clientName || ""},`,
+      "",
+      "Nous vous contactons au sujet de votre réservation Vital Protect.",
+      "Le stage ne peut pas être maintenu à la date initialement prévue. Une nouvelle date vous est proposée.",
+      "",
+      `Stage : ${title}`,
+      `Date initiale : ${oldDateLabel}`,
+      `Nouvelle date proposée : ${dateLabel}${timeLabelPlain}`,
+      `Lieu : ${cityLabel}`,
+      "",
+      "Merci d’indiquer votre choix depuis ce lien sécurisé :",
+      responseUrl,
+      "",
+      "Vous pourrez accepter la nouvelle date ou demander le remboursement de votre réservation.",
+      "",
+      "VITAL PROTECT"
+    ].join("\n"),
     html: `
-      <h2>Nouvelle date proposée pour votre stage</h2>
-      <p>Bonjour ${escapeHtml(reservation.first_name || "")} ${escapeHtml(reservation.last_name || "")},</p>
-      <p>Votre stage <strong>VITAL PROTECT</strong> ne peut pas être maintenu à la date initiale. Nous vous proposons une nouvelle date.</p>
-      <ul>
-        <li><strong>Stage :</strong> ${escapeHtml(title)}</li>
-        <li><strong>Date initiale :</strong> ${escapeHtml(oldDateLabel)}</li>
-        <li><strong>Nouvelle date proposée :</strong> ${escapeHtml(dateLabel)}${timeLabel}</li>
-        <li><strong>Lieu :</strong> ${escapeHtml(cityLabel)}</li>
-      </ul>
-      <p>Merci de confirmer votre choix depuis le lien sécurisé ci-dessous :</p>
-      <p>
-        <a href="${escapeHtml(responseUrl)}" style="display:inline-block;padding:12px 18px;border-radius:999px;background:#12324a;color:#ffffff;text-decoration:none;font-weight:700;">
-          Répondre à la proposition
-        </a>
-      </p>
-      <p>Vous pourrez accepter la nouvelle date ou demander le remboursement de votre réservation.</p>
-      <p><strong>VITAL PROTECT</strong></p>
+      <div style="display:none;max-height:0;overflow:hidden;color:#ffffff;opacity:0;">
+        Merci de confirmer votre choix pour la nouvelle date proposée.
+      </div>
+      <div style="font-family:Arial,sans-serif;color:#10223a;line-height:1.65;max-width:640px;">
+        <h2 style="margin:0 0 12px;color:#0f243d;">Nouvelle date proposée pour votre stage</h2>
+        <p>Bonjour ${escapeHtml(clientName)},</p>
+        <p>Nous vous contactons au sujet de votre réservation <strong>Vital Protect</strong>.</p>
+        <p>Le stage ne peut pas être maintenu à la date initialement prévue. Une nouvelle date vous est proposée.</p>
+        <table role="presentation" cellpadding="0" cellspacing="0" style="width:100%;border-collapse:collapse;margin:18px 0;background:#f6f9fc;border:1px solid #dce8f1;border-radius:14px;overflow:hidden;">
+          <tr><td style="padding:12px 14px;font-weight:700;width:170px;">Stage</td><td style="padding:12px 14px;">${escapeHtml(title)}</td></tr>
+          <tr><td style="padding:12px 14px;font-weight:700;">Date initiale</td><td style="padding:12px 14px;">${escapeHtml(oldDateLabel)}</td></tr>
+          <tr><td style="padding:12px 14px;font-weight:700;">Nouvelle date</td><td style="padding:12px 14px;">${escapeHtml(dateLabel)}${timeLabelHtml}</td></tr>
+          <tr><td style="padding:12px 14px;font-weight:700;">Lieu</td><td style="padding:12px 14px;">${escapeHtml(cityLabel)}</td></tr>
+        </table>
+        <p>Merci d’indiquer votre choix depuis le lien sécurisé ci-dessous.</p>
+        <p style="margin:22px 0;">
+          <a href="${escapeHtml(responseUrl)}" style="display:inline-block;padding:13px 20px;border-radius:999px;background:#12324a;color:#ffffff;text-decoration:none;font-weight:700;">
+            Répondre à la proposition
+          </a>
+        </p>
+        <p>Vous pourrez accepter la nouvelle date ou demander le remboursement de votre réservation.</p>
+        <p style="font-size:13px;color:#66758a;">Si le bouton ne fonctionne pas, copiez ce lien dans votre navigateur :<br>${escapeHtml(responseUrl)}</p>
+        <p style="margin-top:18px;"><strong>VITAL PROTECT</strong></p>
+      </div>
     `
   });
 }

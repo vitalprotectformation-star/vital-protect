@@ -72,36 +72,142 @@ async function getReservationByToken(token) {
   return { reservation, stage: stage || {} };
 }
 
-async function sendAdminNotification({ reservation = {}, stage = {}, decision = "" }) {
-  const to = process.env.ADMIN_NOTIFY_EMAIL || process.env.RESEND_REPLY_TO || "contact@vital-protect.fr";
-  if (!resend || !to) return { sent: false, skipped: true };
+function getMailFrom() {
+  return process.env.RESEND_FROM || "VITAL PROTECT <contact@vital-protect.fr>";
+}
 
-  const decisionLabel = decision === "accepted"
+function getMailReplyTo() {
+  return process.env.RESEND_REPLY_TO || process.env.ADMIN_NOTIFY_EMAIL || "contact@vital-protect.fr";
+}
+
+function getAdminNotificationEmail() {
+  return process.env.ADMIN_NOTIFY_EMAIL || process.env.RESEND_ADMIN_EMAIL || process.env.RESEND_REPLY_TO || "herosboxinggym@gmail.com";
+}
+
+function getDecisionLabel(decision = "") {
+  return decision === "accepted"
     ? "a accepté la nouvelle date"
     : "demande le remboursement";
+}
 
+function buildStageLines({ reservation = {}, stage = {} }) {
+  const title = stage.title || reservation.stage_title || "Stage VITAL PROTECT";
+  const oldDate = formatDateForEmail(reservation.report_original_stage_date);
+  const newDate = formatDateForEmail(reservation.report_proposed_stage_date || stage.stage_date);
+  const place = [stage.city || reservation.city || "", stage.postal_code || reservation.postal_code || ""].filter(Boolean).join(" · ") || "à confirmer";
+  return { title, oldDate, newDate, place };
+}
+
+async function sendEmailSafe(payload) {
   try {
+    if (!resend || !payload?.to) return { sent: false, skipped: true };
     const response = await resend.emails.send({
-      from: process.env.RESEND_FROM || "VITAL PROTECT <contact@vital-protect.fr>",
-      replyTo: process.env.RESEND_REPLY_TO || "contact@vital-protect.fr",
-      to,
-      subject: `Réponse client au report VITAL PROTECT — ${decisionLabel}`,
-      html: `
-        <h2>Réponse client au report</h2>
-        <p><strong>${escapeHtml(reservation.first_name || "")} ${escapeHtml(reservation.last_name || "")}</strong> ${escapeHtml(decisionLabel)}.</p>
-        <ul>
-          <li><strong>Email :</strong> ${escapeHtml(reservation.email || reservation.customer_email || "")}</li>
-          <li><strong>Stage :</strong> ${escapeHtml(stage.title || reservation.stage_title || "Stage VITAL PROTECT")}</li>
-          <li><strong>Date initiale :</strong> ${escapeHtml(formatDateForEmail(reservation.report_original_stage_date))}</li>
-          <li><strong>Nouvelle date :</strong> ${escapeHtml(formatDateForEmail(reservation.report_proposed_stage_date || stage.stage_date))}</li>
-        </ul>
-      `
+      from: getMailFrom(),
+      replyTo: getMailReplyTo(),
+      ...payload
     });
     return { sent: true, response };
   } catch (error) {
-    console.error("Erreur notification admin report:", error);
+    console.error("Erreur email report:", error);
     return { sent: false, error: error.message };
   }
+}
+
+async function sendAdminNotification({ reservation = {}, stage = {}, decision = "" }) {
+  const to = getAdminNotificationEmail();
+  const decisionLabel = getDecisionLabel(decision);
+  const { title, oldDate, newDate, place } = buildStageLines({ reservation, stage });
+  const clientName = `${reservation.first_name || ""} ${reservation.last_name || ""}`.trim() || "Client";
+  const clientEmail = reservation.email || reservation.customer_email || "";
+
+  return await sendEmailSafe({
+    to,
+    subject: `Réponse client au report — ${decisionLabel}`,
+    text: [
+      "Réponse client au report VITAL PROTECT",
+      "",
+      `${clientName} ${decisionLabel}.`,
+      `Email client : ${clientEmail}`,
+      `Stage : ${title}`,
+      `Lieu : ${place}`,
+      `Date initiale : ${oldDate}`,
+      `Nouvelle date : ${newDate}`,
+      "",
+      decision === "accepted"
+        ? "La réservation reste confirmée sur la nouvelle date."
+        : "Le client demande un remboursement. La demande doit être traitée dans l’admin."
+    ].join("\n"),
+    html: `
+      <div style="font-family:Arial,sans-serif;color:#10223a;line-height:1.55;">
+        <h2 style="margin:0 0 12px;color:#0f243d;">Réponse client au report</h2>
+        <p><strong>${escapeHtml(clientName)}</strong> ${escapeHtml(decisionLabel)}.</p>
+        <ul>
+          <li><strong>Email client :</strong> ${escapeHtml(clientEmail)}</li>
+          <li><strong>Stage :</strong> ${escapeHtml(title)}</li>
+          <li><strong>Lieu :</strong> ${escapeHtml(place)}</li>
+          <li><strong>Date initiale :</strong> ${escapeHtml(oldDate)}</li>
+          <li><strong>Nouvelle date :</strong> ${escapeHtml(newDate)}</li>
+        </ul>
+        <p>${decision === "accepted"
+          ? "La réservation reste confirmée sur la nouvelle date."
+          : "Le client demande un remboursement. La demande doit être traitée dans l’admin."}</p>
+        <p style="margin-top:18px;"><strong>VITAL PROTECT</strong></p>
+      </div>
+    `
+  });
+}
+
+async function sendClientConfirmation({ reservation = {}, stage = {}, decision = "" }) {
+  const to = reservation.email || reservation.customer_email || "";
+  if (!to) return { sent: false, skipped: true };
+
+  const accepted = decision === "accepted";
+  const { title, oldDate, newDate, place } = buildStageLines({ reservation, stage });
+  const clientName = `${reservation.first_name || ""} ${reservation.last_name || ""}`.trim();
+  const subject = accepted
+    ? "Votre nouvelle date de stage est confirmée"
+    : "Votre demande de remboursement est bien reçue";
+  const mainText = accepted
+    ? "Nous confirmons la prise en compte de votre accord pour la nouvelle date. Votre réservation reste active."
+    : "Nous confirmons la prise en compte de votre demande de remboursement. VITAL PROTECT va la traiter depuis l’espace d’administration.";
+
+  return await sendEmailSafe({
+    to,
+    subject,
+    text: [
+      `Bonjour ${clientName || ""},`,
+      "",
+      mainText,
+      "",
+      `Stage : ${title}`,
+      `Lieu : ${place}`,
+      `Date initiale : ${oldDate}`,
+      `Nouvelle date proposée : ${newDate}`,
+      "",
+      accepted
+        ? "Aucune autre action n’est nécessaire de votre côté."
+        : "Vous recevrez une confirmation lorsque le remboursement aura été lancé.",
+      "",
+      "VITAL PROTECT"
+    ].join("\n"),
+    html: `
+      <div style="font-family:Arial,sans-serif;color:#10223a;line-height:1.65;">
+        <h2 style="margin:0 0 12px;color:#0f243d;">${escapeHtml(subject)}</h2>
+        <p>Bonjour ${escapeHtml(clientName)},</p>
+        <p>${escapeHtml(mainText)}</p>
+        <ul>
+          <li><strong>Stage :</strong> ${escapeHtml(title)}</li>
+          <li><strong>Lieu :</strong> ${escapeHtml(place)}</li>
+          <li><strong>Date initiale :</strong> ${escapeHtml(oldDate)}</li>
+          <li><strong>Nouvelle date proposée :</strong> ${escapeHtml(newDate)}</li>
+        </ul>
+        <p>${accepted
+          ? "Aucune autre action n’est nécessaire de votre côté."
+          : "Vous recevrez une confirmation lorsque le remboursement aura été lancé."}</p>
+        <p style="margin-top:18px;"><strong>VITAL PROTECT</strong></p>
+      </div>
+    `
+  });
 }
 
 export default async function handler(req, res) {
@@ -163,17 +269,18 @@ export default async function handler(req, res) {
 
     if (error) return res.status(500).json({ error: error.message });
 
-    const adminNotification = await sendAdminNotification({
-      reservation: data,
-      stage,
-      decision: accepted ? "accepted" : "refund_requested"
-    });
+    const decisionStatus = accepted ? "accepted" : "refund_requested";
+    const [adminNotification, clientConfirmation] = await Promise.all([
+      sendAdminNotification({ reservation: data, stage, decision: decisionStatus }),
+      sendClientConfirmation({ reservation: data, stage, decision: decisionStatus })
+    ]);
 
     return res.status(200).json({
       success: true,
-      decision: accepted ? "accepted" : "refund_requested",
+      decision: decisionStatus,
       reservation: publicReservation(data, stage),
-      admin_email_sent: Boolean(adminNotification?.sent)
+      admin_email_sent: Boolean(adminNotification?.sent),
+      client_email_sent: Boolean(clientConfirmation?.sent)
     });
   } catch (error) {
     console.error("respond-report error:", error);
