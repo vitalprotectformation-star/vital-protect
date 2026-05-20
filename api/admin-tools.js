@@ -340,7 +340,8 @@ function sanitizeTrainerDocumentRow(row = {}) {
 const VP_MODULE_NAMES = {
   module1: "Prévenir, éviter, réagir – Module 1",
   module2: "Prévenir, éviter, réagir – Module 2",
-  pro: "Faire face aux situations tendues et comportements agressifs en milieu professionnel"
+  pro: "Faire face aux situations tendues et comportements agressifs en milieu professionnel",
+  baton: "Interpellation simple et usage du bâton télescopique – Police / Sécurité",
 };
 
 function normalizeModuleKey(value) {
@@ -371,6 +372,16 @@ function getCanonicalModuleType(...values) {
     text.includes("comportement") ||
     text.includes("self pro")
   ) return "pro";
+  if (
+    text.includes("baton") ||
+    text.includes("bâton") ||
+    text.includes("telescopique") ||
+    text.includes("télescopique") ||
+    text.includes("interpellation") ||
+    text.includes("police") ||
+    text.includes("securite police") ||
+    text.includes("module baton")
+  ) return "baton";
   if (
     text.includes("niveau 1") ||
     text.includes("niv 1") ||
@@ -447,8 +458,17 @@ function extractOfficialModulesFromText(value) {
     normalized.includes("comportement") ||
     normalized.includes("self pro")
   ) pushOfficialModule(modules, VP_MODULE_NAMES.pro);
+  if (
+    normalized.includes("baton") ||
+    normalized.includes("bâton") ||
+    normalized.includes("telescopique") ||
+    normalized.includes("télescopique") ||
+    normalized.includes("interpellation") ||
+    normalized.includes("police securite") ||
+    normalized.includes("module baton")
+  ) pushOfficialModule(modules, VP_MODULE_NAMES.baton);
 
-  return modules.slice(0, 3);
+  return modules.slice(0, 4);
 }
 
 function replaceLegacyModuleNames(value) {
@@ -463,6 +483,8 @@ function replaceLegacyModuleNames(value) {
   text = text.replace(/Self\s*Defense\s*Essentielle\s*Niveau\s*1/gi, VP_MODULE_NAMES.module1);
   text = text.replace(/Self\s*Défense\s*Essentielle/gi, VP_MODULE_NAMES.module1);
   text = text.replace(/Self\s*Defense\s*Essentielle/gi, VP_MODULE_NAMES.module1);
+  text = text.replace(/Interpellation\s*simple.*?bâton\s*télescopique/gi, VP_MODULE_NAMES.baton);
+  text = text.replace(/Interpellation.*?baton/gi, VP_MODULE_NAMES.baton);
   return text;
 }
 
