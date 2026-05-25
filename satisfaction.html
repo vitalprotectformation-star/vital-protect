@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Votre avis — Vital Protect</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f4fb;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 16px;
+    }
+    .card {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 4px 32px rgba(31,56,100,0.10);
+      max-width: 500px;
+      width: 100%;
+      padding: 36px 32px;
+    }
+    .logo { display: flex; align-items: center; gap: 10px; margin-bottom: 24px; }
+    .logo-mark { width: 30px; height: 30px; background: #1F3864; border-radius: 6px; flex-shrink: 0; }
+    .logo-text { font-size: 14px; font-weight: 800; color: #1F3864; letter-spacing: 0.05em; }
+    .stage-info { background: #f0f5ff; border-radius: 8px; padding: 12px 16px; margin-bottom: 24px; }
+    .stage-info strong { display: block; font-size: 14px; color: #1F3864; font-weight: 700; margin-bottom: 2px; }
+    .stage-info span { font-size: 13px; color: #666; }
+    h1 { font-size: 20px; font-weight: 800; color: #1F3864; margin-bottom: 6px; }
+    .subtitle { font-size: 13px; color: #888; margin-bottom: 28px; }
+    .field { margin-bottom: 22px; }
+    .field-label { font-size: 13px; font-weight: 700; color: #1F3864; margin-bottom: 10px; display: block; }
+    /* Stars */
+    .stars { display: flex; gap: 4px; }
+    .stars span {
+      font-size: 32px;
+      cursor: pointer;
+      color: #ddd;
+      transition: color 0.1s;
+      line-height: 1;
+      user-select: none;
+    }
+    .stars[data-val="1"] span:nth-child(-n+1),
+    .stars[data-val="2"] span:nth-child(-n+2),
+    .stars[data-val="3"] span:nth-child(-n+3),
+    .stars[data-val="4"] span:nth-child(-n+4),
+    .stars[data-val="5"] span:nth-child(-n+5) { color: #f5a623; }
+    /* Radio */
+    .radio-group { display: flex; gap: 10px; }
+    .radio-btn {
+      flex: 1;
+      padding: 11px;
+      border: 2px solid #e0e6f0;
+      border-radius: 8px;
+      text-align: center;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      color: #555;
+      transition: all 0.15s;
+      user-select: none;
+    }
+    .radio-btn.active { border-color: #1F3864; background: #1F3864; color: #fff; }
+    textarea {
+      width: 100%;
+      border: 1px solid #dde3ef;
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 14px;
+      font-family: inherit;
+      resize: vertical;
+      min-height: 80px;
+      color: #333;
+    }
+    textarea:focus { outline: none; border-color: #1F3864; }
+    .btn-submit {
+      width: 100%;
+      background: #1F3864;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 14px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.15s;
+      margin-top: 4px;
+    }
+    .btn-submit:hover { background: #2E5FA3; }
+    .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+    .error-msg { color: #c0392b; font-size: 13px; margin-top: 10px; display: none; }
+    /* States */
+    .state { text-align: center; padding: 32px 16px; }
+    .state-icon { font-size: 52px; margin-bottom: 16px; }
+    .state h2 { font-size: 20px; font-weight: 800; color: #1F3864; margin-bottom: 8px; }
+    .state p { font-size: 14px; color: #777; line-height: 1.6; }
+    .loading { text-align: center; padding: 48px; color: #aaa; font-size: 14px; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="logo">
+      <div class="logo-mark"></div>
+      <div class="logo-text">VITAL PROTECT</div>
+    </div>
+    <div id="root"><div class="loading">Chargement…</div></div>
+  </div>
+
+  <script>
+    const token = new URLSearchParams(location.search).get('token');
+    const root = document.getElementById('root');
+    let recoVal = null;
+
+    function html(str) {
+      const d = document.createElement('div');
+      d.textContent = str;
+      return d.innerHTML;
+    }
+
+    function showState(icon, title, body) {
+      root.innerHTML = `<div class="state">
+        <div class="state-icon">${icon}</div>
+        <h2>${title}</h2>
+        <p>${body}</p>
+      </div>`;
+    }
+
+    function renderForm(stage) {
+      const name = html(stage.module_name || 'Stage Vital Protect');
+      const date = stage.stage_date
+        ? new Date(stage.stage_date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })
+        : '';
+      const city = stage.city ? ' · ' + html(stage.city) : '';
+
+      root.innerHTML = `
+        <div class="stage-info">
+          <strong>${name}</strong>
+          <span>${date}${city}</span>
+        </div>
+        <h1>Comment s'est passé votre stage ?</h1>
+        <p class="subtitle">Anonyme · 2 minutes</p>
+
+        <div class="field">
+          <label class="field-label">Satisfaction globale</label>
+          <div class="stars" id="s_global" data-val="0">
+            <span data-v="1">★</span><span data-v="2">★</span>
+            <span data-v="3">★</span><span data-v="4">★</span><span data-v="5">★</span>
+          </div>
+        </div>
+        <div class="field">
+          <label class="field-label">Qualité du formateur</label>
+          <div class="stars" id="s_formateur" data-val="0">
+            <span data-v="1">★</span><span data-v="2">★</span>
+            <span data-v="3">★</span><span data-v="4">★</span><span data-v="5">★</span>
+          </div>
+        </div>
+        <div class="field">
+          <label class="field-label">Qualité du contenu</label>
+          <div class="stars" id="s_contenu" data-val="0">
+            <span data-v="1">★</span><span data-v="2">★</span>
+            <span data-v="3">★</span><span data-v="4">★</span><span data-v="5">★</span>
+          </div>
+        </div>
+        <div class="field">
+          <label class="field-label">Recommanderiez-vous ce stage ?</label>
+          <div class="radio-group" id="reco">
+            <div class="radio-btn" data-v="true" onclick="setReco(this)">Oui</div>
+            <div class="radio-btn" data-v="false" onclick="setReco(this)">Non</div>
+          </div>
+        </div>
+        <div class="field">
+          <label class="field-label">Commentaire <span style="font-weight:400;color:#bbb">(optionnel)</span></label>
+          <textarea id="comment" placeholder="Ce qui vous a plu, ce qui pourrait être amélioré…" maxlength="2000"></textarea>
+        </div>
+        <div class="error-msg" id="err"></div>
+        <button class="btn-submit" id="btn" onclick="submit()">Envoyer mon avis</button>
+      `;
+
+      // Stars interaction
+      document.querySelectorAll('.stars').forEach(group => {
+        group.querySelectorAll('span').forEach(star => {
+          star.addEventListener('click', () => { group.dataset.val = star.dataset.v; });
+        });
+      });
+    }
+
+    function setReco(el) {
+      document.querySelectorAll('#reco .radio-btn').forEach(b => b.classList.remove('active'));
+      el.classList.add('active');
+      recoVal = el.dataset.v;
+    }
+
+    async function submit() {
+      const err = document.getElementById('err');
+      err.style.display = 'none';
+      const btn = document.getElementById('btn');
+
+      const g = Number(document.getElementById('s_global').dataset.val);
+      const f = Number(document.getElementById('s_formateur').dataset.val);
+      const c = Number(document.getElementById('s_contenu').dataset.val);
+      const comment = document.getElementById('comment').value;
+
+      if (!g || !f || !c) {
+        err.textContent = 'Merci de noter les 3 critères.';
+        err.style.display = 'block'; return;
+      }
+      if (recoVal === null) {
+        err.textContent = 'Merci d\'indiquer si vous recommanderiez ce stage.';
+        err.style.display = 'block'; return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = 'Envoi…';
+
+      try {
+        const res = await fetch('/api/satisfaction', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            token, score_global: g, score_formateur: f,
+            score_contenu: c, recommande: recoVal === 'true', commentaire: comment
+          })
+        });
+        const data = await res.json();
+        if (data.success) {
+          showState('🎯', 'Merci pour votre retour.', 'Vos réponses contribuent à l\'amélioration des formations Vital Protect.');
+        } else {
+          err.textContent = data.error || 'Une erreur est survenue.';
+          err.style.display = 'block';
+          btn.disabled = false; btn.textContent = 'Envoyer mon avis';
+        }
+      } catch(e) {
+        err.textContent = 'Erreur réseau. Veuillez réessayer.';
+        err.style.display = 'block';
+        btn.disabled = false; btn.textContent = 'Envoyer mon avis';
+      }
+    }
+
+    (async () => {
+      if (!token) { showState('⚠', 'QR code invalide', 'Ce lien n\'est pas valide.'); return; }
+      try {
+        const res = await fetch('/api/satisfaction?token=' + encodeURIComponent(token));
+        const data = await res.json();
+        if (data.success) renderForm(data.stage);
+        else showState('⚠', 'QR code invalide', data.error || 'Ce QR code n\'est pas valide.');
+      } catch(e) { showState('⚠', 'Erreur', 'Impossible de charger le formulaire.'); }
+    })();
+  </script>
+</body>
+</html>

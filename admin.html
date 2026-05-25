@@ -564,6 +564,7 @@
         <button class="nav-btn" data-tab="formations">Formations formateur</button>
         <button class="nav-btn" data-tab="reversements">Reversements formateurs</button>
         <button class="nav-btn" data-tab="finances">Pilotage financier</button>
+        <button class="nav-btn" data-tab="satisfaction">Satisfaction participants</button>
       </div>
 
       <div class="sidebar-footer">
@@ -1454,7 +1455,24 @@
           </div>
         </div>
       </section>
-    </main>
+    
+
+      <section id="tab-satisfaction" class="tab-panel">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h2>Satisfaction participants</h2>
+              <p>Résultats des questionnaires de satisfaction. Les participants scannent le QR code affiché par le formateur en fin de stage.</p>
+            </div>
+            <button class="btn btn-secondary btn-small" onclick="loadSatisfaction()">Actualiser</button>
+          </div>
+          <div class="card-body">
+            <div id="satisfactionWrap"><p class="muted">Cliquez sur "Satisfaction participants" pour charger les données.</p></div>
+          </div>
+        </div>
+      </section>
+
+</main>
   </div>
 
   <script src="/fr-location.js"></script>
@@ -2397,7 +2415,10 @@
     }
 
     document.querySelectorAll(".nav-btn").forEach(btn => {
-      btn.addEventListener("click", () => setActiveTab(btn.dataset.tab));
+      btn.addEventListener("click", () => {
+      setActiveTab(btn.dataset.tab);
+      if (btn.dataset.tab === "satisfaction") loadSatisfaction();
+    });
     });
 
     function renderReservations(rows) {
@@ -5294,6 +5315,74 @@ VITAL PROTECT`
       await loadTrainerSessions();
       await loadTrainerDocuments();
     }
-  </script>
+  
+    // ── Satisfaction ────────────────────────────────────────────────────────
+    async function loadSatisfaction() {
+      const wrap = document.getElementById("satisfactionWrap");
+      wrap.innerHTML = "<div class=\"loading\">Chargement...</div>";
+      try {
+        const res = await adminPost({ action: "get_satisfaction" });
+        const data = await res.json();
+        if (!data.success) throw new Error(data.error || "Erreur");
+        renderSatisfaction(data.summary || [], data.responses || []);
+      } catch (err) {
+        wrap.innerHTML = `<p class="error">Erreur : ${escapeHtml(err.message)}</p>`;
+      }
+    }
+
+    function renderSatisfaction(summary, responses) {
+      const wrap = document.getElementById("satisfactionWrap");
+
+      if (!summary.length && !responses.length) {
+        wrap.innerHTML = "<p class=\"muted\">Aucune donnée de satisfaction disponible. Les questionnaires sont envoyés automatiquement lorsqu'un stage est marqué <strong>Réalisé</strong>.</p>";
+        return;
+      }
+
+      // Summary table
+      const rows = summary.length ? summary.map((s, i) => {
+        const fill = i % 2 === 0 ? "" : "background:#f8faff";
+        const dateStr = s.stage_date ? new Date(s.stage_date).toLocaleDateString("fr-FR", { day: "numeric", month: "short", year: "numeric" }) : "—";
+        const stars = (val) => val ? "★".repeat(Math.round(val)) + "☆".repeat(5 - Math.round(val)) : "—";
+        return `<tr style="${fill}">
+          <td>${escapeHtml(s.module_name || "—")}</td>
+          <td>${dateStr}</td>
+          <td>${escapeHtml(s.city || "—")}</td>
+          <td style="text-align:center">${s.total_reponses || 0} / ${s.total_envois || 0}<br/><small class="muted">${s.taux_reponse_pct || 0}%</small></td>
+          <td style="text-align:center;color:#f5a623">${stars(s.moy_global)}<br/><small style="color:#666">${s.moy_global ? Number(s.moy_global).toFixed(1) + "/5" : "—"}</small></td>
+          <td style="text-align:center;color:#f5a623">${stars(s.moy_formateur)}<br/><small style="color:#666">${s.moy_formateur ? Number(s.moy_formateur).toFixed(1) + "/5" : "—"}</small></td>
+          <td style="text-align:center;color:#f5a623">${stars(s.moy_contenu)}<br/><small style="color:#666">${s.moy_contenu ? Number(s.moy_contenu).toFixed(1) + "/5" : "—"}</small></td>
+          <td style="text-align:center">${s.pct_recommande !== null ? s.pct_recommande + "%" : "—"}</td>
+        </tr>`;
+      }).join("") : `<tr><td colspan="8" class="muted" style="text-align:center">Aucun résultat agrégé disponible.</td></tr>`;
+
+      // Comments
+      const comments = responses.filter(r => r.commentaire && r.submitted_at).slice(0, 20);
+      const commentRows = comments.length ? comments.map(r => {
+        const dateStr = r.submitted_at ? new Date(r.submitted_at).toLocaleDateString("fr-FR") : "—";
+        return `<div style="padding:12px 16px;border:1px solid #e8eef5;border-radius:8px;margin-bottom:8px;">
+          <div style="font-size:12px;color:#888;margin-bottom:6px;">${dateStr} · Global ${r.score_global}/5 · Formateur ${r.score_formateur}/5 · Contenu ${r.score_contenu}/5 · ${r.recommande ? "✓ Recommande" : "✗ Ne recommande pas"}</div>
+          <div style="font-size:14px;color:#333;">${escapeHtml(r.commentaire)}</div>
+        </div>`;
+      }).join("") : "<p class=\"muted\">Aucun commentaire pour le moment.</p>";
+
+      wrap.innerHTML = `
+        <div class="table-wrap" style="margin-bottom:28px">
+          <table>
+            <thead><tr>
+              <th>Module</th><th>Date</th><th>Ville</th>
+              <th style="text-align:center">Réponses</th>
+              <th style="text-align:center">Global</th>
+              <th style="text-align:center">Formateur</th>
+              <th style="text-align:center">Contenu</th>
+              <th style="text-align:center">Recommande</th>
+            </tr></thead>
+            <tbody>${rows}</tbody>
+          </table>
+        </div>
+        ${comments.length ? `<h3 style="font-size:15px;font-weight:700;color:#1F3864;margin:0 0 12px">Commentaires récents</h3>${commentRows}` : ""}
+      `;
+    }
+
+</script>
 </body>
 </html>

@@ -19,7 +19,76 @@
     html.vpl-route-preload-transition,html.vpl-route-preload-transition body{background:#2f6f9f!important}
     html.vpl-route-preload-transition::before{content:"";position:fixed;inset:0;z-index:2147482998;pointer-events:none;background-color:#2f6f9f;background-image:var(--vpl-transition-image);background-position:center;background-size:var(--vpl-transition-bg-size);background-repeat:no-repeat;opacity:1}
     @media (max-width: 768px), (pointer: coarse) and (orientation: portrait){html{--vpl-transition-image:url("transition-screen-mobile.jpg");--vpl-transition-bg-size:cover}}
-  </style>
+  
+    /* ─── Certifications section ──────────────────────────────────────── */
+    .vp-certif-section {
+      background: #f8faff;
+      border: 1px solid rgba(31,56,100,0.12);
+      border-radius: 10px;
+      padding: 20px;
+      margin-top: 20px;
+    }
+    .vp-certif-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+    .vp-certif-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #1F3864;
+      margin: 0;
+    }
+    .vp-certif-count {
+      font-size: 12px;
+      font-weight: 600;
+      color: #fff;
+      background: #1F3864;
+      padding: 3px 10px;
+      border-radius: 20px;
+    }
+    .vp-certif-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .vp-certif-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 14px;
+      background: #fff;
+      border: 1px solid rgba(31,56,100,0.10);
+      border-radius: 8px;
+    }
+    .vp-certif-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: #1F3864;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 900;
+      flex-shrink: 0;
+    }
+    .vp-certif-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: #1F3864;
+    }
+    .vp-certif-meta {
+      font-size: 12px;
+      color: #777;
+      margin-top: 2px;
+    }
+
+    /* QR Avis button */
+    a.btn { display: inline-block; text-decoration: none; text-align: center; }
+</style>
   <link rel="preload" as="image" href="transition-screen.png" media="(min-width: 769px)" />
   <link rel="preload" as="image" href="transition-screen-mobile.jpg" media="(max-width: 768px), (pointer: coarse) and (orientation: portrait)" />
   <script src="/page-transition.js"></script>
@@ -1456,7 +1525,38 @@
         });
     }
 
-    function buildTrainerPayoutsSection() {
+    
+    function buildCertificationsSection(modules) {
+      if (!modules || modules.length === 0) {
+        return `<div class="vp-certif-section">
+          <div class="vp-certif-header">
+            <h3 class="vp-certif-title">Mes habilitations</h3>
+          </div>
+          <p class="muted" style="margin-top:12px">Aucun module certifié pour le moment. Vos habilitations apparaîtront ici après validation par Vital Protect.</p>
+        </div>`;
+      }
+      const rows = modules.map(m => {
+        const name = escapeHtml(m.module_name || m.module_slug || 'Module');
+        const date = m.validated_at ? new Date(m.validated_at).toLocaleDateString('fr-FR', { year: 'numeric', month: 'long' }) : '—';
+        const expiry = m.expires_at ? new Date(m.expires_at).toLocaleDateString('fr-FR', { year: 'numeric', month: 'long' }) : 'Sans date d'expiration';
+        return `<div class="vp-certif-row">
+          <div class="vp-certif-badge">✓</div>
+          <div class="vp-certif-info">
+            <div class="vp-certif-name">${name}</div>
+            <div class="vp-certif-meta">Certifié en ${date} · ${expiry}</div>
+          </div>
+        </div>`;
+      }).join('');
+      return `<div class="vp-certif-section">
+        <div class="vp-certif-header">
+          <h3 class="vp-certif-title">Mes habilitations</h3>
+          <span class="vp-certif-count">${modules.length} module${modules.length > 1 ? 's' : ''}</span>
+        </div>
+        <div class="vp-certif-list">${rows}</div>
+      </div>`;
+    }
+
+function buildTrainerPayoutsSection() {
       const rows = buildTrainerPayoutRows();
       const totalScheduled = rows
         .filter(row => row.status !== "paid" && row.status !== "blocked" && row.status !== "validated")
@@ -1776,6 +1876,8 @@
 
           ${buildTrainerPayoutsSection()}
 
+          ${buildCertificationsSection(data.certified_modules || [])}
+
           ${stages.length ? `
             <div class="dashboard-toolbar">
               <select id="trainerStageFilter" aria-label="Filtrer mes stages">
@@ -1903,6 +2005,7 @@
                 <button class="btn btn-secondary btn-small" type="button" data-stage-contact="${escapeAttr(stage.id)}" ${canContact ? "" : "disabled"}>Contacter</button>
                 ${canSubmit ? `<button class="btn btn-primary btn-small" type="button" data-stage-submit="${escapeAttr(stage.id)}">Soumettre</button>` : ""}
                 ${canCancel ? `<button class="btn btn-secondary btn-small" type="button" data-stage-cancel="${escapeAttr(stage.id)}">Annuler</button>` : ""}
+                ${stage.satisfaction_token ? `<a class="btn btn-secondary btn-small" href="/qr-satisfaction.html?token=${escapeAttr(stage.satisfaction_token)}" target="_blank" title="Afficher le QR code satisfaction">QR Avis</a>` : ""}
               </div>
             </td>
           </tr>

@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>QR Code satisfaction — Vital Protect</title>
+  <!-- QR code library (CDN, no server needed) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: Arial, sans-serif;
+      background: #0a1628;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .card {
+      background: #fff;
+      border-radius: 20px;
+      max-width: 480px;
+      width: 100%;
+      padding: 40px 36px;
+      text-align: center;
+    }
+    .logo { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 28px; }
+    .logo-mark { width: 32px; height: 32px; background: #1F3864; border-radius: 7px; }
+    .logo-text { font-size: 15px; font-weight: 800; color: #1F3864; letter-spacing: 0.05em; }
+    .stage-label {
+      background: #f0f5ff;
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin-bottom: 28px;
+    }
+    .stage-label strong { display: block; font-size: 15px; color: #1F3864; margin-bottom: 2px; }
+    .stage-label span { font-size: 13px; color: #888; }
+    h1 { font-size: 22px; font-weight: 800; color: #1F3864; margin-bottom: 8px; }
+    .instruction { font-size: 15px; color: #555; margin-bottom: 28px; line-height: 1.5; }
+    #qr-container {
+      display: inline-block;
+      padding: 18px;
+      background: #fff;
+      border: 3px solid #1F3864;
+      border-radius: 12px;
+      margin-bottom: 24px;
+    }
+    #qr-container canvas, #qr-container img { display: block; }
+    .url-copy {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 28px;
+    }
+    .url-input {
+      flex: 1;
+      border: 1px solid #dde3ef;
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-size: 12px;
+      color: #888;
+      background: #f8faff;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .btn-copy {
+      background: #1F3864;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 16px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background 0.15s;
+    }
+    .btn-copy:hover { background: #2E5FA3; }
+    .btn-copy.copied { background: #1A6B2E; }
+    .note {
+      font-size: 13px;
+      color: #aaa;
+      line-height: 1.5;
+    }
+    .note strong { color: #555; }
+    .loading { padding: 60px; color: #aaa; }
+    .error { padding: 40px; text-align: center; }
+    .error h2 { font-size: 18px; color: #c0392b; margin-bottom: 8px; }
+    .error p { font-size: 14px; color: #888; }
+    .back-link { display: inline-block; margin-top: 20px; font-size: 13px; color: #1F3864; text-decoration: none; font-weight: 600; }
+    .back-link:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="logo">
+      <div class="logo-mark"></div>
+      <div class="logo-text">VITAL PROTECT</div>
+    </div>
+    <div id="root"><div class="loading">Chargement…</div></div>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(location.search);
+    const token = params.get('token');
+    const root = document.getElementById('root');
+
+    function html(str) {
+      const d = document.createElement('div');
+      d.textContent = str || '';
+      return d.innerHTML;
+    }
+
+    function renderQR(stage, url) {
+      const name = html(stage.module_name || 'Stage Vital Protect');
+      const date = stage.stage_date
+        ? new Date(stage.stage_date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })
+        : '';
+      const city = stage.city ? ' · ' + html(stage.city) : '';
+
+      root.innerHTML = `
+        <div class="stage-label">
+          <strong>${name}</strong>
+          <span>${date}${city}</span>
+        </div>
+        <h1>Questionnaire de satisfaction</h1>
+        <p class="instruction">Montrez ce QR code à vos participants<br/>en fin de stage. Chacun le scanne<br/>et répond en 2 minutes.</p>
+        <div id="qr-container"></div>
+        <div class="url-copy">
+          <input class="url-input" id="urlInput" value="${html(url)}" readonly />
+          <button class="btn-copy" id="btnCopy" onclick="copyUrl()">Copier</button>
+        </div>
+        <p class="note">
+          <strong>Anonyme</strong> — les participants ne s'identifient pas.<br/>
+          Le QR code est valable pour tous les passages de ce stage.
+        </p>
+        <a class="back-link" href="/espace-formateur.html">← Retour à mon espace</a>
+      `;
+
+      // Generate QR
+      new QRCode(document.getElementById('qr-container'), {
+        text: url,
+        width: 220,
+        height: 220,
+        colorDark: '#1F3864',
+        colorLight: '#ffffff',
+        correctLevel: QRCode.CorrectLevel.M
+      });
+    }
+
+    function copyUrl() {
+      const input = document.getElementById('urlInput');
+      const btn = document.getElementById('btnCopy');
+      input.select();
+      document.execCommand('copy');
+      btn.textContent = '✓ Copié';
+      btn.classList.add('copied');
+      setTimeout(() => {
+        btn.textContent = 'Copier';
+        btn.classList.remove('copied');
+      }, 2000);
+    }
+
+    (async () => {
+      if (!token) {
+        root.innerHTML = `<div class="error"><h2>QR code invalide</h2><p>Ce lien n'est pas valide.</p><a class="back-link" href="/espace-formateur.html">← Retour</a></div>`;
+        return;
+      }
+
+      // Verify token via API
+      try {
+        const res = await fetch('/api/satisfaction?token=' + encodeURIComponent(token));
+        const data = await res.json();
+        if (!data.success) {
+          root.innerHTML = `<div class="error"><h2>QR code invalide</h2><p>${data.error || 'Ce QR code n\'est pas valide.'}</p><a class="back-link" href="/espace-formateur.html">← Retour</a></div>`;
+          return;
+        }
+        const url = location.origin + '/satisfaction.html?token=' + encodeURIComponent(token);
+        renderQR(data.stage, url);
+      } catch(e) {
+        root.innerHTML = `<div class="error"><h2>Erreur</h2><p>Impossible de charger le QR code.</p><a class="back-link" href="/espace-formateur.html">← Retour</a></div>`;
+      }
+    })();
+  </script>
+</body>
+</html>

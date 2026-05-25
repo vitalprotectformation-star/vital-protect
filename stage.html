@@ -23,7 +23,63 @@
     .vp-marketplace-card{background-size:cover!important;background-position:center center!important;background-repeat:no-repeat!important;}
     .vp-marketplace-card > .vp-marketplace-card-content{position:absolute!important;left:0!important;right:0!important;bottom:0!important;top:auto!important;z-index:9999!important;color:#fff!important;opacity:1!important;visibility:visible!important;display:flex!important;}
     .vp-marketplace-card > .vp-marketplace-card-content *{opacity:1!important;visibility:visible!important;}
-  </style>
+  
+    /* ─── Garanties formateur ─────────────────────────────────────────── */
+    .vp-guarantees-section {
+      padding: 32px 0;
+      background: rgba(31, 56, 100, 0.06);
+      border-top: 1px solid rgba(31, 56, 100, 0.10);
+      border-bottom: 1px solid rgba(31, 56, 100, 0.10);
+    }
+    .vp-guarantees-band {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      flex-wrap: wrap;
+    }
+    .vp-guarantees-label {
+      font-size: 13px;
+      font-weight: 700;
+      color: #1F3864;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      white-space: nowrap;
+      opacity: 0.7;
+    }
+    .vp-guarantees-items {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px 24px;
+      flex: 1;
+    }
+    .vp-guarantee-item {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 14px;
+      color: #1F3864;
+      font-weight: 500;
+    }
+    .vp-guarantee-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #1F3864;
+      color: #fff;
+      font-size: 10px;
+      font-weight: 900;
+      flex-shrink: 0;
+    }
+    @media (max-width: 640px) {
+      .vp-guarantees-band { gap: 16px; }
+      .vp-guarantees-label { width: 100%; }
+      .vp-guarantees-items { gap: 10px 16px; }
+      .vp-guarantee-item { font-size: 13px; }
+    }
+</style>
   <link rel="preload" as="image" href="transition-screen.png" media="(min-width: 769px)" />
   <link rel="preload" as="image" href="transition-screen-mobile.jpg" media="(max-width: 768px), (pointer: coarse) and (orientation: portrait)" />
   <script src="/page-transition.js"></script>
@@ -1177,7 +1233,39 @@
       </div>
     </section>
 
-    <section id="marketplace" class="vp-marketplace-section">
+    
+    <!-- ═══ GARANTIES FORMATEUR ═══════════════════════════════════════════ -->
+    <section class="vp-guarantees-section">
+      <div class="vpl-container">
+        <div class="vp-guarantees-band">
+          <div class="vp-guarantees-label">Chaque formateur Vital Protect</div>
+          <div class="vp-guarantees-items">
+            <div class="vp-guarantee-item">
+              <span class="vp-guarantee-icon">✓</span>
+              <span>Certifié module par module</span>
+            </div>
+            <div class="vp-guarantee-item">
+              <span class="vp-guarantee-icon">✓</span>
+              <span>Casier judiciaire vérifié</span>
+            </div>
+            <div class="vp-guarantee-item">
+              <span class="vp-guarantee-icon">✓</span>
+              <span>RC professionnelle valide</span>
+            </div>
+            <div class="vp-guarantee-item">
+              <span class="vp-guarantee-icon">✓</span>
+              <span>Certification de secourisme</span>
+            </div>
+            <div class="vp-guarantee-item">
+              <span class="vp-guarantee-icon">✓</span>
+              <span>Charte pédagogique signée</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+<section id="marketplace" class="vp-marketplace-section">
       <div class="vpl-container">
         <div class="section-head section-head--center"><span class="eyebrow">Trouver un stage</span><h2 id="marketplaceTitle">Choisissez d’abord votre zone, puis le module qui vous intéresse.</h2><p id="marketplaceIntro">La liste sépare les parcours : stages tout public, sessions entreprise et sessions formateur. Choisissez un parcours pour garder une navigation claire.</p></div>
         <div class="vp-marketplace-filters" aria-label="Rechercher les stages disponibles">
