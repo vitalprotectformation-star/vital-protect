@@ -2772,6 +2772,27 @@ async function handleUpdateTrainerModule(req, res) {
   });
 }
 
+
+async function handleGetSatisfaction(req, res) {
+  const { data, error } = await supabase
+    .from("satisfaction_summary")
+    .select("*");
+
+  if (error) {
+    // Fallback if view doesn't exist yet
+    const { data: raw, error: rawError } = await supabase
+      .from("satisfaction_responses")
+      .select("*, stages(module_name, stage_date, city)")
+      .order("created_at", { ascending: false })
+      .limit(200);
+
+    if (rawError) return res.status(500).json({ error: rawError.message });
+    return res.status(200).json({ success: true, responses: raw || [], summary: [] });
+  }
+
+  return res.status(200).json({ success: true, summary: data || [] });
+}
+
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
@@ -2880,6 +2901,10 @@ export default async function handler(req, res) {
 
     if (action === "update_trainer_module") {
       return await handleUpdateTrainerModule(req, res);
+    }
+
+    if (action === "get_satisfaction") {
+      return await handleGetSatisfaction(req, res);
     }
 
     return res.status(400).json({ error: "action inconnue" });

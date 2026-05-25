@@ -1620,6 +1620,15 @@ async function handleDashboard(req, res, access) {
   const realizedStages12Months = stageRows.filter(stage => isRealizedStage(stage) && isInLast12Months(stage.stage_date)).length;
   const commissionTier = getCommissionTier(realizedStages12Months);
 
+  // Fetch certified modules
+  const { data: certifiedModulesRaw } = await supabase
+    .from("trainer_modules")
+    .select("module_name, module_slug, status, validated_at, expires_at")
+    .eq("trainer_id", trainer.id)
+    .eq("status", "active")
+    .order("validated_at", { ascending: true });
+  const certifiedModules = certifiedModulesRaw || [];
+
   if (!stageIds.length) {
     return res.status(200).json({
       success: true,
@@ -1631,6 +1640,7 @@ async function handleDashboard(req, res, access) {
       stripe_connect: stripeConnect,
       stages: [],
       reservations: [],
+      certified_modules: certifiedModules,
       stats: {
         stages_total: 0,
         stages_upcoming: 0,
@@ -1719,7 +1729,8 @@ async function handleDashboard(req, res, access) {
       habilitation_minimum_required: 2,
       habilitation_at_risk: realizedStages12Months < 2,
       next_payout_day: PAYOUT_DAY_OF_MONTH
-    }
+    },
+    certified_modules: certifiedModules
   });
 }
 
