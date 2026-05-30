@@ -20,74 +20,27 @@
     html.vpl-route-preload-transition::before{content:"";position:fixed;inset:0;z-index:2147482998;pointer-events:none;background-color:#2f6f9f;background-image:var(--vpl-transition-image);background-position:center;background-size:var(--vpl-transition-bg-size);background-repeat:no-repeat;opacity:1}
     @media (max-width: 768px), (pointer: coarse) and (orientation: portrait){html{--vpl-transition-image:url("transition-screen-mobile.jpg");--vpl-transition-bg-size:cover}}
   
-    /* ─── Certifications section ──────────────────────────────────────── */
-    .vp-certif-section {
-      background: #f8faff;
-      border: 1px solid rgba(31,56,100,0.12);
-      border-radius: 10px;
-      padding: 20px;
-      margin-top: 20px;
+    /* ─── Commission block ─────────────────────────────────────────────── */
+    .vp-commission-block { border: 1px solid rgba(31,56,100,0.12); border-radius: 10px; overflow: hidden; margin-bottom: 20px; }
+    .vp-commission-current { padding: 16px 20px; background: #f0f5ff; border-bottom: 1px solid rgba(31,56,100,0.10); }
+    .vp-commission-current.is-warning { background: #fff8e6; }
+    .vp-commission-label { font-size: 12px; font-weight: 700; color: #1F3864; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; }
+    .vp-commission-rate { font-size: 22px; font-weight: 800; color: #1F3864; }
+    .vp-commission-sub { font-size: 12px; color: #888; margin-top: 4px; }
+    .vp-commission-tiers { display: flex; }
+    .vp-commission-tier { flex: 1; padding: 12px 14px; border-right: 1px solid rgba(31,56,100,0.08); text-align: center; }
+    .vp-commission-tier:last-child { border-right: none; }
+    .vp-commission-tier.is-active { background: #1F3864; }
+    .vp-commission-tier.is-active .vp-tier-name,
+    .vp-commission-tier.is-active .vp-tier-rate,
+    .vp-commission-tier.is-active .vp-tier-cond { color: #fff; }
+    .vp-tier-name { display: block; font-size: 11px; font-weight: 700; color: #888; text-transform: uppercase; margin-bottom: 4px; }
+    .vp-tier-rate { display: block; font-size: 18px; font-weight: 800; color: #1F3864; }
+    .vp-tier-cond { display: block; font-size: 11px; color: #aaa; margin-top: 3px; }
+    @media (max-width: 500px) {
+      .vp-commission-tiers { flex-direction: column; }
+      .vp-commission-tier { border-right: none; border-bottom: 1px solid rgba(31,56,100,0.08); }
     }
-    .vp-certif-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 14px;
-    }
-    .vp-certif-title {
-      font-size: 15px;
-      font-weight: 700;
-      color: #1F3864;
-      margin: 0;
-    }
-    .vp-certif-count {
-      font-size: 12px;
-      font-weight: 600;
-      color: #fff;
-      background: #1F3864;
-      padding: 3px 10px;
-      border-radius: 20px;
-    }
-    .vp-certif-list {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-    .vp-certif-row {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 10px 14px;
-      background: #fff;
-      border: 1px solid rgba(31,56,100,0.10);
-      border-radius: 8px;
-    }
-    .vp-certif-badge {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      background: #1F3864;
-      color: #fff;
-      font-size: 13px;
-      font-weight: 900;
-      flex-shrink: 0;
-    }
-    .vp-certif-name {
-      font-size: 14px;
-      font-weight: 600;
-      color: #1F3864;
-    }
-    .vp-certif-meta {
-      font-size: 12px;
-      color: #777;
-      margin-top: 2px;
-    }
-
-    /* QR Avis button */
-    a.btn { display: inline-block; text-decoration: none; text-align: center; }
 </style>
   <link rel="preload" as="image" href="transition-screen.png" media="(min-width: 769px)" />
   <link rel="preload" as="image" href="transition-screen-mobile.jpg" media="(max-width: 768px), (pointer: coarse) and (orientation: portrait)" />
@@ -1525,38 +1478,7 @@
         });
     }
 
-    
-    function buildCertificationsSection(modules) {
-      if (!modules || modules.length === 0) {
-        return `<div class="vp-certif-section">
-          <div class="vp-certif-header">
-            <h3 class="vp-certif-title">Mes habilitations</h3>
-          </div>
-          <p class="muted" style="margin-top:12px">Aucun module certifié pour le moment. Vos habilitations apparaîtront ici après validation par Vital Protect.</p>
-        </div>`;
-      }
-      const rows = modules.map(m => {
-        const name = escapeHtml(m.module_name || m.module_slug || 'Module');
-        const date = m.validated_at ? new Date(m.validated_at).toLocaleDateString('fr-FR', { year: 'numeric', month: 'long' }) : '—';
-        const expiry = m.expires_at ? new Date(m.expires_at).toLocaleDateString('fr-FR', { year: 'numeric', month: 'long' }) : 'Sans date d'expiration';
-        return `<div class="vp-certif-row">
-          <div class="vp-certif-badge">✓</div>
-          <div class="vp-certif-info">
-            <div class="vp-certif-name">${name}</div>
-            <div class="vp-certif-meta">Certifié en ${date} · ${expiry}</div>
-          </div>
-        </div>`;
-      }).join('');
-      return `<div class="vp-certif-section">
-        <div class="vp-certif-header">
-          <h3 class="vp-certif-title">Mes habilitations</h3>
-          <span class="vp-certif-count">${modules.length} module${modules.length > 1 ? 's' : ''}</span>
-        </div>
-        <div class="vp-certif-list">${rows}</div>
-      </div>`;
-    }
-
-function buildTrainerPayoutsSection() {
+    function buildTrainerPayoutsSection() {
       const rows = buildTrainerPayoutRows();
       const totalScheduled = rows
         .filter(row => row.status !== "paid" && row.status !== "blocked" && row.status !== "validated")
@@ -1869,14 +1791,32 @@ function buildTrainerPayoutsSection() {
             </div>
           </div>
 
-          <div class="alert ${stats.habilitation_at_risk ? "alert-warning" : "alert-success"}">
-            <strong>${escapeHtml(stats.commission_label || "Niveau formateur")}</strong> — ${escapeHtml(stats.commission_description || "Commission calculée sur les stages réalisés sur 12 mois.")}
-            <br />Minimum habilitation : ${Number(stats.habilitation_minimum_required || 2)} stages réalisés sur 12 mois. Reversements préparés après stage, cycle mensuel le ${Number(stats.next_payout_day || 20)}.
+          <div class="vp-commission-block">
+            <div class="vp-commission-current ${stats.habilitation_at_risk ? "is-warning" : "is-ok"}">
+              <div class="vp-commission-label">${escapeHtml(stats.commission_label || "Niveau Lancement")}</div>
+              <div class="vp-commission-rate">${Math.round((stats.trainer_share_rate || 0.70) * 100)}&nbsp;% du prix HT</div>
+              <div class="vp-commission-sub">${stats.stages_realized_12_months || 0} stage${(stats.stages_realized_12_months || 0) > 1 ? "s" : ""} réalisé${(stats.stages_realized_12_months || 0) > 1 ? "s" : ""} sur les 12 derniers mois · Reversement le ${Number(stats.next_payout_day || 20)} du mois suivant</div>
+            </div>
+            <div class="vp-commission-tiers">
+              <div class="vp-commission-tier ${(stats.stages_realized_12_months || 0) < 6 ? "is-active" : ""}">
+                <span class="vp-tier-name">Lancement</span>
+                <span class="vp-tier-rate">70 %</span>
+                <span class="vp-tier-cond">0–5 stages / 12 mois</span>
+              </div>
+              <div class="vp-commission-tier ${(stats.stages_realized_12_months || 0) >= 6 && (stats.stages_realized_12_months || 0) < 12 ? "is-active" : ""}">
+                <span class="vp-tier-name">Régulier</span>
+                <span class="vp-tier-rate">85 %</span>
+                <span class="vp-tier-cond">6–11 stages / 12 mois</span>
+              </div>
+              <div class="vp-commission-tier ${(stats.stages_realized_12_months || 0) >= 12 ? "is-active" : ""}">
+                <span class="vp-tier-name">Mensuel</span>
+                <span class="vp-tier-rate">92,5 %</span>
+                <span class="vp-tier-cond">12+ stages / 12 mois</span>
+              </div>
+            </div>
           </div>
 
           ${buildTrainerPayoutsSection()}
-
-          ${buildCertificationsSection(data.certified_modules || [])}
 
           ${stages.length ? `
             <div class="dashboard-toolbar">
@@ -2005,7 +1945,6 @@ function buildTrainerPayoutsSection() {
                 <button class="btn btn-secondary btn-small" type="button" data-stage-contact="${escapeAttr(stage.id)}" ${canContact ? "" : "disabled"}>Contacter</button>
                 ${canSubmit ? `<button class="btn btn-primary btn-small" type="button" data-stage-submit="${escapeAttr(stage.id)}">Soumettre</button>` : ""}
                 ${canCancel ? `<button class="btn btn-secondary btn-small" type="button" data-stage-cancel="${escapeAttr(stage.id)}">Annuler</button>` : ""}
-                ${stage.satisfaction_token ? `<a class="btn btn-secondary btn-small" href="/qr-satisfaction.html?token=${escapeAttr(stage.satisfaction_token)}" target="_blank" title="Afficher le QR code satisfaction">QR Avis</a>` : ""}
               </div>
             </td>
           </tr>
@@ -3097,6 +3036,28 @@ Date fin habilitation : ${escapeHtml(trainer.certification_expiry || "—")}</di
     document.getElementById("headerLogoutBtn").addEventListener("click", logoutTrainer);
 
     load();
-  </script>
+  
+    // Handle affiliation=success param
+    (function() {
+      const params = new URLSearchParams(location.search);
+      if (params.get('affiliation') === 'cancel') {
+        const toast = document.createElement('div');
+        toast.style.cssText = 'position:fixed;top:20px;right:20px;background:#666;color:#fff;padding:14px 20px;border-radius:10px;font-size:14px;font-weight:600;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,0.15);max-width:320px;line-height:1.4;';
+        toast.innerHTML = 'Renouvellement annulé. Votre affiliation reste active jusqu\'à sa date d\'expiration.';
+        document.body.appendChild(toast);
+        setTimeout(() => { toast.style.transition = 'opacity 0.5s'; toast.style.opacity = '0'; setTimeout(() => toast.remove(), 500); }, 3500);
+        history.replaceState({}, '', location.pathname);
+      }
+      if (params.get('affiliation') === 'success') {
+        const toast = document.createElement('div');
+        toast.style.cssText = 'position:fixed;top:20px;right:20px;background:#1F3864;color:#fff;padding:14px 20px;border-radius:10px;font-size:14px;font-weight:600;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,0.15);max-width:320px;line-height:1.4;';
+        toast.innerHTML = '✓&nbsp;&nbsp;<strong>Affiliation renouvelée</strong><br/><span style="font-weight:400;opacity:0.85">Votre accès à la plateforme est actif pour 12 mois.</span>';
+        document.body.appendChild(toast);
+        setTimeout(() => { toast.style.transition = 'opacity 0.5s'; toast.style.opacity = '0'; setTimeout(() => toast.remove(), 500); }, 4000);
+        history.replaceState({}, '', location.pathname);
+      }
+    })();
+
+</script>
 </body>
 </html>
