@@ -1,4 +1,52 @@
 import { createClient } from "@supabase/supabase-js";
+import { Resend } from "resend";
+
+const resend = new Resend(process.env.RESEND_API_KEY);
+const APP_URL = process.env.APP_URL || "https://vital-protect.fr";
+
+async function sendValidationEmail(trainer, trainerModules) {
+  try {
+    if (!trainer?.email) return;
+
+    const firstName = trainer.first_name ? `, ${trainer.first_name}` : "";
+    const moduleList = trainerModules.map(m => `<li>${m.module_name || m.module_slug}</li>`).join("");
+    const loginUrl = `${APP_URL}/formateur-login.html`;
+
+    await resend.emails.send({
+      from: "Vital Protect <noreply@vital-protect.fr>",
+      to: trainer.email,
+      subject: "Votre dossier formateur Vital Protect a été validé",
+      html: `
+        <div style="font-family:Arial,sans-serif;max-width:560px;margin:0 auto;padding:32px 24px;background:#fff;">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:28px;">
+            <div style="width:28px;height:28px;background:#1F3864;border-radius:5px;"></div>
+            <strong style="color:#1F3864;font-size:15px;letter-spacing:0.04em;">VITAL PROTECT</strong>
+          </div>
+          <h2 style="color:#1F3864;font-size:20px;margin:0 0 16px;">Votre dossier a été validé${firstName}.</h2>
+          <p style="color:#444;font-size:15px;line-height:1.6;margin:0 0 16px;">
+            Votre profil formateur Vital Protect est maintenant actif. Vous êtes habilité à animer les modules suivants :
+          </p>
+          <ul style="color:#1F3864;font-size:15px;line-height:1.8;margin:0 0 24px;padding-left:20px;">
+            ${moduleList}
+          </ul>
+          <p style="color:#444;font-size:15px;line-height:1.6;margin:0 0 24px;">
+            Connectez-vous à votre espace formateur pour planifier vos premières sessions et configurer votre profil de paiement.
+          </p>
+          <a href="${loginUrl}" style="display:inline-block;background:#1F3864;color:#fff;padding:14px 28px;border-radius:8px;text-decoration:none;font-weight:700;font-size:15px;">
+            Accéder à mon espace formateur →
+          </a>
+          <p style="color:#999;font-size:12px;margin-top:32px;line-height:1.5;">
+            Vital Protect — formations à la sécurité personnelle<br/>
+            Première année d'affiliation offerte. Recyclage annuel inclus.
+          </p>
+        </div>
+      `
+    });
+  } catch (err) {
+    console.error("sendValidationEmail error:", err);
+    // Non-bloquant
+  }
+}
 
 const supabase = createClient(
   process.env.SUPABASE_URL,
@@ -493,6 +541,9 @@ export default async function handler(req, res) {
       "activated"
     );
     await markRegistrationActivated(registration.id, trainerData.id, now);
+
+    // Envoyer l'email de validation au formateur
+    await sendValidationEmail(trainerData, trainerModules);
 
     return res.status(200).json({
       success: true,
