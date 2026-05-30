@@ -1048,6 +1048,70 @@ function constructStripeWebhookEvent(rawBody, signature) {
   throw lastError;
 }
 
+
+async function handleTrainerRetakeCheckout(session) {
+  const metadata = session.metadata || {};
+  const email = normalizeEmail(metadata.email || session.customer_email || "");
+  const moduleName = sanitizeText(metadata.retake_module || "");
+
+  if (!email || !moduleName) {
+    console.error("handleTrainerRetakeCheckout: email ou module manquant", metadata);
+    return;
+  }
+
+  // Trouver le formateur
+  const { data: trainer, error: trainerError } = await supabase
+    .from("trainers")
+    .select("id, email, first_name, last_name")
+    .ilike("email", email)
+    .maybeSingle();
+
+  if (trainerError || !trainer) {
+    console.error("handleTrainerRetakeCheckout: formateur introuvable pour", email);
+    return;
+  }
+
+  // Remettre le module en statut "pending_retake" pour qu'il puisse se réinscrire
+  const { error: updateError } = await supabase
+    .from("trainer_modules")
+    .update({ status: "pending_retake" })
+    .eq("trainer_id", trainer.id)
+    .eq("module_name", moduleName);
+
+  if (updateError) {
+    console.error("handleTrainerRetakeCheckout: update module error", updateError);
+    return;
+  }
+
+  // Email de confirmation
+  await sendEmailSafe({
+    from: "VITAL PROTECT <noreply@vital-protect.fr>",
+    to: email,
+    replyTo: "contact@vital-protect.fr",
+    subject: "Rachat de module confirmé — Vital Protect",
+    html: `
+      <div style="font-family:Arial,sans-serif;max-width:560px;margin:0 auto;padding:32px 24px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:28px;">
+          <div style="width:28px;height:28px;background:#1F3864;border-radius:5px;"></div>
+          <strong style="color:#1F3864;font-size:15px;">VITAL PROTECT</strong>
+        </div>
+        <h2 style="color:#1F3864;font-size:20px;margin:0 0 16px;">Rachat de module confirmé${trainer.first_name ? `, ${escapeHtml(trainer.first_name)}` : ""}.</h2>
+        <p style="color:#444;font-size:15px;line-height:1.6;margin:0 0 16px;">
+          Votre paiement pour le module <strong>${escapeHtml(moduleName)}</strong> a bien été enregistré.
+        </p>
+        <p style="color:#444;font-size:15px;line-height:1.6;margin:0 0 24px;">
+          Vous pouvez maintenant vous inscrire sur une nouvelle date de formation depuis votre espace formateur.
+        </p>
+        <a href="${process.env.APP_URL || "https://vital-protect.fr"}/espace-formateur.html" 
+           style="display:inline-block;background:#1F3864;color:#fff;padding:14px 28px;border-radius:8px;text-decoration:none;font-weight:700;">
+          Accéder à mon espace →
+        </a>
+      </div>
+    `
+  });
+}
+
+
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).send("Method not allowed");
@@ -1087,6 +1151,11 @@ export default async function handler(req, res) {
 
     if (type === "trainer") {
       await handleTrainerCheckout(session);
+      return res.status(200).json({ received: true });
+    }
+
+    if (type === "trainer_retake") {
+      await handleTrainerRetakeCheckout(session);
       return res.status(200).json({ received: true });
     }
 

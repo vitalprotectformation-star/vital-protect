@@ -513,25 +513,53 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: updateError.message });
     }
 
+    // Activer le formateur sur chaque module réussi indépendamment
+    // Un seul module réussi suffit à créer/activer le profil formateur
+    const passedModules = modules.filter(m => moduleResults[m] === "passed");
+    const failedModules = modules.filter(m => moduleResults[m] === "failed");
+
     let activation = null;
-    if (overallResult === "passed") {
+    if (passedModules.length > 0) {
       activation = await activateTrainerFromRegistration(
         {
           ...registration,
           training_module_results: moduleResults,
           training_result: overallResult
         },
-        modules
+        passedModules  // seulement les modules réussis
       );
+    }
+
+    // Désactiver les modules échoués si le formateur existe déjà
+    if (failedModules.length > 0 && activation?.trainer?.id) {
+      for (const moduleName of failedModules) {
+        await supabase
+          .from("trainer_modules")
+          .update({ status: "failed" })
+          .eq("trainer_id", activation.trainer.id)
+          .eq("module_name", moduleName);
+      }
+    }
+
+    // Message adapté selon le résultat
+    let message = "Résultat du module mis à jour.";
+    if (passedModules.length > 0 && failedModules.length === 0) {
+      message = "Tous les modules validés — formateur activé sur l'ensemble de ses modules.";
+    } else if (passedModules.length > 0) {
+      message = `Formateur activé sur ${passedModules.length} module(s). ${failedModules.length} module(s) échoué(s) — rachat requis pour retenter.`;
+    } else if (overallResult === "resit") {
+      message = "Rattrapage à planifier.";
+    } else if (overallResult === "failed") {
+      message = "Tous les modules échoués. Le candidat doit racheter les modules pour se représenter.";
     }
 
     return res.status(200).json({
       success: true,
-      message: overallResult === "passed"
-        ? "Module validé. Tous les modules sont validés : le formateur est activé et déplacé vers Formateurs actifs."
-        : "Résultat du module mis à jour.",
+      message,
       training_result: overallResult,
       training_module_results: moduleResults,
+      passed_modules: passedModules,
+      failed_modules: failedModules,
       activated: Boolean(activation),
       trainer: activation?.trainer || null,
       trainer_modules: activation?.trainer_modules || []

@@ -342,8 +342,48 @@ export default async function handler(req, res) {
       training_type,
       experience,
       message,
-      session_id
+      session_id,
+      retake_module    // présent si rachat d'un module échoué
     } = req.body || {};
+
+    // ── Mode rachat de module échoué ───────────────────────────────────────
+    if (retake_module) {
+      const cleanEmail = normalizeEmail(email);
+      const moduleName = sanitizeText(retake_module);
+      const origin = req.headers.origin || "https://vital-protect.fr";
+
+      if (!cleanEmail || !moduleName) {
+        return res.status(400).json({ error: "Email et module requis pour le rachat" });
+      }
+
+      const retakeSession = await stripe.checkout.sessions.create({
+        payment_method_types: ["card"],
+        mode: "payment",
+        customer_email: cleanEmail,
+        line_items: [{
+          price_data: {
+            currency: "eur",
+            product_data: {
+              name: `Rachat module VITAL PROTECT — ${moduleName}`,
+              description: "Accès à une nouvelle session de formation sur ce module. Tarif de reprise."
+            },
+            unit_amount: 24500  // 245€ = moitié du tarif 1 module (490€)
+          },
+          quantity: 1
+        }],
+        metadata: {
+          type: "trainer_retake",
+          email: cleanEmail,
+          retake_module: moduleName,
+          formula_price: "245"
+        },
+        success_url: \`\${origin}/espace-formateur.html?retake=success\`,
+        cancel_url: \`\${origin}/espace-formateur.html?retake=cancel\`
+      });
+
+      return res.status(200).json({ url: retakeSession.url });
+    }
+    // ── Fin mode rachat ────────────────────────────────────────────────────
 
     const cleanFirstName = sanitizeText(first_name);
     const cleanLastName = sanitizeText(last_name);
