@@ -377,8 +377,8 @@ export default async function handler(req, res) {
           retake_module: moduleName,
           formula_price: "245"
         },
-        success_url: \`\${origin}/espace-formateur.html?retake=success\`,
-        cancel_url: \`\${origin}/espace-formateur.html?retake=cancel\`
+        success_url: origin + "/espace-formateur.html?retake=success",
+        cancel_url: origin + "/espace-formateur.html?retake=cancel"
       });
 
       return res.status(200).json({ url: retakeSession.url });
