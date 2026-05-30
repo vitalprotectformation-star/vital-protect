@@ -3047,31 +3047,31 @@ ID candidat : ${escapeHtml(candidate.id || "—")}</div>
         { name: "Régulier",  rate: "85 %", cond: "6–11 stages / an", active: realized >= 6 && realized < 12 },
         { name: "Mensuel",   rate: "92,5 %", cond: "12+ stages / an", active: realized >= 12 },
       ];
-      return \`<div class="vp-commission-block">
+      return `<div class="vp-commission-block">
         <div class="vp-commission-current">
-          <div class="vp-commission-label">\${escapeHtml(label)}</div>
-          <div class="vp-commission-rate">\${Math.round(shareRate * 100)}&nbsp;% du prix HT</div>
-          <div class="vp-commission-sub">\${realized} stage\${realized !== 1 ? "s" : ""} réalisé\${realized !== 1 ? "s" : ""} sur 12 mois · Reversement le \${nextPayout} du mois suivant</div>
+          <div class="vp-commission-label">${escapeHtml(label)}</div>
+          <div class="vp-commission-rate">${Math.round(shareRate * 100)}&nbsp;% du prix HT</div>
+          <div class="vp-commission-sub">${realized} stage${realized !== 1 ? "s" : ""} réalisé${realized !== 1 ? "s" : ""} sur 12 mois · Reversement le ${nextPayout} du mois suivant</div>
         </div>
         <div class="vp-commission-tiers">
-          \${tiers.map(t => \`<div class="vp-commission-tier \${t.active ? "is-active" : ""}">
-            <span class="vp-tier-name">\${t.name}</span>
-            <span class="vp-tier-rate">\${t.rate}</span>
-            <span class="vp-tier-cond">\${t.cond}</span>
-          </div>\`).join("")}
+          ${tiers.map(t => `<div class="vp-commission-tier ${t.active ? "is-active" : ""}">
+            <span class="vp-tier-name">${t.name}</span>
+            <span class="vp-tier-rate">${t.rate}</span>
+            <span class="vp-tier-cond">${t.cond}</span>
+          </div>`).join("")}
         </div>
-      </div>\`;
+      </div>`;
     }
 
     function buildVpReversementsPanel() {
       const rows = buildTrainerPayoutRows();
       if (!rows || !rows.length) {
-        return \`<div class="card" style="padding:24px">
+        return `<div class="card" style="padding:24px">
           <h2 class="section-title">Reversements</h2>
           <p class="muted" style="margin-top:12px">Aucun reversement en attente. Les reversements apparaissent ici après chaque stage réalisé.</p>
-        </div>\`;
+        </div>`;
       }
-      return \`<div class="card" style="padding:18px">\${buildTrainerPayoutsSection()}</div>\`;
+      return `<div class="card" style="padding:18px">${buildTrainerPayoutsSection()}</div>`;
     }
 
 
