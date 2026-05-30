@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Accueil — Vital Protect</title>
+  <title>Reversements — Vital Protect</title>
   <link rel="stylesheet" href="/styles/tokens.css" />
   <link rel="stylesheet" href="/styles/base.css" />
   <link rel="stylesheet" href="/styles/components.css" />
@@ -836,10 +836,10 @@
       </div>
       <div class="vp-sidenav-label">COCKPIT FORMATEUR</div>
       <nav class="vp-sidenav-nav">
-        <a href="/espace-formateur.html" class="vp-sidenav-link active">⊞ Accueil</a>
+        <a href="/espace-formateur.html" class="vp-sidenav-link">⊞ Accueil</a>
         <a href="/formateur-dossier.html" class="vp-sidenav-link">📋 Mon dossier</a>
         <a href="/formateur-stages.html" class="vp-sidenav-link">📅 Mes stages</a>
-        <a href="/formateur-reversements.html" class="vp-sidenav-link">💶 Reversements</a>
+        <a href="/formateur-reversements.html" class="vp-sidenav-link active">💶 Reversements</a>
       </nav>
       <div class="vp-sidenav-footer">
         <button id="logoutBtn" class="vp-sidenav-logout" type="button">⇠ Déconnexion</button>
@@ -3326,75 +3326,37 @@ Date fin habilitation : ${escapeHtml(trainer.certification_expiry || "—")}</di
 
     async function renderFullActiveView(trainer, sessionEmail, certValid, affiliationValid) {
       const app = document.getElementById("app");
-      const affiliationFeedback = buildAffiliationFeedback();
-
       try { await loadTrainerDashboardData(); } catch(e) { latestTrainerDashboard = {}; }
-      window._dashboardData = window._dashboardData || {};
 
       app.innerHTML = `
         <div class="vp-page-header">
-          <div>
-            <h1 class="vp-page-title">${escapeHtml(trainer.first_name || "")} ${escapeHtml(trainer.last_name || "")}</h1>
-            <p class="vp-page-subtitle">${escapeHtml(trainer.email || "")}</p>
-          </div>
-          <div class="vp-page-actions">
-            <button id="refreshBtn" class="btn btn-secondary btn-small" type="button">Actualiser</button>
-          </div>
+          <h1 class="vp-page-title">Reversements</h1>
+          <p class="vp-page-subtitle">Historique de vos paiements</p>
         </div>
-
-        ${affiliationFeedback}
-
-        <div class="vp-status-badges">
-          <span class="badge ${certValid ? "badge-success" : "badge-danger"}">
-            Habilitation ${certValid ? "valide" : "expirée"} — ${formatDate(trainer.certification_expiry)}
-          </span>
-          <span class="badge ${affiliationValid ? "badge-success" : "badge-danger"}">
-            Affiliation ${affiliationValid ? "active" : "expirée"} — ${formatDate(trainer.affiliation_end)}
-          </span>
-        </div>
-
-        ${buildModulesSection(trainer)}
-
-        ${buildVpCommissionBlock()}
+        ${buildVpReversementsPanel()}
       `;
 
-      if (!affiliationValid) {
-        const btn = document.getElementById("renewAffiliationBtn");
-        if (btn) btn.style.display = "block";
-      }
-
-      document.getElementById("refreshBtn")?.addEventListener("click", () => load());
       attachLogoutButtons();
     }
 
     async function load() {
       const app = document.getElementById("app");
-
       let { data: { session } } = await supabase.auth.getSession();
       if (!session?.user?.email) {
         await new Promise(r => setTimeout(r, 1000));
         const retry = await supabase.auth.getSession();
         session = retry.data.session;
       }
-      if (!session?.user?.email) {
-        window.location.href = "/formateur-login.html";
-        return;
-      }
-
+      if (!session?.user?.email) { window.location.href = "/formateur-login.html"; return; }
       const sessionEmail = session.user.email.trim().toLowerCase();
-
       try {
         const dashboardData = await loadTrainerDashboardData();
-        window._dashboardData = dashboardData;
-
         if (dashboardData.account_type === "candidate") {
-          renderCandidateDashboard(dashboardData, sessionEmail);
+          window.location.href = "/espace-formateur.html";
           return;
         }
-
         const trainer = dashboardData.trainer;
         if (!trainer) throw new Error("Profil formateur introuvable.");
-
         await buildTrainerView(trainer, sessionEmail);
       } catch (err) {
         app.innerHTML = `<div class="alert alert-warning"><h2>Erreur</h2><p>${escapeHtml(err.message)}</p></div>`;
