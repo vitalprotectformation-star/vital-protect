@@ -3970,7 +3970,21 @@
           return searchOk && validationOk && resultOk && paymentOk;
         });
 
-        renderTrainerRegistrations(filtered);
+        // Dédoublonnage : même email → garder la ligne la plus récente
+        const seen = new Map();
+        for (const row of filtered) {
+          const key = (row.email || "").trim().toLowerCase() + "|" + (row.trainer_formula_module_count || "");
+          const existing = seen.get(key);
+          if (!existing) {
+            seen.set(key, row);
+          } else {
+            const d1 = existing.created_at || existing.updated_at || "";
+            const d2 = row.created_at || row.updated_at || "";
+            if (d2 > d1) seen.set(key, row);
+          }
+        }
+        const deduped = Array.from(seen.values());
+        renderTrainerRegistrations(deduped);
       } catch (error) {
         console.error("Erreur affichage candidats", error, trainerRegistrationsData);
         trainerRegistrationsWrap.innerHTML = `
@@ -4739,6 +4753,10 @@ VITAL PROTECT`
     };
 
     window.deleteTrainerCandidate = async (registrationId, candidateName, paymentStatus = "", portalCreated = false, existsAsTrainer = false) => {
+      if (!registrationId || registrationId === "null" || registrationId === "undefined") {
+        alert("Impossible de supprimer : identifiant de candidat manquant. Supprimez cette entrée directement depuis Supabase.");
+        return;
+      }
       const normalizedPaymentStatus = normalize(paymentStatus);
       const paymentAlreadyCaptured = ["captured", "paid"].includes(normalizedPaymentStatus);
 

@@ -53,6 +53,65 @@
     .vp-module-meta { font-size:12px;color:#888;margin-top:2px; }
     .vp-module-info { flex:1; }
     .vp-retake-btn { flex-shrink:0; }
+
+    /* ═══ ONGLETS ESPACE FORMATEUR ════════════════════════════════════════ */
+    .vp-tabs-nav {
+      display: flex;
+      gap: 4px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 12px;
+      padding: 6px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+    .vp-tab-btn {
+      flex: 1;
+      min-width: 100px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 10px 16px;
+      border: none;
+      border-radius: 8px;
+      background: transparent;
+      color: rgba(255,255,255,0.6);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .vp-tab-btn:hover { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.9); }
+    .vp-tab-btn.active { background: #1F3864; color: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+    .vp-tab-icon { font-size: 14px; }
+    .vp-tab-panel { display: none; }
+    .vp-tab-panel.active { display: block; }
+
+    /* Hero accueil */
+    .vp-dashboard-hero {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      padding: 20px 24px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .vp-dashboard-name { font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 4px; }
+    .vp-dashboard-email { font-size: 13px; color: rgba(255,255,255,0.5); margin-bottom: 12px; }
+    .vp-dashboard-badges { display: flex; flex-wrap: wrap; gap: 8px; }
+    .vp-dashboard-hero-right { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+
+    @media (max-width: 600px) {
+      .vp-tabs-nav { gap: 2px; padding: 4px; }
+      .vp-tab-btn { font-size: 12px; padding: 8px 10px; }
+      .vp-tab-icon { display: none; }
+      .vp-dashboard-hero { flex-direction: column; }
+    }
 </style>
   <link rel="preload" as="image" href="transition-screen.png" media="(min-width: 769px)" />
   <link rel="preload" as="image" href="transition-screen-mobile.jpg" media="(max-width: 768px), (pointer: coarse) and (orientation: portrait)" />
@@ -2892,68 +2951,82 @@ ID candidat : ${escapeHtml(candidate.id || "—")}</div>
         dashboardReservations = [];
       }
 
+      // ── Structure onglets ──────────────────────────────────────────────
       app.innerHTML = `
-        <h1>Espace formateur</h1>
-        <p class="muted">Votre espace est actif. Votre habilitation et votre affiliation sont à jour.</p>
-
-        ${affiliationFeedback}
-
-        <div class="alert alert-success">
-          <h2>Accès actif</h2>
-          <p>Vous pouvez continuer à utiliser la plateforme normalement.</p>
+        <div class="vp-tabs-nav" role="tablist">
+          <button class="vp-tab-btn active" data-tab="accueil" role="tab">
+            <span class="vp-tab-icon">⊞</span> Accueil
+          </button>
+          <button class="vp-tab-btn" data-tab="dossier" role="tab">
+            <span class="vp-tab-icon">📋</span> Mon dossier
+          </button>
+          <button class="vp-tab-btn" data-tab="stages" role="tab">
+            <span class="vp-tab-icon">📅</span> Mes stages
+          </button>
+          <button class="vp-tab-btn" data-tab="reversements" role="tab">
+            <span class="vp-tab-icon">💶</span> Reversements
+          </button>
         </div>
 
-        <div class="grid" style="margin-top:18px;">
-          <div class="info-box">
-            <span class="label">Formateur</span>
-            <div class="value">${escapeHtml(trainer.first_name || "")} ${escapeHtml(trainer.last_name || "")}</div>
+        <!-- ═══ ONGLET ACCUEIL ══════════════════════════════════════════ -->
+        <div class="vp-tab-panel active" id="vp-tab-accueil">
+
+          ${affiliationFeedback}
+
+          <div class="vp-dashboard-hero">
+            <div class="vp-dashboard-hero-left">
+              <div class="vp-dashboard-name">${escapeHtml(trainer.first_name || "")} ${escapeHtml(trainer.last_name || "")}</div>
+              <div class="vp-dashboard-email">${escapeHtml(trainer.email || "")}</div>
+              <div class="vp-dashboard-badges">
+                <span class="badge ${certValid ? "badge-success" : "badge-danger"}">
+                  Habilitation ${certValid ? "valide" : "expirée"} — ${formatDate(trainer.certification_expiry)}
+                </span>
+                <span class="badge ${affiliationValid ? "badge-success" : "badge-danger"}">
+                  Affiliation ${affiliationValid ? "active" : "expirée"} — ${formatDate(trainer.affiliation_end)}
+                </span>
+              </div>
+            </div>
+            <div class="vp-dashboard-hero-right">
+              <button id="renewAffiliationBtn" class="btn btn-secondary btn-small" type="button" style="${affiliationValid ? "display:none" : ""}">Renouveler l'affiliation</button>
+              <button id="refreshBtn" class="btn btn-secondary btn-small" type="button">Actualiser</button>
+              <button id="logoutBtn" class="btn btn-secondary btn-small" type="button">Déconnexion</button>
+            </div>
           </div>
-          <div class="info-box">
-            <span class="label">Email</span>
-            <div class="value">${escapeHtml(trainer.email || "—")}</div>
-          </div>
-          <div class="info-box">
-            <span class="label">Habilitation</span>
-            <div class="value"><span class="badge badge-success">Valide</span></div>
-          </div>
-          <div class="info-box">
-            <span class="label">Expire le</span>
-            <div class="value">${formatDate(trainer.certification_expiry)}</div>
-          </div>
-          <div class="info-box">
-            <span class="label">Affiliation</span>
-            <div class="value"><span class="badge badge-success">Active</span></div>
-          </div>
-          <div class="info-box">
-            <span class="label">Expire le</span>
-            <div class="value">${formatDate(trainer.affiliation_end)}</div>
-          </div>
+
+          ${buildModulesSection(trainer)}
+
+          ${buildVpCommissionBlock()}
+
+          <div class="debug diagnostic">Email : ${escapeHtml(sessionEmail)} · ID : ${escapeHtml(trainer.id)}</div>
         </div>
 
-        <div class="card" style="padding:18px; margin-top:18px;">
-          <h3>Zone membre</h3>
-          <p class="muted">Cette zone regroupe les contenus privés du formateur : ressources, documents, calendrier et kit formateur.</p>
-          <div class="actions">
-            <a href="/" class="btn btn-secondary">Retour au site</a>
-            <button id="logoutBtn" class="btn btn-secondary" type="button">Déconnexion</button>
-          </div>
+        <!-- ═══ ONGLET DOSSIER ══════════════════════════════════════════ -->
+        <div class="vp-tab-panel" id="vp-tab-dossier">
+          ${buildStripeConnectSection(latestTrainerDashboard)}
+          ${buildTrainerDocumentsSection(latestTrainerDashboard)}
         </div>
 
-        ${buildStripeConnectSection(latestTrainerDashboard)}
+        <!-- ═══ ONGLET STAGES ════════════════════════════════════════════ -->
+        <div class="vp-tab-panel" id="vp-tab-stages">
+          ${buildTrainerDashboardSection(latestTrainerDashboard)}
+          ${buildCreateStageSection(trainer)}
+        </div>
 
-        ${buildTrainerDocumentsSection(latestTrainerDashboard)}
-
-        ${buildTrainerDashboardSection(latestTrainerDashboard)}
-
-        ${buildCreateStageSection(trainer)}
-
-        <div class="debug diagnostic">Email session : ${escapeHtml(sessionEmail)}
-Email trouvé : ${trainer.email}
-ID formateur : ${escapeHtml(trainer.id)}
-Habilitation valide : ${certValid}
-Affiliation valide : ${affiliationValid}
-Modules habilités valides : ${escapeHtml(certifiedModules.map(getCanonicalModuleName).join(", ") || "aucun")}</div>
+        <!-- ═══ ONGLET REVERSEMENTS ══════════════════════════════════════ -->
+        <div class="vp-tab-panel" id="vp-tab-reversements">
+          ${buildVpReversementsPanel()}
+        </div>
       `;
+
+      // ── Onglets navigation ─────────────────────────────────────────────
+      document.querySelectorAll(".vp-tab-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          document.querySelectorAll(".vp-tab-btn").forEach(b => b.classList.remove("active"));
+          document.querySelectorAll(".vp-tab-panel").forEach(p => p.classList.remove("active"));
+          btn.classList.add("active");
+          document.getElementById("vp-tab-" + btn.dataset.tab)?.classList.add("active");
+        });
+      });
 
       attachLogoutButtons();
       attachStripeConnectActions();
@@ -2961,6 +3034,46 @@ Modules habilités valides : ${escapeHtml(certifiedModules.map(getCanonicalModul
       attachTrainerDashboardActions();
       await handleCreateStageSubmit();
     }
+
+    function buildVpCommissionBlock() {
+      const data = window._dashboardData || {};
+      const stats = data.stats || {};
+      const realized = stats.stages_realized_12_months || 0;
+      const shareRate = stats.trainer_share_rate || 0.70;
+      const label = stats.commission_label || "Lancement";
+      const nextPayout = stats.next_payout_day || 20;
+      const tiers = [
+        { name: "Lancement", rate: "70 %", cond: "0–5 stages / an", active: realized < 6 },
+        { name: "Régulier",  rate: "85 %", cond: "6–11 stages / an", active: realized >= 6 && realized < 12 },
+        { name: "Mensuel",   rate: "92,5 %", cond: "12+ stages / an", active: realized >= 12 },
+      ];
+      return \`<div class="vp-commission-block">
+        <div class="vp-commission-current">
+          <div class="vp-commission-label">\${escapeHtml(label)}</div>
+          <div class="vp-commission-rate">\${Math.round(shareRate * 100)}&nbsp;% du prix HT</div>
+          <div class="vp-commission-sub">\${realized} stage\${realized !== 1 ? "s" : ""} réalisé\${realized !== 1 ? "s" : ""} sur 12 mois · Reversement le \${nextPayout} du mois suivant</div>
+        </div>
+        <div class="vp-commission-tiers">
+          \${tiers.map(t => \`<div class="vp-commission-tier \${t.active ? "is-active" : ""}">
+            <span class="vp-tier-name">\${t.name}</span>
+            <span class="vp-tier-rate">\${t.rate}</span>
+            <span class="vp-tier-cond">\${t.cond}</span>
+          </div>\`).join("")}
+        </div>
+      </div>\`;
+    }
+
+    function buildVpReversementsPanel() {
+      const rows = buildTrainerPayoutRows();
+      if (!rows || !rows.length) {
+        return \`<div class="card" style="padding:24px">
+          <h2 class="section-title">Reversements</h2>
+          <p class="muted" style="margin-top:12px">Aucun reversement en attente. Les reversements apparaissent ici après chaque stage réalisé.</p>
+        </div>\`;
+      }
+      return \`<div class="card" style="padding:18px">\${buildTrainerPayoutsSection()}</div>\`;
+    }
+
 
     async function buildTrainerView(trainer, sessionEmail) {
       const certValid = isFutureOrToday(trainer.certification_expiry);
