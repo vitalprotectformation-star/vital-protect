@@ -802,28 +802,11 @@
     }
   
 
-    /* ─── Page header ─────────────────────────────────────────────────── */
-    .vp-page-header {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 16px;
-      margin-bottom: 28px;
-      flex-wrap: wrap;
-    }
-    .vp-page-title {
-      font-size: 26px;
-      font-weight: 800;
-      color: #fff;
-      margin: 0 0 4px;
-    }
-    .vp-page-subtitle {
-      font-size: 14px;
-      color: rgba(255,255,255,0.5);
-      margin: 0;
-    }
-    .vp-page-actions { display: flex; gap: 8px; align-items: center; }
-    .vp-status-badges { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+    .vp-page-header { display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:28px;flex-wrap:wrap; }
+    .vp-page-title { font-size:26px;font-weight:800;color:#fff;margin:0 0 4px; }
+    .vp-page-subtitle { font-size:14px;color:rgba(255,255,255,0.5);margin:0; }
+    .vp-page-actions { display:flex;gap:8px;align-items:center; }
+    .vp-status-badges { display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px; }
 
   </style>
 </head>
@@ -849,7 +832,6 @@
       <div id="app">Chargement...</div>
     </div>
   </div>
-
   <footer>
     <div class="container">
       <p>VITAL PROTECT — Espace formateur</p>
@@ -857,18 +839,6 @@
   </footer>
   <script src="/fr-location.js"></script>
   <script type="module">
-    import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-
-    const supabase = createClient(
-      "https://zsraqxzneghkzaozzuci.supabase.co",
-      "sb_publishable_VlTpYjzJ3DKpFA1Un_EFHQ_FW-mYK4U"
-    );
-
-    let latestTrainerDashboard = null;
-    let dashboardStages = [];
-    let dashboardReservations = [];
-
-
     import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
     const supabase = createClient(
@@ -3328,7 +3298,7 @@ Date fin habilitation : ${escapeHtml(trainer.certification_expiry || "—")}</di
     async function renderFullActiveView(trainer, sessionEmail, certValid, affiliationValid) {
       const app = document.getElementById("app");
       const affiliationFeedback = buildAffiliationFeedback();
-      try { await loadTrainerDashboardData(); } catch(e) { latestTrainerDashboard = latestTrainerDashboard || {}; }
+      try { await loadTrainerDashboardData(); } catch(e) {}
 
       app.innerHTML = `
         <div class="vp-page-header">
