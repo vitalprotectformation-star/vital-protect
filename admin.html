@@ -3238,7 +3238,8 @@
       const resit = modules.filter(moduleName => results[moduleName] === "resit").length;
       const failed = modules.filter(moduleName => results[moduleName] === "failed").length;
       if (passed === modules.length) return `Tous validés (${passed}/${modules.length})`;
-      if (failed) return `${failed} recalé${failed > 1 ? "s" : ""} · ${passed}/${modules.length} validé${passed > 1 ? "s" : ""}`;
+      if (failed && passed > 0) return `${passed}/${modules.length} habilité${passed > 1 ? "s" : ""} · ${failed} échoué${failed > 1 ? "s" : ""} — rachat requis`;
+      if (failed && passed === 0) return `${failed} module${failed > 1 ? "s" : ""} échoué${failed > 1 ? "s" : ""} — rachat requis`;
       if (resit) return `${resit} rattrapage${resit > 1 ? "s" : ""} · ${passed}/${modules.length} validé${passed > 1 ? "s" : ""}`;
       return `${passed}/${modules.length} module${modules.length > 1 ? "s" : ""} validé${passed > 1 ? "s" : ""}`;
     }

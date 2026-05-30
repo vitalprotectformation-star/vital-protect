@@ -41,6 +41,18 @@
       .vp-commission-tiers { flex-direction: column; }
       .vp-commission-tier { border-right: none; border-bottom: 1px solid rgba(31,56,100,0.08); }
     }
+
+    /* ─── Failed module row ────────────────────────────────────────────── */
+    .vp-module-row { display:flex;align-items:center;gap:12px;padding:10px 14px;background:#fff;border:1px solid rgba(31,56,100,0.10);border-radius:8px;margin-bottom:8px; }
+    .vp-module-ok .vp-module-badge { background:#1A6B2E;color:#fff;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;flex-shrink:0; }
+    .vp-module-fail .vp-module-badge { background:#C0392B;color:#fff;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;flex-shrink:0; }
+    .vp-module-retake .vp-module-badge { background:#E67E22;color:#fff;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:900;flex-shrink:0; }
+    .vp-module-fail { border-color:rgba(192,57,43,0.25);background:#fff8f8; }
+    .vp-module-retake { border-color:rgba(230,126,34,0.25);background:#fffaf5; }
+    .vp-module-name { font-size:14px;font-weight:600;color:#1F3864; }
+    .vp-module-meta { font-size:12px;color:#888;margin-top:2px; }
+    .vp-module-info { flex:1; }
+    .vp-retake-btn { flex-shrink:0; }
 </style>
   <link rel="preload" as="image" href="transition-screen.png" media="(min-width: 769px)" />
   <link rel="preload" as="image" href="transition-screen-mobile.jpg" media="(max-width: 768px), (pointer: coarse) and (orientation: portrait)" />
@@ -1478,6 +1490,109 @@
         });
     }
 
+    function buildModulesSection(trainerData) {
+      // Get modules from trainer data (certified_modules from our API update)
+      const allModules = (window._dashboardData && window._dashboardData.certified_modules) || [];
+
+      if (!allModules.length) {
+        // Try to get from trainer_modules if available
+        return "";
+      }
+
+      const certified = allModules.filter(m => (m.status || "certified") === "certified" || m.status === "active");
+      const failed = allModules.filter(m => m.status === "failed");
+      const pendingRetake = allModules.filter(m => m.status === "pending_retake");
+
+      const certifiedRows = certified.map(m => {
+        const name = escapeHtml(m.module_name || m.module_slug || "Module");
+        const date = m.validated_at ? new Date(m.validated_at).toLocaleDateString("fr-FR", { year: "numeric", month: "long" }) : "—";
+        return `<div class="vp-module-row vp-module-ok">
+          <div class="vp-module-badge">✓</div>
+          <div class="vp-module-info">
+            <div class="vp-module-name">${name}</div>
+            <div class="vp-module-meta">Habilité depuis ${date}</div>
+          </div>
+        </div>`;
+      }).join("");
+
+      const failedRows = failed.map(m => {
+        const name = escapeHtml(m.module_name || m.module_slug || "Module");
+        return `<div class="vp-module-row vp-module-fail">
+          <div class="vp-module-badge">✗</div>
+          <div class="vp-module-info">
+            <div class="vp-module-name">${name}</div>
+            <div class="vp-module-meta">Module échoué — rachat requis pour se représenter (245 €)</div>
+          </div>
+          <button class="btn btn-primary btn-small vp-retake-btn" 
+            data-module="${escapeHtml(m.module_name || m.module_slug || "")}"
+            onclick="retakeModule(this)">
+            Racheter ce module
+          </button>
+        </div>`;
+      }).join("");
+
+      const retakeRows = pendingRetake.map(m => {
+        const name = escapeHtml(m.module_name || m.module_slug || "Module");
+        return `<div class="vp-module-row vp-module-retake">
+          <div class="vp-module-badge">↻</div>
+          <div class="vp-module-info">
+            <div class="vp-module-name">${name}</div>
+            <div class="vp-module-meta">Rachat effectué — inscription à une session disponible</div>
+          </div>
+        </div>`;
+      }).join("");
+
+      if (!certifiedRows && !failedRows && !retakeRows) return "";
+
+      return `<div class="vp-certif-section">
+        <div class="vp-certif-header">
+          <h3 class="vp-certif-title">Mes habilitations</h3>
+          <span class="vp-certif-count">${certified.length} module${certified.length > 1 ? "s" : ""} actif${certified.length > 1 ? "s" : ""}</span>
+        </div>
+        <div class="vp-certif-list">
+          ${certifiedRows}
+          ${retakeRows}
+          ${failedRows}
+        </div>
+      </div>`;
+    }
+
+    async function retakeModule(btn) {
+      const moduleName = btn.dataset.module;
+      if (!moduleName) return;
+
+      const confirmed = window.confirm(\`Racheter le module "\${moduleName}" pour 245 € ?\`);
+      if (!confirmed) return;
+
+      btn.disabled = true;
+      btn.textContent = "Redirection...";
+
+      try {
+        const headers = await getTrainerAuthHeaders();
+        const session = await supabase.auth.getSession();
+        const email = session.data.session?.user?.email || "";
+
+        const res = await fetch("/api/create-trainer-checkout", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", ...headers },
+          body: JSON.stringify({ email, retake_module: moduleName })
+        });
+        const data = await res.json();
+        if (data.url) {
+          window.location.href = data.url;
+        } else {
+          alert(data.error || "Erreur lors de la création du paiement.");
+          btn.disabled = false;
+          btn.textContent = "Racheter ce module";
+        }
+      } catch (e) {
+        alert("Erreur réseau. Veuillez réessayer.");
+        btn.disabled = false;
+        btn.textContent = "Racheter ce module";
+      }
+    }
+
+
     function buildTrainerPayoutsSection() {
       const rows = buildTrainerPayoutRows();
       const totalScheduled = rows
@@ -1815,6 +1930,8 @@
               </div>
             </div>
           </div>
+
+          ${buildModulesSection(trainer)}
 
           ${buildTrainerPayoutsSection()}
 
@@ -3016,7 +3133,8 @@ Date fin habilitation : ${escapeHtml(trainer.certification_expiry || "—")}</di
         }
 
         certifiedModules = await loadCertifiedModules(trainer);
-        await buildTrainerView(trainer, sessionEmail);
+        window._dashboardData = dashboardData;  // store for buildModulesSection
+      await buildTrainerView(trainer, sessionEmail);
       } catch (error) {
         console.error("Erreur chargement dashboard formateur:", error);
         await supabase.auth.signOut();
@@ -3041,6 +3159,14 @@ Date fin habilitation : ${escapeHtml(trainer.certification_expiry || "—")}</di
     // Handle affiliation=success param
     (function() {
       const params = new URLSearchParams(location.search);
+      if (params.get('retake') === 'success') {
+        const toast = document.createElement('div');
+        toast.style.cssText = 'position:fixed;top:20px;right:20px;background:#1A6B2E;color:#fff;padding:14px 20px;border-radius:10px;font-size:14px;font-weight:600;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,0.15);max-width:320px;line-height:1.4;';
+        toast.innerHTML = '✓&nbsp;&nbsp;<strong>Rachat confirmé</strong><br/><span style="font-weight:400;opacity:0.85">Vous pouvez maintenant vous inscrire sur une nouvelle date de formation.</span>';
+        document.body.appendChild(toast);
+        setTimeout(() => { toast.style.transition = 'opacity 0.5s'; toast.style.opacity = '0'; setTimeout(() => toast.remove(), 500); }, 4000);
+        history.replaceState({}, '', location.pathname);
+      }
       if (params.get('affiliation') === 'cancel') {
         const toast = document.createElement('div');
         toast.style.cssText = 'position:fixed;top:20px;right:20px;background:#666;color:#fff;padding:14px 20px;border-radius:10px;font-size:14px;font-weight:600;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,0.15);max-width:320px;line-height:1.4;';
