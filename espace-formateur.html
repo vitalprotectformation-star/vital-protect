@@ -2365,9 +2365,9 @@ VITAL PROTECT`;
       if (["captured", "paid"].includes(payment) && validation === "validated" && result === "passed") return "Réussi — activation à finaliser";
       if (result === "resit") return "Rattrapage à planifier";
       if (result === "failed") return "Recalé";
-      if (validation === "validated") return "Dossier validé — sessions / résultat à suivre";
-      if (["authorized", "captured", "paid", "checkout_created"].includes(payment)) return "Paiement enregistré — dossier à planifier";
-      return "Dossier en cours";
+      if (validation === "validated") return "Dossier validé — vous recevrez un email dès que vos sessions sont planifiées";
+      if (["authorized", "captured", "paid", "checkout_created"].includes(payment)) return "Votre dossier est en cours d'examen par notre équipe. Vous recevrez un email de confirmation dès validation. Vous pourrez ensuite vous inscrire sur une date de formation.";
+      return "Dossier en cours de traitement";
     }
 
     function groupCandidateSessionsByModule(sessions = []) {
@@ -2688,8 +2688,9 @@ VITAL PROTECT`;
         <p class="muted">Votre espace est ouvert. Certaines fonctionnalités seront débloquées après validation et activation par VITAL PROTECT.</p>
 
         <div class="alert alert-warning">
-          <h2>Candidat formateur</h2>
+          <h2>Dossier en cours d'examen</h2>
           <p>${escapeHtml(candidateStatusLabel(candidate))}</p>
+          <p style="margin-top:8px;font-size:13px;opacity:0.85">Un email vous sera envoyé automatiquement dès que votre dossier sera validé par notre équipe.</p>
         </div>
 
         <div class="grid" style="margin-top:18px;">
