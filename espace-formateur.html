@@ -1561,32 +1561,42 @@
       const moduleName = btn.dataset.module;
       if (!moduleName) return;
 
-      const confirmed = window.confirm(\`Racheter le module "\${moduleName}" pour 245 € ?\`);
+      const confirmed = window.confirm('Racheter le module "' + moduleName + '" pour 245 € ?');
       if (!confirmed) return;
 
       btn.disabled = true;
       btn.textContent = "Redirection...";
 
       try {
-        const headers = await getTrainerAuthHeaders();
-        const session = await supabase.auth.getSession();
-        const email = session.data.session?.user?.email || "";
+        const sessionData = await supabase.auth.getSession();
+        const email = sessionData.data.session?.user?.email || "";
+
+        if (!email) {
+          alert("Session expirée. Veuillez vous reconnecter.");
+          window.location.href = "/formateur-login.html";
+          return;
+        }
 
         const res = await fetch("/api/create-trainer-checkout", {
           method: "POST",
-          headers: { "Content-Type": "application/json", ...headers },
-          body: JSON.stringify({ email, retake_module: moduleName })
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: email, retake_module: moduleName })
         });
+
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({}));
+          throw new Error(err.error || "Erreur serveur (" + res.status + ")");
+        }
+
         const data = await res.json();
         if (data.url) {
           window.location.href = data.url;
         } else {
-          alert(data.error || "Erreur lors de la création du paiement.");
-          btn.disabled = false;
-          btn.textContent = "Racheter ce module";
+          throw new Error(data.error || "URL de paiement introuvable");
         }
       } catch (e) {
-        alert("Erreur réseau. Veuillez réessayer.");
+        console.error("retakeModule error:", e);
+        alert("Erreur : " + (e.message || "Veuillez réessayer."));
         btn.disabled = false;
         btn.textContent = "Racheter ce module";
       }
