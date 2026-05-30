@@ -109,7 +109,7 @@
       .vp-main-content { padding: 16px; }
     }
 
-<style>
+
     :root {
       --navy: #0b2e59;
       --navy-dark: #08203d;
@@ -691,8 +691,8 @@
         width: 100%;
       }
     }
-  </style>
-<style>
+  
+
     /* V59 — correction contraste espace formateur.
        dashboard-premium.css est chargé après les styles locaux et impose des titres/strong blancs.
        Ces overrides ciblent uniquement espace-formateur.html. */
@@ -800,9 +800,8 @@
     .table-wrap td span {
       color: #a7bbd6 !important;
     }
-  </style>
-
   
+
     /* ─── Page header ─────────────────────────────────────────────────── */
     .vp-page-header {
       display: flex;
@@ -825,14 +824,15 @@
     }
     .vp-page-actions { display: flex; gap: 8px; align-items: center; }
     .vp-status-badges { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
-</style>
+
+  </style>
 </head>
 <body>
   <div class="vp-layout">
     <aside class="vp-sidenav">
       <div class="vp-sidenav-brand">
-        <a href="/index.html"><img src="/logo.png" alt="VITAL PROTECT" /></a>
-        <span class="vp-sidenav-badge" id="trainerBadge">FORMATEUR</span>
+        <a href="/index.html"><img src="/logo.png" alt="VP" /></a>
+        <span class="vp-sidenav-badge">FORMATEUR</span>
       </div>
       <div class="vp-sidenav-label">COCKPIT FORMATEUR</div>
       <nav class="vp-sidenav-nav">
@@ -849,6 +849,7 @@
       <div id="app">Chargement...</div>
     </div>
   </div>
+
   <footer>
     <div class="container">
       <p>VITAL PROTECT — Espace formateur</p>
@@ -3326,17 +3327,15 @@ Date fin habilitation : ${escapeHtml(trainer.certification_expiry || "—")}</di
 
     async function renderFullActiveView(trainer, sessionEmail, certValid, affiliationValid) {
       const app = document.getElementById("app");
-      try { await loadTrainerDashboardData(); } catch(e) { latestTrainerDashboard = {}; }
-
+      try { await loadTrainerDashboardData(); } catch(e) { latestTrainerDashboard = latestTrainerDashboard || {}; }
       app.innerHTML = `
         <div class="vp-page-header">
-          <h1 class="vp-page-title">Mes stages</h1>
-          <p class="vp-page-subtitle">Gérez et créez vos stages</p>
+          <div><h1 class="vp-page-title">Mes stages</h1>
+          <p class="vp-page-subtitle">Gérez et créez vos stages</p></div>
         </div>
         ${buildTrainerDashboardSection(latestTrainerDashboard)}
         ${buildCreateStageSection(trainer)}
       `;
-
       attachLogoutButtons();
       attachTrainerDashboardActions();
       await handleCreateStageSubmit();
@@ -3354,9 +3353,9 @@ Date fin habilitation : ${escapeHtml(trainer.certification_expiry || "—")}</di
       const sessionEmail = session.user.email.trim().toLowerCase();
       try {
         const dashboardData = await loadTrainerDashboardData();
+        window._dashboardData = dashboardData;
         if (dashboardData.account_type === "candidate") {
-          window.location.href = "/espace-formateur.html";
-          return;
+          window.location.href = "/espace-formateur.html"; return;
         }
         const trainer = dashboardData.trainer;
         if (!trainer) throw new Error("Profil formateur introuvable.");
