@@ -543,10 +543,12 @@ export default async function handler(req, res) {
 
     // Message adapté selon le résultat
     let message = "Résultat du module mis à jour.";
-    if (passedModules.length > 0 && failedModules.length === 0) {
+    if (overallResult === "passed" && passedModules.length === modules.length) {
       message = "Tous les modules validés — formateur activé sur l'ensemble de ses modules.";
+    } else if (passedModules.length > 0 && failedModules.length > 0) {
+      message = `Formateur activé sur ${passedModules.length} module(s) validé(s). ${failedModules.length} module(s) échoué(s) — rachat requis pour retenter.`;
     } else if (passedModules.length > 0) {
-      message = `Formateur activé sur ${passedModules.length} module(s). ${failedModules.length} module(s) échoué(s) — rachat requis pour retenter.`;
+      message = `Module(s) validé(s) : ${passedModules.length}/${modules.length}. ${modules.length - passedModules.length} module(s) en attente.`;
     } else if (overallResult === "resit") {
       message = "Rattrapage à planifier.";
     } else if (overallResult === "failed") {
