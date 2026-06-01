@@ -812,47 +812,51 @@
 
     /* ─── KPI cards row ─────────────────────────────────────────── */
     .vp-kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:24px}
-    .vp-kpi-card{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.10);border-radius:12px;padding:18px 20px}
-    .vp-kpi-label{font-size:11px;font-weight:700;color:rgba(255,255,255,0.45);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px}
-    .vp-kpi-value{font-size:26px;font-weight:800;color:#fff;line-height:1}
-    .vp-kpi-sub{font-size:12px;color:rgba(255,255,255,0.4);margin-top:4px}
+    .vp-kpi-card{background:#fff;border:1px solid #e0e8f4;border-radius:12px;padding:18px 20px;box-shadow:0 1px 4px rgba(31,56,100,0.07)}
+    .vp-kpi-label{font-size:11px;font-weight:700;color:#8aa0bc;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px}
+    .vp-kpi-value{font-size:26px;font-weight:800;color:#1F3864;line-height:1}
+    .vp-kpi-sub{font-size:12px;color:#aab8cc;margin-top:4px}
 
     /* ─── Commission block ──────────────────────────────────────── */
-    .vp-commission-block{border:1px solid rgba(255,255,255,0.10);border-radius:12px;overflow:hidden;margin-bottom:20px}
-    .vp-commission-current{padding:18px 20px;background:rgba(31,56,100,0.4);border-bottom:1px solid rgba(255,255,255,0.08)}
-    .vp-commission-label{font-size:11px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px}
+    .vp-commission-block{border:1px solid #d0dcea;border-radius:12px;overflow:hidden;margin-bottom:20px;background:#fff;box-shadow:0 1px 4px rgba(31,56,100,0.07)}
+    .vp-commission-current{padding:18px 20px;background:#1F3864;border-bottom:1px solid #162a4e}
+    .vp-commission-label{font-size:11px;font-weight:700;color:rgba(255,255,255,0.6);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px}
     .vp-commission-rate{font-size:28px;font-weight:800;color:#fff;margin-bottom:4px}
-    .vp-commission-sub{font-size:12px;color:rgba(255,255,255,0.4)}
+    .vp-commission-sub{font-size:12px;color:rgba(255,255,255,0.55)}
     .vp-commission-tiers{display:grid;grid-template-columns:repeat(3,1fr)}
-    .vp-commission-tier{padding:14px 16px;text-align:center;border-right:1px solid rgba(255,255,255,0.08);background:rgba(255,255,255,0.02)}
+    .vp-commission-tier{padding:14px 16px;text-align:center;border-right:1px solid #e8eef6;background:#f8faff}
     .vp-commission-tier:last-child{border-right:none}
-    .vp-commission-tier.is-active{background:rgba(31,56,100,0.6)}
-    .vp-tier-name{display:block;font-size:11px;font-weight:700;color:rgba(255,255,255,0.4);text-transform:uppercase;margin-bottom:6px}
-    .vp-tier-rate{display:block;font-size:18px;font-weight:800;color:#fff}
-    .vp-tier-cond{display:block;font-size:11px;color:rgba(255,255,255,0.35);margin-top:4px}
+    .vp-commission-tier.is-active{background:#1F3864}
+    .vp-tier-name{display:block;font-size:11px;font-weight:700;color:#8aa0bc;text-transform:uppercase;margin-bottom:6px}
+    .vp-tier-rate{display:block;font-size:18px;font-weight:800;color:#1F3864}
+    .vp-tier-cond{display:block;font-size:11px;color:#aab8cc;margin-top:4px}
     .vp-commission-tier.is-active .vp-tier-name,
     .vp-commission-tier.is-active .vp-tier-rate,
     .vp-commission-tier.is-active .vp-tier-cond{color:#fff}
 
     /* ─── Modules section ───────────────────────────────────────── */
-    .vp-certif-section{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:20px;margin-bottom:20px}
+    .vp-certif-section{background:#fff;border:1px solid #d0dcea;border-radius:12px;padding:20px;margin-bottom:20px;box-shadow:0 1px 4px rgba(31,56,100,0.07)}
     .vp-certif-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
-    .vp-certif-title{font-size:14px;font-weight:700;color:#fff;margin:0}
-    .vp-certif-count{font-size:11px;font-weight:700;color:#fff;background:rgba(31,56,100,0.8);padding:3px 10px;border-radius:20px}
+    .vp-certif-title{font-size:14px;font-weight:700;color:#1F3864;margin:0}
+    .vp-certif-count{font-size:11px;font-weight:700;color:#fff;background:#1F3864;padding:3px 10px;border-radius:20px}
     .vp-certif-list{display:flex;flex-direction:column;gap:8px}
-    .vp-module-row{display:flex;align-items:center;gap:12px;padding:12px 14px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:8px}
+    .vp-module-row{display:flex;align-items:center;gap:12px;padding:12px 14px;background:#f8faff;border:1px solid #e0e8f4;border-radius:8px}
     .vp-module-ok .vp-module-badge{background:#1a6b2e;color:#fff;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;flex-shrink:0}
     .vp-module-fail .vp-module-badge{background:#c0392b;color:#fff;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;flex-shrink:0}
     .vp-module-retake .vp-module-badge{background:#e67e22;color:#fff;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;flex-shrink:0}
-    .vp-module-fail{border-color:rgba(192,57,43,0.3);background:rgba(192,57,43,0.06)}
-    .vp-module-retake{border-color:rgba(230,126,34,0.3);background:rgba(230,126,34,0.06)}
-    .vp-module-name{font-size:13px;font-weight:600;color:#fff}
-    .vp-module-meta{font-size:11px;color:rgba(255,255,255,0.4);margin-top:2px}
+    .vp-module-fail{border-color:rgba(192,57,43,0.25);background:#fff8f8}
+    .vp-module-retake{border-color:rgba(230,126,34,0.25);background:#fffaf5}
+    .vp-module-name{font-size:13px;font-weight:600;color:#1F3864}
+    .vp-module-meta{font-size:11px;color:#8aa0bc;margin-top:2px}
     .vp-module-info{flex:1}
     .vp-retake-btn{flex-shrink:0}
 
     /* ─── Section title ─────────────────────────────────────────── */
-    .vp-section-title{font-size:13px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.08em;margin:0 0 12px}
+    .vp-section-title{font-size:11px;font-weight:700;color:#8aa0bc;text-transform:uppercase;letter-spacing:0.08em;margin:0 0 10px}
+
+    /* ─── Page header text ──────────────────────────────────────── */
+    .vp-page-title{font-size:22px;font-weight:800;color:#1F3864;margin:0 0 4px}
+    .vp-page-subtitle{font-size:13px;color:#8aa0bc;margin:0}
 
     @media(max-width:600px){
       .vp-commission-tiers{grid-template-columns:1fr}
