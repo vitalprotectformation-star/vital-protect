@@ -843,10 +843,11 @@
       "https://zsraqxzneghkzaozzuci.supabase.co",
       "sb_publishable_VlTpYjzJ3DKpFA1Un_EFHQ_FW-mYK4U"
     );
-    let certifiedModules=[];
-    let dashboardStages=[];
-    let dashboardReservations=[];
-    let latestTrainerDashboard=null;
+    let certifiedModules = [];
+    let dashboardStages = [];
+    let dashboardReservations = [];
+    let latestTrainerDashboard = null;
+    let currentTrainer = null;
 
     function normalize(value) {
       return String(value || "").trim().toLowerCase();
@@ -2919,6 +2920,8 @@ ID candidat : ${escapeHtml(candidate.id || "—")}</div>
       attachCandidateSessionActions();
     }
 
+
+
     function buildVpCommissionBlock() {
       const data = window._dashboardData || {};
       const stats = data.stats || {};
@@ -2952,165 +2955,36 @@ ID candidat : ${escapeHtml(candidate.id || "—")}</div>
       if (!rows || !rows.length) {
         return `<div class="card" style="padding:24px">
           <h2 class="section-title">Reversements</h2>
-          <p class="muted" style="margin-top:12px">Aucun reversement en attente. Les reversements apparaissent ici après chaque stage réalisé.</p>
+          <p class="muted" style="margin-top:12px">Aucun reversement pour le moment.</p>
         </div>`;
       }
       return `<div class="card" style="padding:18px">${buildTrainerPayoutsSection()}</div>`;
     }
 
-
     async function buildTrainerView(trainer, sessionEmail) {
+      currentTrainer = trainer;
       const certValid = isFutureOrToday(trainer.certification_expiry);
-      const affiliationValid =
-        isFutureOrToday(trainer.affiliation_end) &&
-        normalize(trainer.affiliation_status) === "active";
-
-      const affiliationFeedback = buildAffiliationFeedback();
-      const app = document.getElementById("app");
-
-      if (!affiliationValid) {
-        app.innerHTML = `
-          <h1>Espace formateur</h1>
-          <p class="muted">Bienvenue sur votre espace personnel VITAL PROTECT.</p>
-
-          ${affiliationFeedback}
-
-          <div class="alert alert-danger blocked">
-            <h2>Accès bloqué</h2>
-            <p>Votre affiliation n’est plus active.</p>
-            <p>Pour réactiver votre espace formateur, vous devez renouveler votre affiliation annuelle.</p>
-          </div>
-
-          <div class="card" style="padding:18px; margin-top:18px;">
-            <div class="grid">
-              <div class="info-box">
-                <span class="label">Formateur</span>
-                <div class="value">${escapeHtml(trainer.first_name || "")} ${escapeHtml(trainer.last_name || "")}</div>
-              </div>
-              <div class="info-box">
-                <span class="label">Email</span>
-                <div class="value">${escapeHtml(trainer.email || "—")}</div>
-              </div>
-              <div class="info-box">
-                <span class="label">Affiliation</span>
-                <div class="value"><span class="badge badge-danger">Expirée</span></div>
-              </div>
-              <div class="info-box">
-                <span class="label">Fin d’affiliation</span>
-                <div class="value">${formatDate(trainer.affiliation_end)}</div>
-              </div>
-              <div class="info-box">
-                <span class="label">Habilitation</span>
-                <div class="value">
-                  <span class="badge ${certValid ? "badge-success" : "badge-danger"}">
-                    ${certValid ? "Valide" : "Expirée"}
-                  </span>
-                </div>
-              </div>
-              <div class="info-box">
-                <span class="label">Fin habilitation</span>
-                <div class="value">${formatDate(trainer.certification_expiry)}</div>
-              </div>
-            </div>
-
-            <div class="actions">
-              <button id="renewAffiliationBtn" class="btn btn-primary" type="button">
-                Renouveler mon affiliation
-              </button>
-              <button id="refreshBtn" class="btn btn-secondary" type="button">
-                Actualiser
-              </button>
-              <button id="logoutBtn" class="btn btn-secondary" type="button">Déconnexion</button>
-            </div>
-          </div>
-
-          <div class="debug diagnostic">Email session : ${escapeHtml(sessionEmail)}
-Email trouvé : ${trainer.email}
-ID formateur : ${escapeHtml(trainer.id)}
-Habilitation valide : ${certValid}
-Affiliation valide : ${affiliationValid}
-Affiliation status : ${escapeHtml(trainer.affiliation_status || "—")}
-Affiliation end : ${escapeHtml(trainer.affiliation_end || "—")}</div>
-        `;
-
-        document
-          .getElementById("renewAffiliationBtn")
-          .addEventListener("click", () => payAffiliation(trainer.email));
-
-        document
-          .getElementById("refreshBtn")
-          .addEventListener("click", () => window.location.reload());
-
+      const affiliationValid = isFutureOrToday(trainer.affiliation_end) && normalize(trainer.affiliation_status) === "active";
+      if (!affiliationValid || !certValid) {
+        const app = document.getElementById("app");
+        const affiliationFeedback = buildAffiliationFeedback();
+        app.innerHTML = `<div class="alert alert-warning">
+          <h2>${affiliationValid ? "Habilitation expirée" : "Affiliation expirée"}</h2>
+          <p>Veuillez contacter Vital Protect pour renouveler votre accès.</p>
+        </div>`;
         attachLogoutButtons();
         return;
       }
-
-      if (!certValid) {
-        app.innerHTML = `
-          <h1>Espace formateur</h1>
-          <p class="muted">Bienvenue sur votre espace personnel VITAL PROTECT.</p>
-
-          ${affiliationFeedback}
-
-          <div class="alert alert-warning">
-            <h2>Habilitation expirée</h2>
-            <p>Votre affiliation est active, mais votre habilitation n’est plus valide.</p>
-            <p>Vous devez suivre le parcours de renouvellement / recyclage pour retrouver un statut complet.</p>
-          </div>
-
-          <div class="grid" style="margin-top:18px;">
-            <div class="info-box">
-              <span class="label">Formateur</span>
-              <div class="value">${escapeHtml(trainer.first_name || "")} ${escapeHtml(trainer.last_name || "")}</div>
-            </div>
-            <div class="info-box">
-              <span class="label">Email</span>
-              <div class="value">${escapeHtml(trainer.email || "—")}</div>
-            </div>
-            <div class="info-box">
-              <span class="label">Habilitation</span>
-              <div class="value"><span class="badge badge-danger">Expirée</span></div>
-            </div>
-            <div class="info-box">
-              <span class="label">Expire le</span>
-              <div class="value">${formatDate(trainer.certification_expiry)}</div>
-            </div>
-            <div class="info-box">
-              <span class="label">Affiliation</span>
-              <div class="value"><span class="badge badge-success">Active</span></div>
-            </div>
-            <div class="info-box">
-              <span class="label">Expire le</span>
-              <div class="value">${formatDate(trainer.affiliation_end)}</div>
-            </div>
-          </div>
-
-          <div class="actions">
-            <a href="/devenir-formateur.html" class="btn btn-primary">Voir les formations disponibles</a>
-            <button id="logoutBtn" class="btn btn-secondary" type="button">Déconnexion</button>
-          </div>
-
-          <div class="debug diagnostic">Email session : ${escapeHtml(sessionEmail)}
-Email trouvé : ${trainer.email}
-ID formateur : ${escapeHtml(trainer.id)}
-Habilitation valide : ${certValid}
-Affiliation valide : ${affiliationValid}
-Date fin habilitation : ${escapeHtml(trainer.certification_expiry || "—")}</div>
-        `;
-
-        attachLogoutButtons();
-        return;
-      }
-
+      // Load certified modules
+      try { certifiedModules = await loadCertifiedModules(trainer); } catch(e) { certifiedModules = []; }
       await renderFullActiveView(trainer, sessionEmail, certValid, affiliationValid);
     }
 
-
-
     async function renderFullActiveView(trainer, sessionEmail, certValid, affiliationValid) {
       const app = document.getElementById("app");
-      const affiliationFeedback = buildAffiliationFeedback();
       try { await loadTrainerDashboardData(); } catch(e) {}
+
+      const affiliationFeedback = buildAffiliationFeedback();
       app.innerHTML = `
         <div class="vp-page-header">
           <div>
@@ -3127,32 +3001,32 @@ Date fin habilitation : ${escapeHtml(trainer.certification_expiry || "—")}</di
         ${buildModulesSection(trainer)}
         ${buildVpCommissionBlock()}
       `;
-      document.getElementById("refreshBtn")?.addEventListener("click",()=>load());
+      document.getElementById("refreshBtn")?.addEventListener("click", () => load());
       attachLogoutButtons();
     }
 
-
     async function load() {
       const app = document.getElementById("app");
-      let { data:{ session } } = await supabase.auth.getSession();
+      let { data: { session } } = await supabase.auth.getSession();
       if (!session?.user?.email) {
-        await new Promise(r=>setTimeout(r,1000));
+        await new Promise(r => setTimeout(r, 1000));
         const retry = await supabase.auth.getSession();
         session = retry.data.session;
       }
-      if (!session?.user?.email) { window.location.href="/formateur-login.html"; return; }
+      if (!session?.user?.email) { window.location.href = "/formateur-login.html"; return; }
       const sessionEmail = session.user.email.trim().toLowerCase();
       try {
         const dashboardData = await loadTrainerDashboardData();
         window._dashboardData = dashboardData;
-        if (dashboardData.account_type==="candidate") { renderCandidateDashboard(dashboardData,sessionEmail);return; }
+        if (dashboardData.account_type === "candidate") { renderCandidateDashboard(dashboardData, sessionEmail); return; }
         const trainer = dashboardData.trainer;
         if (!trainer) throw new Error("Profil formateur introuvable.");
         await buildTrainerView(trainer, sessionEmail);
       } catch(err) {
-        app.innerHTML=`<div class="alert alert-warning"><h2>Erreur</h2><p>${escapeHtml(err.message)}</p></div>`;
+        app.innerHTML = `<div class="alert alert-warning"><h2>Erreur</h2><p>${escapeHtml(err.message)}</p></div>`;
       }
     }
+
 
     load();
   </script>
