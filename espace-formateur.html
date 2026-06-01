@@ -802,10 +802,63 @@
     }
   
 
-    .vp-page-header{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:28px;flex-wrap:wrap}
-    .vp-page-title{font-size:26px;font-weight:800;color:#fff;margin:0 0 4px}
-    .vp-page-subtitle{font-size:14px;color:rgba(255,255,255,0.5);margin:0}
-    .vp-status-badges{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}
+    /* ─── Page header ───────────────────────────────────────────── */
+    .vp-page-header{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:24px;flex-wrap:wrap}
+    .vp-page-title{font-size:24px;font-weight:800;color:#fff;margin:0 0 4px}
+    .vp-page-subtitle{font-size:13px;color:rgba(255,255,255,0.5);margin:0}
+
+    /* ─── Status badges ─────────────────────────────────────────── */
+    .vp-status-badges{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px}
+
+    /* ─── KPI cards row ─────────────────────────────────────────── */
+    .vp-kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:24px}
+    .vp-kpi-card{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.10);border-radius:12px;padding:18px 20px}
+    .vp-kpi-label{font-size:11px;font-weight:700;color:rgba(255,255,255,0.45);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px}
+    .vp-kpi-value{font-size:26px;font-weight:800;color:#fff;line-height:1}
+    .vp-kpi-sub{font-size:12px;color:rgba(255,255,255,0.4);margin-top:4px}
+
+    /* ─── Commission block ──────────────────────────────────────── */
+    .vp-commission-block{border:1px solid rgba(255,255,255,0.10);border-radius:12px;overflow:hidden;margin-bottom:20px}
+    .vp-commission-current{padding:18px 20px;background:rgba(31,56,100,0.4);border-bottom:1px solid rgba(255,255,255,0.08)}
+    .vp-commission-label{font-size:11px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px}
+    .vp-commission-rate{font-size:28px;font-weight:800;color:#fff;margin-bottom:4px}
+    .vp-commission-sub{font-size:12px;color:rgba(255,255,255,0.4)}
+    .vp-commission-tiers{display:grid;grid-template-columns:repeat(3,1fr)}
+    .vp-commission-tier{padding:14px 16px;text-align:center;border-right:1px solid rgba(255,255,255,0.08);background:rgba(255,255,255,0.02)}
+    .vp-commission-tier:last-child{border-right:none}
+    .vp-commission-tier.is-active{background:rgba(31,56,100,0.6)}
+    .vp-tier-name{display:block;font-size:11px;font-weight:700;color:rgba(255,255,255,0.4);text-transform:uppercase;margin-bottom:6px}
+    .vp-tier-rate{display:block;font-size:18px;font-weight:800;color:#fff}
+    .vp-tier-cond{display:block;font-size:11px;color:rgba(255,255,255,0.35);margin-top:4px}
+    .vp-commission-tier.is-active .vp-tier-name,
+    .vp-commission-tier.is-active .vp-tier-rate,
+    .vp-commission-tier.is-active .vp-tier-cond{color:#fff}
+
+    /* ─── Modules section ───────────────────────────────────────── */
+    .vp-certif-section{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:20px;margin-bottom:20px}
+    .vp-certif-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+    .vp-certif-title{font-size:14px;font-weight:700;color:#fff;margin:0}
+    .vp-certif-count{font-size:11px;font-weight:700;color:#fff;background:rgba(31,56,100,0.8);padding:3px 10px;border-radius:20px}
+    .vp-certif-list{display:flex;flex-direction:column;gap:8px}
+    .vp-module-row{display:flex;align-items:center;gap:12px;padding:12px 14px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:8px}
+    .vp-module-ok .vp-module-badge{background:#1a6b2e;color:#fff;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;flex-shrink:0}
+    .vp-module-fail .vp-module-badge{background:#c0392b;color:#fff;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;flex-shrink:0}
+    .vp-module-retake .vp-module-badge{background:#e67e22;color:#fff;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;flex-shrink:0}
+    .vp-module-fail{border-color:rgba(192,57,43,0.3);background:rgba(192,57,43,0.06)}
+    .vp-module-retake{border-color:rgba(230,126,34,0.3);background:rgba(230,126,34,0.06)}
+    .vp-module-name{font-size:13px;font-weight:600;color:#fff}
+    .vp-module-meta{font-size:11px;color:rgba(255,255,255,0.4);margin-top:2px}
+    .vp-module-info{flex:1}
+    .vp-retake-btn{flex-shrink:0}
+
+    /* ─── Section title ─────────────────────────────────────────── */
+    .vp-section-title{font-size:13px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.08em;margin:0 0 12px}
+
+    @media(max-width:600px){
+      .vp-commission-tiers{grid-template-columns:1fr}
+      .vp-commission-tier{border-right:none;border-bottom:1px solid rgba(255,255,255,0.08)}
+      .vp-kpi-row{grid-template-columns:repeat(2,1fr)}
+    }
 
   </style>
 </head>
@@ -1982,7 +2035,7 @@
             </div>
           </div>
 
-          ${buildModulesSection(currentTrainer)}
+          ${buildModulesSection(trainer)}
 
           ${buildTrainerPayoutsSection()}
 
@@ -2934,19 +2987,20 @@ ID candidat : ${escapeHtml(candidate.id || "—")}</div>
         { name: "Régulier",  rate: "85 %", cond: "6–11 stages / an", active: realized >= 6 && realized < 12 },
         { name: "Mensuel",   rate: "92,5 %", cond: "12+ stages / an", active: realized >= 12 },
       ];
+      const tiersHtml = tiers.map(t =>
+        `<div class="vp-commission-tier ${t.active ? "is-active" : ""}">
+          <span class="vp-tier-name">${t.name}</span>
+          <span class="vp-tier-rate">${t.rate}</span>
+          <span class="vp-tier-cond">${t.cond}</span>
+        </div>`
+      ).join("");
       return `<div class="vp-commission-block">
         <div class="vp-commission-current">
-          <div class="vp-commission-label">${escapeHtml(label)}</div>
+          <div class="vp-commission-label">Palier actuel</div>
           <div class="vp-commission-rate">${Math.round(shareRate * 100)}&nbsp;% du prix HT</div>
-          <div class="vp-commission-sub">${realized} stage${realized !== 1 ? "s" : ""} réalisé${realized !== 1 ? "s" : ""} sur 12 mois · Reversement le ${nextPayout} du mois suivant</div>
+          <div class="vp-commission-sub">${escapeHtml(label)} · ${realized} stage${realized !== 1 ? "s" : ""} réalisé${realized !== 1 ? "s" : ""} sur 12 mois · Reversement le ${nextPayout}</div>
         </div>
-        <div class="vp-commission-tiers">
-          ${tiers.map(t => `<div class="vp-commission-tier ${t.active ? "is-active" : ""}">
-            <span class="vp-tier-name">${t.name}</span>
-            <span class="vp-tier-rate">${t.rate}</span>
-            <span class="vp-tier-cond">${t.cond}</span>
-          </div>`).join("")}
-        </div>
+        <div class="vp-commission-tiers">${tiersHtml}</div>
       </div>`;
     }
 
@@ -2961,13 +3015,41 @@ ID candidat : ${escapeHtml(candidate.id || "—")}</div>
       return `<div class="card" style="padding:18px">${buildTrainerPayoutsSection()}</div>`;
     }
 
+    function buildVpKpiRow() {
+      const data = window._dashboardData || {};
+      const stats = data.stats || {};
+      const stages = data.stages || [];
+      const upcoming = stages.filter(s => {
+        const d = new Date(s.stage_date || "");
+        return d > new Date() && !["cancelled","canceled","annulé"].includes((s.status||"").toLowerCase());
+      }).length;
+      const payout = stats.trainer_payout_due || 0;
+
+      return `<div class="vp-kpi-row">
+        <div class="vp-kpi-card">
+          <div class="vp-kpi-label">Stages à venir</div>
+          <div class="vp-kpi-value">${upcoming}</div>
+          <div class="vp-kpi-sub">planifiés</div>
+        </div>
+        <div class="vp-kpi-card">
+          <div class="vp-kpi-label">Stages réalisés</div>
+          <div class="vp-kpi-value">${stats.stages_realized_12_months || 0}</div>
+          <div class="vp-kpi-sub">12 derniers mois</div>
+        </div>
+        <div class="vp-kpi-card">
+          <div class="vp-kpi-label">Reversement prévu</div>
+          <div class="vp-kpi-value">${formatPrice ? formatPrice(payout) : payout + " €"}</div>
+          <div class="vp-kpi-sub">le ${stats.next_payout_day || 20} du mois</div>
+        </div>
+      </div>`;
+    }
+
     async function buildTrainerView(trainer, sessionEmail) {
       currentTrainer = trainer;
       const certValid = isFutureOrToday(trainer.certification_expiry);
       const affiliationValid = isFutureOrToday(trainer.affiliation_end) && normalize(trainer.affiliation_status) === "active";
       if (!affiliationValid || !certValid) {
         const app = document.getElementById("app");
-        const affiliationFeedback = buildAffiliationFeedback();
         app.innerHTML = `<div class="alert alert-warning">
           <h2>${affiliationValid ? "Habilitation expirée" : "Affiliation expirée"}</h2>
           <p>Veuillez contacter Vital Protect pour renouveler votre accès.</p>
@@ -2975,32 +3057,49 @@ ID candidat : ${escapeHtml(candidate.id || "—")}</div>
         attachLogoutButtons();
         return;
       }
-      // Load certified modules
       try { certifiedModules = await loadCertifiedModules(trainer); } catch(e) { certifiedModules = []; }
       await renderFullActiveView(trainer, sessionEmail, certValid, affiliationValid);
     }
 
     async function renderFullActiveView(trainer, sessionEmail, certValid, affiliationValid) {
       const app = document.getElementById("app");
+      const affiliationFeedback = buildAffiliationFeedback();
       try { await loadTrainerDashboardData(); } catch(e) {}
 
-      const affiliationFeedback = buildAffiliationFeedback();
+      const firstName = escapeHtml(trainer.first_name || "");
+      const lastName = escapeHtml(trainer.last_name || "");
+      const certExpiry = formatDate(trainer.certification_expiry);
+      const affExpiry = formatDate(trainer.affiliation_end);
+
       app.innerHTML = `
         <div class="vp-page-header">
           <div>
-            <h1 class="vp-page-title">${escapeHtml(trainer.first_name||"")} ${escapeHtml(trainer.last_name||"")}</h1>
-            <p class="vp-page-subtitle">${escapeHtml(trainer.email||"")}</p>
+            <h1 class="vp-page-title">${firstName} ${lastName}</h1>
+            <p class="vp-page-subtitle">${escapeHtml(trainer.email || "")}</p>
           </div>
           <button id="refreshBtn" class="btn btn-secondary btn-small">Actualiser</button>
         </div>
+
         ${affiliationFeedback}
+
         <div class="vp-status-badges">
-          <span class="badge ${certValid?"badge-success":"badge-danger"}">Habilitation ${certValid?"valide":"expirée"} — ${formatDate(trainer.certification_expiry)}</span>
-          <span class="badge ${affiliationValid?"badge-success":"badge-danger"}">Affiliation ${affiliationValid?"active":"expirée"} — ${formatDate(trainer.affiliation_end)}</span>
+          <span class="badge ${certValid ? "badge-success" : "badge-danger"}">
+            Habilitation ${certValid ? "valide" : "expirée"} — ${certExpiry}
+          </span>
+          <span class="badge ${affiliationValid ? "badge-success" : "badge-danger"}">
+            Affiliation ${affiliationValid ? "active" : "expirée"} — ${affExpiry}
+          </span>
         </div>
-        ${buildModulesSection(trainer)}
+
+        ${buildVpKpiRow()}
+
+        <p class="vp-section-title">Mes habilitations</p>
+        ${buildModulesSection(currentTrainer)}
+
+        <p class="vp-section-title">Ma commission</p>
         ${buildVpCommissionBlock()}
       `;
+
       document.getElementById("refreshBtn")?.addEventListener("click", () => load());
       attachLogoutButtons();
     }
@@ -3018,9 +3117,13 @@ ID candidat : ${escapeHtml(candidate.id || "—")}</div>
       try {
         const dashboardData = await loadTrainerDashboardData();
         window._dashboardData = dashboardData;
-        if (dashboardData.account_type === "candidate") { renderCandidateDashboard(dashboardData, sessionEmail); return; }
+        if (dashboardData.account_type === "candidate") {
+          renderCandidateDashboard(dashboardData, sessionEmail);
+          return;
+        }
         const trainer = dashboardData.trainer;
         if (!trainer) throw new Error("Profil formateur introuvable.");
+        currentTrainer = trainer;
         await buildTrainerView(trainer, sessionEmail);
       } catch(err) {
         app.innerHTML = `<div class="alert alert-warning"><h2>Erreur</h2><p>${escapeHtml(err.message)}</p></div>`;
