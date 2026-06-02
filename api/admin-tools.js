@@ -2793,6 +2793,87 @@ async function handleGetSatisfaction(req, res) {
   return res.status(200).json({ success: true, summary: data || [] });
 }
 
+
+async function handleRefundTrainerRegistration(req, res) {
+  const registrationId = sanitizeText(req.body?.registration_id);
+
+  if (!registrationId) {
+    return res.status(400).json({ error: "registration_id manquant" });
+  }
+
+  // Get the registration
+  const { data: reg, error: regError } = await supabase
+    .from("trainer_session_registrations")
+    .select("id, email, first_name, last_name, payment_status, validation_status, stripe_payment_intent_id, stripe_session_id, refunded_at")
+    .eq("id", registrationId)
+    .maybeSingle();
+
+  if (regError || !reg) {
+    return res.status(404).json({ error: "Inscription introuvable" });
+  }
+
+  // Check not already refunded
+  if (reg.refunded_at || reg.stripe_refund_id) {
+    return res.status(400).json({ error: "Cette inscription a déjà été remboursée" });
+  }
+
+  // Check not already activated as trainer
+  const { data: trainer } = await supabase
+    .from("trainers")
+    .select("id")
+    .ilike("email", reg.email || "")
+    .maybeSingle();
+
+  if (trainer) {
+    return res.status(400).json({ error: "Ce formateur est déjà activé — remboursement impossible depuis l'admin" });
+  }
+
+  // Get payment intent from Stripe session if needed
+  let paymentIntentId = reg.stripe_payment_intent_id;
+
+  if (!paymentIntentId && reg.stripe_session_id) {
+    try {
+      const session = await stripe.checkout.sessions.retrieve(reg.stripe_session_id);
+      paymentIntentId = session.payment_intent;
+    } catch (err) {
+      return res.status(500).json({ error: "Impossible de récupérer la session Stripe : " + err.message });
+    }
+  }
+
+  if (!paymentIntentId) {
+    return res.status(400).json({ error: "Aucun paiement Stripe trouvé pour cette inscription" });
+  }
+
+  // Process refund
+  try {
+    const refund = await stripe.refunds.create({
+      payment_intent: paymentIntentId,
+      reason: "requested_by_customer"
+    });
+
+    // Update registration
+    await supabase
+      .from("trainer_session_registrations")
+      .update({
+        refunded_at: new Date().toISOString(),
+        stripe_refund_id: refund.id,
+        payment_status: "refunded",
+        validation_status: "cancelled"
+      })
+      .eq("id", registrationId);
+
+    return res.status(200).json({
+      success: true,
+      refund_id: refund.id,
+      amount: refund.amount
+    });
+
+  } catch (err) {
+    return res.status(500).json({ error: "Erreur Stripe : " + err.message });
+  }
+}
+
+
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
@@ -2905,6 +2986,10 @@ export default async function handler(req, res) {
 
     if (action === "get_satisfaction") {
       return await handleGetSatisfaction(req, res);
+    }
+
+    if (action === "refund_trainer_registration") {
+      return await handleRefundTrainerRegistration(req, res);
     }
 
     return res.status(400).json({ error: "action inconnue" });
