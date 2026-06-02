@@ -3102,7 +3102,6 @@
       `);
 
       // Remboursement formateur — uniquement si pas encore activé et paiement capturé
-      const paymentStatus = normalize(row.payment_status || "");
       const isActivated = isCandidateActivated(row);
       const alreadyRefunded = row.refunded_at || row.stripe_refund_id;
       if (["captured", "paid", "authorized"].includes(paymentStatus) && !isActivated && !alreadyRefunded) {
