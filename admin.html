@@ -2696,7 +2696,7 @@
             ${rows.map(row => {
               const stage = getStageByIdOrReservationFallback(row.stage_id) || {};
               const status = normalize(row.report_response_status || "pending");
-              const canRefund = status === "refund_requested" && normalize(row.payment_status || "") === "paid" && !row.refunded_at && !row.stripe_refund_id && !row.trainer_payout_stripe_transfer_id;
+              const canRefund = normalize(row.payment_status || "") === "paid" && !row.refunded_at && !row.stripe_refund_id && !row.trainer_payout_stripe_transfer_id;
               return `
                 <tr>
                   <td>
@@ -3100,6 +3100,18 @@
           Supprimer complètement
         </button>
       `);
+
+      // Remboursement formateur — uniquement si pas encore activé et paiement capturé
+      const paymentStatus = normalize(row.payment_status || "");
+      const isActivated = isCandidateActivated(row);
+      const alreadyRefunded = row.refunded_at || row.stripe_refund_id;
+      if (["captured", "paid", "authorized"].includes(paymentStatus) && !isActivated && !alreadyRefunded) {
+        actions.push(`
+          <button class="btn btn-warning" type="button" onclick="window.refundTrainerRegistration('${jsArg(row.id)}', '${jsArg(row.stripe_payment_intent_id || row.stripe_session_id || "")}', '${jsArg(candidateName)}')">
+            Rembourser l'inscription
+          </button>
+        `);
+      }
 
       return `<div class="action-stack">${actions.join("")}</div>`;
     }
@@ -5341,6 +5353,42 @@ VITAL PROTECT`
       await loadTrainerSessions();
       await loadTrainerDocuments();
     }
-  </script>
+  
+    window.refundTrainerRegistration = async (registrationId, paymentRef, candidateName) => {
+      if (!registrationId) {
+        alert("Identifiant manquant — impossible de rembourser.");
+        return;
+      }
+
+      const confirmed = window.confirm(
+        `Rembourser l'inscription de ${candidateName || "ce candidat"} ?\n\n` +
+        `Le montant payé sera remboursé sur la carte bancaire d'origine.\n` +
+        `Cette action est irréversible.`
+      );
+      if (!confirmed) return;
+
+      try {
+        const headers = await getAuthHeaders();
+        const res = await fetch("/api/admin-tools", {
+          method: "POST",
+          headers,
+          body: JSON.stringify({
+            action: "refund_trainer_registration",
+            registration_id: registrationId
+          })
+        });
+        const result = await parseApiResponse(res);
+        if (result.success) {
+          alert("Remboursement effectué avec succès.");
+          await loadTrainerRegistrations();
+        } else {
+          alert(result.error || "Erreur lors du remboursement.");
+        }
+      } catch (err) {
+        alert("Erreur réseau : " + (err.message || "Veuillez réessayer."));
+      }
+    };
+
+</script>
 </body>
 </html>
