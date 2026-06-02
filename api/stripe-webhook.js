@@ -1,4 +1,5 @@
 import Stripe from "stripe";
+import { sendInvoice } from "./generate-invoice.js";
 import { createClient } from "@supabase/supabase-js";
 import { Resend } from "resend";
 import { randomBytes } from "crypto";
@@ -823,6 +824,25 @@ async function handleTrainerCheckout(session) {
       <p><strong>VITAL PROTECT</strong></p>
     `
   });
+
+
+  // ── Génération et envoi de la facture formateur ───────────────────
+  try {
+    const trainerMeta = session.metadata || {};
+    await sendInvoice({
+      clientEmail: trainerMeta.email || session.customer_email || "",
+      clientName: `${trainerMeta.first_name || ""} ${trainerMeta.last_name || ""}`.trim(),
+      description: `Formation formateur VITAL PROTECT — ${trainerMeta.training_type || "Module formateur"}`,
+      quantity: 1,
+      unitPrice: (session.amount_total || 0) / 100,
+      totalAmount: (session.amount_total || 0) / 100,
+      invoiceType: "trainer",
+      referenceId: trainerMeta.session_id || null,
+      invoiceDate: new Date().toISOString()
+    });
+  } catch (invoiceErr) {
+    console.error("Invoice trainer error:", invoiceErr);
+  }
 }
 
 async function notifyTrainerStageReservation({ stage, reservation, newRemainingPlaces, previousRemainingPlaces, trainerPayoutAmount, commissionTier }) {
@@ -1022,6 +1042,25 @@ async function handleStageCheckout(session) {
     trainerPayoutAmount,
     commissionTier
   });
+
+
+  // ── Génération et envoi de la facture participant ──────────────────
+  try {
+    const stageMetadata = session.metadata || {};
+    await sendInvoice({
+      clientEmail: stageMetadata.email || session.customer_email || "",
+      clientName: `${stageMetadata.first_name || ""} ${stageMetadata.last_name || ""}`.trim(),
+      description: `Stage VITAL PROTECT — ${stageMetadata.stage_title || "Formation self-défense"}`,
+      quantity: Number(stageMetadata.places || 1),
+      unitPrice: Number(stageMetadata.unit_price || 30),
+      totalAmount: (session.amount_total || 0) / 100,
+      invoiceType: "stage",
+      referenceId: stageMetadata.stage_id || null,
+      invoiceDate: new Date().toISOString()
+    });
+  } catch (invoiceErr) {
+    console.error("Invoice stage error:", invoiceErr);
+  }
 }
 
 function constructStripeWebhookEvent(rawBody, signature) {
