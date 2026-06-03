@@ -93,10 +93,22 @@ async function getRegistrationFromStripeSession(sessionId) {
   }
 
   const paymentIntent = checkoutSession.payment_intent;
-  const paymentIntentStatus = typeof paymentIntent === "object" ? String(paymentIntent.status || "") : "";
+  const paymentIntentStatus = paymentIntent && typeof paymentIntent === "object"
+    ? String(paymentIntent.status || "")
+    : "";
+  const checkoutPaymentStatus = String(checkoutSession.payment_status || "").toLowerCase();
+  const checkoutStatus = String(checkoutSession.status || "").toLowerCase();
+  const amountTotal = Number(checkoutSession.amount_total || 0);
   const allowedPaymentIntentStatuses = ["requires_capture", "processing", "succeeded"];
 
   if (paymentIntentStatus && !allowedPaymentIntentStatuses.includes(paymentIntentStatus)) {
+    throw Object.assign(new Error("Le paiement n'est pas confirmé côté Stripe"), { status: 402 });
+  }
+
+  // Stripe peut renvoyer payment_intent = null pour certains cas :
+  // session à 0 €, session sans paiement à capturer, ou paiement traité autrement.
+  // Dans ce cas, on ne doit pas lire payment_intent.status et faire planter l'API.
+  if (!paymentIntentStatus && amountTotal > 0 && checkoutPaymentStatus === "unpaid" && checkoutStatus !== "complete") {
     throw Object.assign(new Error("Le paiement n'est pas confirmé côté Stripe"), { status: 402 });
   }
 
