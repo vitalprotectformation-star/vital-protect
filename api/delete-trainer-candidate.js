@@ -109,10 +109,12 @@ async function cancelStripeAuthorizationIfNeeded(registration) {
       expand: ["payment_intent"]
     });
 
-    if (typeof checkoutSession?.payment_intent === "object") {
-      paymentIntentId = checkoutSession.payment_intent.id;
-    } else {
-      paymentIntentId = sanitizeText(checkoutSession?.payment_intent);
+    const sessionPaymentIntent = checkoutSession?.payment_intent;
+
+    if (sessionPaymentIntent && typeof sessionPaymentIntent === "object" && sessionPaymentIntent.id) {
+      paymentIntentId = sanitizeText(sessionPaymentIntent.id);
+    } else if (typeof sessionPaymentIntent === "string") {
+      paymentIntentId = sanitizeText(sessionPaymentIntent);
     }
   }
 
