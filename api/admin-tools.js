@@ -2796,20 +2796,61 @@ async function handleGetSatisfaction(req, res) {
 
 async function handleRefundTrainerRegistration(req, res) {
   const registrationId = sanitizeText(req.body?.registration_id);
+  const paymentRef = sanitizeText(
+    req.body?.payment_ref ||
+    req.body?.stripe_payment_intent_id ||
+    req.body?.stripe_session_id
+  );
 
-  if (!registrationId) {
-    return res.status(400).json({ error: "registration_id manquant" });
+  if (!registrationId && !paymentRef) {
+    return res.status(400).json({ error: "registration_id ou référence Stripe manquant" });
   }
 
-  // Get the registration
-  const { data: reg, error: regError } = await supabase
-    .from("trainer_session_registrations")
-    .select("id, email, first_name, last_name, payment_status, validation_status, stripe_payment_intent_id, stripe_session_id, refunded_at, stripe_refund_id")
-    .eq("id", registrationId)
-    .maybeSingle();
+  const registrationSelect = "id, email, first_name, last_name, payment_status, validation_status, stripe_payment_intent_id, stripe_session_id, refunded_at, stripe_refund_id";
+  const isUuid = value => /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(String(value || ""));
 
-  if (regError || !reg) {
-    return res.status(404).json({ error: "Inscription introuvable" });
+  async function findRegistration(field, value) {
+    if (!value) return null;
+
+    const { data, error } = await supabase
+      .from("trainer_session_registrations")
+      .select(registrationSelect)
+      .eq(field, value)
+      .order("created_at", { ascending: false })
+      .limit(1);
+
+    if (error) throw error;
+    return Array.isArray(data) && data.length ? data[0] : null;
+  }
+
+  let reg = null;
+
+  try {
+    // Recherche normale par ID Supabase. On évite les valeurs non UUID pour ne pas casser
+    // si le front envoie une mauvaise référence.
+    if (isUuid(registrationId)) {
+      reg = await findRegistration("id", registrationId);
+    }
+
+    // Sécurité : si l'ID affiché côté admin ne correspond pas à la ligne,
+    // on retrouve l'inscription via la référence Stripe transmise par le bouton.
+    if (!reg && paymentRef) {
+      reg = await findRegistration("stripe_payment_intent_id", paymentRef);
+    }
+
+    if (!reg && paymentRef) {
+      reg = await findRegistration("stripe_session_id", paymentRef);
+    }
+  } catch (regError) {
+    return res.status(500).json({ error: `Erreur recherche inscription : ${regError.message || regError}` });
+  }
+
+  if (!reg) {
+    return res.status(404).json({
+      error: "Inscription introuvable",
+      registration_id: registrationId || null,
+      payment_ref: paymentRef || null
+    });
   }
 
   // Check not already refunded
@@ -2844,15 +2885,44 @@ async function handleRefundTrainerRegistration(req, res) {
     return res.status(400).json({ error: "Aucun paiement Stripe trouvé pour cette inscription" });
   }
 
-  // Process refund
+  // Process refund / cancellation
   try {
+    const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
+
+    // Si le paiement est seulement autorisé mais pas encore encaissé, Stripe ne fait pas
+    // un refund : il faut annuler l'autorisation pour libérer l'empreinte bancaire.
+    if (
+      paymentIntent.status === "requires_capture" ||
+      (Number(paymentIntent.amount_capturable || 0) > 0 && !paymentIntent.latest_charge)
+    ) {
+      const canceledIntent = await stripe.paymentIntents.cancel(paymentIntentId);
+
+      const { error: cancelUpdateError } = await supabase
+        .from("trainer_session_registrations")
+        .update({
+          payment_status: "canceled",
+          validation_status: "cancelled"
+        })
+        .eq("id", reg.id);
+
+      if (cancelUpdateError) {
+        return res.status(500).json({ error: cancelUpdateError.message });
+      }
+
+      return res.status(200).json({
+        success: true,
+        canceled: true,
+        payment_intent_id: canceledIntent.id,
+        amount: 0
+      });
+    }
+
     const refund = await stripe.refunds.create({
       payment_intent: paymentIntentId,
       reason: "requested_by_customer"
     });
 
-    // Update registration
-    await supabase
+    const { error: refundUpdateError } = await supabase
       .from("trainer_session_registrations")
       .update({
         refunded_at: new Date().toISOString(),
@@ -2860,7 +2930,11 @@ async function handleRefundTrainerRegistration(req, res) {
         payment_status: "refunded",
         validation_status: "cancelled"
       })
-      .eq("id", registrationId);
+      .eq("id", reg.id);
+
+    if (refundUpdateError) {
+      return res.status(500).json({ error: refundUpdateError.message });
+    }
 
     return res.status(200).json({
       success: true,
