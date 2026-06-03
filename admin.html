@@ -5360,18 +5360,20 @@ VITAL PROTECT`
       }
 
       const confirmed = window.confirm(
-        `Rembourser l'inscription de ${candidateName || "ce candidat"} ?\n\n` +
-        `Le montant payé sera remboursé sur la carte bancaire d'origine.\n` +
+        `Rembourser / annuler l'inscription de ${candidateName || "ce candidat"} ?\n\n` +
+        `Si le paiement est déjà encaissé, il sera remboursé sur la carte bancaire d'origine.\n` +
+        `Si le paiement est seulement autorisé, l'autorisation bancaire sera annulée.\n\n` +
         `Cette action est irréversible.`
       );
       if (!confirmed) return;
 
       try {
         const result = await callAdminTool("refund_trainer_registration", {
-          registration_id: registrationId
+          registration_id: registrationId,
+          payment_ref: paymentRef
         });
         if (result.success) {
-          alert("Remboursement effectué avec succès.");
+          alert(result.canceled ? "Autorisation bancaire annulée avec succès." : "Remboursement effectué avec succès.");
           await loadTrainerRegistrations();
         } else {
           alert(result.error || "Erreur lors du remboursement.");
