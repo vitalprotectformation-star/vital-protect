@@ -29,14 +29,14 @@ const TRAINER_DOCUMENT_REQUIREMENTS = [
     label: "Pièce d’identité",
     category: "external",
     required: true,
-    description: "Vérification externe via Stripe Connect. Aucun scan d’identité n’est stocké sur le site."
+    description: "Vérification hors site avec VITAL PROTECT. Aucun scan d’identité n’est à déposer ici."
   },
   {
     type: "bank_account",
     label: "RIB / compte bancaire",
     category: "external",
     required: true,
-    description: "À connecter via Stripe Connect pour les reversements. Aucun RIB PDF n’est stocké sur le site."
+    description: "Reversements gérés hors Stripe Connect, directement avec VITAL PROTECT. Aucun RIB PDF n’est à déposer ici."
   },
   {
     type: "criminal_record",
@@ -1842,7 +1842,7 @@ export default async function handler(req, res) {
     }
 
     if (action === "create_stripe_connect_onboarding") {
-      return await handleCreateStripeConnectOnboarding(req, res, trainerCheck);
+      return res.status(400).json({ error: "Stripe Connect est désactivé côté formateur. Aucun compte Stripe formateur n’est nécessaire : les reversements sont gérés directement avec VITAL PROTECT." });
     }
 
     if (action === "update_stage_status") {
