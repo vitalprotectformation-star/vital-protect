@@ -2806,7 +2806,7 @@ async function handleRefundTrainerRegistration(req, res) {
     return res.status(400).json({ error: "registration_id ou référence Stripe manquant" });
   }
 
-  const registrationSelect = "id, email, first_name, last_name, payment_status, validation_status, stripe_payment_intent_id, stripe_session_id, refunded_at, stripe_refund_id";
+  const registrationSelect = "*";
   const isUuid = value => /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(String(value || ""));
 
   async function findRegistration(field, value) {
@@ -2853,9 +2853,11 @@ async function handleRefundTrainerRegistration(req, res) {
     });
   }
 
-  // Check not already refunded
-  if (reg.refunded_at || reg.stripe_refund_id) {
-    return res.status(400).json({ error: "Cette inscription a déjà été remboursée" });
+  // Check not already refunded/cancelled. Certaines bases n’ont pas les colonnes
+  // refunded_at / stripe_refund_id, donc on se base d’abord sur payment_status.
+  const currentPaymentStatus = normalize(reg.payment_status || "");
+  if (currentPaymentStatus === "refunded" || currentPaymentStatus === "canceled" || currentPaymentStatus === "cancelled" || reg.refunded_at || reg.stripe_refund_id) {
+    return res.status(400).json({ error: "Cette inscription a déjà été remboursée ou annulée" });
   }
 
   // Check not already activated as trainer
@@ -2922,18 +2924,20 @@ async function handleRefundTrainerRegistration(req, res) {
       reason: "requested_by_customer"
     });
 
-    const { error: refundUpdateError } = await supabase
-      .from("trainer_session_registrations")
-      .update({
+    const refundUpdateResult = await updateWithOptionalColumns(
+      "trainer_session_registrations",
+      {
         refunded_at: new Date().toISOString(),
         stripe_refund_id: refund.id,
         payment_status: "refunded",
         validation_status: "cancelled"
-      })
-      .eq("id", reg.id);
+      },
+      [{ column: "id", value: reg.id }],
+      ["refunded_at", "stripe_refund_id"]
+    );
 
-    if (refundUpdateError) {
-      return res.status(500).json({ error: refundUpdateError.message });
+    if (refundUpdateResult.error) {
+      return res.status(500).json({ error: refundUpdateResult.error.message });
     }
 
     return res.status(200).json({
