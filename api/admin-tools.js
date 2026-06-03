@@ -2883,39 +2883,8 @@ async function handleRefundTrainerRegistration(req, res) {
     }
   }
 
-  async function markRegistrationPaymentClosed(extraPayload = {}, optionalColumns = []) {
-    return await updateWithOptionalColumns(
-      "trainer_session_registrations",
-      {
-        payment_status: "canceled",
-        validation_status: "cancelled",
-        ...extraPayload
-      },
-      [{ column: "id", value: reg.id }],
-      optionalColumns
-    );
-  }
-
-  async function closeFreeOrManualRegistration(reason = "Aucun paiement Stripe à rembourser pour cette inscription") {
-    const closeResult = await markRegistrationPaymentClosed({}, []);
-
-    if (closeResult.error) {
-      return res.status(500).json({ error: closeResult.error.message });
-    }
-
-    return res.status(200).json({
-      success: true,
-      free_payment: true,
-      canceled: true,
-      amount: 0,
-      message: reason
-    });
-  }
-
   if (!paymentIntentId) {
-    // Cas inscription offerte / paiement à 0 € : Stripe ne crée pas toujours de
-    // PaymentIntent remboursable. On clôture donc le dossier localement sans appeler refund.
-    return await closeFreeOrManualRegistration("Inscription gratuite / paiement à 0 € : aucun remboursement Stripe nécessaire.");
+    return res.status(400).json({ error: "Aucun paiement Stripe trouvé pour cette inscription" });
   }
 
   // Process refund / cancellation
@@ -2930,40 +2899,24 @@ async function handleRefundTrainerRegistration(req, res) {
     ) {
       const canceledIntent = await stripe.paymentIntents.cancel(paymentIntentId);
 
-      const cancelUpdateResult = await markRegistrationPaymentClosed({}, []);
+      const { error: cancelUpdateError } = await supabase
+        .from("trainer_session_registrations")
+        .update({
+          payment_status: "canceled",
+          validation_status: "rejected"
+        })
+        .eq("id", reg.id);
 
-      if (cancelUpdateResult.error) {
-        return res.status(500).json({ error: cancelUpdateResult.error.message });
+      if (cancelUpdateError) {
+        return res.status(500).json({ error: cancelUpdateError.message });
       }
 
       return res.status(200).json({
         success: true,
         canceled: true,
         payment_intent_id: canceledIntent.id,
-        amount: 0,
-        message: "Autorisation bancaire annulée, aucun remboursement Stripe nécessaire."
+        amount: 0
       });
-    }
-
-    if (paymentIntent.status === "canceled") {
-      const alreadyCanceledResult = await markRegistrationPaymentClosed({}, []);
-      if (alreadyCanceledResult.error) {
-        return res.status(500).json({ error: alreadyCanceledResult.error.message });
-      }
-      return res.status(200).json({
-        success: true,
-        canceled: true,
-        payment_intent_id: paymentIntent.id,
-        amount: 0,
-        message: "Autorisation Stripe déjà annulée. Dossier mis à jour."
-      });
-    }
-
-    const receivedAmount = Number(paymentIntent.amount_received || 0);
-    const capturableAmount = Number(paymentIntent.amount_capturable || 0);
-    const intentAmount = Number(paymentIntent.amount || 0);
-    if (receivedAmount <= 0 && capturableAmount <= 0 && intentAmount <= 0) {
-      return await closeFreeOrManualRegistration("Paiement à 0 € : aucun remboursement Stripe nécessaire.");
     }
 
     const refund = await stripe.refunds.create({
@@ -2977,7 +2930,7 @@ async function handleRefundTrainerRegistration(req, res) {
         refunded_at: new Date().toISOString(),
         stripe_refund_id: refund.id,
         payment_status: "refunded",
-        validation_status: "cancelled"
+        validation_status: "rejected"
       },
       [{ column: "id", value: reg.id }],
       ["refunded_at", "stripe_refund_id"]
