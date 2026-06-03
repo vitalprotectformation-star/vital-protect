@@ -4632,10 +4632,19 @@ VITAL PROTECT`
         const result = await parseApiResponse(res);
 
         if (result.success) {
+          const emailErrorSuffix = result.email_error ? ` : ${result.email_error}` : "";
           const fallback = result.email_sent
             ? ""
-            : `\n\nRESEND_API_KEY n'est pas configurée : copie le lien ci-dessous et envoie-le manuellement :\n${result.access_link || ""}`;
-          alert(`Lien d'accès dashboard envoyé à ${result.email || "ce candidat"}.${fallback}`);
+            : `
+
+Le mail automatique n'a pas été envoyé${emailErrorSuffix}.
+
+Copie ce lien et envoie-le manuellement au candidat :
+${result.access_link || ""}`;
+          const mainMessage = result.email_sent
+            ? `Lien d'accès dashboard envoyé à ${result.email || "ce candidat"}.`
+            : `Lien d'accès dashboard généré pour ${result.email || "ce candidat"}.`;
+          alert(`${mainMessage}${fallback}`);
           await loadTrainerRegistrations();
         } else {
           alert(result.error || "Envoi du lien impossible.");
