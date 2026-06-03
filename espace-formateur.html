@@ -1075,8 +1075,8 @@
 
 
     const TRAINER_DOCUMENT_FALLBACK_REQUIREMENTS = [
-      { type: "identity", label: "Pièce d’identité", category: "external", required: true, description: "Vérification hors site avec VITAL PROTECT. Aucun scan d’identité n’est à déposer ici." },
-      { type: "bank_account", label: "RIB / compte bancaire", category: "external", required: true, description: "Reversements gérés hors Stripe Connect, directement avec VITAL PROTECT. Aucun RIB PDF n’est à déposer ici." },
+      { type: "identity", label: "Pièce d’identité", category: "external", required: true, description: "Vérification via Stripe Identity / Stripe Connect. Aucun scan n’est stocké ici." },
+      { type: "bank_account", label: "RIB / compte bancaire", category: "external", required: true, description: "Compte bancaire à connecter via Stripe Connect pour les reversements. Aucun RIB PDF n’est stocké ici." },
       { type: "criminal_record", label: "Casier judiciaire B3", category: "upload", required: true, sensitive: true, description: "À transmettre pour vérification par VITAL PROTECT." },
       { type: "liability_insurance", label: "Attestation RC pro", category: "upload", required: true, description: "Attestation d’assurance responsabilité civile professionnelle." },
       { type: "diploma", label: "Diplôme / certification", category: "upload", required: false, description: "Diplôme, certification ou justificatif d’expérience." },
@@ -1136,38 +1136,98 @@
     }
 
     function buildStripeConnectSection(data = {}) {
+      const stripeConnect = data.stripe_connect || {};
+      const status = stripeConnect.status || "not_connected";
+      const setupRequired = Boolean(stripeConnect.setup_required);
+      const requirementsDue = Array.isArray(stripeConnect.requirements_due) ? stripeConnect.requirements_due : [];
+      const isReady = normalize(status) === "payouts_enabled";
+      const hasAccount = Boolean(stripeConnect.account_id);
+      const buttonLabel = hasAccount ? "Compléter mon compte de reversement" : "Connecter mon compte de reversement";
+
       return `
         <div class="card" id="stripeConnectMount" style="padding:18px; margin-top:18px;">
           <div class="dashboard-header">
             <div>
               <h2 class="section-title">Compte de reversement</h2>
-              <p class="muted">Aucun compte Stripe formateur n’est à créer depuis cet espace.</p>
+              <p class="muted">Les reversements formateurs passent par un compte Stripe Express connecté à la marketplace VITAL PROTECT. Ce compte sert uniquement à recevoir votre part de reversement ; il ne remplace pas le compte Stripe principal de VITAL PROTECT. VITAL PROTECT ne stocke ni RIB PDF, ni scan d’identité.</p>
             </div>
           </div>
+
+          ${setupRequired ? `
+            <div class="alert alert-warning">
+              Le module Stripe Connect n’est pas encore initialisé côté base de données. VITAL PROTECT doit exécuter la SQL v48.
+            </div>
+          ` : ""}
 
           <div class="stripe-connect-card">
             <div class="stripe-connect-status">
               <div>
-                <h3 style="margin:0 0 6px;">Reversements gérés hors Stripe Connect</h3>
+                <h3 style="margin:0 0 6px;">Compte de reversement Stripe Express</h3>
                 <p class="trainer-document-meta">
-                  Le compte Stripe VITAL PROTECT sert uniquement à encaisser les paiements du site. Le formateur n’a pas besoin de connecter son propre compte Stripe ici.
+                  Stripe collecte directement les informations d’identité et le compte bancaire nécessaires aux reversements. VITAL PROTECT encaisse les clients, conserve sa commission, puis reverse votre part sur ce compte connecté.
                 </p>
               </div>
-              <span class="badge badge-warning">Hors site</span>
+              <span class="badge ${stripeConnectBadgeClass(status)}">${escapeHtml(stripeConnectStatusLabel(status))}</span>
             </div>
 
-            <ul>
-              <li>Les modalités de reversement seront vérifiées directement avec VITAL PROTECT après validation du dossier.</li>
-              <li>Aucun RIB PDF ni scan d’identité n’est à déposer dans cette rubrique.</li>
-              <li>Les justificatifs à fournir restent disponibles dans la section « Mon dossier formateur ».</li>
-            </ul>
+            ${isReady ? `
+              <p class="trainer-document-meta"><strong>Compte prêt :</strong> les reversements peuvent être programmés vers ce compte.</p>
+            ` : `
+              <ul>
+                <li>Créer ou compléter votre compte de reversement Stripe Express.</li>
+                <li>Ajouter le compte bancaire qui recevra vos reversements.</li>
+                <li>Revenir ici après l’onboarding pour actualiser le statut.</li>
+              </ul>
+            `}
+
+            ${requirementsDue.length ? `
+              <p class="trainer-document-meta"><strong>Stripe demande encore :</strong> ${escapeHtml(requirementsDue.slice(0, 4).join(", "))}${requirementsDue.length > 4 ? "…" : ""}</p>
+            ` : ""}
+
+            ${stripeConnect.error ? `
+              <div class="trainer-document-note"><strong>Info :</strong> ${escapeHtml(stripeConnect.error)}</div>
+            ` : ""}
+
+            <div class="trainer-document-actions">
+              <button class="btn btn-primary btn-small" type="button" data-stripe-connect ${setupRequired ? "disabled" : ""}>
+                ${escapeHtml(isReady ? "Ouvrir / mettre à jour Stripe" : buttonLabel)}
+              </button>
+              <button class="btn btn-secondary btn-small" type="button" onclick="window.location.reload()">Actualiser</button>
+            </div>
           </div>
         </div>
       `;
     }
 
     function attachStripeConnectActions() {
-      // Stripe Connect est désactivé côté formateur : aucun bouton d’onboarding n’est utilisé.
+      document.querySelectorAll("[data-stripe-connect]").forEach(button => {
+        button.addEventListener("click", async () => {
+          const previousText = button.textContent;
+          button.disabled = true;
+          button.textContent = "Préparation Stripe...";
+
+          try {
+            const headers = await getTrainerAuthHeaders();
+            const res = await fetch("/api/trainer-tools", {
+              method: "POST",
+              headers,
+              body: JSON.stringify({ action: "create_stripe_connect_onboarding" })
+            });
+
+            const result = await parseApiResponse(res);
+            if (result.url) {
+              window.location.href = result.url;
+              return;
+            }
+            alert("Lien Stripe indisponible. Réessayez dans quelques instants.");
+          } catch (error) {
+            console.error(error);
+            alert(error.message || "Impossible d’ouvrir Stripe Connect.");
+            button.disabled = false;
+            button.textContent = previousText;
+          }
+        });
+      });
     }
 
     function buildTrainerDocumentsSection(data = {}) {
@@ -1243,7 +1303,7 @@
                   ` : ""}
 
                   ${category === "external" ? `
-                    <p class="trainer-document-meta">Ce point sera traité hors site avec VITAL PROTECT. Aucun fichier à déposer ici.</p>
+                    <p class="trainer-document-meta">Ce point sera traité via Stripe Express / vérification externe. Aucun fichier à déposer ici.</p>
                   ` : ""}
                 </article>
               `;
@@ -1660,7 +1720,7 @@
         <div class="dashboard-header" style="margin-top: 18px;">
           <div>
             <h3 style="margin: 0;">Mes revenus / reversements</h3>
-            <p class="muted">Suivez les montants encaissés, la commission VITAL PROTECT et les reversements validés par VITAL PROTECT.</p>
+            <p class="muted">Suivez les montants encaissés, la commission VITAL PROTECT et les reversements programmés vers votre compte Stripe Express.</p>
           </div>
         </div>
         <div class="dashboard-kpis" style="margin-bottom: 14px;">
