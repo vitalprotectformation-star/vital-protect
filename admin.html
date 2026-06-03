@@ -5368,11 +5368,10 @@ VITAL PROTECT`
 
       try {
         const headers = await getAuthHeaders();
-        const res = await fetch("/api/admin-tools", {
+        const res = await fetch("/api/refund-trainer-registration", {
           method: "POST",
           headers,
           body: JSON.stringify({
-            action: "refund_trainer_registration",
             registration_id: registrationId
           })
         });
