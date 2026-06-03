@@ -5367,15 +5367,9 @@ VITAL PROTECT`
       if (!confirmed) return;
 
       try {
-        const headers = await getAuthHeaders();
-        const res = await fetch("/api/refund-trainer-registration", {
-          method: "POST",
-          headers,
-          body: JSON.stringify({
-            registration_id: registrationId
-          })
+        const result = await callAdminTool("refund_trainer_registration", {
+          registration_id: registrationId
         });
-        const result = await parseApiResponse(res);
         if (result.success) {
           alert("Remboursement effectué avec succès.");
           await loadTrainerRegistrations();
