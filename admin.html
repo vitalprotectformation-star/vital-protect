@@ -5372,13 +5372,7 @@ VITAL PROTECT`
           payment_ref: paymentRef
         });
         if (result.success) {
-          if (result.free_payment) {
-            alert(result.message || "Inscription gratuite annulée avec succès.");
-          } else if (result.canceled) {
-            alert(result.message || "Autorisation bancaire annulée avec succès.");
-          } else {
-            alert("Remboursement effectué avec succès.");
-          }
+          alert("Remboursement effectué avec succès.");
           await loadTrainerRegistrations();
         } else {
           alert(result.error || "Erreur lors du remboursement.");
