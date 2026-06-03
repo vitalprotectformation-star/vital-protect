@@ -2804,7 +2804,7 @@ async function handleRefundTrainerRegistration(req, res) {
   // Get the registration
   const { data: reg, error: regError } = await supabase
     .from("trainer_session_registrations")
-    .select("id, email, first_name, last_name, payment_status, validation_status, stripe_payment_intent_id, stripe_session_id, refunded_at")
+    .select("id, email, first_name, last_name, payment_status, validation_status, stripe_payment_intent_id, stripe_session_id, refunded_at, stripe_refund_id")
     .eq("id", registrationId)
     .maybeSingle();
 
