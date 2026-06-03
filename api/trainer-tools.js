@@ -79,6 +79,16 @@ function sanitizeText(value, fallback = "") {
 }
 
 
+
+function isStripeConnectSignupRequiredError(error) {
+  const message = String(error?.message || error || "").toLowerCase();
+  return message.includes("signed up for connect") || message.includes("dashboard.stripe.com/connect");
+}
+
+function getStripeConnectSignupRequiredMessage() {
+  return "Stripe Connect n’est pas encore activé/configuré sur le compte Stripe VITAL PROTECT en mode LIVE. Active d’abord Connect dans le Dashboard Stripe, puis réessaie. Aucun compte formateur ne peut être créé tant que Stripe bloque la création de comptes connectés.";
+}
+
 function getStripe() {
   if (!process.env.STRIPE_SECRET_KEY) {
     throw new Error("Configuration Stripe manquante : STRIPE_SECRET_KEY");
@@ -1375,6 +1385,15 @@ async function handleCreateStripeConnectOnboarding(req, res, access) {
     });
   } catch (error) {
     console.error("Stripe Connect onboarding error:", error);
+
+    if (isStripeConnectSignupRequiredError(error)) {
+      return res.status(503).json({
+        error: getStripeConnectSignupRequiredMessage(),
+        code: "stripe_connect_signup_required",
+        stripe_dashboard_url: "https://dashboard.stripe.com/connect"
+      });
+    }
+
     return res.status(500).json({ error: error.message || "Impossible de préparer l’onboarding Stripe Connect" });
   }
 }
