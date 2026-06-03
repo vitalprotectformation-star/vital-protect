@@ -190,6 +190,7 @@
 
       submitBtn.disabled = true;
       setStatus("Création de votre accès en cours...");
+      let keepButtonDisabled = false;
 
       try {
         const res = await fetch("/api/setup-trainer-account", {
@@ -210,28 +211,39 @@
         }
 
         setStatus("Accès créé. Connexion au dashboard...", "success");
+        keepButtonDisabled = true;
 
-        const { error: loginError } = await supabase.auth.signInWithPassword({
-          email: data.email,
-          password
-        });
+        try {
+          const { data: loginData, error: loginError } = await supabase.auth.signInWithPassword({
+            email: data.email,
+            password
+          });
 
-        if (loginError) {
-          setStatus("Accès créé. Vous pouvez maintenant vous connecter avec votre mot de passe.", "success");
+          if (loginError || !loginData?.session) {
+            console.warn("Connexion automatique formateur indisponible :", loginError || "session absente");
+            setStatus("Accès créé. Redirection vers la page de connexion...", "success");
+            setTimeout(() => {
+              window.location.href = `/formateur-login.html?email=${encodeURIComponent(data.email || "")}`;
+            }, 1200);
+            return;
+          }
+
           setTimeout(() => {
-            window.location.href = "/formateur-login.html";
+            window.location.href = "/espace-formateur.html";
+          }, 700);
+        } catch (loginException) {
+          console.warn("Connexion automatique formateur impossible :", loginException);
+          setStatus("Accès créé. Connexion automatique indisponible, redirection vers la page de connexion...", "success");
+          setTimeout(() => {
+            window.location.href = `/formateur-login.html?email=${encodeURIComponent(data.email || "")}`;
           }, 1200);
           return;
         }
-
-        setTimeout(() => {
-          window.location.href = "/espace-formateur.html";
-        }, 700);
       } catch (error) {
         console.error(error);
         setStatus(error.message || "Erreur réseau ou serveur.", "error");
       } finally {
-        submitBtn.disabled = false;
+        if (!keepButtonDisabled) submitBtn.disabled = false;
       }
     });
   </script>
