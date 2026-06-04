@@ -4308,6 +4308,103 @@
     }
 
 
+    function escapeHtmlDocumentViewer(value) {
+      return String(value || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function base64ToBlob(base64, mimeType) {
+      const byteCharacters = atob(base64 || "");
+      const byteArrays = [];
+      const sliceSize = 1024;
+
+      for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+        const slice = byteCharacters.slice(offset, offset + sliceSize);
+        const byteNumbers = new Array(slice.length);
+        for (let i = 0; i < slice.length; i += 1) {
+          byteNumbers[i] = slice.charCodeAt(i);
+        }
+        byteArrays.push(new Uint8Array(byteNumbers));
+      }
+
+      return new Blob(byteArrays, { type: mimeType || "application/octet-stream" });
+    }
+
+    function renderDocumentPreview(previewWindow, fileUrl, fileName, mimeType, fallbackUrl = "") {
+      const safeName = escapeHtmlDocumentViewer(fileName || "document");
+      const safeFileUrl = escapeHtmlDocumentViewer(fileUrl || "");
+      const safeFallbackUrl = escapeHtmlDocumentViewer(fallbackUrl || fileUrl || "");
+      const normalizedMime = String(mimeType || "").toLowerCase();
+      const isImage = normalizedMime.startsWith("image/") || /\.(jpg|jpeg|png|webp|gif)$/i.test(fileName || "");
+      const isPdf = normalizedMime.includes("pdf") || /\.pdf$/i.test(fileName || "");
+
+      let viewer = "";
+      if (isImage) {
+        viewer = `<img src="${safeFileUrl}" alt="${safeName}" style="display:block;max-width:100%;height:auto;margin:0 auto;border-radius:12px;box-shadow:0 12px 30px rgba(15,23,42,.16);" />`;
+      } else if (isPdf) {
+        viewer = `<iframe src="${safeFileUrl}" title="${safeName}" style="width:100%;height:calc(100vh - 115px);border:0;border-radius:12px;background:#fff;"></iframe>`;
+      } else {
+        viewer = `<div style="padding:24px;border:1px solid #d8e2f0;border-radius:12px;background:#f8fbff;">Aperçu non disponible pour ce type de fichier. Utilisez le bouton Télécharger.</div>`;
+      }
+
+      const html = `<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>${safeName}</title>
+  <style>
+    body { margin:0; font-family: Arial, sans-serif; background:#eef4fb; color:#0f172a; }
+    header { position:sticky; top:0; z-index:10; display:flex; gap:12px; align-items:center; justify-content:space-between; padding:14px 18px; background:#fff; border-bottom:1px solid #d8e2f0; }
+    strong { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .actions { display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end; }
+    a, button { border:1px solid #c9d7e8; border-radius:10px; padding:9px 13px; background:#fff; color:#0f3270; font-weight:700; text-decoration:none; cursor:pointer; }
+    main { padding:18px; }
+  </style>
+</head>
+<body>
+  <header>
+    <strong>${safeName}</strong>
+    <div class="actions">
+      ${safeFallbackUrl ? `<a href="${safeFallbackUrl}" target="_blank" rel="noopener">Ouvrir le lien sécurisé</a>` : ""}
+      <a href="${safeFileUrl}" download="${safeName}">Télécharger</a>
+      <button onclick="window.close()">Fermer</button>
+    </div>
+  </header>
+  <main>${viewer}</main>
+</body>
+</html>`;
+
+      if (previewWindow) {
+        previewWindow.document.open();
+        previewWindow.document.write(html);
+        previewWindow.document.close();
+      }
+    }
+
+    function renderDocumentPreviewError(previewWindow, message, signedUrl = "") {
+      const safeMessage = escapeHtmlDocumentViewer(message || "Impossible d’ouvrir le document.");
+      const safeSignedUrl = escapeHtmlDocumentViewer(signedUrl || "");
+      const html = `<!doctype html>
+<html lang="fr">
+<head><meta charset="utf-8" /><title>Document formateur</title></head>
+<body style="font-family:Arial,sans-serif;padding:24px;color:#0f172a;">
+  <h2>Impossible d’afficher l’aperçu</h2>
+  <p>${safeMessage}</p>
+  ${safeSignedUrl ? `<p><a href="${safeSignedUrl}" target="_blank" rel="noopener">Essayer d’ouvrir le lien sécurisé Supabase</a></p>` : ""}
+</body>
+</html>`;
+      if (previewWindow) {
+        previewWindow.document.open();
+        previewWindow.document.write(html);
+        previewWindow.document.close();
+      }
+    }
+
     window.openTrainerDocument = async (documentId) => {
       if (!documentId) {
         alert("Document introuvable.");
@@ -4316,31 +4413,53 @@
 
       let previewWindow = null;
       try {
-        previewWindow = window.open("", "_blank", "noopener,noreferrer");
+        previewWindow = window.open("", "_blank");
         if (previewWindow) {
           previewWindow.document.write("<p style='font-family:Arial,sans-serif;padding:24px;'>Chargement du document sécurisé...</p>");
         }
 
-        const result = await callAdminTool("get_trainer_document_url", {
+        const result = await callAdminTool("get_trainer_document_data", {
           document_id: documentId
         });
 
-        const signedUrl = result.signed_url || result.url || "";
-        if (!signedUrl) {
-          if (previewWindow) previewWindow.close();
-          alert("Lien du document introuvable.");
+        const fileName = result.file_name || "document-formateur";
+        const mimeType = result.file_mime_type || "application/octet-stream";
+
+        if (result.file_base64) {
+          const blob = base64ToBlob(result.file_base64, mimeType);
+          const objectUrl = URL.createObjectURL(blob);
+          if (previewWindow) {
+            renderDocumentPreview(previewWindow, objectUrl, fileName, mimeType, result.signed_url || "");
+          } else {
+            window.open(objectUrl, "_blank");
+          }
           return;
         }
 
-        if (previewWindow) {
-          previewWindow.location.href = signedUrl;
-        } else {
-          window.open(signedUrl, "_blank", "noopener,noreferrer");
+        const signedUrl = result.signed_url || result.url || "";
+        if (signedUrl) {
+          if (previewWindow) {
+            renderDocumentPreview(previewWindow, signedUrl, fileName, mimeType, signedUrl);
+          } else {
+            window.open(signedUrl, "_blank");
+          }
+          return;
         }
+
+        if (previewWindow) previewWindow.close();
+        alert("Aucun fichier exploitable n’a été retourné par l’API.");
       } catch (error) {
         console.error(error);
-        if (previewWindow) previewWindow.close();
-        alert(error.message || "Impossible d’ouvrir le document formateur.");
+        if (previewWindow) {
+          try {
+            const fallback = await callAdminTool("get_trainer_document_url", { document_id: documentId });
+            renderDocumentPreviewError(previewWindow, error.message || "Impossible d’ouvrir le document formateur.", fallback.signed_url || "");
+          } catch (_) {
+            renderDocumentPreviewError(previewWindow, error.message || "Impossible d’ouvrir le document formateur.");
+          }
+        } else {
+          alert(error.message || "Impossible d’ouvrir le document formateur.");
+        }
       }
     };
 
