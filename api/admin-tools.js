@@ -2632,9 +2632,7 @@ async function handleGetTrainerDocumentUrl(req, res) {
   const bucket = documentRow.storage_bucket || TRAINER_DOCUMENT_BUCKET;
   const { data: signed, error: signedError } = await supabase.storage
     .from(bucket)
-    .createSignedUrl(documentRow.storage_path, 300, {
-      download: documentRow.file_name || undefined
-    });
+    .createSignedUrl(documentRow.storage_path, 300);
 
   if (signedError) {
     return res.status(500).json({ error: signedError.message });
