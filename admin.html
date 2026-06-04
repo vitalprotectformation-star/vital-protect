@@ -2027,6 +2027,48 @@
       return name || row.email || "Formateur";
     }
 
+    function trainerDocumentHasUploadedFile(row = {}) {
+      return Boolean(row.has_file || row.file_path || row.storage_path || row.file_name);
+    }
+
+    function trainerDocumentFileCell(row = {}) {
+      if (trainerDocumentHasUploadedFile(row)) {
+        return `
+          <strong>${escapeHtml(row.file_name || "Fichier privé")}</strong>
+          <span>${escapeHtml(formatFileSize(row.file_size_bytes))}</span>
+        `;
+      }
+      return `
+        <strong>Acceptation en ligne</strong>
+        <span>Aucun fichier à ouvrir</span>
+      `;
+    }
+
+    function trainerDocumentActionsHtml(row = {}) {
+      const id = jsArg(row.id);
+      const status = normalize(row.status);
+      const hasUploadedFile = trainerDocumentHasUploadedFile(row);
+
+      if (!hasUploadedFile) {
+        return `
+          <div class="action-stack">
+            ${status !== "validated" ? `<button class="btn btn-primary" type="button" onclick="window.updateTrainerDocumentStatus('${id}', 'validated')">Valider l’acceptation</button>` : `<span style="font-weight:800;color:#9fb2cc;text-align:center;">Acceptation validée</span>`}
+            ${status !== "refused" ? `<button class="btn btn-danger" type="button" onclick="window.updateTrainerDocumentStatus('${id}', 'refused')">Refuser</button>` : ""}
+          </div>
+        `;
+      }
+
+      return `
+        <div class="action-stack">
+          <button class="btn btn-secondary" type="button" onclick="window.openTrainerDocument('${id}')">Voir</button>
+          ${status !== "validated" ? `<button class="btn btn-primary" type="button" onclick="window.updateTrainerDocumentStatus('${id}', 'validated')">Valider</button>` : ""}
+          ${status !== "in_review" ? `<button class="btn btn-secondary" type="button" onclick="window.updateTrainerDocumentStatus('${id}', 'in_review')">En vérification</button>` : ""}
+          ${status !== "refused" ? `<button class="btn btn-danger" type="button" onclick="window.updateTrainerDocumentStatus('${id}', 'refused')">Refuser</button>` : ""}
+          ${status !== "expired" ? `<button class="btn btn-secondary" type="button" onclick="window.updateTrainerDocumentStatus('${id}', 'expired')">Expirer</button>` : ""}
+        </div>
+      `;
+    }
+
     function renderTrainerDocuments(rows = []) {
       if (!trainerDocumentsWrap) return;
 
@@ -2059,10 +2101,7 @@
                   <strong>${escapeHtml(row.document_label || row.document_type || "Document")}</strong>
                   <span>${row.sensitive ? "Document sensible" : "Document standard"}</span>
                 </td>
-                <td>
-                  <strong>${escapeHtml(row.file_name || (row.has_file ? "Fichier privé" : "—"))}</strong>
-                  <span>${escapeHtml(formatFileSize(row.file_size_bytes))}</span>
-                </td>
+                <td>${trainerDocumentFileCell(row)}</td>
                 <td><span class="badge ${trainerDocumentStatusClass(row.status)}">${escapeHtml(trainerDocumentStatusLabel(row.status))}</span></td>
                 <td>
                   <strong>Envoi : ${escapeHtml(formatDateTime(row.uploaded_at || row.accepted_at || row.updated_at))}</strong>
@@ -2070,15 +2109,7 @@
                   ${row.expires_at ? `<span>Expire : ${escapeHtml(formatShortDate(row.expires_at))}</span>` : ""}
                 </td>
                 <td>${escapeHtml(row.admin_note || "—")}</td>
-                <td>
-                  <div class="action-stack">
-                    ${row.has_file ? `<button class="btn btn-secondary" type="button" onclick="window.openTrainerDocument('${jsArg(row.id)}')">Voir</button>` : ""}
-                    ${normalize(row.status) !== "validated" ? `<button class="btn btn-primary" type="button" onclick="window.updateTrainerDocumentStatus('${jsArg(row.id)}', 'validated')">Valider</button>` : ""}
-                    ${normalize(row.status) !== "in_review" ? `<button class="btn btn-secondary" type="button" onclick="window.updateTrainerDocumentStatus('${jsArg(row.id)}', 'in_review')">En vérification</button>` : ""}
-                    ${normalize(row.status) !== "refused" ? `<button class="btn btn-danger" type="button" onclick="window.updateTrainerDocumentStatus('${jsArg(row.id)}', 'refused')">Refuser</button>` : ""}
-                    ${normalize(row.status) !== "expired" ? `<button class="btn btn-secondary" type="button" onclick="window.updateTrainerDocumentStatus('${jsArg(row.id)}', 'expired')">Expirer</button>` : ""}
-                  </div>
-                </td>
+                <td>${trainerDocumentActionsHtml(row)}</td>
               </tr>
             `).join("")}
           </tbody>
