@@ -4307,6 +4307,97 @@
       }
     }
 
+
+    window.openTrainerDocument = async (documentId) => {
+      if (!documentId) {
+        alert("Document introuvable.");
+        return;
+      }
+
+      let previewWindow = null;
+      try {
+        previewWindow = window.open("", "_blank", "noopener,noreferrer");
+        if (previewWindow) {
+          previewWindow.document.write("<p style='font-family:Arial,sans-serif;padding:24px;'>Chargement du document sécurisé...</p>");
+        }
+
+        const result = await callAdminTool("get_trainer_document_url", {
+          document_id: documentId
+        });
+
+        const signedUrl = result.signed_url || result.url || "";
+        if (!signedUrl) {
+          if (previewWindow) previewWindow.close();
+          alert("Lien du document introuvable.");
+          return;
+        }
+
+        if (previewWindow) {
+          previewWindow.location.href = signedUrl;
+        } else {
+          window.open(signedUrl, "_blank", "noopener,noreferrer");
+        }
+      } catch (error) {
+        console.error(error);
+        if (previewWindow) previewWindow.close();
+        alert(error.message || "Impossible d’ouvrir le document formateur.");
+      }
+    };
+
+    window.updateTrainerDocumentStatus = async (documentId, status) => {
+      if (!documentId) {
+        alert("Document introuvable.");
+        return;
+      }
+
+      const statusLabels = {
+        submitted: "envoyé",
+        in_review: "en vérification",
+        validated: "validé",
+        refused: "refusé",
+        expired: "expiré"
+      };
+
+      let adminNote = "";
+      if (status === "refused") {
+        adminNote = window.prompt("Motif du refus / note admin (optionnel) :", "") || "";
+      } else if (status === "expired") {
+        adminNote = window.prompt("Note admin pour l’expiration (optionnel) :", "") || "";
+      }
+
+      try {
+        const result = await callAdminTool("update_trainer_document_status", {
+          document_id: documentId,
+          status,
+          admin_note: adminNote
+        });
+
+        if (!result.success) {
+          alert(result.error || "Impossible de mettre à jour le document.");
+          return;
+        }
+
+        const updated = result.trainer_document;
+        if (updated?.id) {
+          const index = trainerDocumentsData.findIndex(row => String(row.id) === String(updated.id));
+          if (index >= 0) {
+            trainerDocumentsData[index] = updated;
+          } else {
+            trainerDocumentsData.unshift(updated);
+          }
+        } else {
+          await loadTrainerDocuments();
+          return;
+        }
+
+        applyDocumentFilters();
+        alert(`Document ${statusLabels[status] || "mis à jour"}.`);
+      } catch (error) {
+        console.error(error);
+        alert(error.message || "Impossible de mettre à jour le document.");
+      }
+    };
+
     window.deleteTrainerSession = async (sessionId, sessionTitle) => {
       const confirmed = window.confirm(
         `Supprimer la session de formation formateur "${sessionTitle}" ?\n\n` +
