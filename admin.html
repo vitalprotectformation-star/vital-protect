@@ -1891,6 +1891,10 @@
       });
     }
 
+    function formatDateTime(dateString) {
+      return formatDate(dateString);
+    }
+
     function formatShortDate(dateString) {
       if (!dateString) return "—";
       const date = new Date(dateString);
