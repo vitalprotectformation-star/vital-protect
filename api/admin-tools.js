@@ -2608,6 +2608,20 @@ async function handleListTrainerDocuments(req, res) {
   });
 }
 
+async function getTrainerDocumentStorageRow(documentId) {
+  const { data: documentRow, error } = await supabase
+    .from("trainer_documents")
+    .select("id, storage_bucket, storage_path, file_name, file_mime_type, file_size_bytes")
+    .eq("id", documentId)
+    .maybeSingle();
+
+  if (error) {
+    throw error;
+  }
+
+  return documentRow;
+}
+
 async function handleGetTrainerDocumentUrl(req, res) {
   const documentId = sanitizeText(req.body?.document_id);
 
@@ -2615,13 +2629,10 @@ async function handleGetTrainerDocumentUrl(req, res) {
     return res.status(400).json({ error: "document_id manquant" });
   }
 
-  const { data: documentRow, error } = await supabase
-    .from("trainer_documents")
-    .select("id, storage_bucket, storage_path, file_name")
-    .eq("id", documentId)
-    .maybeSingle();
-
-  if (error) {
+  let documentRow = null;
+  try {
+    documentRow = await getTrainerDocumentStorageRow(documentId);
+  } catch (error) {
     return res.status(500).json({ error: error.message });
   }
 
@@ -2641,7 +2652,70 @@ async function handleGetTrainerDocumentUrl(req, res) {
   return res.status(200).json({
     success: true,
     signed_url: signed?.signedUrl || "",
+    file_name: documentRow.file_name || "document",
+    file_mime_type: documentRow.file_mime_type || "application/octet-stream",
+    file_size_bytes: Number(documentRow.file_size_bytes || 0),
     expires_in_seconds: 300
+  });
+}
+
+async function handleGetTrainerDocumentData(req, res) {
+  const documentId = sanitizeText(req.body?.document_id);
+
+  if (!documentId) {
+    return res.status(400).json({ error: "document_id manquant" });
+  }
+
+  let documentRow = null;
+  try {
+    documentRow = await getTrainerDocumentStorageRow(documentId);
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+
+  if (!documentRow?.storage_path) {
+    return res.status(404).json({ error: "Fichier introuvable pour ce document" });
+  }
+
+  const bucket = documentRow.storage_bucket || TRAINER_DOCUMENT_BUCKET;
+  const { data: fileData, error: downloadError } = await supabase.storage
+    .from(bucket)
+    .download(documentRow.storage_path);
+
+  if (downloadError) {
+    return res.status(500).json({ error: downloadError.message });
+  }
+
+  const arrayBuffer = await fileData.arrayBuffer();
+  const buffer = Buffer.from(arrayBuffer);
+
+  // Sécurité Vercel : au-delà d'environ 4 Mo, on renvoie plutôt un lien signé.
+  if (buffer.length > 4 * 1024 * 1024) {
+    const { data: signed, error: signedError } = await supabase.storage
+      .from(bucket)
+      .createSignedUrl(documentRow.storage_path, 300);
+
+    if (signedError) {
+      return res.status(500).json({ error: signedError.message });
+    }
+
+    return res.status(200).json({
+      success: true,
+      too_large_for_inline_preview: true,
+      signed_url: signed?.signedUrl || "",
+      file_name: documentRow.file_name || "document",
+      file_mime_type: documentRow.file_mime_type || fileData.type || "application/octet-stream",
+      file_size_bytes: buffer.length,
+      expires_in_seconds: 300
+    });
+  }
+
+  return res.status(200).json({
+    success: true,
+    file_base64: buffer.toString("base64"),
+    file_name: documentRow.file_name || "document",
+    file_mime_type: documentRow.file_mime_type || fileData.type || "application/octet-stream",
+    file_size_bytes: buffer.length
   });
 }
 
@@ -3046,6 +3120,10 @@ export default async function handler(req, res) {
 
     if (action === "get_trainer_document_url") {
       return await handleGetTrainerDocumentUrl(req, res);
+    }
+
+    if (action === "get_trainer_document_data") {
+      return await handleGetTrainerDocumentData(req, res);
     }
 
     if (action === "update_trainer_document_status") {
