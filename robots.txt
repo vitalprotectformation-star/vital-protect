@@ -2,6 +2,3 @@ User-agent: *
 Allow: /
 
 Sitemap: https://www.vital-protect.fr/sitemap.xml
-
-# Fichier de contexte pour moteurs IA / LLM
-# https://www.vital-protect.fr/llms.txt
