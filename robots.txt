@@ -1,4 +1,7 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://vital-protect.fr/sitemap.xml
+Sitemap: https://www.vital-protect.fr/sitemap.xml
+
+# Fichier de contexte pour moteurs IA / LLM
+# https://www.vital-protect.fr/llms.txt
