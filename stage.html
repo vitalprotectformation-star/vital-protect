@@ -1242,7 +1242,7 @@
           <div class="vp-guarantees-items">
             <div class="vp-guarantee-item">
               <span class="vp-guarantee-icon">✓</span>
-              <span>Certifié module par module</span>
+              <span>Habilité module par module</span>
             </div>
             <div class="vp-guarantee-item">
               <span class="vp-guarantee-icon">✓</span>
@@ -1582,13 +1582,28 @@
       if (message) showBookingStatus(message, bookingEnabled ? "success" : "info");
     }
 
+    function getDisplayUnitPrice(stageRow, places) {
+      const kind = String(stageRow?.stage_kind || "").toLowerCase();
+      if (kind === "enterprise") return 250;
+      const n = Math.max(1, Number(places || 1));
+      if (n === 1) return 30;
+      if (n === 2) return 25;
+      return 20;
+    }
+
+    function getDisplayTotal(stageRow, places) {
+      const kind = String(stageRow?.stage_kind || "").toLowerCase();
+      if (kind === "enterprise") return 250;
+      return getDisplayUnitPrice(stageRow, places) * Math.max(1, Number(places || 1));
+    }
+
     function updateBookingTotal() {
       if (!stage || !hasCompleteSession(stage)) {
         setText(bookingTotal, "Total : en attente d’une session complète");
         return;
       }
       const places = Math.max(1, Number(placesInput?.value || 1));
-      setText(bookingTotal, `Total : ${formatPrice(Number(stage.price || 0) * places)}`);
+      setText(bookingTotal, `Total : ${formatPrice(getDisplayTotal(stage, places))}`);
     }
 
     function showNoSessionState(message = "Choisissez une session dans la liste : le formulaire s’activera automatiquement si la réservation est possible.") {
@@ -2197,7 +2212,7 @@
       setText(heroDescription, stage.description || moduleSummary(getItemModuleType(stage), stagePathForItem(stage)));
       setText(metaCity, stage.city || "À confirmer");
       setText(metaDate, formatDate(stage.stage_date));
-      setText(metaPrice, formatPrice(stage.price));
+      setText(metaPrice, String(stage.stage_kind || "").toLowerCase() === "enterprise" ? `${formatPrice(stage.price)} (forfait jusqu'à 20 pers.)` : `à partir de ${formatPrice(stage.price)} / pers.`);
       setText(metaPlaces, String(stage.remaining_places ?? "—"));
       setText(metaRegion, stage.region || "Région à confirmer");
       setText(metaDepartment, stage.department || "Département à confirmer");
@@ -2272,6 +2287,11 @@
           showBookingStatus("Le nombre de places demandé dépasse les places restantes.", "error");
           return;
         }
+        const stageKind = String(stage.stage_kind || "").toLowerCase();
+        if (stageKind !== "enterprise" && places > 12) {
+          showBookingStatus("Un stage grand public est limité à 12 participants maximum. Pour un effectif plus large, contactez-nous pour une formule entreprise/association.", "error");
+          return;
+        }
         showBookingStatus("Redirection vers le paiement Stripe...", "info");
         try {
           const res = await fetch("/api/create-checkout-session", {
@@ -2285,7 +2305,7 @@
               email,
               phone,
               places,
-              unit_price: Number(stage.price || 0)
+              unit_price: getDisplayUnitPrice(stage, places)
             })
           });
           const result = await res.json();

@@ -559,7 +559,7 @@
         <button class="nav-btn" data-tab="archives">Archives candidats</button>
         <button class="nav-btn" data-tab="formateurs">Formateurs actifs</button>
         <button class="nav-btn" data-tab="recyclage">À recycler</button>
-        <button class="nav-btn" data-tab="modules">Modules certifiés</button>
+        <button class="nav-btn" data-tab="modules">Modules habilités</button>
         <button class="nav-btn" data-tab="stages">Stages</button>
         <button class="nav-btn" data-tab="formations">Formations formateur</button>
         <button class="nav-btn" data-tab="reversements">Reversements formateurs</button>
@@ -645,7 +645,7 @@
                 <div class="stat-value" id="expiredAffiliationsCount">0</div>
               </div>
               <div class="stat-card">
-                <span class="stat-label">Certifications expirées</span>
+                <span class="stat-label">Habilitations expirées</span>
                 <div class="stat-value" id="expiredCertificationsCount">0</div>
               </div>
               <div class="stat-card">
@@ -854,7 +854,7 @@
 
             <div class="filters filters-2">
               <div class="field">
-                <label>Certification</label>
+                <label>Habilitation</label>
                 <select id="trainerCertificationFilter">
                   <option value="">Toutes</option>
                   <option value="valid">Valide</option>
@@ -890,7 +890,7 @@
         <div class="card">
           <div class="card-header">
             <div>
-              <h2>Gestion des modules certifiés</h2>
+              <h2>Gestion des modules habilités</h2>
               <p>Ajout manuel, prolongation, suppression ou masquage des modules.</p>
             </div>
             <button class="btn btn-primary" type="button" onclick="window.openModuleCatalogForm()">Ajouter un module</button>
@@ -989,7 +989,7 @@
                 <div class="field">
                   <label>Statut</label>
                   <select id="trainerModuleStatusInput" required>
-                    <option value="certified">certified</option>
+                    <option value="certified">Habilité</option>
                     <option value="expired">expired</option>
                     <option value="suspended">suspended</option>
                   </select>
@@ -1027,7 +1027,7 @@
                 <label>Statut</label>
                 <select id="trainerModuleStatusFilter">
                   <option value="">Tous</option>
-                  <option value="certified">Certifié</option>
+                  <option value="certified">Habilité</option>
                   <option value="expired">Expiré</option>
                   <option value="suspended">Suspendu</option>
                 </select>
@@ -1043,7 +1043,7 @@
             </div>
 
             <div class="table-wrap" id="trainerModulesWrap">
-              <div class="loading">Chargement des modules certifiés...</div>
+              <div class="loading">Chargement des modules habilités...</div>
             </div>
           </div>
         </div>
@@ -3775,9 +3775,9 @@
               <th>Ville</th>
               <th>Département</th>
               <th>Région</th>
-              <th>Certif. expire le</th>
+              <th>Habil. expire le</th>
               <th>Affiliation expire le</th>
-              <th>Certification</th>
+              <th>Habilitation</th>
               <th>Affiliation</th>
               <th>Reversements</th>
               <th>Statut global</th>
@@ -3824,7 +3824,7 @@
 
     function renderTrainerModules(rows) {
       if (!rows.length) {
-        trainerModulesWrap.innerHTML = `<div class="empty">Aucun module certifié trouvé.</div>`;
+        trainerModulesWrap.innerHTML = `<div class="empty">Aucun module habilité trouvé.</div>`;
         return;
       }
 
@@ -4296,7 +4296,7 @@
 
       if (error) {
         console.error(error);
-        trainerModulesWrap.innerHTML = `<div class="error">Impossible de charger les modules certifiés.</div>`;
+        trainerModulesWrap.innerHTML = `<div class="error">Impossible de charger les modules habilités.</div>`;
         return;
       }
 
@@ -5197,7 +5197,7 @@ ${result.access_link || ""}`;
     };
 
     window.finalizeTrainer = async (registrationId) => {
-      const confirmed = window.confirm("Activer ce formateur et démarrer sa certification + son affiliation ?");
+      const confirmed = window.confirm("Activer ce formateur et démarrer son habilitation + son affiliation ?");
       if (!confirmed) return;
 
       try {
