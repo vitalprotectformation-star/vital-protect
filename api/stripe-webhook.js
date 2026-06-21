@@ -15,7 +15,17 @@ const supabase = createClient(
 );
 
 const PUBLIC_STAGE_UNIT_PRICE = 30;
-const ENTERPRISE_STAGE_PRICE = 390;
+const PUBLIC_STAGE_DUO_UNIT_PRICE = 25;
+const PUBLIC_STAGE_GROUP_UNIT_PRICE = 20;
+const ENTERPRISE_STAGE_PRICE = 250;
+const ENTERPRISE_COMMISSION_RATE = 0.10;
+
+function getPublicTierUnitPrice(requestedPlaces) {
+  const n = Number(requestedPlaces || 1);
+  if (n <= 1) return PUBLIC_STAGE_UNIT_PRICE;
+  if (n === 2) return PUBLIC_STAGE_DUO_UNIT_PRICE;
+  return PUBLIC_STAGE_GROUP_UNIT_PRICE;
+}
 const PAYOUT_DAY_OF_MONTH = 20;
 
 export const config = {
@@ -576,8 +586,8 @@ function isInLast12Months(dateString) {
 
 function getCommissionTier(realizedStages12Months) {
   const count = Number(realizedStages12Months || 0);
-  if (count >= 12) return { rate: 0.075, label: "Formateur mensuel" };
-  if (count >= 6) return { rate: 0.15, label: "Formateur régulier" };
+  if (count >= 12) return { rate: 0.10, label: "Formateur mensuel" };
+  if (count >= 6) return { rate: 0.20, label: "Formateur régulier" };
   return { rate: 0.30, label: "Formateur lancement" };
 }
 
@@ -957,7 +967,9 @@ async function handleStageCheckout(session) {
   }
 
   const offerType = stageKind || getStageOfferType(stage);
-  const commissionTier = await getTrainerCommissionTier(stage.trainer_id);
+  const commissionTier = offerType === "enterprise"
+    ? { rate: ENTERPRISE_COMMISSION_RATE, label: "B2B / association (forfait fixe)" }
+    : await getTrainerCommissionTier(stage.trainer_id);
   const trainerPayoutAmount = calculateTrainerPayout(totalAmount, commissionTier.rate);
   const payoutDueDate = getPayoutDateForStage(stage.stage_date);
 

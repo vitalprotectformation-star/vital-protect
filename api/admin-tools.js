@@ -12,7 +12,17 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "");
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 
 const PUBLIC_STAGE_UNIT_PRICE = 30;
-const ENTERPRISE_STAGE_PRICE = 390;
+const PUBLIC_STAGE_DUO_UNIT_PRICE = 25;
+const PUBLIC_STAGE_GROUP_UNIT_PRICE = 20;
+const ENTERPRISE_STAGE_PRICE = 250;
+const ENTERPRISE_COMMISSION_RATE = 0.10;
+
+function getPublicTierUnitPrice(requestedPlaces) {
+  const n = Number(requestedPlaces || 1);
+  if (n <= 1) return PUBLIC_STAGE_UNIT_PRICE;
+  if (n === 2) return PUBLIC_STAGE_DUO_UNIT_PRICE;
+  return PUBLIC_STAGE_GROUP_UNIT_PRICE;
+}
 const PAYOUT_DAY_OF_MONTH = 20;
 
 const TRAINER_DOCUMENT_BUCKET = process.env.TRAINER_DOCUMENT_BUCKET || "trainer-documents";
@@ -599,10 +609,10 @@ function isInLast12Months(dateString) {
 function getCommissionTier(realizedStages12Months) {
   const count = Number(realizedStages12Months || 0);
   if (count >= 12) {
-    return { rate: 0.075, trainerShareRate: 0.925, label: "Formateur mensuel" };
+    return { rate: 0.10, trainerShareRate: 0.90, label: "Formateur mensuel" };
   }
   if (count >= 6) {
-    return { rate: 0.15, trainerShareRate: 0.85, label: "Formateur régulier" };
+    return { rate: 0.20, trainerShareRate: 0.80, label: "Formateur régulier" };
   }
   return { rate: 0.30, trainerShareRate: 0.70, label: "Formateur lancement" };
 }
@@ -615,7 +625,8 @@ function getReservationGrossAmount(reservation = {}, stage = {}) {
   if (offerType === "enterprise") return ENTERPRISE_STAGE_PRICE;
 
   const places = Number(reservation.places || 0);
-  return places * PUBLIC_STAGE_UNIT_PRICE;
+  const requestedPlaces = Number(reservation.requested_places || places);
+  return places * getPublicTierUnitPrice(requestedPlaces);
 }
 
 function calculateTrainerPayout(grossAmount, commissionRate) {
@@ -2362,12 +2373,14 @@ async function handleExecuteTrainerPayout(req, res) {
   }
 
   const commissionTier = await getTrainerCommissionTier(stage.trainer_id);
+  const stageOfferType = getStageOfferType(stage);
+  const fallbackCommissionRate = stageOfferType === "enterprise" ? ENTERPRISE_COMMISSION_RATE : commissionTier.rate;
   const reservationBreakdown = [];
 
   for (const row of payableReservations) {
     const grossAmount = getReservationGrossAmount(row, stage);
     const storedRate = Number(row.vital_protect_commission_rate);
-    const commissionRate = Number.isFinite(storedRate) && storedRate >= 0 && storedRate < 1 ? storedRate : commissionTier.rate;
+    const commissionRate = Number.isFinite(storedRate) && storedRate >= 0 && storedRate < 1 ? storedRate : fallbackCommissionRate;
     const storedPayout = Number(row.trainer_payout_amount);
     const payoutAmount = Number.isFinite(storedPayout) && storedPayout > 0
       ? storedPayout

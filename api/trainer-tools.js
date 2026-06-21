@@ -8,7 +8,18 @@ const supabase = createClient(
 );
 
 const PUBLIC_STAGE_UNIT_PRICE = 30;
-const ENTERPRISE_STAGE_PRICE = 390;
+const PUBLIC_STAGE_DUO_UNIT_PRICE = 25;
+const PUBLIC_STAGE_GROUP_UNIT_PRICE = 20;
+const PUBLIC_STAGE_MAX_PARTICIPANTS = 12;
+const ENTERPRISE_STAGE_PRICE = 250;
+const ENTERPRISE_COMMISSION_RATE = 0.10;
+
+function getPublicTierUnitPrice(requestedPlaces) {
+  const n = Number(requestedPlaces || 1);
+  if (n <= 1) return PUBLIC_STAGE_UNIT_PRICE;
+  if (n === 2) return PUBLIC_STAGE_DUO_UNIT_PRICE;
+  return PUBLIC_STAGE_GROUP_UNIT_PRICE;
+}
 const PAYOUT_DAY_OF_MONTH = 20;
 
 const TRAINER_DOCUMENT_BUCKET = process.env.TRAINER_DOCUMENT_BUCKET || "trainer-documents";
@@ -756,8 +767,8 @@ function getCommissionTier(realizedStages12Months) {
 
   if (count >= 12) {
     return {
-      rate: 0.075,
-      trainerShareRate: 0.925,
+      rate: 0.10,
+      trainerShareRate: 0.90,
       label: "Formateur mensuel",
       description: "12 stages réalisés ou plus sur 12 mois"
     };
@@ -765,8 +776,8 @@ function getCommissionTier(realizedStages12Months) {
 
   if (count >= 6) {
     return {
-      rate: 0.15,
-      trainerShareRate: 0.85,
+      rate: 0.20,
+      trainerShareRate: 0.80,
       label: "Formateur régulier",
       description: "6 à 11 stages réalisés sur 12 mois"
     };
@@ -788,7 +799,8 @@ function getReservationGrossAmount(reservation, stage) {
   if (offerType === "enterprise") return ENTERPRISE_STAGE_PRICE;
 
   const places = Number(reservation?.places || 0);
-  return places * PUBLIC_STAGE_UNIT_PRICE;
+  const requestedPlaces = Number(reservation?.requested_places || places);
+  return places * getPublicTierUnitPrice(requestedPlaces);
 }
 
 function calculateTrainerPayout(grossAmount, commissionRate) {
@@ -801,8 +813,10 @@ function calculateTrainerPayout(grossAmount, commissionRate) {
 
 function sanitizeReservationForTrainer(row, stage, commissionTier) {
   const grossAmount = getReservationGrossAmount(row, stage);
-  const commissionRate = Number(row.vital_protect_commission_rate ?? commissionTier.rate);
-  const safeCommissionRate = Number.isFinite(commissionRate) ? commissionRate : commissionTier.rate;
+  const offerType = getStageOfferType(stage);
+  const fallbackRate = offerType === "enterprise" ? ENTERPRISE_COMMISSION_RATE : commissionTier.rate;
+  const commissionRate = Number(row.vital_protect_commission_rate ?? fallbackRate);
+  const safeCommissionRate = Number.isFinite(commissionRate) ? commissionRate : fallbackRate;
   const payoutAmount = calculateTrainerPayout(grossAmount, safeCommissionRate);
   const storedPayoutAmount = Number(row.trainer_payout_amount);
   const trainerPayoutAmount = Number.isFinite(storedPayoutAmount) && storedPayoutAmount >= 0
@@ -837,7 +851,10 @@ function sanitizeStageForTrainer(stage, reservations, commissionTier) {
   const offerType = getStageOfferType(stage);
   const paidReservations = reservations.filter(row => normalize(row.payment_status || "paid") === "paid");
   const grossAmount = paidReservations.reduce((sum, row) => sum + getReservationGrossAmount(row, stage), 0);
-  const payoutAmount = calculateTrainerPayout(grossAmount, commissionTier.rate);
+  const effectiveCommissionTier = offerType === "enterprise"
+    ? { rate: ENTERPRISE_COMMISSION_RATE, label: "B2B / association (forfait fixe)" }
+    : commissionTier;
+  const payoutAmount = calculateTrainerPayout(grossAmount, effectiveCommissionTier.rate);
   const commissionAmount = Math.max(0, Math.round((grossAmount - payoutAmount) * 100) / 100);
   const inventoryCapacity = offerType === "enterprise" ? 1 : Number(stage.max_participants || 0);
   const paidUnits = offerType === "enterprise"
@@ -868,8 +885,8 @@ function sanitizeStageForTrainer(stage, reservations, commissionTier) {
     vital_protect_commission_estimate: commissionAmount,
     trainer_payout_estimate: payoutAmount,
     trainer_payout_due_date: getPayoutDateForStage(stage.stage_date),
-    vital_protect_commission_rate: commissionTier.rate,
-    vital_protect_commission_label: commissionTier.label,
+    vital_protect_commission_rate: effectiveCommissionTier.rate,
+    vital_protect_commission_label: effectiveCommissionTier.label,
     paid_units: paidUnits,
     inventory_capacity: inventoryCapacity || Number(stage.remaining_places || 0) + paidUnits
   };
@@ -1059,7 +1076,7 @@ async function handleCreateStage(req, res, trainer) {
   const stageDate = sanitizeText(req.body?.stage_date);
   const startTime = sanitizeText(req.body?.start_time);
   const duration = sanitizeText(req.body?.duration);
-  const maxParticipants = parseNumber(req.body?.max_participants, 20);
+  const maxParticipants = parseNumber(req.body?.max_participants, 12);
 
   const moduleRow = await resolveTrainingModule({ moduleSlug, moduleName });
 
@@ -1093,6 +1110,12 @@ async function handleCreateStage(req, res, trainer) {
     return res.status(400).json({ error: "max_participants invalide" });
   }
 
+  if (offerType === "public" && maxParticipants > PUBLIC_STAGE_MAX_PARTICIPANTS) {
+    return res.status(400).json({
+      error: `Un stage grand public est limité à ${PUBLIC_STAGE_MAX_PARTICIPANTS} participants maximum. Utilisez le format entreprise/association pour un effectif plus large.`
+    });
+  }
+
   if (!Number.isFinite(remainingPlaces) || remainingPlaces < 0 || remainingPlaces > inventoryCapacity) {
     return res.status(400).json({ error: "remaining_places invalide" });
   }
@@ -1108,7 +1131,7 @@ async function handleCreateStage(req, res, trainer) {
 
   if (!isFutureOrToday(trainer.certification_expiry)) {
     return res.status(403).json({
-      error: "Certification expirée"
+      error: "Habilitation expirée"
     });
   }
 
@@ -1116,7 +1139,7 @@ async function handleCreateStage(req, res, trainer) {
 
   if (!trainerModule) {
     return res.status(403).json({
-      error: "Aucun module certifié trouvé pour ce type de stage"
+      error: "Aucun module habilité trouvé pour ce type de stage"
     });
   }
 
@@ -1129,7 +1152,7 @@ async function handleCreateStage(req, res, trainer) {
   const trainerModuleStatus = normalize(trainerModule.status || "certified");
   if (!["certified", "active"].includes(trainerModuleStatus)) {
     return res.status(403).json({
-      error: "Ce module n'est pas certifié"
+      error: "Ce module n'est pas habilité"
     });
   }
 

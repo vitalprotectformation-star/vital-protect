@@ -9,7 +9,17 @@ const supabase = createClient(
 );
 
 const PUBLIC_STAGE_UNIT_PRICE = 30;
-const ENTERPRISE_STAGE_PRICE = 390;
+const PUBLIC_STAGE_DUO_UNIT_PRICE = 25;
+const PUBLIC_STAGE_GROUP_UNIT_PRICE = 20;
+const PUBLIC_STAGE_MAX_PARTICIPANTS = 12;
+const ENTERPRISE_STAGE_PRICE = 250;
+
+function getPublicTierUnitPrice(requestedPlaces) {
+  const n = Number(requestedPlaces || 1);
+  if (n <= 1) return PUBLIC_STAGE_UNIT_PRICE;
+  if (n === 2) return PUBLIC_STAGE_DUO_UNIT_PRICE;
+  return PUBLIC_STAGE_GROUP_UNIT_PRICE;
+}
 
 function normalizeEmail(value) {
   return String(value || "").trim().toLowerCase();
@@ -159,8 +169,10 @@ function getStageOfferType(stage = {}) {
   return classifyModule(stage.training_type, stage.title, stage.description, stage.module_slug);
 }
 
-function getStageCheckoutPrice(stage) {
-  return getStageOfferType(stage) === "enterprise" ? ENTERPRISE_STAGE_PRICE : PUBLIC_STAGE_UNIT_PRICE;
+function getStageCheckoutPrice(stage, requestedPlaces) {
+  return getStageOfferType(stage) === "enterprise"
+    ? ENTERPRISE_STAGE_PRICE
+    : getPublicTierUnitPrice(requestedPlaces);
 }
 
 function getTrainerSessionPrice(trainerSession) {
@@ -295,8 +307,11 @@ export default async function handler(req, res) {
     if (offerType === "enterprise" && requestedPlaces > 20) {
       return res.status(400).json({ error: "Le forfait entreprise est prévu pour 20 personnes maximum" });
     }
+    if (offerType === "public" && requestedPlaces > PUBLIC_STAGE_MAX_PARTICIPANTS) {
+      return res.status(400).json({ error: `Le stage grand public est limité à ${PUBLIC_STAGE_MAX_PARTICIPANTS} personnes maximum.` });
+    }
     const checkoutQuantity = offerType === "enterprise" ? 1 : inventoryPlaces;
-    const unitPrice = getStageCheckoutPrice(stage);
+    const unitPrice = getStageCheckoutPrice(stage, requestedPlaces);
     const remainingPlaces = Number(stage.remaining_places || 0);
 
     if (remainingPlaces < checkoutQuantity) {
