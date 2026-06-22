@@ -2181,7 +2181,7 @@
           .eq("status", "published")
           .order("stage_date", { ascending: true });
         if (error) throw error;
-        publicStagesData = (data || []).filter((item) => Number(item.remaining_places || 0) > 0 && !isAdsTestSession(item));
+        publicStagesData = (data || []).filter((item) => Number(item.remaining_places || 0) > 0 && !isAdsTestSession(item) && String(item.stage_kind || "").toLowerCase() !== "enterprise");
         renderMarketplaceLists();
       } catch (error) {
         console.error("Erreur chargement marketplace stages:", error);

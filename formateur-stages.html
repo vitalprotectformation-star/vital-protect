@@ -2111,6 +2111,7 @@
                 <button class="btn btn-secondary btn-small" type="button" data-stage-details="${escapeAttr(stage.id)}">Détails</button>
                 <button class="btn btn-secondary btn-small" type="button" data-stage-export="${escapeAttr(stage.id)}" ${canContact ? "" : "disabled"}>Exporter</button>
                 <button class="btn btn-secondary btn-small" type="button" data-stage-contact="${escapeAttr(stage.id)}" ${canContact ? "" : "disabled"}>Contacter</button>
+                ${isEnterpriseStage(stage) ? `<button class="btn btn-secondary btn-small" type="button" data-stage-copy-link="${escapeAttr(stage.id)}">Copier le lien de paiement</button>` : ""}
                 ${canSubmit ? `<button class="btn btn-primary btn-small" type="button" data-stage-submit="${escapeAttr(stage.id)}">Soumettre</button>` : ""}
                 ${canCancel ? `<button class="btn btn-secondary btn-small" type="button" data-stage-cancel="${escapeAttr(stage.id)}">Annuler</button>` : ""}
               </div>
@@ -2298,6 +2299,10 @@ VITAL PROTECT`;
         button.addEventListener("click", () => contactStageReservations(button.dataset.stageContact));
       });
 
+      document.querySelectorAll("[data-stage-copy-link]").forEach(button => {
+        button.addEventListener("click", () => copyEnterpriseStageLink(button.dataset.stageCopyLink, button));
+      });
+
       document.querySelectorAll("[data-stage-submit]").forEach(button => {
         button.addEventListener("click", () => updateTrainerStageStatus(button.dataset.stageSubmit, "pending"));
       });
@@ -2305,6 +2310,23 @@ VITAL PROTECT`;
       document.querySelectorAll("[data-stage-cancel]").forEach(button => {
         button.addEventListener("click", () => updateTrainerStageStatus(button.dataset.stageCancel, "cancelled"));
       });
+    }
+
+    async function copyEnterpriseStageLink(stageId, button) {
+      const url = `${window.location.origin}/stage.html?id=${encodeURIComponent(stageId)}`;
+      const originalLabel = button.textContent;
+
+      try {
+        await navigator.clipboard.writeText(url);
+        button.textContent = "Lien copié !";
+      } catch (error) {
+        console.error("Impossible de copier le lien :", error);
+        window.prompt("Copiez ce lien à envoyer à votre contact entreprise :", url);
+      } finally {
+        setTimeout(() => {
+          button.textContent = originalLabel;
+        }, 2000);
+      }
     }
 
     function attachTrainerDashboardActions() {
