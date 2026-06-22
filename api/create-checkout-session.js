@@ -304,8 +304,8 @@ export default async function handler(req, res) {
     }
 
     const offerType = getStageOfferType(stage);
-    if (offerType === "enterprise" && requestedPlaces > 20) {
-      return res.status(400).json({ error: "Le forfait entreprise est prévu pour 20 personnes maximum" });
+    if (offerType === "enterprise" && requestedPlaces > 24) {
+      return res.status(400).json({ error: "Le forfait entreprise est prévu pour 24 personnes maximum" });
     }
     if (offerType === "public" && requestedPlaces > PUBLIC_STAGE_MAX_PARTICIPANTS) {
       return res.status(400).json({ error: `Le stage grand public est limité à ${PUBLIC_STAGE_MAX_PARTICIPANTS} personnes maximum.` });
