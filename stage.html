@@ -2212,7 +2212,7 @@
       setText(heroDescription, stage.description || moduleSummary(getItemModuleType(stage), stagePathForItem(stage)));
       setText(metaCity, stage.city || "À confirmer");
       setText(metaDate, formatDate(stage.stage_date));
-      setText(metaPrice, String(stage.stage_kind || "").toLowerCase() === "enterprise" ? `${formatPrice(stage.price)} (forfait jusqu'à 20 pers.)` : `à partir de ${formatPrice(stage.price)} / pers.`);
+      setText(metaPrice, String(stage.stage_kind || "").toLowerCase() === "enterprise" ? `${formatPrice(stage.price)} (forfait jusqu'à 24 pers.)` : `à partir de ${formatPrice(stage.price)} / pers.`);
       setText(metaPlaces, String(stage.remaining_places ?? "—"));
       setText(metaRegion, stage.region || "Région à confirmer");
       setText(metaDepartment, stage.department || "Département à confirmer");
