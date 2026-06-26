@@ -1028,7 +1028,7 @@ async function handleStageCheckout(session) {
         <p>Votre réservation a bien été enregistrée sur <strong>VITAL PROTECT</strong>.</p>
         <ul>
           <li><strong>Stage :</strong> ${escapeHtml(stageTitle)}</li>
-          <li><strong>Type :</strong> ${offerType === "enterprise" ? "Forfait entreprise jusqu’à 20 personnes" : "Inscription individuelle"}</li>
+          <li><strong>Type :</strong> ${offerType === "enterprise" ? "Forfait entreprise jusqu’à 24 personnes" : "Inscription individuelle"}</li>
           <li><strong>${offerType === "enterprise" ? "Session" : "Places"} :</strong> ${escapeHtml(offerType === "enterprise" ? "1" : places)}</li>
           <li><strong>Montant :</strong> ${escapeHtml(formatEuroAmount(totalAmount))}</li>
         </ul>
