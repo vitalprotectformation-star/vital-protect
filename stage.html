@@ -1333,6 +1333,12 @@
                 <div class="form-field"><label for="email">Email</label><input id="email" type="email" required /></div>
                 <div class="form-field"><label for="phone">Téléphone</label><input id="phone" type="tel" required /></div>
                 <div class="form-field"><label for="places">Nombre de places</label><input id="places" type="number" min="1" value="1" required /></div>
+                <div class="form-field full">
+                  <label for="freeReinscription" style="display:flex;align-items:center;gap:8px;font-weight:500;">
+                    <input id="freeReinscription" type="checkbox" style="width:auto;" />
+                    J’ai déjà suivi ce stage il y a moins d’un an → réinscription gratuite
+                  </label>
+                </div>
                 <div class="form-field"><label for="cityDisplay">Ville du stage</label><input id="cityDisplay" type="text" disabled /></div>
                 <div class="form-field full"><label for="notes">Message complémentaire</label><textarea id="notes" placeholder="Optionnel"></textarea></div>
               </div>
@@ -1477,6 +1483,7 @@
     const bookingTotal = $("bookingTotal");
     const bookingStatus = $("bookingStatus");
     const placesInput = $("places");
+    const freeReinscriptionCheckbox = $("freeReinscription");
     const bookingForm = $("bookingForm");
     const bookingSubmitButton = $("bookingSubmitButton");
     const publicStagesContainer = $("publicStagesContainer");
@@ -1600,6 +1607,10 @@
     function updateBookingTotal() {
       if (!stage || !hasCompleteSession(stage)) {
         setText(bookingTotal, "Total : en attente d’une session complète");
+        return;
+      }
+      if (freeReinscriptionCheckbox?.checked) {
+        setText(bookingTotal, "Total : Gratuit (réinscription)");
         return;
       }
       const places = Math.max(1, Number(placesInput?.value || 1));
@@ -2292,6 +2303,40 @@
           showBookingStatus("Un stage grand public est limité à 12 participants maximum. Pour un effectif plus large, contactez-nous pour une formule entreprise/association.", "error");
           return;
         }
+
+        if (freeReinscriptionCheckbox?.checked) {
+          if (stageKind === "enterprise") {
+            showBookingStatus("La réinscription gratuite n’est pas disponible sur les formats entreprise.", "error");
+            return;
+          }
+          showBookingStatus("Vérification de votre éligibilité...", "info");
+          try {
+            const res = await fetch("/api/redeem-free-reinscription", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                stage_id: stage.id,
+                first_name: firstName,
+                last_name: lastName,
+                email,
+                phone
+              })
+            });
+            const result = await res.json();
+            if (result.success) {
+              showBookingStatus("Réinscription gratuite confirmée ! Vous allez recevoir un email de confirmation.", "success");
+              bookingForm.reset();
+              updateBookingTotal();
+            } else {
+              showBookingStatus(result.error || "Réinscription gratuite refusée.", "error");
+            }
+          } catch (error) {
+            showBookingStatus("Erreur réseau.", "error");
+            console.error(error);
+          }
+          return;
+        }
+
         showBookingStatus("Redirection vers le paiement Stripe...", "info");
         try {
           const res = await fetch("/api/create-checkout-session", {
@@ -2323,6 +2368,15 @@
     }
 
     placesInput?.addEventListener("input", updateBookingTotal);
+    freeReinscriptionCheckbox?.addEventListener("change", () => {
+      if (freeReinscriptionCheckbox.checked && placesInput) {
+        placesInput.value = "1";
+        placesInput.disabled = true;
+      } else if (placesInput) {
+        placesInput.disabled = false;
+      }
+      updateBookingTotal();
+    });
     populateLocationFilters();
     setMarketplacePath(activeMarketplacePath, { clearSelection: false });
     Promise.allSettled([loadMarketplace(), loadStage()]);
