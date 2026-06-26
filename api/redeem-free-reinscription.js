@@ -59,6 +59,57 @@ async function insertWithOptionalColumns(table, payload, optionalColumns = []) {
   return { data: null, error: new Error("Impossible d'enregistrer : colonnes optionnelles incompatibles") };
 }
 
+function isRealizedStage(stage) {
+  const status = normalize(stage?.status);
+  return ["completed", "realized", "réalisé", "realise"].includes(status);
+}
+
+function isInLast12Months(dateString) {
+  if (!dateString) return false;
+  const date = new Date(dateString);
+  if (Number.isNaN(date.getTime())) return false;
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const start = new Date(today);
+  start.setFullYear(start.getFullYear() - 1);
+
+  date.setHours(0, 0, 0, 0);
+  return date >= start && date <= today;
+}
+
+function getCommissionTier(realizedStages12Months) {
+  const count = Number(realizedStages12Months || 0);
+  if (count >= 12) return { rate: 0.10, label: "Formateur mensuel" };
+  if (count >= 6) return { rate: 0.20, label: "Formateur régulier" };
+  return { rate: 0.30, label: "Formateur lancement" };
+}
+
+async function getTrainerCommissionTier(trainerId) {
+  if (!trainerId) return getCommissionTier(0);
+
+  const { data, error } = await supabase
+    .from("stages")
+    .select("id, status, stage_date")
+    .eq("trainer_id", trainerId);
+
+  if (error) {
+    console.error("Supabase trainer commission fetch error:", error);
+    return getCommissionTier(0);
+  }
+
+  const realizedStages12Months = (data || []).filter(stage => isRealizedStage(stage) && isInLast12Months(stage.stage_date)).length;
+  return getCommissionTier(realizedStages12Months);
+}
+
+function calculateTrainerPayout(grossAmount, commissionRate) {
+  const amount = Number(grossAmount || 0);
+  const rate = Number(commissionRate || 0);
+  if (!Number.isFinite(amount) || amount <= 0) return 0;
+  if (!Number.isFinite(rate) || rate < 0 || rate >= 1) return amount;
+  return Math.round(amount * (1 - rate) * 100) / 100;
+}
+
 function getStageOfferType(stage = {}) {
   const explicit = normalize(stage.stage_kind || stage.offer_type);
   return explicit === "enterprise" ? "enterprise" : "public";
@@ -160,7 +211,8 @@ export default async function handler(req, res) {
       });
     }
 
-    const trainerPayoutAmount = PUBLIC_STAGE_UNIT_PRICE; // VP prend 0% de commission, le formateur touche la valeur pleine
+    const commissionTier = await getTrainerCommissionTier(stage.trainer_id);
+    const trainerPayoutAmount = calculateTrainerPayout(PUBLIC_STAGE_UNIT_PRICE, commissionTier.rate);
 
     const reservationInsert = await insertWithOptionalColumns("reservations", {
       stage_id: stage.id,
@@ -176,7 +228,7 @@ export default async function handler(req, res) {
       stage_kind: "public",
       requested_places: 1,
       trainer_payout_amount: trainerPayoutAmount,
-      vital_protect_commission_rate: 0,
+      vital_protect_commission_rate: commissionTier.rate,
       trainer_payout_status: "scheduled",
       is_free_reinscription: true,
       free_reinscription_source_reservation_id: sourceReservation.id
